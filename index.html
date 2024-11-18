@@ -70,6 +70,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             padding: 20px;
+            margin-bottom: 0; /* Eliminar margen adicional en la parte inferior */
         }
 
         .menu-item {
@@ -165,6 +166,12 @@
             .back-button {
                 margin-bottom: 0px !important; /* Elimina cualquier margen adicional debajo */
             }
+        }
+
+        /* Asegurarse de que el iframe-container no añada espacio innecesario */
+        #iframe-container {
+            display: none;
+            height: auto; /* Para que no haya un alto fijo que cause espacio adicional */
         }
     </style>
 </head>
