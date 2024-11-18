@@ -243,12 +243,25 @@
         </div>
     </div>
 
+    <!-- Contenedor del iframe -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
     <script>
         function openInIframe(url) {
             document.getElementById('iframe').src = url;
+            document.getElementById('iframe-container').style.display = 'block';
             document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
         }
 
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
+
+        // Código para la instalación de la app (si es necesario)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
@@ -277,5 +290,6 @@
             });
         });
     </script>
+
 </body>
 </html>
