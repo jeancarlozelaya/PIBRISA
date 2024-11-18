@@ -127,35 +127,23 @@
             margin-top: 0px;
         }
 
-/* Elimina cualquier margen o padding no deseado en el body */
-body {
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Asegura que el body ocupe toda la altura */
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Centra todo el contenido */
-    flex-direction: column; /* Apila los elementos verticalmente */
-}
-
-/* Estilo del botón */
 .back-button {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 0px 20px;
     background-color: #007BFF;
     color: white;
     border-radius: 5px;
     text-decoration: none;
     text-align: center;
+    margin-top: 0px; /* Espacio desde el borde inferior */
+    margin-bottom: 10px;
     font-size: 1em;
-    width: auto;
-    max-width: 300px; /* Tamaño máximo del botón */
+    width: auto; /* Dejar que el ancho se ajuste */
+    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
-    margin: 10px 0; /* Espaciado arriba y abajo del botón */
 }
 
-/* Hover */
 .back-button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
@@ -164,14 +152,10 @@ body {
 /* En dispositivos móviles */
 @media screen and (max-width: 600px) {
     .back-button {
-        font-size: 0.9em;
-        padding: 12px 18px;
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        max-width: none;
+        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+        padding: 0px 18px; /* Ajustar el padding */
+        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
+        margin-left: 5%; /* Centrar el botón */
     }
 }
 
@@ -299,14 +283,11 @@ body {
 
     </div>
 
-
-
-<div class="back-button-container">
-    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-</div>
-
-
-    
+    <!-- Aquí aparece el iframe con el enlace cargado -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
 
     <script>
         function openInIframe(url) {
