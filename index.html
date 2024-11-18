@@ -121,11 +121,13 @@
         }
 
         iframe {
-            width: 100%;
-            height: 80vh;
-            border: none;
-            margin-top: 0px;
-        }
+    width: 100%;
+    height: 80vh;
+    border: none;
+    margin-top: 0px;
+    display: none; /* Asegúrate de que esté oculto por defecto */
+}
+
 
 
 
@@ -207,12 +209,13 @@
         Pisos Brillantes
     </div>
 
-        <!-- Aquí aparece el iframe con el enlace cargado -->
-<!-- Aquí aparece el botón de volver al inicio -->
-<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
 
-<!-- Si el iframe es necesario más tarde, puedes mostrarlo dinámicamente con JS -->
-<!-- El iframe ya no estará en la parte inferior -->
+    
+<!-- Aquí aparece el iframe con el enlace cargado -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
 
 
 
