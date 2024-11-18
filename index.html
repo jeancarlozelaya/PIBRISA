@@ -6,14 +6,25 @@
     <title>Pisos Brillantes</title>
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
     <link rel="manifest" href="/PIBRISA/manifest.json">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
+    
     <style>
+        /* Asegurarse de que no haya márgenes ni rellenos extra */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%; /* Asegura que el body y html ocupen toda la altura disponible */
+            font-family: Arial, sans-serif;
+        }
+
         #install-button {
             display: none;
             padding: 12px 24px;
-            background-color: #007BFF; /* Color principal */
+            background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
@@ -48,14 +59,6 @@
             margin-right: 8px;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
         .header {
             background-color: #007BFF;
             color: white;
@@ -70,7 +73,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             padding: 20px;
-            margin-bottom: 0; /* Eliminar margen adicional en la parte inferior */
+            margin-bottom: 0; /* Eliminar margen inferior */
+            height: 100%; /* Asegura que ocupe toda la altura disponible */
         }
 
         .menu-item {
@@ -113,13 +117,6 @@
             margin: 10px 0;
         }
 
-        iframe {
-            width: 100%;
-            height: 80vh;
-            border: none;
-            margin-top: 0px;
-        }
-
         .back-button {
             display: inline-block;
             padding: 10px 20px;
@@ -130,14 +127,12 @@
             text-align: center;
             font-size: 1em;
             position: absolute;
-            top: 80px; /* Ajusta la distancia desde la parte superior de la pantalla */
-            left: 20px; /* Coloca el botón en el borde izquierdo */
-            width: auto;
+            top: 80px;
+            left: 20px;
             max-width: 200px;
-            box-sizing: border-box;
             transition: background-color 0.3s, transform 0.3s;
-            margin-bottom: 0px !important; /* Elimina cualquier margen adicional debajo */
-            padding-bottom: 0px !important; /* Elimina padding inferior */
+            margin-bottom: 0px !important;
+            padding-bottom: 0px !important;
         }
 
         .back-button:hover {
@@ -145,15 +140,9 @@
             transform: scale(1.05);
         }
 
-        /* En dispositivos móviles */
-        @media screen and (max-width: 600px) {
-            .back-button {
-                font-size: 0.9em;
-                padding: 10px 15px;
-                width: auto;
-                max-width: 150px;
-                left: 10px;
-            }
+        /* Eliminar cualquier espacio vacío extra en la parte inferior */
+        .menu-container {
+            flex-grow: 1;
         }
 
         /* Regla específica para el modo standalone (PWA) */
@@ -164,14 +153,8 @@
             }
 
             .back-button {
-                margin-bottom: 0px !important; /* Elimina cualquier margen adicional debajo */
+                margin-bottom: 0px !important;
             }
-        }
-
-        /* Asegurarse de que el iframe-container no añada espacio innecesario */
-        #iframe-container {
-            display: none;
-            height: auto; /* Para que no haya un alto fijo que cause espacio adicional */
         }
     </style>
 </head>
@@ -185,13 +168,11 @@
         Pisos Brillantes
     </div>
 
-    <div id="iframe-container" style="display:none;">
-        <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-    </div>
+    <!-- Eliminar el contenedor del iframe completamente -->
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
 
     <div class="menu-container">
-        <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232267091623858');">
+        <div class="menu-item" onclick="window.open('https://form.jotform.com/232267091623858');">
             <span>📝</span>
             <p>Registro de Asistencia Diaria</p>
         </div>
@@ -202,11 +183,11 @@
         </div>
         <div class="separator"></div>
 
-        <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232254204934855');">
+        <div class="menu-item" onclick="window.open('https://form.jotform.com/232254204934855');">
             <span>📝</span>
             <p>Registro de Participación (Momento SISO)</p>
         </div>
-        <div class="menu-item" onclick="openInIframe('https://form.jotform.com/242495060366862');">
+        <div class="menu-item" onclick="window.open('https://form.jotform.com/242495060366862');">
             <span>📝</span>
             <p>Registro de Seguimiento de Oasis</p>
         </div>
@@ -266,17 +247,12 @@
     </div>
 
     <script>
-        function openInIframe(url) {
-            document.getElementById('iframe').src = url;
-            document.getElementById('iframe-container').style.display = 'block';
-            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
-        }
-
+        // No es necesario mantener la función de iframe
         function goBack() {
-            document.getElementById('iframe-container').style.display = 'none';
-            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+            window.location.href = 'index.html'; // O a la página principal que desees
         }
 
+        // Instalar Service Worker si es necesario (sin cambios)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
@@ -289,15 +265,13 @@
             });
         }
 
+        // Lógica de instalación de la PWA
         let deferredPrompt;
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-
             const installButton = document.getElementById('install-button');
             installButton.style.display = 'block';
-
             installButton.addEventListener('click', () => {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
