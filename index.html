@@ -203,6 +203,15 @@
     <div class="header">
         Pisos Brillantes
     </div>
+
+        <!-- Aquí aparece el iframe con el enlace cargado -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
+
+    
     <div class="menu-container">
         <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232267091623858');">
             <span>📝</span>
@@ -351,9 +360,5 @@ window.addEventListener('beforeinstallprompt', (e) => {
     
 </body>
 
-        <!-- Aquí aparece el iframe con el enlace cargado -->
-    <div id="iframe-container" style="display:none;">
-        <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-    </div>
+
 </html>
