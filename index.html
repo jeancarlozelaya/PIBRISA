@@ -327,16 +327,24 @@ iframe {
 
         
 function openInIframe(url) {
-    // Mostrar el iframe y el botón sin necesidad de hacer scroll
+    // Mostrar el contenedor del iframe y el botón
+    document.getElementById('iframe-container').style.visibility = 'visible';
+    document.getElementById('iframe-container').style.opacity = 1;
+
+    // Cargar el iframe
     document.getElementById('iframe').src = url;
-    document.querySelector('.menu-container').style.display = 'none'; // Ocultar el menú de navegación
+    document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
 }
 
 function goBack() {
-    // Volver al inicio (en este caso, a la pantalla principal)
-    document.getElementById('iframe').src = '';  // Limpiar el iframe
-    document.querySelector('.menu-container').style.display = 'grid'; // Mostrar el menú de nuevo
+    // Ocultar el iframe y el botón
+    document.getElementById('iframe-container').style.visibility = 'hidden';
+    document.getElementById('iframe-container').style.opacity = 0;
+    
+    // Mostrar el menú de nuevo
+    document.querySelector('.menu-container').style.display = 'grid';
 }
+
 
 
 
