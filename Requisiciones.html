@@ -3,8 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - Aplicación Móvil</title>
+    <title>Pisos Brillantes</title>
+    <link rel="icon" href="Imágenes/Icono.png" type="image/png">
+    <link rel="manifest" href="/PIBRISA/manifest.json">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
+        #install-button {
+            display: none;
+            padding: 12px 24px;
+            background-color: #007BFF; /* Color principal */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #install-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #install-button:active {
+            transform: scale(0.98);
+        }
+
+        #install-button:focus {
+            outline: none;
+        }
+
+        #install-button span {
+            margin-left: 8px;
+        }
+
+        /* Estilo adicional si deseas que el texto del botón tenga icono */
+        #install-button i {
+            margin-right: 8px;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -71,50 +115,66 @@
 
         iframe {
             width: 100%;
-            height: 80vh;
+            height: 93vh;
             border: none;
             margin-top: 0px;
         }
 
-.back-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    margin-top: 10px; /* Espacio desde el borde inferior */
-    margin-bottom: 20px;
-    font-size: 1em;
-    width: auto; /* Dejar que el ancho se ajuste */
-    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
-    box-sizing: border-box;
-    transition: background-color 0.3s, transform 0.3s;
-}
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
 
-.back-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
 
-/* En dispositivos móviles */
-@media screen and (max-width: 600px) {
-    .back-button {
-        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: 5%; /* Centrar el botón */
-    }
-}
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
 
+            top: 57px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+
+
+            }
+        }
+
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
     </style>
 </head>
+
+<button id="install-button" style="display:none;">
+  <i class="fas fa-download"></i> Instalar App
+</button>
+
 <body>
     <div class="header">
         Pisos Brillantes
     </div>
-    <div class="menu-container">
+    
+<div class="menu-container">
         <div class="menu-item full-width" onclick="openInIframe('https://form.jotform.com/240795406220856');">
             <span>🚨</span>
             <p>Botiquín de Emergencia</p>
@@ -146,9 +206,10 @@
 
 
 
+
     </div>
 
-    <!-- Aquí aparece el iframe con el enlace cargado -->
+    <!-- Contenedor del iframe -->
     <div id="iframe-container" style="display:none;">
         <iframe id="iframe" src=""></iframe>
         <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
@@ -165,6 +226,36 @@
             document.getElementById('iframe-container').style.display = 'none';
             document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
         }
+
+        // Código para la instalación de la app (si es necesario)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar el Service Worker:', error);
+                    });
+            });
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
     </script>
+
 </body>
 </html>
