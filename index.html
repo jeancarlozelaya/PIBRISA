@@ -5,57 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pisos Brillantes</title>
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
-<link rel="manifest" href="/PIBRISA/manifest.json">
+    <link rel="manifest" href="/PIBRISA/manifest.json">
 
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
+        #install-button {
+            display: none;
+            padding: 12px 24px;
+            background-color: #007BFF; /* Color principal */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
 
-  #install-button {
-    display: none;
-    padding: 12px 24px;
-    background-color: #007BFF; /* Color principal */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  }
+        #install-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
 
-  #install-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-  }
+        #install-button:active {
+            transform: scale(0.98);
+        }
 
-  #install-button:active {
-    transform: scale(0.98);
-  }
+        #install-button:focus {
+            outline: none;
+        }
 
-  #install-button:focus {
-    outline: none;
-  }
+        #install-button span {
+            margin-left: 8px;
+        }
 
-  #install-button span {
-    margin-left: 8px;
-  }
+        /* Estilo adicional si deseas que el texto del botón tenga icono */
+        #install-button i {
+            margin-right: 8px;
+        }
 
-  /* Estilo adicional si deseas que el texto del botón tenga icono */
-  #install-button i {
-    margin-right: 8px;
-  }
-
-
-
-
-
-        
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -127,70 +120,43 @@
             margin-top: 0px;
         }
 
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 20px; /* Mueve el botón a la parte superior */
+            left: 20px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
 
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
 
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
+            }
+        }
 
-      
-.back-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    margin-top: 0px; /* Espacio desde el borde inferior */
-    margin-bottom: 20px;
-    font-size: 1em;
-    width: auto; /* Dejar que el ancho se ajuste */
-    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
-    box-sizing: border-box;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.back-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-/* En dispositivos móviles */
-@media screen and (max-width: 600px) {
-    .back-button {
-        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: 5%; /* Centrar el botón */
-    }
-}
-
-/* Regla específica para el modo standalone (PWA) */
-@media screen and (display-mode: standalone) {
-    body {
-        margin: 0; /* Asegura que no haya márgenes extra */
-        padding: 0; /* Asegura que no haya padding extra */
-    }
-
-    .back-button {
-        margin-bottom: 0px !important; /* Elimina cualquier margen adicional debajo */
-    }
-}
-
-/* Asegúrate de que el contenedor del botón no añada espacio extra */
-.back-button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: auto;
-    padding: 0;
-    margin: 0;
-}
-
-
-
-
-
-
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
     </style>
 </head>
 
@@ -198,7 +164,6 @@
   <i class="fas fa-download"></i> Instalar App
 </button>
 
-    
 <body>
     <div class="header">
         Pisos Brillantes
@@ -215,9 +180,6 @@
         </div>
         <div class="separator"></div>
 
-        <!-- Aquí puedes agregar más enlaces -->
-
-
         <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232254204934855');">
             <span>📝</span>
             <p>Registro de Participación (Momento SISO)</p>
@@ -228,10 +190,10 @@
         </div>
         <div class="separator"></div>
 
-<div class="menu-item" onclick="window.location.href='Requisiciones.html';">
-    <span>📝</span>
-    <p>Requisiciones</p>
-</div>
+        <div class="menu-item" onclick="window.location.href='Requisiciones.html';">
+            <span>📝</span>
+            <p>Requisiciones</p>
+        </div>
 
         <div class="menu-item" onclick="window.location.href='Historial-Requisiciones.html';">
             <span>📁</span>
@@ -279,79 +241,41 @@
             <span>📥</span>
             <p>Descargas</p>
         </div>
-
-
-
-
-
-
-    </div>
-
-    <!-- Aquí aparece el iframe con el enlace cargado -->
-    <div id="iframe-container" style="display:none;">
-        <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
     </div>
 
     <script>
         function openInIframe(url) {
             document.getElementById('iframe').src = url;
-            document.getElementById('iframe-container').style.display = 'block';
             document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
         }
 
-        function goBack() {
-            document.getElementById('iframe-container').style.display = 'none';
-            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar el Service Worker:', error);
+                    });
+            });
         }
 
+        let deferredPrompt;
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then((registration) => {
-        console.log('Service Worker registrado con éxito:', registration);
-      })
-      .catch((error) => {
-        console.log('Error al registrar el Service Worker:', error);
-      });
-  });
-}
-
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevenir que el navegador muestre el banner de instalación automáticamente
-  e.preventDefault();
-  deferredPrompt = e;
-
-  // Mostrar el botón de instalación
-  const installButton = document.getElementById('install-button');
-  installButton.style.display = 'block';
-
-  installButton.addEventListener('click', () => {
-    // Mostrar el cuadro de instalación
-    deferredPrompt.prompt();
-
-    // Esperar la respuesta del usuario
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('El usuario aceptó la instalación');
-      } else {
-        console.log('El usuario rechazó la instalación');
-      }
-      deferredPrompt = null;
-      installButton.style.display = 'none'; // Ocultar el botón después de la interacción
-    });
-  });
-});
-
-
-        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
     </script>
-
-
-
-    
 </body>
 </html>
