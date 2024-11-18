@@ -53,6 +53,7 @@
             padding: 0;
             background-color: #f4f4f4;
             color: #333;
+            overflow-x: hidden;
         }
 
         .header {
@@ -115,7 +116,7 @@
             width: 100%;
             height: 80vh;
             border: none;
-            margin-top: 0px;
+            display: none;
         }
 
         /* Nuevo estilo para el botón "Volver al Inicio" en la esquina superior izquierda */
@@ -144,13 +145,9 @@
             transform: scale(1.05);
         }
 
-        /* Eliminar el recuadro que rodeaba el iframe (no será necesario ahora) */
+        /* Evitar que el iframe se vea de más cuando no está cargando contenido */
         #iframe-container {
-            display: none; /* El iframe ya no es necesario con el botón en la parte superior */
-        }
-
-        iframe {
-            display: none; /* El iframe no se muestra en este caso */
+            display: none;
         }
     </style>
 </head>
@@ -163,6 +160,10 @@
     <div class="header">
         Pisos Brillantes
     </div>
+
+    <!-- Botón "Volver al Inicio" -->
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
     <div class="menu-container">
         <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232267091623858');">
             <span>📝</span>
