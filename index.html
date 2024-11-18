@@ -138,8 +138,8 @@
     margin-top: 0px; /* Espacio desde el borde inferior */
     margin-bottom: 20px;
     font-size: 1em;
-    width: auto; /* Dejar que el ancho se ajuste */
-    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
+    width: auto; /* Dejar que el ancho se ajuste por el contenido */
+    max-width: 300px; /* Limitar el ancho máximo del botón en pantallas grandes */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
 }
@@ -154,10 +154,13 @@
     .back-button {
         font-size: 0.9em; /* Reducir un poco el tamaño del texto */
         padding: 12px 18px; /* Ajustar el padding */
-        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: 5%; /* Centrar el botón */
+        width: 100%; /* Hacer que el botón ocupe el 100% de la pantalla */
+        margin-left: 0; /* Quitar el margen izquierdo */
+        margin-right: 0; /* Quitar el margen derecho */
+        margin-top: 10px; /* Espacio desde el borde superior para que no se pegue tanto */
     }
 }
+
 
     </style>
 </head>
