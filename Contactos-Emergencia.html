@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Aplicación Móvil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .separator {
+            grid-column: span 2;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            margin-top: 0px;
+        }
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 10px; /* Espacio desde el borde inferior */
+    margin-bottom: 20px;
+    font-size: 1em;
+    width: auto; /* Dejar que el ancho se ajuste */
+    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
+    box-sizing: border-box;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* En dispositivos móviles */
+@media screen and (max-width: 600px) {
+    .back-button {
+        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+        padding: 12px 18px; /* Ajustar el padding */
+        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
+        margin-left: 5%; /* Centrar el botón */
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+    <div class="menu-container">
+
+<div class="menu-item full-width" onclick="window.open('tel:+50494457053');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\SalaControl.png" alt="Ariel Machado" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Sala de Control (Argos)</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;"></p>
+    </div>
+</div>
+
+        <div class="separator"></div>
+
+
+<div class="menu-item" onclick="window.open('tel:+50489894286');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\ArielMachado.webp" alt="Ariel Machado" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Ariel Machado</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Rosa María</p>
+    </div>
+</div>
+
+<div class="menu-item" onclick="window.open('tel:+50499489871');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\CintiaDubon.webp" alt="Cintia Dubon" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Cintia Dubon</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Erundina Machado</p>
+    </div>
+</div>
+
+        <div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('tel:+50489091836');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\JeancarloZelaya.webp" alt="Jeancarlo Zelaya" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Jeancarlo Zelaya</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Stephani Sanchez</p>
+    </div>
+</div>
+
+<div class="menu-item" onclick="window.open('tel:+50496449395');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\KarlaPadilla.webp" alt="Karla Padilla" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Karla Padilla</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Daniel Ponce</p>
+    </div>
+</div>
+
+        <div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('tel:+504');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\MaríaPortillo.webp" alt="María Portillo" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">María Portillo</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a </p>
+    </div>
+</div>
+
+<div class="menu-item" onclick="window.open('tel:+50498291916');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\EstherDonaire.webp" alt="Esther Donaire" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Esther Donaire</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Ibis Flores</p>
+    </div>
+</div>
+
+        <div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('tel:+50497780133');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\MayraNicolás.webp" alt="Mayra Nicolás" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Mayra Nicolás</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Adalid Hernandez</p>
+    </div>
+</div>
+
+<div class="menu-item" onclick="window.open('tel:+50496857431');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\OlbanAcosta.webp" alt="Olban Acosta" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Olban Acosta</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Leyla Velis</p>
+    </div>
+</div>
+
+        <div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('tel:+50499079180');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\YarahiLópez.webp" alt="Yarahi López" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Yarahi López</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Héctor Flores</p>
+    </div>
+</div>
+
+<div class="menu-item" onclick="window.open('tel:+50433891762');" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <img src="Imágenes\Colaboradores\YosselinVelasquez.webp" alt="Yosselin Velasquez" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <div>
+        <span style="display: block; font-weight: bold; font-size: 1.2em;">Yosselin Velasquez</span>
+        <p style="margin: 0; color: #007BFF; font-size: 1em;">📞Llamar a Yesenia Velasquez</p>
+    </div>
+</div>
+
+
+<div class="separator"></div>
+
+<div class="menu-item full-width" onclick="window.history.back()">
+    <p>Menú Principal</p>
+</div>
+
+
+
+    </div>
+
+    <!-- Aquí aparece el iframe con el enlace cargado -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
+    <script>
+        function openInIframe(url) {
+            document.getElementById('iframe').src = url;
+            document.getElementById('iframe-container').style.display = 'block';
+            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+        }
+
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
+    </script>
+</body>
+</html>
