@@ -133,12 +133,9 @@
     flex-direction: column;     /* Coloca los elementos en una columna */
     justify-content: flex-start; /* Alinea los elementos al principio del contenedor */
     align-items: center;        /* Centra los elementos horizontalmente */
-    height: 100vh;              /* Usa toda la altura de la ventana del navegador */
+    min-height: 100vh;           /* Asegura que el contenedor tenga al menos la altura de la pantalla */
     margin: 0;
     padding: 0;
-    visibility: hidden;         /* Inicialmente el contenedor está oculto */
-    opacity: 0;                 /* Hacemos que el contenedor sea transparente */
-    transition: opacity 0.5s ease, visibility 0.5s ease; /* Transición suave */
 }
 
 /* El iframe debe ocupar toda la pantalla disponible (menos el botón) */
@@ -186,10 +183,7 @@ iframe {
 
 
 
-
-
-
-            
+        
 /* Regla específica para el modo standalone (PWA) */
 @media screen and (display-mode: standalone) {
     body {
@@ -315,34 +309,24 @@ iframe {
     </div>
 
     <!-- Aquí aparece el iframe con el enlace cargado -->
-    <div id="iframe-container" style="display:none;">
-        <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-    </div>
+<div id="iframe-container">
+    <iframe id="iframe" src=""></iframe>
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+</div>
+
 
     <script>
-
-        
 function openInIframe(url) {
-    // Mostrar el contenedor del iframe y el botón
-    document.getElementById('iframe-container').style.visibility = 'visible';
-    document.getElementById('iframe-container').style.opacity = 1;
-
-    // Cargar el iframe
+    // Mostrar el iframe y el botón sin necesidad de hacer scroll
     document.getElementById('iframe').src = url;
-    document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+    document.querySelector('.menu-container').style.display = 'none'; // Ocultar el menú de navegación
 }
 
 function goBack() {
-    // Ocultar el iframe y el botón
-    document.getElementById('iframe-container').style.visibility = 'hidden';
-    document.getElementById('iframe-container').style.opacity = 0;
-    
-    // Mostrar el menú de nuevo
-    document.querySelector('.menu-container').style.display = 'grid';
+    // Volver al inicio (en este caso, a la pantalla principal)
+    document.getElementById('iframe').src = '';  // Limpiar el iframe
+    document.querySelector('.menu-container').style.display = 'grid'; // Mostrar el menú de nuevo
 }
-
-
 
 
 
