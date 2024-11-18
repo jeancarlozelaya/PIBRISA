@@ -131,6 +131,11 @@
 body {
     margin: 0;
     padding: 0;
+    height: 100%; /* Asegura que el body ocupe toda la altura */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centra todo el contenido */
+    flex-direction: column; /* Apila los elementos verticalmente */
 }
 
 /* Estilo del botón */
@@ -144,10 +149,10 @@ body {
     text-align: center;
     font-size: 1em;
     width: auto;
-    max-width: 300px; /* Maximo tamaño */
+    max-width: 300px; /* Tamaño máximo del botón */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
-    margin: 10px auto 0 auto; /* Centramos el botón y ajustamos margen */
+    margin: 10px 0; /* Espaciado arriba y abajo del botón */
 }
 
 /* Hover */
@@ -177,11 +182,22 @@ body {
         padding: 0; /* Asegura que no haya padding extra */
     }
 
-    /* Eliminar cualquier espacio extra debajo del botón en modo standalone */
     .back-button {
-        margin-bottom: 0px !important; /* Aseguramos que no haya margen adicional */
+        margin-bottom: 0px !important; /* Elimina cualquier margen adicional debajo */
     }
 }
+
+/* Asegúrate de que el contenedor del botón no añada espacio extra */
+.back-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+}
+
 
 
 
