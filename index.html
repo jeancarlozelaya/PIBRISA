@@ -127,25 +127,10 @@
             margin-top: 0px;
         }
 
-/* Contenedor del iframe */
-#iframe-container {
-    display: flex;              /* Flexbox para controlar la disposición de los elementos */
-    flex-direction: column;     /* Coloca los elementos en una columna */
-    justify-content: flex-start; /* Alinea los elementos al principio del contenedor */
-    align-items: center;        /* Centra los elementos horizontalmente */
-    min-height: 100vh;           /* Asegura que el contenedor tenga al menos la altura de la pantalla */
-    margin: 0;
-    padding: 0;
-}
 
-/* El iframe debe ocupar toda la pantalla disponible (menos el botón) */
-iframe {
-    width: 100%;
-    height: calc(100vh - 60px); /* Restamos la altura del botón para que el iframe ocupe el espacio restante */
-    border: none;
-}
 
-/* Estilo del botón 'Volver al Inicio' */
+
+      
 .back-button {
     display: inline-block;
     padding: 10px 20px;
@@ -154,15 +139,15 @@ iframe {
     border-radius: 5px;
     text-decoration: none;
     text-align: center;
-    margin: 10px 0;              /* Un margen pequeño arriba y abajo para separar del iframe */
+    margin-top: 0px; /* Espacio desde el borde inferior */
+    margin-bottom: 20px;
     font-size: 1em;
-    width: auto;
-    max-width: 90%;              /* Limita el ancho máximo del botón */
+    width: auto; /* Dejar que el ancho se ajuste */
+    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
 }
 
-/* Efecto hover */
 .back-button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
@@ -171,19 +156,13 @@ iframe {
 /* En dispositivos móviles */
 @media screen and (max-width: 600px) {
     .back-button {
-        font-size: 0.9em;
-        padding: 12px 18px;
-        width: 90%;
-        margin-left: 5%;
+        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+        padding: 12px 18px; /* Ajustar el padding */
+        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
+        margin-left: 5%; /* Centrar el botón */
     }
 }
 
-
-
-
-
-
-        
 /* Regla específica para el modo standalone (PWA) */
 @media screen and (display-mode: standalone) {
     body {
@@ -309,25 +288,22 @@ iframe {
     </div>
 
     <!-- Aquí aparece el iframe con el enlace cargado -->
-<div id="iframe-container">
-    <iframe id="iframe" src=""></iframe>
-    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-</div>
-
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
 
     <script>
-function openInIframe(url) {
-    // Mostrar el iframe y el botón sin necesidad de hacer scroll
-    document.getElementById('iframe').src = url;
-    document.querySelector('.menu-container').style.display = 'none'; // Ocultar el menú de navegación
-}
+        function openInIframe(url) {
+            document.getElementById('iframe').src = url;
+            document.getElementById('iframe-container').style.display = 'block';
+            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+        }
 
-function goBack() {
-    // Volver al inicio (en este caso, a la pantalla principal)
-    document.getElementById('iframe').src = '';  // Limpiar el iframe
-    document.querySelector('.menu-container').style.display = 'grid'; // Mostrar el menú de nuevo
-}
-
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
 
 
 if ('serviceWorker' in navigator) {
