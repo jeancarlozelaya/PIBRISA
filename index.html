@@ -139,11 +139,12 @@
     border-radius: 5px;
     text-decoration: none;
     text-align: center;
-    margin-top: 0px; /* Espacio desde el borde inferior */
-    margin-bottom: 20px;
     font-size: 1em;
-    width: auto; /* Dejar que el ancho se ajuste */
-    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
+    position: absolute; /* Permite colocar el botón de manera absoluta */
+    top: 80px; /* Ajusta la distancia desde la parte superior de la pantalla, puedes modificar este valor */
+    left: 20px; /* Coloca el botón en el borde izquierdo */
+    width: auto; /* Ajusta el ancho automáticamente */
+    max-width: 200px; /* Limita el ancho máximo del botón */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
 }
@@ -157,11 +158,13 @@
 @media screen and (max-width: 600px) {
     .back-button {
         font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: 5%; /* Centrar el botón */
+        padding: 10px 15px; /* Ajustar el padding */
+        width: auto; /* Dejar que el ancho se ajuste */
+        max-width: 150px; /* Limitar el ancho máximo del botón */
+        left: 10px; /* Mantener margen desde el borde izquierdo */
     }
 }
+
 
 /* Regla específica para el modo standalone (PWA) */
 @media screen and (display-mode: standalone) {
