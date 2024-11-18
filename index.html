@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Aplicación Móvil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .separator {
+            grid-column: span 2;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            margin-top: 0px;
+        }
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 10px; /* Espacio desde el borde inferior */
+    margin-bottom: 20px;
+    font-size: 1em;
+    width: auto; /* Dejar que el ancho se ajuste */
+    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
+    box-sizing: border-box;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* En dispositivos móviles */
+@media screen and (max-width: 600px) {
+    .back-button {
+        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+        padding: 12px 18px; /* Ajustar el padding */
+        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
+        margin-left: 5%; /* Centrar el botón */
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+    <div class="menu-container">
+        <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232267091623858');">
+            <span>📝</span>
+            <p>Registro de Asistencia Diaria</p>
+        </div>
+
+        <div class="menu-item" onclick="openInIframe('https://docs.google.com/spreadsheets/d/17c4q0B8vrjYLqqHipSzcm2O2x2zlOYqJRDHjnlzHiF8/edit?gid=881819110#gid=881819110');">
+            <span>📈</span>
+            <p>Historial de Asistencia Diaria</p>
+        </div>
+        <div class="separator"></div>
+
+        <!-- Aquí puedes agregar más enlaces -->
+
+
+        <div class="menu-item" onclick="openInIframe('https://form.jotform.com/232254204934855');">
+            <span>📝</span>
+            <p>Registro de Participación (Momento SISO)</p>
+        </div>
+        <div class="menu-item" onclick="openInIframe('https://form.jotform.com/242495060366862');">
+            <span>📝</span>
+            <p>Registro de Seguimiento de Oasis</p>
+        </div>
+        <div class="separator"></div>
+
+<div class="menu-item" onclick="window.location.href='Requisiciones.html';">
+    <span>📝</span>
+    <p>Requisiciones</p>
+</div>
+
+        <div class="menu-item" onclick="window.location.href='Historial-Requisiciones.html';">
+            <span>📁</span>
+            <p>Historial de Requisiciones</p>
+        </div>
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="openInIframe('https://docs.google.com/spreadsheets/d/1RxL37ZJsI36iz54tTK_juDqG9ARMGOzE/edit?usp=drive_link&ouid=115326674435059696286&rtpof=true&sd=true');">
+            <span>🌟</span>
+            <p>Actividades en Bodega de Limpieza</p>
+        </div>
+        <div class="menu-item" onclick="alert('Contactos en Caso de Emergencia')">
+            <span>🚨</span>
+            <p>Contactos en Caso de Emergencia</p>
+        </div>
+        <div class="separator"></div>
+
+        <div class="menu-item full-width" onclick="alert('Antecedentes / Formaciones SISO')">
+            <span>👮🏻👷🏻‍♀️</span>
+            <p>Antecedentes / Formaciones SISO</p>
+        </div>
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="alert('MSDS - Productos Químicos')">
+            <span>📁</span>
+            <p>MSDS - Productos Químicos</p>
+        </div>
+        <div class="menu-item" onclick="alert('Procedimientos de Limpieza')">
+            <span>📁</span>
+            <p>Procedimientos de Limpieza</p>
+        </div>
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="alert('Formaciones SISO (Argos)')">
+            <span>📁</span>
+            <p>Formaciones SISO (Argos)</p>
+        </div>
+        <div class="menu-item" onclick="alert('Evaluaciones')">
+            <span>📁</span>
+            <p>Evaluaciones</p>
+        </div>
+        <div class="separator"></div>
+
+        <div class="menu-item full-width" onclick="alert('Descargas')">
+            <span>📥</span>
+            <p>Descargas</p>
+        </div>
+
+
+
+
+
+
+    </div>
+
+    <!-- Aquí aparece el iframe con el enlace cargado -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
+    <script>
+        function openInIframe(url) {
+            document.getElementById('iframe').src = url;
+            document.getElementById('iframe-container').style.display = 'block';
+            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+        }
+
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
+    </script>
+</body>
+</html>
