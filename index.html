@@ -129,20 +129,16 @@
 
 /* Contenedor del iframe */
 #iframe-container {
-    display: flex;                  /* Flexbox para controlar la disposición de los elementos */
-    flex-direction: column;         /* Coloca los elementos en una columna */
-    justify-content: flex-start;    /* Alinea los elementos al principio del contenedor */
-    align-items: center;            /* Centra los elementos horizontalmente */
-    height: 100vh;                  /* Usa toda la altura de la ventana del navegador */
+    display: flex;              /* Flexbox para controlar la disposición de los elementos */
+    flex-direction: column;     /* Coloca los elementos en una columna */
+    justify-content: flex-start; /* Alinea los elementos al principio del contenedor */
+    align-items: center;        /* Centra los elementos horizontalmente */
+    height: 100vh;              /* Usa toda la altura de la ventana del navegador */
     margin: 0;
     padding: 0;
-    position: fixed;                /* Hace que el contenedor sea fijo en la pantalla */
-    top: 0;                          /* Lo coloca en la parte superior */
-    left: 0;
-    right: 0;
-    bottom: 0;                      /* Extiende hasta el fondo */
-    background-color: rgba(255, 255, 255, 0.9); /* Un fondo ligeramente transparente */
-    z-index: 1000;                  /* Asegura que esté por encima de otros elementos */
+    visibility: hidden;         /* Inicialmente el contenedor está oculto */
+    opacity: 0;                 /* Hacemos que el contenedor sea transparente */
+    transition: opacity 0.5s ease, visibility 0.5s ease; /* Transición suave */
 }
 
 /* El iframe debe ocupar toda la pantalla disponible (menos el botón) */
@@ -184,6 +180,7 @@ iframe {
         margin-left: 5%;
     }
 }
+
 
 
 
