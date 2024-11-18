@@ -130,38 +130,30 @@
 
 
 
-      
+/* Estilos para el botón Atrás (← Atrás) */
 .back-button {
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
+    padding: 8px 12px;
+    background-color: transparent;
+    color: #007BFF;
+    border: none;
     text-decoration: none;
-    text-align: center;
-    margin-top: 0px; /* Espacio desde el borde inferior */
-    margin-bottom: 20px;
-    font-size: 1em;
-    width: auto; /* Dejar que el ancho se ajuste */
-    max-width: 90%; /* Limitar el ancho máximo a 90% de la pantalla */
-    box-sizing: border-box;
-    transition: background-color 0.3s, transform 0.3s;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-top: 15px;
+    transition: all 0.3s ease;
 }
 
 .back-button:hover {
-    background-color: #0056b3;
+    color: #0056b3;
     transform: scale(1.05);
 }
 
-/* En dispositivos móviles */
-@media screen and (max-width: 600px) {
-    .back-button {
-        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: 5%; /* Centrar el botón */
-    }
+.back-button:focus {
+    outline: none;
 }
+
 
 /* Regla específica para el modo standalone (PWA) */
 @media screen and (display-mode: standalone) {
@@ -287,11 +279,13 @@
 
     </div>
 
-    <!-- Aquí aparece el iframe con el enlace cargado -->
-    <div id="iframe-container" style="display:none;">
-        <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-    </div>
+<!-- Reemplaza y mueve el botón "Volver al Inicio" aquí -->
+<a href="javascript:void(0);" class="back-button" onclick="goBack()">← Atrás</a>
+
+<div class="header">
+    Pisos Brillantes
+</div>
+
 
     <script>
         function openInIframe(url) {
