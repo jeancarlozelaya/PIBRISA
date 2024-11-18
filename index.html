@@ -136,18 +136,15 @@
     border-radius: 5px;
     text-decoration: none;
     text-align: center;
-    margin-top: 0px; /* Espacio desde el borde inferior */
-    margin-bottom: 20px;
     font-size: 1em;
     width: auto; /* Dejar que el ancho se ajuste por el contenido */
     max-width: 300px; /* Limitar el ancho máximo del botón en pantallas grandes */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
-    margin-left: auto; /* Centrado horizontal */
-    margin-right: auto; /* Centrado horizontal */
-    display: block; /* Asegurarnos de que ocupe el espacio completo del contenedor */
+    margin: 10px auto 0 auto; /* Centrar el botón y quitar margen innecesario */
 }
 
+/* Hover */
 .back-button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
@@ -159,12 +156,14 @@
         font-size: 0.9em; /* Reducir un poco el tamaño del texto */
         padding: 12px 18px; /* Ajustar el padding */
         width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: auto; /* Centrado horizontal */
-        margin-right: auto; /* Centrado horizontal */
-        margin-top: 10px; /* Espacio desde el borde superior para que no se pegue tanto */
+        margin-left: auto; /* Centrar horizontalmente */
+        margin-right: auto; /* Centrar horizontalmente */
+        margin-top: 10px; /* Espacio desde el borde superior */
+        margin-bottom: 10px; /* Evitar margen excesivo debajo del botón */
         max-width: none; /* Eliminar el max-width en pantallas pequeñas */
     }
 }
+
 
 
 
