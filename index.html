@@ -127,7 +127,13 @@
             margin-top: 0px;
         }
 
-/* Estilo general del botón */
+/* Elimina cualquier margen o padding no deseado en el body */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilo del botón */
 .back-button {
     display: inline-block;
     padding: 10px 20px;
@@ -137,11 +143,11 @@
     text-decoration: none;
     text-align: center;
     font-size: 1em;
-    width: auto; /* Dejar que el ancho se ajuste por el contenido */
-    max-width: 300px; /* Limitar el ancho máximo del botón en pantallas grandes */
+    width: auto;
+    max-width: 300px; /* Maximo tamaño */
     box-sizing: border-box;
     transition: background-color 0.3s, transform 0.3s;
-    margin: 10px auto 0 auto; /* Centrar el botón y quitar margen innecesario */
+    margin: 10px auto 0 auto; /* Centramos el botón y ajustamos margen */
 }
 
 /* Hover */
@@ -153,16 +159,30 @@
 /* En dispositivos móviles */
 @media screen and (max-width: 600px) {
     .back-button {
-        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        width: 90%; /* Hacer que el botón ocupe el 90% de la pantalla */
-        margin-left: auto; /* Centrar horizontalmente */
-        margin-right: auto; /* Centrar horizontalmente */
-        margin-top: 10px; /* Espacio desde el borde superior */
-        margin-bottom: 10px; /* Evitar margen excesivo debajo del botón */
-        max-width: none; /* Eliminar el max-width en pantallas pequeñas */
+        font-size: 0.9em;
+        padding: 12px 18px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        max-width: none;
     }
 }
+
+/* Regla específica para el modo standalone (PWA) */
+@media screen and (display-mode: standalone) {
+    body {
+        margin: 0; /* Asegura que no haya márgenes extra */
+        padding: 0; /* Asegura que no haya padding extra */
+    }
+
+    /* Eliminar cualquier espacio extra debajo del botón en modo standalone */
+    .back-button {
+        margin-bottom: 0px !important; /* Aseguramos que no haya margen adicional */
+    }
+}
+
 
 
 
