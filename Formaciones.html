@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pisos Brillantes</title>
+    <link rel="icon" href="Imágenes/Icono.png" type="image/png">
+    <link rel="manifest" href="/PIBRISA/manifest.json">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        #install-button {
+            display: none;
+            padding: 12px 24px;
+            background-color: #007BFF; /* Color principal */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #install-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #install-button:active {
+            transform: scale(0.98);
+        }
+
+        #install-button:focus {
+            outline: none;
+        }
+
+        #install-button span {
+            margin-left: 8px;
+        }
+
+        /* Estilo adicional si deseas que el texto del botón tenga icono */
+        #install-button i {
+            margin-right: 8px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .separator {
+            grid-column: span 2;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        iframe {
+            width: 100%;
+            height: 93vh;
+            border: none;
+            margin-top: 0px;
+        }
+
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
+
+            top: 57px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+
+
+            }
+        }
+
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
+    </style>
+</head>
+
+<button id="install-button" style="display:none;">
+  <i class="fas fa-download"></i> Instalar App
+</button>
+
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+    <div class="menu-container">
+
+<div class="menu-item" onclick="window.open('https://www.youtube.com/watch?v=KK0eP4If6tk');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Youtube.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Sistema de Gestión SISO Yo Prometo</p>
+</div>
+
+<div class="menu-item" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeaOew5eskl4gTRKF5tCWykmeAKRWTt0obefhEAfyRuZJWkXQ/viewform?pli=1');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Evaluación.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Evaluación - Sistema de Gestión SISO</p>
+</div>
+
+<div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('https://www.youtube.com/watch?v=zGg3ysmjqnk');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Youtube.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Análisis de Riesgo de la Tarea</p>
+</div>
+
+<div class="menu-item" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeeAcGCqNvel-WkoIshF4gB4awU3C5CcTDlMOzKxL6r7YhOYg/viewform?usp=sf_link');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Evaluación.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Evaluación - Análisis de Riesgo de la Tarea</p>
+</div>
+
+<div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('https://www.youtube.com/watch?v=ZYg8tCLPBDg');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Youtube.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Cultura 5Ss y Gestión de Residuos</p>
+</div>
+
+<div class="menu-item" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSf1xkQqFBNjpEmnEj7qcQicj9AWBBZuM5muBLr_e1JghYzU5A/viewform');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Evaluación.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Evaluación - Cultura 5Ss y Gestión de Residuos</p>
+</div>
+
+<div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('https://www.youtube.com/watch?v=iQvCD5zD45U');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Youtube.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Equipos de Protección Personal</p>
+</div>
+
+<div class="menu-item" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc6VgPTHWFMgoyp6vW7i00lsUEPpJPo1PwyiN3LUqk-eUmNLQ/viewform');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Evaluación.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Evaluación - Equipos de Protección Personal</p>
+</div>
+
+<div class="separator"></div>
+
+<div class="menu-item" onclick="window.open('https://www.youtube.com/watch?v=mibYR7A_7QA');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Youtube.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Equipos Móviles y Seguridad Vial</p>
+</div>
+
+<div class="menu-item" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSfF-eLx1E8UwsluLEHR6Ld1QeLIL8YkIjrWCaBGsg98WvWekA/viewform');" 
+     style="text-align: center; cursor: pointer;" 
+     oncontextmenu="return false;">
+    <img src="Imágenes\Formaciones\Evaluación.png" alt="" style="width: 50px; height: 50px; margin-bottom: 5px;" />
+    <p>Evaluación - Equipos Móviles y Seguridad Vial</p>
+</div>
+
+<div class="separator"></div>
+
+
+
+   	 </div><div class="menu-item full-width" onclick="window.history.back()">
+   		 <p>Menú Principal</p>
+	</div>
+
+
+
+
+    </div>
+        
+
+
+
+
+
+
+
+
+    <!-- Contenedor del iframe -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
+    <script>
+        function openInIframe(url) {
+            document.getElementById('iframe').src = url;
+            document.getElementById('iframe-container').style.display = 'block';
+            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+        }
+
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
+
+        // Código para la instalación de la app (si es necesario)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar el Service Worker:', error);
+                    });
+            });
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
