@@ -1,0 +1,250 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-size: 16px;
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        select {
+            cursor: pointer;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        button:hover:enabled {
+            background-color: #45a049;
+        }
+        .message-box {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background-color: #e0f7e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .message-box h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .message-box button {
+            background-color: #007BFF;
+            padding: 12px 30px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .message-box button:hover {
+            background-color: #0056b3;
+        }
+
+        .loading-message {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Formulario de Registro -->
+    <div class="container" id="form-container">
+        <h1>Registro de Asistencia Diaria</h1>
+        <form id="registro-form">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required><br>
+
+            <label for="hora">Hora:</label>
+            <input type="time" id="hora" name="hora" required><br>
+
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="">Por favor seleccione</option>
+                <option value="Entrada">Entrada</option>
+                <option value="Salida">Salida</option>
+            </select><br>
+
+            <label for="colaborador">Colaborador:</label>
+            <select id="colaborador" name="colaborador" required>
+                <option value="">Por favor seleccione</option>
+                <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
+                <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
+                <option value="Karla Mariela Padilla Padilla">Karla Mariela Padilla Padilla</option>
+                <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
+                <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
+                <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+                <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
+                <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
+                <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
+            </select><br>
+
+            <button type="submit" id="enviar" disabled>Enviar</button>
+            <!-- Mensaje de espera -->
+            <div class="loading-message" id="loading-message" style="display:none;">Enviando datos, por favor espere...</div>
+        </form>
+    </div>
+
+    <!-- Pantalla de "¡Datos enviados con éxito!" -->
+    <div class="message-box" id="message-box">
+        <h2>¡Datos enviados con éxito!</h2>
+        <button onclick="resetForm()">Volver al formulario</button>
+    </div>
+
+    <script>
+        // Asegurar que la página comience con la pantalla de "¡Datos enviados con éxito!" oculta
+        window.onload = function() {
+            document.getElementById('message-box').style.display = 'none'; // Aseguramos que el mensaje de éxito esté oculto
+            document.getElementById('form-container').style.display = 'block'; // Aseguramos que el formulario esté visible
+        };
+
+        // URL de tu Google Apps Script (reemplaza con la URL de tu script)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrs_9aAOI97Syrp8jMC2y9U48dnIldhgpWliJXZWpZQQjtar5pHpTXNTPWXCWTlZ3lrw/exec";
+
+        // Prellenar fecha y hora
+        document.getElementById('fecha').value = new Date().toISOString().split('T')[0]; // Fecha actual
+        document.getElementById('hora').value = new Date().toTimeString().split(' ')[0].substring(0, 5); // Hora actual
+
+        // Función para habilitar o deshabilitar el botón de enviar según si los campos están completos
+        function validateForm() {
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const estado = document.getElementById('estado').value;
+            const colaborador = document.getElementById('colaborador').value;
+
+            // Habilitar el botón de envío solo si todos los campos están completos
+            document.getElementById('enviar').disabled = !fecha || !hora || !estado || !colaborador;
+        }
+
+        // Verificar cada vez que el usuario cambie un campo
+        document.querySelectorAll('#fecha, #hora, #estado, #colaborador').forEach(input => {
+            input.addEventListener('input', validateForm);
+        });
+
+        // Función para convertir la hora de 24 horas a 12 horas con AM/PM
+        function formatTimeTo12Hour(hora24) {
+            let [hour, minute] = hora24.split(':');
+            hour = parseInt(hour);
+
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12;
+            hour = hour ? hour : 12; // Cambiar el 0 a 12 para medianoche
+            hour = hour < 10 ? '0' + hour : hour; // Agregar 0 a horas menores a 10
+            minute = minute.padStart(2, '0'); // Asegurar que los minutos tengan dos dígitos
+            
+            return `${hour}:${minute} ${ampm}`;
+        }
+
+        // Enviar los datos al Google Apps Script
+        document.getElementById('registro-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const estado = document.getElementById('estado').value;
+            const colaborador = document.getElementById('colaborador').value;
+
+            // Convertir la hora a formato de 12 horas
+            const horaFormateada = formatTimeTo12Hour(hora);
+
+            // Mostrar el mensaje de "Enviando datos..."
+            document.getElementById('loading-message').style.display = 'block';
+            document.getElementById('enviar').disabled = true;
+
+            // Crear un objeto FormData para enviar al servidor
+            const formData = new FormData();
+            formData.append("fecha", fecha);
+            formData.append("hora", horaFormateada); // Usar la hora formateada
+            formData.append("estado", estado);
+            formData.append("colaborador", colaborador);
+
+            // Enviar los datos al Google Apps Script usando fetch
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar el mensaje de éxito
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('message-box').style.display = 'flex';
+            })
+            .catch(error => {
+                // En caso de error, ocultar el mensaje de carga y mostrar el mensaje de éxito
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('message-box').style.display = 'flex';
+            });
+        });
+
+        // Función para resetear el formulario y volver a la pantalla inicial
+        function resetForm() {
+            document.getElementById('registro-form').reset();
+            document.getElementById('fecha').value = new Date().toISOString().split('T')[0]; // Fecha actual
+            document.getElementById('hora').value = new Date().toTimeString().split(' ')[0].substring(0, 5); // Hora actual
+            validateForm(); // Asegura que el botón esté deshabilitado al reiniciar
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('message-box').style.display = 'none';
+            document.getElementById('loading-message').style.display = 'none'; // Ocultar mensaje de espera
+        }
+    </script>
+
+</body>
+</html>
