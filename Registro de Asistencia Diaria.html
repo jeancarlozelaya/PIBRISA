@@ -115,40 +115,39 @@
             margin-top: 0px;
         }
 
-        /* Cambios para el botón "Volver al Inicio" */
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
-            position: fixed;
-            top: 80px; /* Mueve el botón a la parte superior */
-            left: 0px; /* Colócalo a la izquierda */
-            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
-        }
 
-        .back-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
+/* Estilo para el botón "Volver al Inicio" */
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1em;
+    transition: background-color 0.3s, transform 0.3s;
+    position: fixed;
+    top: 80px; /* Mueve el botón a la parte superior */
+    left: 0px; /* Colócalo a la izquierda */
+    z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+}
 
-        /* En dispositivos móviles */
-        @media screen and (max-width: 600px) {
-            .back-button {
-                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-                padding: 12px 18px; /* Ajustar el padding */
+.back-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
 
-            top: 57px; /* Mueve el botón a la parte superior */
-            left: 0px; /* Colócalo a la izquierda */
+/* Estilo adicional para dispositivos móviles */
+@media screen and (max-width: 600px) {
+    .back-button {
+        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+        padding: 12px 18px; /* Ajustar el padding */
+        top: 57px; /* Mueve el botón a la parte superior */
+        left: 0px; /* Colócalo a la izquierda */
+    }
+}
 
-
-            }
-        }
 
         /* Regla específica para el modo standalone (PWA) */
         @media screen and (display-mode: standalone) {
@@ -305,11 +304,14 @@
         <button onclick="resetForm()">Volver al formulario</button>
     </div>
 
-    <!-- Contenedor del iframe -->
-    <div id="iframe-container" style="display:none;">
-        <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-    </div>
+<!-- Contenedor del iframe -->
+<div id="iframe-container" style="display:none;">
+    <iframe id="iframe" src=""></iframe>
+</div>
+
+<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
+<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
 
     <script>
 
@@ -319,10 +321,12 @@
             document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
         }
 
-        function goBack() {
-            document.getElementById('iframe-container').style.display = 'none';
-            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
-        }
+function goBack() {
+    // Asegúrate de que solo ocultes el iframe y no el botón
+    document.getElementById('iframe-container').style.display = 'none';
+    document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+}
+
 
 
         // Código para la instalación de la app (si es necesario)
