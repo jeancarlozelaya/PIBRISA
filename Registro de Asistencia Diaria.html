@@ -304,6 +304,15 @@
         <button onclick="resetForm()">Volver al formulario</button>
     </div>
 
+
+        <div class="separator"></div>
+
+<div class="menu-item full-width" onclick="window.history.back()">
+    <p>Menú Principal</p>
+</div>
+
+
+
 <!-- Contenedor del iframe -->
 <div id="iframe-container" style="display:none;">
     <iframe id="iframe" src=""></iframe>
@@ -322,9 +331,7 @@
         }
 
 function goBack() {
-    // Asegúrate de que solo ocultes el iframe y no el botón
-    document.getElementById('iframe-container').style.display = 'none';
-    document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+    window.history.back();  // Esto hace que el navegador vuelva a la página anterior
 }
 
 
