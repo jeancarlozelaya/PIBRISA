@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Requisición - Productos de Argos</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+    .form-container {
+      width: 80%;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+    }
+    .producto {
+      margin-bottom: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      border: 1px solid #ddd; /* Contorno de cada producto */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px; /* Reducir aún más el tamaño del texto */
+    }
+    .producto:hover {
+      background-color: #e0e0e0;
+    }
+    .producto img {
+      width: 40px; /* Reducir tamaño de la imagen */
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .producto label {
+      display: block;
+      color: #333;
+      flex-grow: 1;
+    }
+    .producto .cantidad {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
+    }
+    .cantidad button, .cantidad input {
+      width: 30px; /* Reducir tamaño de los botones */
+      height: 30px;
+      font-size: 14px; /* Reducir tamaño del texto en botones */
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .cantidad input {
+      width: 40px; /* Reducir tamaño del input */
+      text-align: center;
+      font-size: 14px; /* Reducir tamaño del texto en el input */
+    }
+    .cantidad button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .cantidad input:disabled {
+      background-color: #e0e0e0;
+      color: #999;
+    }
+    .agotado {
+      color: red;
+    }
+    .disponible {
+      color: green;
+    }
+    .productos-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Ajustar a 3 productos por fila */
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+
+/* Estilos para el botón "seguir" */
+#seguir {
+  margin-top: 0; /* Elimina cualquier margen superior extra */
+  margin-right: 10px; /* Espacio a la derecha del botón */
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745; /* Verde */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block; /* Asegura que el botón siga estando en línea */
+}
+
+/* Estilos para el botón "Regresar" */
+form button {
+  padding: 10px 20px; /* Mismo tamaño de padding que el de "seguir" */
+  font-size: 16px; /* El mismo tamaño de texto */
+  background-color: #007bff; /* Azul para el botón regresar */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block; /* Para que esté en la misma línea */
+  margin-right: 10px; /* Espacio entre los botones */
+}
+
+
+
+
+
+
+
+
+    #seguir:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    /* Estilo para los botones - y + */
+    .cantidad button.minus {
+      background-color: #dc3545; /* Rojo */
+    }
+    .cantidad button.plus {
+      background-color: #28a745; /* Verde */
+    }
+    /* Estilo para pantallas pequeñas */
+@media (max-width: 768px) {
+  .producto {
+    font-size: 12px; /* Asegurar que el texto sea más pequeño en móviles */
+  }
+  .productos-container {
+    grid-template-columns: repeat(2, 1fr); /* Dos productos por fila en dispositivos pequeños */
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se acomoden en nuevas filas */
+    gap: 15px;
+    background-color: white; /* Asegura que el fondo blanco cubra toda la sección */
+    padding: 15px 0; /* Añadido padding para ajustar el contenido */
+  }
+  .producto {
+    width: calc(50% - 7.5px); /* Ajusta el tamaño de cada producto, con un pequeño margen */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+  }
+}
+
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Requisición - Productos de Argos</h1>
+    <form id="formulario">
+      <div class="productos-container" id="productos">
+        <!-- Los productos se cargarán aquí mediante el script -->
+      </div>
+      <br>
+      <button type="button" onclick="window.location.href='pagina1.html'">Regresar</button>
+      <button type="button" id="seguir" disabled onclick="window.location.href='pagina3.html'">Seguir</button>
+    </form>
+  </div>
+
+  <script>
+    let productos = [
+      { nombre: "Toalla para manos (10 unds en caja)", id: "producto1", imagen: "https://iili.io/dsgy6iJ.md.png" },
+      { nombre: "Higiénico en bobina (6 unds en caja)", id: "producto2", imagen: "https://iili.io/dsgy6iJ.md.png" },
+      { nombre: "Vasos cónicos", id: "producto3", imagen: "https://iili.io/dsgy6iJ.md.png" },
+      { nombre: "Jalim Espuma Fresh (6 unds en caja)", id: "producto4", imagen: "https://iili.io/dsgy6iJ.md.png" },
+      { nombre: "Bactigel Spray (6 unds en caja)", id: "producto5", imagen: "https://iili.io/dsgy6iJ.md.png" },
+      { nombre: "Wiese", id: "producto6", imagen: "https://iili.io/dsgy6iJ.md.png" },
+      { nombre: "Jalim Gel", id: "producto7", imagen: "https://iili.io/dsgy6iJ.md.png" }
+    ];
+
+    // Función para crear los elementos del formulario
+    function cargarProductos() {
+      $.get("https://script.google.com/macros/s/AKfycbw2JY8kRKwvWUukE2eWyrm3udrj9f08HfyjUCrNBJLPwNYKlM62XHfWcdxSWMH3fMH5IQ/exec", function(data) {
+        const cantidades = data.cantidades; // Obtenemos las cantidades de la respuesta
+        productos.forEach((producto, index) => {
+          let cantidadRestante = cantidades[index];
+          let productoHtml = `
+            <div class="producto" id="${producto.id}">
+              <img src="${producto.imagen}" alt="${producto.nombre}">
+              <label>${producto.nombre}</label>
+              <span id="cantidadRestante${index}" class="${cantidadRestante === 0 ? 'agotado' : cantidadRestante > 0 ? 'disponible' : ''}">
+                ${cantidadRestante === 0 ? '0 restantes' : `${cantidadRestante} restantes`}
+              </span>
+              <div class="cantidad">
+                <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${cantidadRestante === 0 ? 'disabled' : ''}>-</button>
+                <input type="number" id="cantidad${index}" value="0" min="0" ${cantidadRestante === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
+                <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${cantidadRestante === 0 ? 'disabled' : ''}>+</button>
+              </div>
+            </div>
+          `;
+          $(`#productos`).append(productoHtml);
+        });
+      });
+    }
+
+    // Función para cambiar la cantidad
+    function cambiarCantidad(index, valor) {
+      let cantidadInput = $(`#cantidad${index}`);
+      let cantidadActual = parseInt(cantidadInput.val());
+      let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
+
+      if (cantidadActual + valor >= 0 && cantidadActual + valor <= cantidadRestante) {
+        cantidadInput.val(cantidadActual + valor);
+        verificarProductos();
+      }
+    }
+
+    // Función para validar que el número ingresado no sea mayor que el disponible
+    function validarCantidad(index) {
+      let cantidadInput = $(`#cantidad${index}`);
+      let cantidadActual = parseInt(cantidadInput.val());
+      let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
+
+      if (cantidadActual > cantidadRestante) {
+        cantidadInput.val(cantidadRestante);
+      }
+
+      verificarProductos();
+    }
+
+    // Función para verificar si algún producto tiene cantidad seleccionada
+    function verificarProductos() {
+      let productosSeleccionados = false;
+      productos.forEach((producto, index) => {
+        let cantidadInput = $(`#cantidad${index}`);
+        if (parseInt(cantidadInput.val()) > 0) {
+          productosSeleccionados = true;
+        }
+      });
+      $("#seguir").prop("disabled", !productosSeleccionados);
+    }
+
+    cargarProductos();
+  </script>
+</body>
+</html>
+ </script>
+</body>
+</html>
