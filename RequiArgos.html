@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +6,64 @@
   <title>Requisición - Productos de Argos</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+
+
+
+
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
+
+            top: 57px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+
+
+            }
+        }
+
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
+
+
 
   .modal {
     position: fixed;
@@ -267,6 +325,11 @@
 </head>
 <body>
 
+    <div class="header">
+        Pisos Brillantes
+    </div>
+
+
 <div id="mensajeModal" class="modal" style="display: none;">
   <div class="modal-content">
     <p id="mensajeTexto"></p>
@@ -365,6 +428,14 @@
 
     </form>
   </div>
+
+
+    <div>
+        <a href="javascript:void(0);" class="back-button" onclick="window.history.back()">Volver al Inicio</a>
+    </div>
+
+
+
 
   <script>
 
