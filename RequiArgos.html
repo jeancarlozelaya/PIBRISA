@@ -652,19 +652,31 @@ function enviardatos() {
 // Asocia el evento de clic al botón cerrar
 document.getElementById('cerrarModalBtn').addEventListener('click', cerrarModal);
 
-// Función para bloquear o desbloquear el formulario
 function bloquearFormulario(bloquear) {
-  // Seleccionar todos los campos del formulario (inputs, selects, etc.)
+  // Bloquear inputs, selects, textareas, botones, y también el enlace 'back-button'
   $('input, select, textarea, button').prop('disabled', bloquear);
 
-  // Opcional: puedes mostrar una capa de "cargando" para indicar que el formulario está bloqueado
   if (bloquear) {
-    // Crear la capa de bloqueo que cubre toda la pantalla
+    // Deshabilitar funcionalidad del enlace 'back-button'
+    $('.back-button')
+      .addClass('disabled') // Añadir clase para cambiar el estilo
+      .css('pointer-events', 'none') // Desactiva clics
+      .css('opacity', '0.5'); // Cambia la apariencia
+
+    // Añadir capa de bloqueo visual
     $('#formulario').append('<div id="bloqueoFormulario" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px;">Procesando...</div>');
   } else {
-    $('#bloqueoFormulario').remove(); // Eliminar la capa de bloqueo
+    // Habilitar funcionalidad del enlace 'back-button'
+    $('.back-button')
+      .removeClass('disabled')
+      .css('pointer-events', '')
+      .css('opacity', '1'); // Restaurar apariencia
+
+    // Eliminar capa de bloqueo visual
+    $('#bloqueoFormulario').remove();
   }
 }
+
 
 
 
