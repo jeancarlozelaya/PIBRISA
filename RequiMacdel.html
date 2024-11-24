@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Requisición - Productos de Macdel</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+
+
+
+
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
+
+            top: 57px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+
+
+            }
+        }
+
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
+
+
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+  }
+/* Asegurarse de que los botones tengan el mismo tamaño */
+.modal-content button {
+  width: 48%; /* 48% para que haya espacio entre ellos */
+  display: inline-block;
+  padding: 15px;
+  font-size: 16px;
+  margin: 5px 2%; /* Añade margen entre botones */
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: #007bff; /* Color inicial del botón */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+/* Cambiar color al pasar el mouse */
+.modal-content button:hover {
+  background-color: #28a745; /* Verde cuando el mouse está sobre el botón */
+}
+
+
+.modal-content button:first-child {
+  margin-right: 0; /* Para evitar margen extra al primer botón si se coloca margen en los botones */
+}
+
+
+
+    .form-container label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 14px;
+      color: #555;
+    }
+    .form-container select, .form-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    .form-container select:focus, .form-container input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+
+    .form-container input[type="date"] {
+      padding: 12px;
+    }
+
+
+    .form-container .select-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+    .form-container {
+      width: 80%;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .producto {
+      margin-bottom: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      border: 1px solid #ddd; /* Contorno de cada producto */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px; /* Reducir aún más el tamaño del texto */
+    }
+    .producto:hover {
+      background-color: #e0e0e0;
+    }
+
+.producto img {
+  width: 40px; /* Tamaño de la imagen */
+  height: 40px;
+  object-fit: contain; /* Ajusta la imagen sin recortarla */
+  //border-radius: 50%; /* Hace que la imagen sea redonda */
+}
+
+    .producto label {
+      display: block;
+      color: #333;
+      flex-grow: 1;
+    }
+    .producto .cantidad {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
+    }
+    .cantidad button, .cantidad input {
+      width: 30px; /* Reducir tamaño de los botones */
+      height: 30px;
+      font-size: 14px; /* Reducir tamaño del texto en botones */
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .cantidad input {
+      width: 40px; /* Reducir tamaño del input */
+      text-align: center;
+      font-size: 14px; /* Reducir tamaño del texto en el input */
+    }
+    .cantidad button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .cantidad input:disabled {
+      background-color: #e0e0e0;
+      color: #999;
+    }
+    .agotado {
+      color: red;
+    }
+    .disponible {
+      color: green;
+    }
+    .productos-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Ajustar a 3 productos por fila */
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+
+
+/* Estilos para el botón "seguir" */
+#seguir {
+  margin-top: 0; /* Elimina cualquier margen superior extra */
+  margin-right: 10px; /* Espacio a la derecha del botón */
+  padding: 10px 20px;
+
+  background-color: #28a745; /* Verde */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block; /* Asegura que el botón siga estando en línea */
+}
+    #seguir:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+/* Estilo solo para el contenedor de los dos botones */
+.button-container {
+  display: flex; /* Usa Flexbox para colocar los botones en línea */
+  justify-content: center; /* Centra los botones horizontalmente */
+  align-items: center; /* Alinea los botones verticalmente en el centro */
+  gap: 10px; /* Ajusta el espacio entre los botones */
+  /* No establezcas height o márgenes globales aquí para evitar afectar otros elementos */
+}
+
+/* Estilo solo para los botones dentro de .button-container */
+.button-container button {
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 45%; /* Los botones ocupan el 45% del ancho del contenedor */
+  box-sizing: border-box; /* Asegura que el padding no haga que el botón exceda el 50% del contenedor */
+}
+
+
+
+
+
+
+
+
+
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    /* Estilo para los botones - y + */
+    .cantidad button.minus {
+      background-color: #dc3545; /* Rojo */
+    }
+    .cantidad button.plus {
+      background-color: #28a745; /* Verde */
+    }
+    /* Estilo para pantallas pequeñas */
+@media (max-width: 768px) {
+  .producto {
+    font-size: 12px; /* Asegurar que el texto sea más pequeño en móviles */
+  }
+  .productos-container {
+    grid-template-columns: repeat(2, 1fr); /* Dos productos por fila en dispositivos pequeños */
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se acomoden en nuevas filas */
+    gap: 15px;
+    background-color: white; /* Asegura que el fondo blanco cubra toda la sección */
+    padding: 15px 0; /* Añadido padding para ajustar el contenido */
+  }
+  .producto {
+    width: calc(50% - 7.5px); /* Ajusta el tamaño de cada producto, con un pequeño margen */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+  }
+}
+
+    }
+  </style>
+</head>
+<body>
+
+    <div class="header">
+        Pisos Brillantes
+    </div>
+
+
+<div id="mensajeModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <p id="mensajeTexto"></p>
+    <button id="cerrarModalBtn">Cerrar</button>
+  </div>
+</div>
+
+<div id="confirmacionModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <p id="confirmacionTexto">¿Estás seguro de enviar los datos?</p>
+    <button id="confirmarEnvioBtn">Sí</button>
+    <button id="cancelarEnvioBtn">No</button>
+  </div>
+</div>
+
+
+
+
+
+  <div class="form-container">
+    <h1>Requisición - Productos de Macdel</h1>
+
+
+ <div class="select-container">
+        <div>
+          <label for="fecha"><strong>Fecha:<strong></label>
+          <input type="date" id="fecha" name="fecha">
+        </div>
+
+        <div>
+          <label for="colaborador"><strong>Colaborador:</strong></label>
+          <select id="colaborador" name="colaborador">
+            <option value="">Seleccionar colaborador</option>
+            <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
+            <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
+            <option value="Karla Mariela Padilla Padilla">Karla Mariela Padilla Padilla</option>
+            <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
+            <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
+            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+            <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
+            <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
+            <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
+            <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="area"><strong>Área a abastecer:</strong></label>
+          <select id="area" name="area">
+            <option value="">Seleccionar área</option>
+            <option value="USO PROPIO">USO PROPIO</option>
+            <option value="Administración">Administración</option>
+            <option value="Almacén General">Almacén General</option>
+            <option value="Baños de Tolderos">Baños de Tolderos</option>
+            <option value="Baños de Transportistas">Baños de Transportistas</option>
+            <option value="Bodega de Limpieza">Bodega de Limpieza</option>
+            <option value="Cafetería">Cafetería</option>
+            <option value="Camerinos Contratistas">Camerinos Contratistas</option>
+            <option value="Camerinos Permanentes">Camerinos Permanentes</option>
+            <option value="Chiminike">Chiminike</option>
+            <option value="Club de Argos">Club de Argos</option>
+            <option value="Despacho">Despacho</option>
+            <option value="Enfermería">Enfermería</option>
+            <option value="Equipo Móvil">Equipo Móvil</option>
+            <option value="Expedición">Expedición</option>
+            <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
+            <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+            <option value="Machaqueo A">Machaqueo A</option>
+            <option value="Posta Principal">Posta Principal</option>
+            <option value="Postas Externas">Postas Externas</option>
+            <option value="Proyecto Pitaya / ICEC">Proyecto Pitaya / ICEC</option>
+            <option value="Sala de Control">Sala de Control</option>
+            <option value="Salón Vial">Salón Vial</option>
+            <option value="Taller Eléctrico">Taller Eléctrico</option>
+          </select>
+        </div>
+      </div>
+
+         <label><strong>Seleccione los productos a requisar:</strong></label>
+
+
+
+
+    <form id="formulario">
+      <div class="productos-container" id="productos">
+        <!-- Los productos se cargarán aquí mediante el script -->
+      </div>
+      <br>
+
+<div class="button-container">
+
+<button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
+
+</div>
+
+
+    </form>
+  </div>
+
+
+    <div>
+        <a href="javascript:void(0);" class="back-button" onclick="window.history.back()">Volver al Inicio</a>
+    </div>
+
+
+
+
+  <script>
+
+  // Obtener la fecha del sistema
+  var today = new Date();
+
+  // Formatear la fecha en el formato YYYY-MM-DD, que es el formato esperado por el campo input[type="date"]
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+  var dd = String(today.getDate()).padStart(2, '0');
+
+  var formattedDate = yyyy + '-' + mm + '-' + dd;
+
+  // Establecer la fecha actual como valor del campo de fecha
+  document.getElementById("fecha").value = formattedDate;
+
+
+
+
+    let productos = [
+      { nombre: "Aromac", id: "producto1", imagen: "Imágenes/Requisa/Aromac.png" },
+      { nombre: "Bolsas para basura (pequeña)", id: "producto2", imagen: "Imágenes/Requisa/Bolsa blanca.png" },
+      { nombre: "Bolsas para basura (mediana)", id: "producto3", imagen: "Imágenes/Requisa/Bolsa mediana negra.png" },
+      { nombre: "Bolsas para basura (barril)", id: "producto4", imagen: "Imágenes/Requisa/Bolsa barril negra.png" },
+      { nombre: "Bolsas para desechos infecciosos", id: "producto5", imagen: "Imágenes/Requisa/Bolsa roja.png" },
+      { nombre: "Cepillo de Escoba", id: "producto6", imagen: "Imágenes/Requisa/Cepillo escoba.png" },
+      { nombre: "Mechas de mopeta", id: "producto7", imagen: "Imágenes/Requisa/Mecha mopeta.png" },
+      { nombre: "Mecha blanca de trapeador", id: "producto8", imagen: "Imágenes/Requisa/Mecha blanca trapeador.png" },
+      { nombre: "Mecha roja de trapeador", id: "producto9", imagen: "Imágenes/Requisa/Mecha roja trapeador.png" },
+      { nombre: "Mecha azul de trapeador", id: "producto10", imagen: "Imágenes/Requisa/Mecha azul trapeador.png" },
+      { nombre: "Mecha verde de trapeador", id: "producto11", imagen: "Imágenes/Requisa/Mecha verde trapeador.png" },
+      { nombre: "Pastillas PDC Alambre", id: "producto12", imagen: "Imágenes/Requisa/Pastilla pdc.png" },
+      { nombre: "Tapetes Antisalpicaduras", id: "producto13", imagen: "Imágenes/Requisa/Tapete.png" },
+      { nombre: "Proshine", id: "producto14", imagen: "Imágenes/Requisa/Proshine.png" },
+      { nombre: "Batería AA", id: "producto15", imagen: "Imágenes/Requisa/Bateria AA.png" },
+      { nombre: "Paste verde", id: "producto16", imagen: "Imágenes/Requisa/Paste verde.png" },
+      { nombre: "Paste azul", id: "producto17", imagen: "Imágenes/Requisa/Paste azul.png" },
+      { nombre: "Paño Rojo", id: "producto18", imagen: "Imágenes/Requisa/Paño rojo.png" },
+      { nombre: "Paño Verde", id: "producto19", imagen: "Imágenes/Requisa/Paño verde.png" },
+      { nombre: "Paño Amarillo", id: "producto20", imagen: "Imágenes/Requisa/Paño amarillo.png" },
+      { nombre: "Paño Azul", id: "producto21", imagen: "Imágenes/Requisa/Paño azul.png" },
+      { nombre: "Paño Cafè", id: "producto22", imagen: "Imágenes/Requisa/Paño  cafe.png" },
+      { nombre: "Bote de Atomizador", id: "producto23", imagen: "Imágenes/Requisa/Bote atomizador.png" },
+      { nombre: "Pistola de Atomizador", id: "producto24", imagen: "Imágenes/Requisa/Pistola atomizador.png" },
+      { nombre: "3M", id: "producto25", imagen: "Imágenes/Requisa/3M.png" }
+    ];
+
+    // Función para crear los elementos del formulario
+    function cargarProductos() {
+      $.get("https://script.google.com/macros/s/AKfycbwh24Hu9n9RxWzVzObDDnqRZvPCAavJkP0TXQPXvnGudlyPia-49veRNDLDIuBVQbaZ/exec", function(data) {
+        const cantidades = data.cantidades; // Obtenemos las cantidades de la respuesta
+        productos.forEach((producto, index) => {
+          let cantidadRestante = cantidades[index];
+          let productoHtml = `
+            <div class="producto" id="${producto.id}">
+              <img src="${producto.imagen}" alt="${producto.nombre}">
+              <label>${producto.nombre}</label>
+              <span id="cantidadRestante${index}" class="${cantidadRestante === 0 ? 'agotado' : cantidadRestante > 0 ? 'disponible' : ''}">
+                ${cantidadRestante === 0 ? '0 restantes' : `${cantidadRestante} restantes`}
+              </span>
+              <div class="cantidad">
+                <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${cantidadRestante === 0 ? 'disabled' : ''}>-</button>
+                <input type="number" id="cantidad${index}" value="0" min="0" ${cantidadRestante === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
+                <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${cantidadRestante === 0 ? 'disabled' : ''}>+</button>
+              </div>
+            </div>
+          `;
+          $(`#productos`).append(productoHtml);
+        });
+      });
+    }
+
+    // Función para cambiar la cantidad
+    function cambiarCantidad(index, valor) {
+      let cantidadInput = $(`#cantidad${index}`);
+      let cantidadActual = parseInt(cantidadInput.val());
+      let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
+
+      if (cantidadActual + valor >= 0 && cantidadActual + valor <= cantidadRestante) {
+        cantidadInput.val(cantidadActual + valor);
+        verificarProductos();
+      }
+    }
+
+    // Función para validar que el número ingresado no sea mayor que el disponible
+    function validarCantidad(index) {
+      let cantidadInput = $(`#cantidad${index}`);
+      let cantidadActual = parseInt(cantidadInput.val());
+      let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
+
+      if (cantidadActual > cantidadRestante) {
+        cantidadInput.val(cantidadRestante);
+      }
+
+      verificarProductos();
+    }
+
+    // Función para verificar si algún producto tiene cantidad seleccionada
+// Función para verificar si algún producto tiene cantidad seleccionada y si los campos están completos
+function verificarProductos() {
+  let productosSeleccionados = false;
+  
+  // Verificar si algún producto tiene cantidad seleccionada
+  productos.forEach((producto, index) => {
+    let cantidadInput = $(`#cantidad${index}`);
+    if (parseInt(cantidadInput.val()) > 0) {
+      productosSeleccionados = true;
+    }
+  });
+
+  // Verificar si los campos de fecha, colaborador y área están completos
+  let fecha = $("#fecha").val();
+  let colaborador = $("#colaborador").val();
+  let area = $("#area").val();
+
+  // Habilitar o deshabilitar el botón "Seguir"
+  if (productosSeleccionados && fecha.trim() !== "" && colaborador.trim() !== "" && area.trim() !== "") {
+    $("#seguir").prop("disabled", false); // Habilitar el botón si todo está completo
+  } else {
+    $("#seguir").prop("disabled", true); // Deshabilitar el botón si falta algo
+  }
+}
+
+// Agregar event listeners para los campos adicionales
+$("#fecha, #colaborador, #area").on("change", verificarProductos);
+
+// Agregar event listener para las cantidades de productos (suponiendo que los inputs tienen id's como #cantidad0, #cantidad1, ...)
+productos.forEach((producto, index) => {
+  $(`#cantidad${index}`).on("input", verificarProductos);
+});
+
+
+
+
+function mostrarConfirmacion(mensaje, callback) {
+  document.getElementById('confirmacionTexto').textContent = mensaje;
+  document.getElementById('confirmacionModal').style.display = 'flex';
+
+  // Botón "Sí"
+  document.getElementById('confirmarEnvioBtn').onclick = function () {
+    document.getElementById('confirmacionModal').style.display = 'none';
+    callback(true); // Llama al callback con true si el usuario confirma
+  };
+
+  // Botón "No"
+  document.getElementById('cancelarEnvioBtn').onclick = function () {
+    document.getElementById('confirmacionModal').style.display = 'none';
+    callback(false); // Llama al callback con false si el usuario cancela
+  };
+}
+
+function mostrarMensaje(mensaje, recargar = false) {
+  document.getElementById('mensajeTexto').textContent = mensaje;
+  document.getElementById('mensajeModal').style.display = 'flex';
+
+  // Botón cerrar con lógica condicional
+  document.getElementById('cerrarModalBtn').onclick = function () {
+    document.getElementById('mensajeModal').style.display = 'none';
+    
+    // Recargar solo si es necesario
+    if (recargar) {
+      location.reload(); // Solo recarga la página si `recargar` es true
+    }
+  };
+}
+
+
+function cerrarModal() {
+  // Oculta el modal y recarga la página
+  document.getElementById('mensajeModal').style.display = 'none';
+}
+
+function enviardatos() {
+  let seleccion = [];
+
+  // Recolectar los productos y cantidades seleccionadas
+  productos.forEach((producto, index) => {
+    let cantidadSeleccionada = $(`#cantidad${index}`).val();
+
+    if (cantidadSeleccionada > 0) {
+      seleccion.push({
+        producto: producto.nombre,
+        cantidad: cantidadSeleccionada
+      });
+    }
+  });
+
+  // Recolectar los datos adicionales
+  let fecha = $('#fecha').val();
+  let colaborador = $('#colaborador').val();
+  let area = $('#area').val();
+
+  // Verificar los datos antes de enviarlos
+  if (seleccion.length > 0) {
+  let datosTexto = '¿Estás seguro de proceder con el envío de estos datos?';
+
+    // Mostrar confirmación antes de enviar
+    mostrarConfirmacion(datosTexto, function (confirmado) {
+      if (confirmado) {
+        // Usuario confirmó, proceder con el envío
+    bloquearFormulario(true);
+        $.ajax({
+          url: "https://script.google.com/macros/s/AKfycbw6SVd0ifBAhhijbHXntti-EcdgToQnPMtm-qaST-RUWrm0AvY-qXZHGTgvr0FZ97Vu/exec",
+          type: "POST",
+          data: {
+            seleccion: JSON.stringify(seleccion),
+            fecha: fecha,
+            colaborador: colaborador,
+            area: area
+          },
+          success: function(response) {
+            console.log("Respuesta del servidor:", response);
+            mostrarMensaje("¡Gracias! Los datos se enviaron correctamente. 😊", true); // Recarga al enviar exitosamente
+        bloquearFormulario(false);
+
+          },
+          error: function(xhr, status, error) {
+            console.error("Error al enviar los datos:", xhr.responseText);
+            mostrarMensaje("Hubo un problema al enviar los datos. Intenta nuevamente. 😢");
+          }
+        });
+      } else {
+        // Usuario canceló, no recargar la página
+        mostrarMensaje("El envío fue cancelado. Puedes ajustar los datos si lo deseas. 😊", false);
+      }
+    });
+  } else {
+    mostrarMensaje("No has seleccionado ningún producto. ¡Por favor, selecciona algo! 🌟", false);
+  }
+}
+
+// Asocia el evento de clic al botón cerrar
+document.getElementById('cerrarModalBtn').addEventListener('click', cerrarModal);
+
+function bloquearFormulario(bloquear) {
+  // Bloquear inputs, selects, textareas, botones, y también el enlace 'back-button'
+  $('input, select, textarea, button').prop('disabled', bloquear);
+
+  if (bloquear) {
+    // Deshabilitar funcionalidad del enlace 'back-button'
+    $('.back-button')
+      .addClass('disabled') // Añadir clase para cambiar el estilo
+      .css('pointer-events', 'none') // Desactiva clics
+      .css('opacity', '0.5'); // Cambia la apariencia
+
+    // Añadir capa de bloqueo visual
+    $('#formulario').append('<div id="bloqueoFormulario" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px;">Procesando...</div>');
+  } else {
+    // Habilitar funcionalidad del enlace 'back-button'
+    $('.back-button')
+      .removeClass('disabled')
+      .css('pointer-events', '')
+      .css('opacity', '1'); // Restaurar apariencia
+
+    // Eliminar capa de bloqueo visual
+    $('#bloqueoFormulario').remove();
+  }
+}
+
+
+
+
+
+    cargarProductos();
+  </script>
+</body>
+</html>
