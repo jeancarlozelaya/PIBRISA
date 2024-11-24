@@ -467,7 +467,7 @@
 
     // Función para crear los elementos del formulario
     function cargarProductos() {
-      $.get("https://script.google.com/macros/s/AKfycbwELOfIStlzJKDWszJu17oAYAxuV5eMqTe9rh1j3tIsDWDoGBw_JPfuJBn8QczC674Q/exec", function(data) {
+      $.get("https://script.google.com/macros/s/AKfycbyA_1AfUXGy0b-XVq3ZreaDSV2RkaB0OYTKciEvw9-yJ_td-lhiPCNYq5_g9mkZz_QJhw/exec", function(data) {
         const cantidades = data.cantidades; // Obtenemos las cantidades de la respuesta
         productos.forEach((producto, index) => {
           let cantidadRestante = cantidades[index];
@@ -612,7 +612,7 @@ function enviardatos() {
 
   // Verificar los datos antes de enviarlos
   if (seleccion.length > 0) {
-  let datosTexto = '¿Estás seguro de proceder con el envío de estos datos?';
+  let datosTexto = '¿Estás seguro de proceder con el envío?';
 
     // Mostrar confirmación antes de enviar
     mostrarConfirmacion(datosTexto, function (confirmado) {
@@ -620,7 +620,7 @@ function enviardatos() {
         // Usuario confirmó, proceder con el envío
     bloquearFormulario(true);
         $.ajax({
-          url: "https://script.google.com/macros/s/AKfycbxSyOAgHYGieSDwhECuQd9m44Wr2UDG8O0mhTncdZg9ZrFaUD4BpgPHS9w64Lg_q_09/exec",
+          url: "https://script.google.com/macros/s/AKfycbw0XEQuw-PUtXBdqFyM6uk5Akpe3zS3lJm0qBTxFAwQxyWlh9SdZEQGkyjeEGjxbidbbg/exec",
           type: "POST",
           data: {
             seleccion: JSON.stringify(seleccion),
@@ -630,7 +630,7 @@ function enviardatos() {
           },
           success: function(response) {
             console.log("Respuesta del servidor:", response);
-            mostrarMensaje("¡Gracias! Los datos se enviaron correctamente. 😊", true); // Recarga al enviar exitosamente
+            mostrarMensaje("Los datos se enviaron correctamente. 😊", true); // Recarga al enviar exitosamente
         bloquearFormulario(false);
 
           },
@@ -639,10 +639,7 @@ function enviardatos() {
             mostrarMensaje("Hubo un problema al enviar los datos. Intenta nuevamente. 😢");
           }
         });
-      } else {
-        // Usuario canceló, no recargar la página
-        mostrarMensaje("El envío fue cancelado. Puedes ajustar los datos si lo deseas. 😊", false);
-      }
+      } 
     });
   } else {
     mostrarMensaje("No has seleccionado ningún producto. ¡Por favor, selecciona algo! 🌟", false);
