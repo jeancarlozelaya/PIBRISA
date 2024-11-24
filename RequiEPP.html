@@ -443,7 +443,7 @@
 
     // Función para crear los elementos del formulario
     function cargarProductos() {
-      $.get("https://script.google.com/macros/s/AKfycbw_kqFkNzZkEuuCLTgmprdHn1SvOXaXUPH9lK7-rt_O94ebOqHRIw7TN5JLVlc03qU-/exec", function(data) {
+      $.get("https://script.google.com/macros/s/AKfycbwaN_WIr_SdKPs5zfPfiwsR7ac4GWyETsI5pPcTKU7xCaJXnGlDG9THOVcXcw8ofV_Zxw/exec", function(data) {
         const cantidades = data.cantidades; // Obtenemos las cantidades de la respuesta
         productos.forEach((producto, index) => {
           let cantidadRestante = cantidades[index];
@@ -586,7 +586,7 @@ function enviardatos() {
 
   // Verificar los datos antes de enviarlos
   if (seleccion.length > 0) {
-  let datosTexto = '¿Estás seguro de proceder con el envío de estos datos?';
+  let datosTexto = '¿Estás seguro de proceder con el envío?';
 
     // Mostrar confirmación antes de enviar
     mostrarConfirmacion(datosTexto, function (confirmado) {
@@ -594,7 +594,7 @@ function enviardatos() {
         // Usuario confirmó, proceder con el envío
     bloquearFormulario(true);
         $.ajax({
-          url: "https://script.google.com/macros/s/AKfycbxe2RGuppfjngpd5SW7uVaBeQyXDK5gec2Z6954n6ibtnKtuDC674KJFiNIhYRDcGo5/exec",
+          url: "https://script.google.com/macros/s/AKfycby_qeg3pm7n0Aw9XaCg24MpeHo9Mll8RbDzgRV3z9PliUfFI7jXEmPc1c7hJ7kOVjk68w/exec",
           type: "POST",
           data: {
             seleccion: JSON.stringify(seleccion),
@@ -603,7 +603,7 @@ function enviardatos() {
           },
           success: function(response) {
             console.log("Respuesta del servidor:", response);
-            mostrarMensaje("¡Gracias! Los datos se enviaron correctamente. 😊", true); // Recarga al enviar exitosamente
+            mostrarMensaje("Los datos se enviaron correctamente. 😊", true); // Recarga al enviar exitosamente
         bloquearFormulario(false);
 
           },
@@ -612,9 +612,6 @@ function enviardatos() {
             mostrarMensaje("Hubo un problema al enviar los datos. Intenta nuevamente. 😢");
           }
         });
-      } else {
-        // Usuario canceló, no recargar la página
-        mostrarMensaje("El envío fue cancelado. Puedes ajustar los datos si lo deseas. 😊", false);
       }
     });
   } else {
