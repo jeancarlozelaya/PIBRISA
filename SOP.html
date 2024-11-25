@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pisos Brillantes</title>
+    <link rel="icon" href="Imágenes/Icono.png" type="image/png">
+    <link rel="manifest" href="/PIBRISA/manifest.json">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        #install-button {
+            display: none;
+            padding: 12px 24px;
+            background-color: #007BFF; /* Color principal */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #install-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #install-button:active {
+            transform: scale(0.98);
+        }
+
+        #install-button:focus {
+            outline: none;
+        }
+
+        #install-button span {
+            margin-left: 8px;
+        }
+
+        /* Estilo adicional si deseas que el texto del botón tenga icono */
+        #install-button i {
+            margin-right: 8px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .separator {
+            grid-column: span 2;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        iframe {
+            width: 100%;
+            height: 93vh;
+            border: none;
+            margin-top: 0px;
+        }
+
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
+
+            top: 57px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+
+
+            }
+        }
+
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
+    </style>
+</head>
+
+<button id="install-button" style="display:none;">
+  <i class="fas fa-download"></i> Instalar App
+</button>
+
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+    
+<div class="menu-container">
+    
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1e3J0lqyKOV000Gc827zY7vbA_XzZ8zrY/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección General de Edificios</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1p9Ll8oRTSxaAzP8W1bq0f826GjFEkFzB/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección General de Baños</p>
+        </div>    
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1SdJ8QLSFMRIzTigNe3jUpJkUKJDG2k4L/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Preparación de Café en el Edificio Administrativo</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1G1_xFSGJi2lpwGDE_AQPJpvdNrrhteHH/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Manos en el Ambiente Laboral</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1WZa1qxRIO8g7s1jna6-JBPBodyQXbGCx/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Pilas y Piletas</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1yKpmTAGaBoPLLUYvTe1M5FKPgXvy9Lr9/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Preparación de Soluciones de Limpieza y Desinfección</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1FP73B3C3VRW5v72UrdYIVEbtNYJ7AuUP/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Equipo de Protección Personal Reutilizable</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1J9AiuSyLBhcfab92Cdk1MAhLljVSyUYC/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Utensilios y Herramientas de Limpieza</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1AALNan2aw2c6Sjywd1AZp2IREBvWw8a2/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Estación de Lavado de Manos (Exteriores)</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1SYkhF4yh29MNjv2wDX2wSSDSthicky9y/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Vestidores y Camerinos</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1HfEmASXPUMtQDyKA-epjIIzrwSvVjmk2/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Eliminación de Residuos Sólidos y Bioinfeccioso</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1C_cm11WKhI-q-7yxBybO19olwOewgQcG/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de la Bodega de Insumos de Limpieza</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1y1c1oPEPrG2K49q-dyweQ9vogvg7Cn7Y/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Lavado Profundo de los Oasis</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1_uPRDquOgvhZrV42HEeShkUqKepworTQ/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Lavado Profundo de Refrigeradoras</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1jrOXKPmI5zfiqu_5nzV3gasbJR7dKdzl/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Descarte de Herramientas de Limpieza</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1vB84-YiRtaNXi0JqFRRjOZkQh2NlXNwj/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Recepción de Productos Químicos y Utensilios, Herramientas de Limpieza</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/13nd-IzQgqESrb3htArQBdpUACEmUEtci/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Pulido y Cristalizado de Pisos</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/14rWpumDFVn39_bmqVOl21XUUyN2kNhFk/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Protocolo de Uso Seguro para Hidrolavadora de Combustible</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1z39-41lbQs6PsUk-LVNn2-NPuUpomQj7/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Protocolo de Manipulación de Químicos</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1I0aH4YRk-3bSR2fxOzaNSWHfbtWNsjXf/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Protocolo de Limpieza de Derrames</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1Isk0t5ChvnEuQT6xaKhL9sq99t7mU7Sj/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Protocolo de Descarte de EPP Desechable</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/12YIFrcRHArmZfZZqpwNUB_IV_Rqc8wBQ/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Almacenamiento de Sustancias Químicas, Insumos y Materiales</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1iaBr5P4jvWY6PBrmFWHJc5RSgkouUGPy/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza de Pasillos y Bodegas en el Almacén General</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/11KY4MV8wWYASEQyLx4tj1IWKRGEnbUB6/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Limpieza y Desinfección de Enfermería</p>
+        </div>  
+    
+        <div class="separator"></div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1nU_TLdmHqMUp30gn3kf0C6fZbtf94XHI/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Lavado de la Bodega de Residuos Peligrosos</p>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://drive.google.com/file/d/1Gbf-jMtnaPugI5aGq4nt7_3iXF4AWvBi/view?usp=drive_link');">
+            <span>📃</span>
+            <p>Lavado de las Partes Externas de los Edificios</p>
+        </div>  
+
+        <div class="separator"></div>
+
+<div class="menu-item" onclick="window.history.back()">
+    <p>Volver Atrás</p>
+</div>
+
+<div class="menu-item" onclick="window.location.href='index.html';">
+    <p>Menú Principal</p>
+</div>
+
+
+
+    </div>
+
+    <!-- Contenedor del iframe -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
+    <script>
+        function openInIframe(url) {
+            document.getElementById('iframe').src = url;
+            document.getElementById('iframe-container').style.display = 'block';
+            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+        }
+
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
+
+        // Código para la instalación de la app (si es necesario)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar el Service Worker:', error);
+                    });
+            });
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
