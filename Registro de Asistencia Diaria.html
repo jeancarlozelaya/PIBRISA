@@ -5,44 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Registro</title>
     <style>
-        #install-button {
-            display: none;
-            padding: 12px 24px;
-            background-color: #007BFF; /* Color principal */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
 
-        #install-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
+    /* Capa de bloqueo de la pantalla */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Fondo translúcido */
+        display: none; /* Inicialmente oculta */
+        z-index: 999; /* Asegura que esté por encima del contenido */
+        justify-content: center;
+        align-items: center;
+    }
 
-        #install-button:active {
-            transform: scale(0.98);
-        }
+    /* Mensaje de "Procesando..." sin fondo */
+    .processing-message {
+        color: white;
+        font-size: 24px;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        z-index: 1000;
+        background-color: transparent; /* Elimina el fondo */
+        text-align: center;
+    }
 
-        #install-button:focus {
-            outline: none;
-        }
+    /* Estilos del mensaje de confirmación flotante y mensaje de éxito */
+    .floating-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centrado vertical y horizontal */
+        background-color: white; /* Fondo blanco */
+        color: black; /* Texto en negro */
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000; /* Asegura que esté por encima de todo */
+        font-size: 18px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: slideIn 0.5s ease-out;
+    }
 
-        #install-button span {
-            margin-left: 8px;
-        }
+    /* Estilos para los botones de confirmación */
+    .confirm-buttons {
+        margin-top: 20px;
+        display: flex;
+        gap: 20px;
+    }
 
-        /* Estilo adicional si deseas que el texto del botón tenga icono */
-        #install-button i {
-            margin-right: 8px;
+    .confirm-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff; /* Fondo azul para los botones */
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        width: 120px; /* Asegura que ambos botones tengan el mismo tamaño */
+    }
+
+    .confirm-button:hover,
+    .confirm-button:active {
+        background-color: #28a745; /* Cambio a verde al pasar el cursor o presionar */
+    }
+
+    /* Animación para el mensaje flotante */
+    @keyframes slideIn {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
         }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    /* Estilo del botón de cerrar */
+    .close-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border-radius: 5px;
+        margin-top: 20px; /* Espaciado del texto */
+        width: 120px; /* Asegura que el botón de cerrar tenga el mismo tamaño */
+    }
+
+    .close-button:hover {
+        background-color: #28a745; /* Cambio a verde al pasar el cursor o presionar */
+    }
+
+
 
         body {
             font-family: Arial, sans-serif;
@@ -251,9 +315,6 @@
     </style>
 </head>
 
-<button id="install-button" style="display:none;">
-  <i class="fas fa-download"></i> Instalar App
-</button>
 
 <body>
 
@@ -294,78 +355,48 @@
             </select><br>
 
             <button type="submit" id="enviar" disabled>Enviar</button>
-            <!-- Mensaje de espera -->
-            <div class="loading-message" id="loading-message" style="display:none;">Enviando datos, por favor espere...</div>
         </form>
-    </div>
 
-    <!-- Pantalla de "¡Datos enviados con éxito!" -->
-    <div class="message-box" id="message-box">
-        <h2>¡Datos enviados con éxito!</h2>
-        <button onclick="resetForm()">Volver al formulario</button>
+<!-- Contenedor del mensaje de confirmación flotante -->
+<div id="confirm-message" class="floating-message" style="display: none;">
+    <span>¿Estás seguro de proceder con el envío?</span>
+    <div class="confirm-buttons">
+        <button id="confirm-yes" class="confirm-button">Sí</button>
+        <button id="confirm-no" class="confirm-button">No</button>
     </div>
-
-<!-- Contenedor del iframe -->
-<div id="iframe-container" style="display:none;">
-    <iframe id="iframe" src=""></iframe>
 </div>
+
+<!-- Contenedor de la capa de bloqueo mientras se envían los datos -->
+<div id="overlay" class="overlay">
+    <div class="processing-message">Procesando...</div>
+</div>
+
+<!-- Contenedor del mensaje flotante de éxito (centrado) -->
+<div id="message-floating" class="floating-message" style="display: none;">
+    <span>Los datos se enviaron correctamente. 😊</span>
+    <button id="close-message" class="close-button">Cerrar</button>
+</div>
+
+
+
+    </div>
+
+
 
 <!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
 <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
 
 
+
+
     <script>
 
-        function openInIframe(url) {
-            document.getElementById('iframe').src = url;
-            document.getElementById('iframe-container').style.display = 'block';
-            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
-        }
+
 
 function goBack() {
     window.history.back();  // Esto hace que el navegador vuelva a la página anterior
 }
 
-
-
-        // Código para la instalación de la app (si es necesario)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then((registration) => {
-                        console.log('Service Worker registrado con éxito:', registration);
-                    })
-                    .catch((error) => {
-                        console.log('Error al registrar el Service Worker:', error);
-                    });
-            });
-        }
-
-        let deferredPrompt;
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installButton = document.getElementById('install-button');
-            installButton.style.display = 'block';
-            installButton.addEventListener('click', () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                    installButton.style.display = 'none';
-                });
-            });
-        });
-
-
-
-
-
-        // Asegurar que la página comience con la pantalla de "¡Datos enviados con éxito!" oculta
-        window.onload = function() {
-            document.getElementById('message-box').style.display = 'none'; // Aseguramos que el mensaje de éxito esté oculto
-            document.getElementById('form-container').style.display = 'block'; // Aseguramos que el formulario esté visible
-        };
 
         // URL de tu Google Apps Script (reemplaza con la URL de tu script)
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrs_9aAOI97Syrp8jMC2y9U48dnIldhgpWliJXZWpZQQjtar5pHpTXNTPWXCWTlZ3lrw/exec";
@@ -404,57 +435,82 @@ function goBack() {
             return `${hour}:${minute} ${ampm}`;
         }
 
-        // Enviar los datos al Google Apps Script
-        document.getElementById('registro-form').addEventListener('submit', function(event) {
-            event.preventDefault();
 
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const estado = document.getElementById('estado').value;
-            const colaborador = document.getElementById('colaborador').value;
 
-            // Convertir la hora a formato de 12 horas
-            const horaFormateada = formatTimeTo12Hour(hora);
 
-            // Mostrar el mensaje de "Enviando datos..."
-            document.getElementById('loading-message').style.display = 'block';
-            document.getElementById('enviar').disabled = true;
 
-            // Crear un objeto FormData para enviar al servidor
-            const formData = new FormData();
-            formData.append("fecha", fecha);
-            formData.append("hora", horaFormateada); // Usar la hora formateada
-            formData.append("estado", estado);
-            formData.append("colaborador", colaborador);
+// Función para mostrar el mensaje de confirmación antes de enviar
+    document.getElementById('registro-form').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-            // Enviar los datos al Google Apps Script usando fetch
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                // Mostrar el mensaje de éxito
-                document.getElementById('form-container').style.display = 'none';
-                document.getElementById('message-box').style.display = 'flex';
-            })
-            .catch(error => {
-                // En caso de error, ocultar el mensaje de carga y mostrar el mensaje de éxito
-                document.getElementById('form-container').style.display = 'none';
-                document.getElementById('message-box').style.display = 'flex';
-            });
+        // Bloquear el formulario y mostrar el mensaje de confirmación
+        document.getElementById('registro-form').querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+        document.getElementById('confirm-message').style.display = 'flex';
+    });
+
+    // Cuando el usuario hace clic en "Sí" para confirmar el envío
+    document.getElementById('confirm-yes').addEventListener('click', function() {
+        // Cerrar el mensaje de confirmación
+        document.getElementById('confirm-message').style.display = 'none';
+
+        // Bloquear el formulario y mostrar el mensaje de "Procesando..."
+        document.getElementById('overlay').style.display = 'flex';
+
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const estado = document.getElementById('estado').value;
+        const colaborador = document.getElementById('colaborador').value;
+
+        // Convertir la hora a formato de 12 horas
+        const horaFormateada = formatTimeTo12Hour(hora);
+
+        // Crear un objeto FormData para enviar al servidor
+        const formData = new FormData();
+        formData.append("fecha", fecha);
+        formData.append("hora", horaFormateada); // Usar la hora formateada
+        formData.append("estado", estado);
+        formData.append("colaborador", colaborador);
+
+        // Enviar los datos al Google Apps Script usando fetch
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Ocultar el mensaje de "Procesando..."
+            document.getElementById('overlay').style.display = 'none';
+
+            // Mostrar el mensaje de éxito
+            document.getElementById('message-floating').style.display = 'flex';
+        })
+        .catch(error => {
+            // En caso de error, ocultar el mensaje de carga y mostrar el mensaje de error
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('message-floating').style.display = 'flex';
         });
+    });
 
-        // Función para resetear el formulario y volver a la pantalla inicial
-        function resetForm() {
-            document.getElementById('registro-form').reset();
-            document.getElementById('fecha').value = new Date().toISOString().split('T')[0]; // Fecha actual
-            document.getElementById('hora').value = new Date().toTimeString().split(' ')[0].substring(0, 5); // Hora actual
-            validateForm(); // Asegura que el botón esté deshabilitado al reiniciar
-            document.getElementById('form-container').style.display = 'block';
-            document.getElementById('message-box').style.display = 'none';
-            document.getElementById('loading-message').style.display = 'none'; // Ocultar mensaje de espera
-        }
+    // Cuando el usuario hace clic en "No", cancelar el envío
+    document.getElementById('confirm-no').addEventListener('click', function() {
+        // Ocultar el mensaje de confirmación y desbloquear el formulario
+        document.getElementById('confirm-message').style.display = 'none';
+        document.getElementById('registro-form').querySelectorAll('input, select, button').forEach(el => el.disabled = false);
+    });
+
+    // Cerrar el mensaje de éxito y actualizar la página
+    document.getElementById('close-message').addEventListener('click', function() {
+        location.reload(); // Recarga la página para restablecer el formulario
+    });
+
+
+
+
+
+
+
+
+
     </script>
 
 </body>
