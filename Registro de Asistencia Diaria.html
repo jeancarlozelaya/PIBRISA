@@ -6,7 +6,7 @@
     <title>Formulario de Registro</title>
     <style>
 
-    /* Capa de bloqueo de la pantalla */
+/* Capa de bloqueo de la pantalla */
     .overlay {
         position: fixed;
         top: 0;
@@ -50,6 +50,8 @@
         justify-content: center;
         align-items: center;
         animation: slideIn 0.5s ease-out;
+        width: 90%; /* Ajustado al 90% del ancho de la pantalla, similar al formulario */
+        max-width: 500px; /* Establecer un máximo de ancho para que no sea demasiado grande */
     }
 
     /* Estilos para los botones de confirmación */
@@ -105,7 +107,6 @@
     .close-button:hover {
         background-color: #28a745; /* Cambio a verde al pasar el cursor o presionar */
     }
-
 
 
         body {
@@ -359,7 +360,7 @@
 
 <!-- Contenedor del mensaje de confirmación flotante -->
 <div id="confirm-message" class="floating-message" style="display: none;">
-    <span>¿Estás seguro de proceder con el envío?</span>
+    <span>¿Estás seguro de enviar los datos?</span>
     <div class="confirm-buttons">
         <button id="confirm-yes" class="confirm-button">Sí</button>
         <button id="confirm-no" class="confirm-button">No</button>
@@ -373,9 +374,10 @@
 
 <!-- Contenedor del mensaje flotante de éxito (centrado) -->
 <div id="message-floating" class="floating-message" style="display: none;">
-    <span>Los datos se enviaron correctamente. 😊</span>
+    <span>Datos enviados correctamente!</span>
     <button id="close-message" class="close-button">Cerrar</button>
 </div>
+
 
 
 
