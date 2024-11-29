@@ -612,7 +612,7 @@ function enviardatos() {
 
   // Verificar los datos antes de enviarlos
   if (seleccion.length > 0) {
-  let datosTexto = '¿Estás seguro de proceder con el envío?';
+  let datosTexto = '¿Estás seguro de continuar? 🤔';
 
     // Mostrar confirmación antes de enviar
     mostrarConfirmacion(datosTexto, function (confirmado) {
@@ -630,7 +630,7 @@ function enviardatos() {
           },
           success: function(response) {
             console.log("Respuesta del servidor:", response);
-            mostrarMensaje("Los datos se enviaron correctamente. 😊", true); // Recarga al enviar exitosamente
+            mostrarMensaje("¡Envío exitoso! 🥳🎉", true); // Recarga al enviar exitosamente
         bloquearFormulario(false);
 
           },
@@ -661,7 +661,7 @@ function bloquearFormulario(bloquear) {
       .css('opacity', '0.5'); // Cambia la apariencia
 
     // Añadir capa de bloqueo visual
-    $('#formulario').append('<div id="bloqueoFormulario" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px;">Procesando...</div>');
+    $('#formulario').append('<div id="bloqueoFormulario" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px;">Procesando...🥱</div>');
   } else {
     // Habilitar funcionalidad del enlace 'back-button'
     $('.back-button')
