@@ -66,46 +66,47 @@
 
 
   .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-  }
-/* Asegurarse de que los botones tengan el mismo tamaño */
+  position: fixed; /* Posiciona el modal de forma fija en la pantalla */
+  top: 0; /* Lo posiciona desde la parte superior de la pantalla */
+  left: 0; /* Lo posiciona desde la parte izquierda de la pantalla */
+  width: 100%; /* Hace que el modal ocupe todo el ancho de la pantalla */
+  height: 100%; /* Hace que el modal ocupe toda la altura de la pantalla */
+  background-color: rgba(0, 0, 0, 0.5); /* Color de fondo semitransparente (oscurece el fondo) */
+  display: flex; /* Usa Flexbox para alinear los elementos hijos */
+  justify-content: center; /* Centra el contenido (los botones y el mensaje) horizontalmente */
+  align-items: center; /* Centra el contenido (los botones y el mensaje) verticalmente */
+}
+
+.modal-content {
+  background-color: #fff; /* Fondo blanco para el contenido del modal */
+  padding: 20px 40px; /* Menos padding vertical para hacer el mensaje más compacto */
+  border-radius: 5px; /* Bordes redondeados para el modal */
+  text-align: center; /* Centra el texto dentro del modal */
+  width: 400px; /* Ajusta el ancho del contenido para que sea más grande */
+  font-size: 20px; /* Aumenta el tamaño de la fuente del mensaje */
+}
+
+.modal-content .button-container {
+  display: flex; /* Asegura que los botones estén en una fila (Flexbox) */
+  justify-content: center; /* Centra los botones horizontalmente */
+  margin-top: 20px; /* Añade más espacio entre el texto y los botones */
+}
+
 .modal-content button {
-  width: 48%; /* 48% para que haya espacio entre ellos */
-  display: inline-block;
-  padding: 15px;
-  font-size: 16px;
-  margin: 5px 2%; /* Añade margen entre botones */
-  cursor: pointer;
-  box-sizing: border-box;
-  background-color: #007bff; /* Color inicial del botón */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  border-radius: 5px; /* Bordes redondeados */
-  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+  padding: 10px 20px; /* Añade 10px de espacio arriba y abajo, 20px de espacio a la izquierda y derecha */
+  font-size: 16px; /* Tamaño de la fuente de los botones */
+  background-color: #007bff; /* Fondo azul para los botones */
+  border: none; /* Sin borde alrededor de los botones */
+  color: white; /* Color del texto de los botones en blanco */
+  cursor: pointer; /* Cambia el cursor a mano cuando pasa sobre el botón */
+  border-radius: 5px; /* Bordes redondeados para los botones */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color al pasar el mouse */
+  width: 120px; /* Establece el ancho fijo de los botones a 120px */
+  margin: 0 8px; /* Añade margen horizontal de 8px entre los botones */
 }
 
-/* Cambiar color al pasar el mouse */
 .modal-content button:hover {
-  background-color: #28a745; /* Verde cuando el mouse está sobre el botón */
-}
-
-
-.modal-content button:first-child {
-  margin-right: 0; /* Para evitar margen extra al primer botón si se coloca margen en los botones */
+  background-color: #28a745; /* Cambia el color de fondo a verde cuando se pasa el mouse sobre el botón */
 }
 
 
