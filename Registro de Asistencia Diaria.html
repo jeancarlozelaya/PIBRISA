@@ -78,17 +78,6 @@
         background-color: #28a745; /* Cambio a verde al pasar el cursor o presionar */
     }
 
-    /* Animación para el mensaje flotante */
-    @keyframes slideIn {
-        0% {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.5);
-        }
-        100% {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-    }
 
     /* Estilo del botón de cerrar */
     .close-button {
@@ -404,7 +393,18 @@ function goBack() {
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrs_9aAOI97Syrp8jMC2y9U48dnIldhgpWliJXZWpZQQjtar5pHpTXNTPWXCWTlZ3lrw/exec";
 
         // Prellenar fecha y hora
-        document.getElementById('fecha').value = new Date().toISOString().split('T')[0]; // Fecha actual
+
+
+let today = new Date();
+let year = today.getFullYear();
+let month = String(today.getMonth() + 1).padStart(2, '0'); // El mes comienza desde 0, por eso sumamos 1
+let day = String(today.getDate()).padStart(2, '0'); // Añadimos ceros si es necesario
+
+document.getElementById('fecha').value = `${year}-${month}-${day}`; // Asigna la fecha correcta en formato YYYY-MM-DD
+
+
+
+
         document.getElementById('hora').value = new Date().toTimeString().split(' ')[0].substring(0, 5); // Hora actual
 
         // Función para habilitar o deshabilitar el botón de enviar según si los campos están completos
