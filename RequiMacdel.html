@@ -215,11 +215,25 @@
       justify-content: center;
       align-items: center;
     }
-    .cantidad input {
-      width: 40px; /* Reducir tamaño del input */
-      text-align: center;
-      font-size: 14px; /* Reducir tamaño del texto en el input */
-    }
+.cantidad input {
+  width: 30%; /* Usamos un porcentaje para que el input sea más flexible */
+  max-width: 200px; /* Añadimos un límite máximo para no exceder el tamaño en pantallas grandes */
+  text-align: center;
+  font-size: 14px; /* Mantén el tamaño del texto pequeño */
+}
+
+@media (min-width: 768px) {
+  .cantidad input {
+    width: 150px; /* Ajustamos el ancho del input en pantallas grandes */
+    font-size: 16px; /* Podemos aumentar el tamaño del texto en pantallas más grandes */
+  }
+}
+
+@media (min-width: 1024px) {
+  .cantidad input {
+    width: 180px; /* Ajuste para pantallas aún más grandes */
+  }
+}
     .cantidad button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
