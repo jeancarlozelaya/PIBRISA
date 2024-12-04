@@ -210,16 +210,17 @@
                 padding: 0; /* Asegura que no haya padding extra */
             }
         }
-        .container {
-            width: 90%;
-            max-width: 600px;
-            height: 70vh;            /* Ocupa el 100% de la altura de la ventana */
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    .container {
+        width: 90%; /* Ajusta al 90% del ancho de la pantalla */
+        max-width: 600px; /* Establece un ancho máximo para evitar que sea demasiado grande */
+        height: auto; /* Ajusta la altura automáticamente al contenido */
+        margin: 50px auto; /* Centrado horizontal y margen superior */
+        background-color: #fff; /* Fondo blanco */
+        padding: 20px; /* Espaciado interno */
+        border-radius: 8px; /* Bordes redondeados */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+        box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+    }
         h1 {
             text-align: center;
             color: #333;
