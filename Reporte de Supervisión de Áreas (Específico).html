@@ -7,30 +7,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-/* Estilo general del body */
-body { 
-    font-family: 'Arial', sans-serif; 
-    background-color: #f4f4f9; 
-    margin: 0; 
-    padding: 0; 
-    display: flex; 
-    justify-content: center; 
-    align-items: flex-start; 
-    height: 100vh; 
-    padding-top: 50px; 
-}
 
-/* Contenedor general */
-.container { 
-    background: #ffffff; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
-    border-radius: 10px; 
-    padding: 30px; 
-    width: 90%; 
-    max-width: 600px; 
-    text-align: center; 
-    margin-bottom: 30px; 
-}
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+        display: grid;               /* Usamos Grid para estructurar los elementos */
+        grid-template-columns: 1fr;   /* Definimos una sola columna para que todo se apile */
+        grid-template-rows: auto 1fr; /* Dos filas: una para el header y otra para el contenido */
+        min-height: 100vh;           /* Asegura que el body ocupe toda la altura de la ventana */
+    }
+
+    .header {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 15px 0;
+        font-size: 1.5em;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        grid-row: 1;  /* Fijamos el header en la primera fila */
+        width: 100%;   /* Asegura que el header ocupe todo el ancho */
+    }
+
+    /* Contenedor general */
+    .container { 
+        background: #ffffff; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+        border-radius: 10px; 
+        padding: 30px; 
+        width: 90%; 
+        max-width: 600px; 
+        text-align: center; 
+        margin: 40px auto;   /* Ajustamos el margen para que quede cerca del header */
+        grid-row: 2;  /* El formulario se coloca en la segunda fila */
+        /* Limitar la altura del formulario solo si es necesario */
+        height: auto%;  /* El formulario debe ajustarse al contenido */
+    }
 
 /* Estilos para el área de arrastrar y soltar */
 .file-drop-area {
@@ -291,11 +305,52 @@ input[type="date"]:focus {
 
 
 
+/* Estilo para el botón "Volver al Inicio" */
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1em;
+    transition: background-color 0.3s, transform 0.3s;
+    position: fixed;
+    top: 80px; /* Mueve el botón a la parte superior */
+    left: 0px; /* Colócalo a la izquierda */
+    z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Estilo adicional para dispositivos móviles */
+@media screen and (max-width: 600px) {
+    .back-button {
+        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+        padding: 12px 18px; /* Ajustar el padding */
+        top: 57px; /* Mueve el botón a la parte superior */
+        left: 0px; /* Colócalo a la izquierda */
+    }
+}
+
+
 
 
     </style>
 </head>
 <body>
+
+<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
+<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
+    <div class="header">
+        Pisos Brillantes
+    </div>
+
     <div class="container">
         <h1>Reporte de Supervisión de Áreas</h1>
 
@@ -500,7 +555,16 @@ input[type="date"]:focus {
 </div>
 
 
+
+
+
+
     <script>
+
+
+function goBack() {
+    window.history.back();  // Esto hace que el navegador vuelva a la página anterior
+}
 
         // Establecer la fecha actual por defecto
         window.onload = function() {
