@@ -8,43 +8,68 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
 
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        color: #333;
-        display: grid;               /* Usamos Grid para estructurar los elementos */
-        grid-template-columns: 1fr;   /* Definimos una sola columna para que todo se apile */
-        grid-template-rows: auto 1fr; /* Dos filas: una para el header y otra para el contenido */
-        min-height: 100vh;           /* Asegura que el body ocupe toda la altura de la ventana */
-    }
+/* Estilo general para body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    display: grid; /* Usamos Grid para estructurar los elementos */
+    grid-template-columns: 1fr; /* Una columna para apilar los elementos */
+    grid-template-rows: auto 1fr; /* Fila para el header y otra para el contenido */
+    min-height: 100vh; /* Asegura que el body ocupe toda la altura */
+}
 
-    .header {
-        background-color: #007BFF;
-        color: white;
-        text-align: center;
-        padding: 15px 0;
-        font-size: 1.5em;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        grid-row: 1;  /* Fijamos el header en la primera fila */
-        width: 100%;   /* Asegura que el header ocupe todo el ancho */
-    }
+/* Header */
+.header {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 1.5em;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    grid-row: 1; /* Fijamos el header en la primera fila */
+    width: 100%;  /* Asegura que el header ocupe todo el ancho */
+}
 
-    /* Contenedor general */
-    .container { 
-        background: #ffffff; 
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
-        border-radius: 10px; 
-        padding: 30px; 
-        width: 90%; 
-        max-width: 600px; 
-        text-align: center; 
-        margin: 40px auto;   /* Ajustamos el margen para que quede cerca del header */
-        grid-row: 2;  /* El formulario se coloca en la segunda fila */
-        /* Limitar la altura del formulario solo si es necesario */
-        height: auto%;  /* El formulario debe ajustarse al contenido */
+/* Contenedor del formulario */
+.container {
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    text-align: center; /* Asegura que todo el contenido dentro esté centrado */
+    margin: 40px auto; /* Se alinea automáticamente con margen y centrado */
+    grid-row: 2; /* El formulario se coloca en la segunda fila */
+    height: auto;  /* El formulario ajusta su altura según el contenido */
+    box-sizing: border-box;
+}
+
+/* Centrado de los botones dentro del contenedor */
+.container button {
+    display: inline-block; /* Esto asegura que se comporte como un bloque de línea */
+    margin-top: 20px; /* Espaciado superior para los botones */
+    background-color: #007BFF;
+    color: white;
+    border: 2px solid #007BFF;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Estilo para los botones en móviles */
+@media (max-width: 768px) {
+    .container button {
+        width: auto;  /* Cambiar el width a auto para que se queden en línea */
+        display: inline-block; /* Asegura que se mantengan en la misma línea */
+        margin-right: 10px;  /* Espacio entre los botones */
     }
+}
 
 /* Estilos para el área de arrastrar y soltar */
 .file-drop-area {
@@ -302,6 +327,23 @@ input[type="date"]:focus {
         margin-bottom: 15px;  /* Ajustar el margen para pantallas más pequeñas */
     }
 }
+
+
+/* Estilo solo para el textarea con id "medidas" */
+#medidas {
+    padding: 20px; /* Mayor espacio dentro del textarea */
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    width: 100%; /* Ocupa todo el ancho disponible */
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s;
+    resize: vertical; /* Permite cambiar el tamaño solo verticalmente */
+    box-sizing: border-box;
+    height: 250px; /* Aumenta la altura del textarea */
+}
+
 
 
 
