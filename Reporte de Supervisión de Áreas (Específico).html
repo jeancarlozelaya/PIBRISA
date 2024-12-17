@@ -15,10 +15,10 @@ body {
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
-    display: grid; /* Usamos Grid para estructurar los elementos */
-    grid-template-columns: 1fr; /* Una columna para apilar los elementos */
-    grid-template-rows: auto 1fr; /* Fila para el header y otra para el contenido */
-    min-height: 100vh; /* Asegura que el body ocupe toda la altura */
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
 }
 
 /* Header */
@@ -29,8 +29,17 @@ body {
     padding: 15px 0;
     font-size: 1.5em;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    grid-row: 1; /* Fijamos el header en la primera fila */
-    width: 100%;  /* Asegura que el header ocupe todo el ancho */
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Mejoras para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+    .header {
+        font-size: 1.5em;
+        padding: 12px 0;
+    }
 }
 
 /* Contenedor del formulario */
@@ -41,17 +50,38 @@ body {
     padding: 30px;
     width: 90%;
     max-width: 600px;
-    text-align: center; /* Asegura que todo el contenido dentro esté centrado */
-    margin: 40px auto; /* Se alinea automáticamente con margen y centrado */
-    grid-row: 2; /* El formulario se coloca en la segunda fila */
-    height: auto;  /* El formulario ajusta su altura según el contenido */
+    text-align: center;
+    margin: 40px auto;
+    grid-row: 2;
+    height: auto;
     box-sizing: border-box;
 }
 
-/* Centrado de los botones dentro del contenedor */
+/* Mejoras para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        max-width: none;
+        margin: 20px 0;
+        padding: 20px;
+    }
+
+    .container input,
+    .container button {
+        font-size: 1em;
+        padding: 10px;
+        width: 100%;
+    }
+
+    body {
+        padding: 0 10px;
+    }
+}
+
+/* Estilo para los botones dentro del contenedor */
 .container button {
-    display: inline-block; /* Esto asegura que se comporte como un bloque de línea */
-    margin-top: 20px; /* Espaciado superior para los botones */
+    display: inline-block;
+    margin-top: 20px;
     background-color: #007BFF;
     color: white;
     border: 2px solid #007BFF;
@@ -62,36 +92,42 @@ body {
     transition: background-color 0.3s, border-color 0.3s;
 }
 
-/* Estilo para los botones en móviles */
+/* Botones en pantallas pequeñas */
 @media (max-width: 768px) {
     .container button {
-        width: auto;  /* Cambiar el width a auto para que se queden en línea */
-        display: inline-block; /* Asegura que se mantengan en la misma línea */
-        margin-right: 10px;  /* Espacio entre los botones */
+        width: auto;
+        display: inline-block;
+        margin-right: 10px;
     }
+}
+
+/* Centrado de los botones */
+.container .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 /* Estilos para el área de arrastrar y soltar */
 .file-drop-area {
-    border: 2px dashed #007BFF; /* Borde punteado azul */
+    border: 2px dashed #007BFF;
     border-radius: 10px;
     padding: 40px 20px;
     text-align: center;
     cursor: pointer;
     font-size: 16px;
-    background-color: #f0f8ff; /* Fondo suave */
-    color: #007BFF; /* Texto en azul */
+    background-color: #f0f8ff;
+    color: #007BFF;
     transition: background-color 0.3s ease, border-color 0.3s ease;
     margin: 10px 0;
 }
 
-/* Estilo cuando el usuario arrastra archivos sobre el área */
 .file-drop-area.dragover {
     background-color: #e6f7ff;
     border-color: #0056b3;
 }
 
-/* Estilo cuando el usuario pasa el mouse sobre el área */
 .file-drop-area:hover {
     background-color: #e6f7ff;
     border-color: #0056b3;
@@ -99,59 +135,57 @@ body {
 
 /* Ocultar el input file real */
 input[type="file"] {
-    display: none; /* Ocultar el input file */
+    display: none;
 }
 
 /* Vista previa de las imágenes */
 #preview {
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 10px; 
-    margin: 20px 0; 
-    max-height: 300px; 
-    overflow-y: auto; 
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
-/* Estilo de las imágenes */
-#preview .image-container { 
-    position: relative; 
-    display: inline-block; 
-    margin: 10px; 
-    cursor: pointer; 
+#preview .image-container {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+    cursor: pointer;
 }
 
-#preview img { 
-    max-width: 150px; 
-    max-height: 150px; 
-    margin: 0; 
-    border: 2px solid #ddd; 
-    border-radius: 8px; 
-    transition: transform 0.3s, filter 0.3s; 
+#preview img {
+    max-width: 150px;
+    max-height: 150px;
+    margin: 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.3s, filter 0.3s;
 }
 
-#preview img:hover { 
-    filter: brightness(0.8); 
-    transform: scale(1.05); 
+#preview img:hover {
+    filter: brightness(0.8);
+    transform: scale(1.05);
 }
 
-/* Estilo para el icono de eliminar (eliminar la imagen) */
-.delete-trash { 
-    position: absolute; 
-    top: 10px; 
-    left: 10px; 
-    font-size: 30px; 
-    color: red; 
-    display: none; 
-    transition: opacity 0.3s; 
+.delete-trash {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 30px;
+    color: red;
+    display: none;
+    transition: opacity 0.3s;
 }
 
-#preview .image-container:hover .delete-trash { 
-    display: block; 
-    opacity: 1; 
+#preview .image-container:hover .delete-trash {
+    display: block;
+    opacity: 1;
 }
 
-
+/* Estilos generales de los botones */
 button {
     background-color: #007BFF;
     color: white;
@@ -162,26 +196,40 @@ button {
     cursor: pointer;
     transition: background-color 0.3s, border-color 0.3s;
     margin-top: 20px;
-    width: auto;  /* Se puede ajustar el ancho del botón */
+    width: auto;
 }
 
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-    border-color: #ccc; /* El borde también cambia a gris cuando el botón está deshabilitado */
+    border-color: #ccc;
 }
 
 button:hover:not(:disabled) {
     background-color: #0056b3;
-    border-color: #0056b3; /* Cambia el borde al mismo color azul oscuro */
+    border-color: #0056b3;
 }
 
-        .file-label { display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
-        .file-label:hover { background-color: #0056b3; }
-        input[type="file"] { display: none; }
+/* Estilo para el campo .file-label */
+.file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
+.file-label:hover {
+    background-color: #0056b3;
+}
 
-/* Estilo general para .question-container */
+input[type="file"] {
+    display: none;
+}
+
+/* Estilo para los contenedores de preguntas */
 .question-container {
     margin-bottom: 20px;
     text-align: left;
@@ -190,88 +238,80 @@ button:hover:not(:disabled) {
     border-radius: 5px;
     background-color: #f9f9f9;
     transition: border-color 0.3s;
-    box-sizing: border-box;  /* Asegura que padding y borde se incluyan en el ancho total */
+    box-sizing: border-box;
 }
 
-/* Efecto hover en .question-container */
 .question-container:hover {
     border-color: #007BFF;
 }
 
-/* Estilo para los campos input[type="date"], textarea y select */
-.question-container input[type="date"], 
+.question-container input[type="date"],
 .question-container textarea,
 .question-container select {
     padding: 10px;
     border: 2px solid #ccc;
     border-radius: 5px;
-    width: 100%;  /* Hacer que ocupe todo el ancho disponible */
-    font-size: 16px;  /* Mantener el tamaño de la fuente en 16px para todos los campos */
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-    box-sizing: border-box;  /* Incluir padding y borde dentro del ancho total */
-    margin-top: 5px;  /* Espaciado superior para los elementos select */
-}
-
-/* Estilo cuando los campos están enfocados (input, textarea y select) */
-.question-container input[type="date"]:focus, 
-.question-container textarea:focus,
-.question-container select:focus {
-    border-color: #007BFF;
-    outline: none;  /* Eliminar contorno por defecto */
-}
-
-/* Estilo para el campo select en .question-container */
-.question-container select {
-    font-size: 16px;  /* Tamaño de fuente ajustado para select (igual al de los demás campos) */
-    padding: 10px;  /* Espaciado adicional en select */
-}
-
-/* Estilo de las etiquetas en .question-container */
-.question-container label {
-    font-weight: bold;
-    font-size: 16px;  /* Mantener el tamaño de las etiquetas en 16px */
-    margin-bottom: 5px;  /* Espaciado entre la etiqueta y el campo */
-    display: block;  /* Asegurar que la etiqueta esté en su propia línea */
-}
-
-/* Medidas responsivas: para pantallas pequeñas */
-@media (max-width: 768px) {
-    .question-container {
-        padding: 15px;  /* Aumentar padding en pantallas pequeñas */
-        margin-bottom: 15px;  /* Ajustar el margen para pantallas más pequeñas */
-    }
-    
-    /* Ajustar el tamaño de fuente de los inputs y textarea en móviles */
-    .question-container input[type="date"], 
-    .question-container textarea,
-    .question-container select {
-        font-size: 14px;  /* Reducir tamaño de fuente en móviles */
-        padding: 8px;  /* Reducir padding en móviles para ajustarse mejor */
-    }
-
-    .question-container label {
-        font-size: 14px;  /* Reducir el tamaño de las etiquetas en móviles */
-    }
-}
-
-        .form-section { margin-top: 40px; padding-top: 20px; border-top: 2px solid #f4f4f9; }
-        .hidden { display: none; }
-
-
-
-#oficina {
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;  /* Hacer que ocupe todo el ancho disponible */
+    width: 100%;
     font-size: 16px;
     background-color: #f9f9f9;
     color: #333;
     transition: border-color 0.3s;
-    resize: vertical;  /* Permite redimensionar solo en dirección vertical */
-    box-sizing: border-box;  /* Incluir el padding y el borde dentro del ancho total */
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+.question-container input[type="date"]:focus,
+.question-container textarea:focus,
+.question-container select:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+/* Estilos específicos para el campo select */
+.question-container select {
+    font-size: 16px;
+    padding: 10px;
+}
+
+/* Estilos de las etiquetas */
+.question-container label {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Medidas responsivas */
+@media (max-width: 768px) {
+    .question-container {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .question-container input[type="date"],
+    .question-container textarea,
+    .question-container select {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .question-container label {
+        font-size: 18px;
+    }
+}
+
+/* Estilos para la sección "oficina" */
+#oficina {
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s;
+    resize: vertical;
+    box-sizing: border-box;
 }
 
 #oficina:focus {
@@ -279,73 +319,20 @@ button:hover:not(:disabled) {
     outline: none;
 }
 
-
-
-/* Estilo para los campos textarea */
-textarea {
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;  /* Hacer que ocupe todo el ancho disponible */
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-    resize: vertical;  /* Permite redimensionar solo en dirección vertical */
-    box-sizing: border-box;  /* Incluir el padding y el borde dentro del ancho total */
-}
-
-/* Estilo cuando el textarea está enfocado */
-textarea:focus {
-    border-color: #007BFF;
-    outline: none;  /* Eliminar el contorno por defecto */
-}
-
-/* Estilo para los campos input[type="date"] */
-input[type="date"] {
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;  /* Hacer que ocupe todo el ancho disponible */
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-    box-sizing: border-box;  /* Incluir el padding y el borde dentro del ancho total */
-}
-
-/* Estilo cuando el input[type="date"] está enfocado */
-input[type="date"]:focus {
-    border-color: #007BFF;
-    outline: none;  /* Eliminar el contorno por defecto */
-}
-
-/* Medidas responsivas: para pantallas pequeñas */
-@media (max-width: 768px) {
-    .question-container {
-        padding: 15px;  /* Aumentar padding en pantallas pequeñas */
-        margin-bottom: 15px;  /* Ajustar el margen para pantallas más pequeñas */
-    }
-}
-
-
-/* Estilo solo para el textarea con id "medidas" */
+/* Estilo para el textarea con id "medidas" */
 #medidas {
-    padding: 20px; /* Mayor espacio dentro del textarea */
+    padding: 20px;
     border: 2px solid #ccc;
     border-radius: 5px;
-    width: 100%; /* Ocupa todo el ancho disponible */
+    width: 100%;
     font-size: 16px;
     background-color: #f9f9f9;
     color: #333;
     transition: border-color 0.3s;
-    resize: vertical; /* Permite cambiar el tamaño solo verticalmente */
+    resize: vertical;
     box-sizing: border-box;
-    height: 250px; /* Aumenta la altura del textarea */
+    height: 250px;
 }
-
-
-
 
 /* Estilo para el botón "Volver al Inicio" */
 .back-button {
@@ -359,9 +346,9 @@ input[type="date"]:focus {
     font-size: 1em;
     transition: background-color 0.3s, transform 0.3s;
     position: fixed;
-    top: 80px; /* Mueve el botón a la parte superior */
-    left: 0px; /* Colócalo a la izquierda */
-    z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+    top: 80px;
+    left: 0px;
+    z-index: 1001;
 }
 
 .back-button:hover {
@@ -372,15 +359,23 @@ input[type="date"]:focus {
 /* Estilo adicional para dispositivos móviles */
 @media screen and (max-width: 600px) {
     .back-button {
-        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        top: 57px; /* Mueve el botón a la parte superior */
-        left: 0px; /* Colócalo a la izquierda */
+        font-size: 0.9em;
+        padding: 12px 18px;
+        top: 57px;
     }
 }
 
+/* Sección adicional */
+.form-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #f4f4f9;
+}
 
-
+/* Ocultar elementos */
+.hidden {
+    display: none;
+}
 
     </style>
 </head>
