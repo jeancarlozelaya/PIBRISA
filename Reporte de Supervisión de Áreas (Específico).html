@@ -32,7 +32,25 @@ body {
     width: 100%;
     margin: 0;
     box-sizing: border-box;
+    position: relative; /* Aseguramos que el header esté dentro del flujo de la página */
 }
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 0; /* Reducimos el padding en pantallas pequeñas */
+        font-size: 1.2em; /* Ajustamos el tamaño de la fuente */
+        box-sizing: border-box; /* Aseguramos que el padding no cause problemas de desbordamiento */
+        width: 100%; /* Aseguramos que ocupe todo el ancho de la pantalla */
+    }
+
+    /* También podemos reducir otros márgenes o padding en otros elementos si es necesario */
+    body, .container {
+        margin: 0;
+        padding: 0;
+    }
+}
+
 
 /* Mejoras para pantallas pequeñas (móviles) */
 @media (max-width: 768px) {
@@ -377,16 +395,43 @@ input[type="file"] {
     display: none;
 }
 
+
+
+/* Estilo del overlay (pantalla bloqueada) */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
+}
+#loadingMessage {
+  color: white;  /* Texto en blanco */
+  font-size: 24px;  /* Tamaño de fuente para que se vea bien */
+  font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
+  text-align: center;
+  padding: 20px;  /* Espaciado interno */
+}
+
     </style>
 </head>
 <body>
 
-<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
-<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-
     <div class="header">
         Pisos Brillantes
     </div>
+
+
+
+<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
+<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
+
 
     <div class="container">
         <h1>Reporte de Supervisión de Áreas</h1>
@@ -589,6 +634,14 @@ input[type="file"] {
         <button id="backX">Atrás</button>
         <button type="button" id="downloadPdf">Generar Reporte</button>
     </div>
+</div>
+
+
+<!-- Contenedor para bloquear la pantalla -->
+<div id="overlay" style="display: none;">
+  <div id="loadingMessage">
+    <p>Procesando...🥱</p>
+  </div>
 </div>
 
 
@@ -930,102 +983,192 @@ function handleFiles(files) {
 
 
 next0Button.addEventListener('click', () => {
-    // Obtén los valores de los campos
-    const fecha = document.getElementById('fecha').value;  // Reemplaza 'fecha' con el id correcto del campo de fecha
-    const area = document.getElementById('area').value;    // Reemplaza 'area' con el id correcto del campo de área
-
-    // Verifica si los campos están vacíos o el campo área tiene el valor "Selecciona una opción"
-    if (!fecha || !area || area === "Selecciona una opción") {
+    // Obtén los campos
+    const fechaField = document.getElementById('fecha'); // Reemplaza 'fecha' con el id correcto
+    const areaField = document.getElementById('area');   // Reemplaza 'area' con el id correcto
+    
+    let camposCompletados = true; // Bandera para determinar si todos los campos están completos
+    
+    // Validar el campo de fecha
+    let fechaErrorLabel = document.getElementById('error-fecha');
+    if (!fechaErrorLabel) {
+        fechaErrorLabel = document.createElement('span');
+        fechaErrorLabel.id = 'error-fecha';
+        fechaErrorLabel.style.color = 'red';
+        fechaErrorLabel.style.fontSize = '0.9em';
+        fechaErrorLabel.textContent = 'Por favor, selecciona una fecha.';
+        fechaField.parentElement.appendChild(fechaErrorLabel);
+        fechaErrorLabel.style.display = 'none'; // Por defecto, oculto
+    }
+    if (!fechaField.value.trim()) {
+        fechaErrorLabel.style.display = 'block';
+        camposCompletados = false;
     } else {
-        // Si los campos están completos, pasa a la siguiente página
+        fechaErrorLabel.style.display = 'none';
+    }
+
+    // Validar el campo de área
+    let areaErrorLabel = document.getElementById('error-area');
+    if (!areaErrorLabel) {
+        areaErrorLabel = document.createElement('span');
+        areaErrorLabel.id = 'error-area';
+        areaErrorLabel.style.color = 'red';
+        areaErrorLabel.style.fontSize = '0.9em';
+        areaErrorLabel.textContent = 'Por favor, selecciona un área válida.';
+        areaField.parentElement.appendChild(areaErrorLabel);
+        areaErrorLabel.style.display = 'none'; // Por defecto, oculto
+    }
+    if (!areaField.value.trim() || areaField.value === "Selecciona una opción") {
+        areaErrorLabel.style.display = 'block';
+        camposCompletados = false;
+    } else {
+        areaErrorLabel.style.display = 'none';
+    }
+
+    // Agregar validación en tiempo real
+    fechaField.addEventListener('input', () => {
+        if (fechaField.value.trim()) {
+            fechaErrorLabel.style.display = 'none';
+        } else {
+            fechaErrorLabel.style.display = 'block';
+        }
+    });
+
+    areaField.addEventListener('input', () => {
+        if (areaField.value.trim() && areaField.value !== "Selecciona una opción") {
+            areaErrorLabel.style.display = 'none';
+        } else {
+            areaErrorLabel.style.display = 'block';
+        }
+    });
+
+    // Si todos los campos están completos, pasar a la siguiente página
+    if (camposCompletados) {
         document.getElementById('page0').classList.add('hidden');
         document.getElementById('page1').classList.remove('hidden');
     }
 });
 
-        <!-- Página 1: Oficinas -->
 
-        next1Button.addEventListener('click', () => {
-            document.getElementById('page1').classList.add('hidden');
-            document.getElementById('page2').classList.remove('hidden');
+
+function handleNextButton(button, calificarId, startQuestion, endQuestion, currentPageId, nextPageId) {
+    button.addEventListener('click', () => {
+        const calificarElement = document.getElementById(calificarId);
+        const calificarValue = calificarElement.value.trim() || "No";
+        let preguntasCompletadas = true;
+        let calificarCompletado = true;
+
+        // Validar si la pregunta inicial está completada
+        let calificarErrorLabel = document.getElementById(`error-${calificarId}`);
+        if (!calificarErrorLabel) {
+            calificarErrorLabel = document.createElement('span');
+            calificarErrorLabel.id = `error-${calificarId}`;
+            calificarErrorLabel.style.color = 'red';
+            calificarErrorLabel.style.fontSize = '0.9em';
+            calificarErrorLabel.textContent = 'Por favor, seleccione una opción.';
+            calificarElement.parentElement.appendChild(calificarErrorLabel);
+            calificarErrorLabel.style.display = 'none'; // Por defecto, está oculto
+        }
+
+        if (calificarValue === "No") {
+            calificarErrorLabel.style.display = 'none'; // Si es "No", no hay error
+        } else if (calificarValue === "Sí" && !calificarElement.value.trim()) {
+            calificarErrorLabel.style.display = 'block';
+            calificarCompletado = false;
+        } else {
+            calificarErrorLabel.style.display = 'none';
+        }
+
+        // Agregar validación en tiempo real a la pregunta inicial
+        calificarElement.addEventListener('input', () => {
+            if (calificarElement.value.trim()) {
+                calificarErrorLabel.style.display = 'none';
+            } else {
+                calificarErrorLabel.style.display = 'block';
+            }
         });
 
-        back0Button.addEventListener('click', () => {
-            document.getElementById('page1').classList.add('hidden');
-            document.getElementById('page0').classList.remove('hidden');
-        });
+        // Validar subpreguntas si la pregunta inicial es "Sí"
+        if (calificarValue === "Sí") {
+            for (let i = startQuestion; i <= endQuestion; i++) {
+                const pregunta = document.getElementById(`question${i}`);
+                let errorLabel = document.getElementById(`error-question${i}`);
 
-        <!-- Página 2: Pasillos -->
+                // Crear un mensaje de error si no existe
+                if (!errorLabel) {
+                    errorLabel = document.createElement('span');
+                    errorLabel.id = `error-question${i}`;
+                    errorLabel.style.color = 'red';
+                    errorLabel.style.fontSize = '0.9em';
+                    errorLabel.textContent = 'Esta pregunta es obligatoria.';
+                    pregunta.parentElement.appendChild(errorLabel);
+                    errorLabel.style.display = 'none'; // Por defecto está oculto
+                }
 
-        back1Button.addEventListener('click', () => {
-            document.getElementById('page2').classList.add('hidden');
-            document.getElementById('page1').classList.remove('hidden');
-        });
+                // Mostrar o esconder el mensaje de error
+                if (!pregunta || !pregunta.value.trim()) {
+                    preguntasCompletadas = false;
+                    errorLabel.style.display = 'block'; // Mostrar el error si no está contestada
+                } else {
+                    errorLabel.style.display = 'none'; // Ocultar el error si está contestada
+                }
 
-        next2Button.addEventListener('click', () => {
-            document.getElementById('page2').classList.add('hidden');
-            document.getElementById('page3').classList.remove('hidden');
-        });
+                // Validar en tiempo real si la pregunta es respondida
+                pregunta.addEventListener('input', () => {
+                    if (pregunta.value.trim()) {
+                        errorLabel.style.display = 'none'; // Ocultar el error si se completa
+                    } else {
+                        errorLabel.style.display = 'block'; // Mostrar el error si queda vacío
+                    }
+                });
+            }
+        }
 
-        <!-- Página 3: Food Court / Área de Comida-->
+        // Verificar las condiciones finales
+        if (!calificarCompletado || (calificarValue === "Sí" && !preguntasCompletadas)) {
+            return; // Detener la ejecución de la función
+        }
 
-        back2Button.addEventListener('click', () => {
-            document.getElementById('page3').classList.add('hidden');
-            document.getElementById('page2').classList.remove('hidden');
-        });
+        // Si las condiciones se cumplen, cambiar de página
+        document.getElementById(currentPageId).classList.add('hidden');
+        document.getElementById(nextPageId).classList.remove('hidden');
+    });
+}
 
-        next3Button.addEventListener('click', () => {
-            document.getElementById('page3').classList.add('hidden');
-            document.getElementById('page4').classList.remove('hidden');
-        });
+// Configurar los botones
+handleNextButton(next1Button, 'calificarOficinas', 1, 15, 'page1', 'page2');
+handleNextButton(next2Button, 'calificarPasillos', 16, 24, 'page2', 'page3');
+handleNextButton(next3Button, 'calificarFood', 25, 37, 'page3', 'page4');
+handleNextButton(next4Button, 'calificarBano', 38, 51, 'page4', 'page5');
+handleNextButton(next5Button, 'calificarAlrededor', 52, 57, 'page5', 'page6');
+handleNextButton(next6Button, 'calificarPractica', 58, 67, 'page6', 'page7');
 
-        <!-- Página 4: Baños -->
 
-        back3Button.addEventListener('click', () => {
-            document.getElementById('page4').classList.add('hidden');
-            document.getElementById('page3').classList.remove('hidden');
-        });
 
-        next4Button.addEventListener('click', () => {
-            document.getElementById('page4').classList.add('hidden');
-            document.getElementById('page5').classList.remove('hidden');
-        });
 
-        <!-- Página 5: Alrededores -->
 
-        back4Button.addEventListener('click', () => {
-            document.getElementById('page5').classList.add('hidden');
-            document.getElementById('page4').classList.remove('hidden');
-        });
+function handleBackButton(button, currentPageId, previousPageId) {
+    button.addEventListener('click', () => {
+        document.getElementById(currentPageId).classList.add('hidden');
+        document.getElementById(previousPageId).classList.remove('hidden');
+    });
+}
 
-        next5Button.addEventListener('click', () => {
-            document.getElementById('page5').classList.add('hidden');
-            document.getElementById('page6').classList.remove('hidden');
-        });
+// Configurar los botones de retroceso
+handleBackButton(back0Button, 'page1', 'page0');
+handleBackButton(back1Button, 'page2', 'page1');
+handleBackButton(back2Button, 'page3', 'page2');
+handleBackButton(back3Button, 'page4', 'page3');
+handleBackButton(back4Button, 'page5', 'page4');
+handleBackButton(back5Button, 'page6', 'page5');
+handleBackButton(back6Button, 'page7', 'page6');
 
-        <!-- Página 6: Buenas Prácticas -->
+// Botón de avanzar desde la última página
+next7Button.addEventListener('click', () => {
+    document.getElementById('page7').classList.add('hidden');
+    document.getElementById('pageX').classList.remove('hidden');
+});
 
-        back5Button.addEventListener('click', () => {
-            document.getElementById('page6').classList.add('hidden');
-            document.getElementById('page5').classList.remove('hidden');
-        });
-
-        next6Button.addEventListener('click', () => {
-            document.getElementById('page6').classList.add('hidden');
-            document.getElementById('page7').classList.remove('hidden');
-        });
-
-        <!-- Página 7: Comentarios -->
-
-        back6Button.addEventListener('click', () => {
-            document.getElementById('page7').classList.add('hidden');
-            document.getElementById('page6').classList.remove('hidden');
-        });
-
-        next7Button.addEventListener('click', () => {
-            document.getElementById('page7').classList.add('hidden');
-            document.getElementById('pageX').classList.remove('hidden');
-        });
 
 
 
@@ -1142,262 +1285,209 @@ next0Button.addEventListener('click', () => {
             }
         });
 
-        // Función para generar y descargar el PDF
-        downloadPdfButton.addEventListener('click', () => {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            pdf.setFont("times");
-            pdf.setFontSize(12);
-
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const margin = 10;
-
-            let currentY = margin;
-
-            const addQuestionAndAnswer = (question, answer) => {
-                pdf.setFont("times", "bold");
-                pdf.text(question, margin, currentY);
-                currentY += 5;
-
-                pdf.setFont("times", "normal");
-                pdf.text(answer || 'No respondida', margin, currentY);
-                currentY += 10;
-            };
 
 
-pdf.setFont("times", "bold");
-pdf.setFontSize(16);  // Establecer tamaño de fuente a 16
+// Función para generar y descargar el PDF
+downloadPdfButton.addEventListener('click', () => {
+
+    // Verificar si no hay imágenes adjuntas
+    if (images.length === 0) {
+        alert("Sin evidencia no hay reporte. 🤨😝");
+        return; // Si no hay imágenes, no continúa la ejecución
+    }
 
 
-pdf.text("Reporte de Supervisión", margin, currentY);
-currentY += 15;
-
-pdf.text("Proyecto: Cementera Argos", margin, currentY);
-currentY += 15;
-
-pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", margin, currentY);
-currentY += 15;
-
-pdf.text("Correo: jromero@grupomacdel.com", margin, currentY);
-currentY += 15;
-
-pdf.text("Actividad: Supervisión de Áreas (Específico)", margin, currentY);
-currentY += 10;
+    // Mostrar overlay de espera
+    document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
 
 
-// Dibujar la línea horizontal debajo del texto
-var lineWidth = 180;  // Longitud de la línea horizontal (ajústalo según necesites)
-pdf.line(margin, currentY, margin + lineWidth, currentY);  // La línea comienza en (margin, currentY) y termina en (margin + lineWidth, currentY)
+    const { jsPDF } = window.jspdf;
+    
+    // Crear una instancia de jsPDF con tamaño carta (215.9 x 279.4 mm)
+    const pdf = new jsPDF('p', 'mm', 'letter'); // 'p' = página en orientación vertical, 'mm' = milímetros, 'letter' = tamaño carta
+    
+    // Definir los márgenes
+    const margin = 10;
+    
+    // Obtener el tamaño de la página (carta)
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    
+    // Inicializar la posición Y
+    let currentY = margin;
+    
+    const addQuestionAndAnswer = (question, answer) => {
+        // Ajustar la pregunta con un maxWidth para evitar que se desborde
+        const questionLines = pdf.splitTextToSize(question, pageWidth - 2 * margin);  // Dividir la pregunta si excede el ancho
+        pdf.setFont("times", "bold");
+        pdf.text(questionLines, margin, currentY);  // Usamos text con las líneas ajustadas
+        currentY += questionLines.length * 8;  // Aumentamos el espaciado entre la pregunta y la siguiente línea (de 5 a 8)
 
-// Actualizamos currentY para dejar espacio debajo de la línea
-currentY += 10;  // Ajusta el valor de acuerdo a cuánto espacio quieras después de la línea
+        // Ajustar la respuesta con maxWidth para que también se ajuste en varias líneas
+        const answerLines = pdf.splitTextToSize(answer || 'No respondida', pageWidth - 2 * margin);  // Dividir la respuesta si excede el ancho
+        pdf.setFont("times", "normal");
+        pdf.text(answerLines, margin, currentY);  // Usamos text con las líneas ajustadas
+        currentY += answerLines.length * 8;  // Aumentamos el espaciado entre la respuesta y la siguiente pregunta (de 5 a 8)
+    };
 
+    // Portada
+    pdf.setFont("times", "bold");
+    pdf.setFontSize(16);  // Establecer tamaño de fuente a 16
 
-pdf.text("Fecha: " + document.getElementById('fecha').value, margin, currentY);
-currentY += 15;
+    pdf.text("Reporte de Supervisión", margin, currentY);
+    currentY += 15;
 
-pdf.text("Área a Supervisar: " + document.getElementById('area').value, margin, currentY);
-currentY += 15;
+    pdf.text("Proyecto: Cementera Argos", margin, currentY);
+    currentY += 15;
 
-// Obtener el valor del campo 'oficina'
-let oficinaValue = document.getElementById('oficina').value;
+    pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", margin, currentY);
+    currentY += 15;
 
-// Verificar si el valor no está vacío
-if (oficinaValue !== "") {
-    // Si el valor no está vacío, agregarlo al PDF
-    pdf.text("Oficina: " + oficinaValue, margin, currentY);
-    currentY += 15;  // Aumentar la posición Y para la siguiente línea
+    pdf.text("Correo: jromero@grupomacdel.com", margin, currentY);
+    currentY += 15;
+
+    pdf.text("Actividad: Supervisión de Áreas (Específico)", margin, currentY);
+    currentY += 10;
+
+    // Línea horizontal
+    const lineWidth = 180;
+    pdf.line(margin, currentY, margin + lineWidth, currentY);
+    currentY += 10;  // Espacio debajo de la línea
+
+    pdf.text("Fecha: " + document.getElementById('fecha').value, margin, currentY);
+    currentY += 15;
+
+    pdf.text("Área a Supervisar: " + document.getElementById('area').value, margin, currentY);
+    currentY += 15;
+
+    // Si oficina no está vacía, agregarla
+    let oficinaValue = document.getElementById('oficina').value;
+    if (oficinaValue !== "") {
+        pdf.text("Oficina: " + oficinaValue, margin, currentY);
+        currentY += 15;
+    }
+
+// Obtener el valor de medidas
+let medidas = document.getElementById('medidas').value.trim();
+
+// Eliminar emojis (caracteres no ASCII)
+medidas = medidas.replace(/[^\x00-\x7F]/g, '');
+
+// Solo agregar el texto de medidas si no está vacío
+if (medidas) {
+    // Añadir título
+    pdf.text("Medidas tomadas en caso de una no conformidad:", margin, currentY);
+    currentY += 10;
+
+    // Cambiar la fuente a una que soporte emojis (si es necesario)
+    pdf.setFont("Arial", "normal");
+
+    // Añadir el texto de medidas con un ancho máximo
+    pdf.text(medidas, margin, currentY, { maxWidth: pageWidth - 2 * margin });
+    currentY += 20;
+} else {
+    // Si no hay medidas, no hacer nada
+    console.log("No hay medidas para mostrar.");
 }
 
-pdf.text("Medidas tomadas en caso de una no conformidad:", margin, currentY);
-currentY += 10; // Espacio entre la pregunta y la respuesta
 
-pdf.setFont("times", "normal");
+    // Función para agregar preguntas y respuestas con ajuste de texto
+    const addSection = (sectionName, questions) => {
+        pdf.addPage();
+        currentY = margin;
+        pdf.setFont("times", "bold");
+        pdf.setFontSize(12);  // Establecer tamaño de fuente a 16
 
-pdf.text(document.getElementById('medidas').value, margin, currentY, { maxWidth: pageWidth - 2 * margin });
-currentY += 20; // Espacio para el siguiente contenido
+        pdf.text(sectionName, margin, currentY);
 
+        // Línea horizontal
+        const lineY = currentY + 2;
+        pdf.line(margin, lineY, pageWidth - margin, lineY);
+        currentY += 10;
 
-
-
-
-
-pdf.setFontSize(11);  // Establecer tamaño de fuente a 11
-
-
-            // Agregar preguntas y respuestas solo si "Sí" fue seleccionado para oficinas
-            if (calificarOficinasSelect.value === 'Sí') {
-            pdf.addPage();
-            currentY = margin;
-
-                pdf.setFont("times", "bold");
-                pdf.text("Oficinas", margin, currentY);
-
-// Agregar una línea horizontal debajo del texto
-const lineY = currentY + 2;  // Ajusta la distancia de la línea respecto al texto
-pdf.line(margin, lineY, pdf.internal.pageSize.getWidth() - margin, lineY);
-
-                currentY += 10;
-                questionsOficinas.forEach((q) => {
-                    addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-                });
-                currentY += 10;
-            }
-
-            // Agregar preguntas y respuestas solo si "Sí" fue seleccionado para pasillos
-            if (calificarPasillosSelect.value === 'Sí') {
-            pdf.addPage();
-            currentY = margin;
-                pdf.setFont("times", "bold");
-                pdf.text("Pasillos", margin, currentY);
-
-// Agregar una línea horizontal debajo del texto
-const lineY = currentY + 2;  // Ajusta la distancia de la línea respecto al texto
-pdf.line(margin, lineY, pdf.internal.pageSize.getWidth() - margin, lineY);
-
-                currentY += 10;
-                questionsPasillos.forEach((q) => {
-                    addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-                });
-                currentY += 10;
-            }
-
-            // Agregar preguntas y respuestas solo si "Sí" fue seleccionado para Food Court / Área de Comida
-            if (calificarFoodSelect.value === 'Sí') {
-            pdf.addPage();
-            currentY = margin;
-                pdf.setFont("times", "bold");
-                pdf.text("Food Court / Área de Comida", margin, currentY);
-
-// Agregar una línea horizontal debajo del texto
-const lineY = currentY + 2;  // Ajusta la distancia de la línea respecto al texto
-pdf.line(margin, lineY, pdf.internal.pageSize.getWidth() - margin, lineY);
-
-                currentY += 10;
-                questionsFood.forEach((q) => {
-                    addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-                });
-                currentY += 10;
-            }
-
-            // Agregar preguntas y respuestas solo si "Sí" fue seleccionado para Baños
-            if (calificarBanoSelect.value === 'Sí') {
-            pdf.addPage();
-            currentY = margin;
-                pdf.setFont("times", "bold");
-                pdf.text("Baños", margin, currentY);
-
-// Agregar una línea horizontal debajo del texto
-const lineY = currentY + 2;  // Ajusta la distancia de la línea respecto al texto
-pdf.line(margin, lineY, pdf.internal.pageSize.getWidth() - margin, lineY);
-
-                currentY += 10;
-                questionsBano.forEach((q) => {
-                    addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-                });
-                currentY += 10;
-            }
-
-            // Agregar preguntas y respuestas solo si "Sí" fue seleccionado para Alrededores
-            if (calificarAlrededorSelect.value === 'Sí') {
-            pdf.addPage();
-            currentY = margin;
-                pdf.setFont("times", "bold");
-                pdf.text("Alrededores", margin, currentY);
-
-// Agregar una línea horizontal debajo del texto
-const lineY = currentY + 2;  // Ajusta la distancia de la línea respecto al texto
-pdf.line(margin, lineY, pdf.internal.pageSize.getWidth() - margin, lineY);
-
-                currentY += 10;
-                questionsAlrededor.forEach((q) => {
-                    addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-                });
-                currentY += 10;
-            }
-
-            // Agregar preguntas y respuestas solo si "Sí" fue seleccionado para las buenas prácticas
-            if (calificarPracticaSelect.value === 'Sí') {
-            pdf.addPage();
-            currentY = margin;
-                pdf.setFont("times", "bold");
-                pdf.text("Buenas Prácticas", margin, currentY);
-
-// Agregar una línea horizontal debajo del texto
-const lineY = currentY + 2;  // Ajusta la distancia de la línea respecto al texto
-pdf.line(margin, lineY, pdf.internal.pageSize.getWidth() - margin, lineY);
-
-                currentY += 10;
-                questionsPractica.forEach((q) => {
-                    addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-                });
-                currentY += 10;
-            }
-
-
-
-
-
-
-
-
-
-
-            pdf.addPage();
-
-            const cellWidth = (pageWidth - 2 * margin) / 3;
-            const cellHeight = (pageHeight - 2 * margin) / 5;
-            const spacing = 3;
-
-            images.forEach((image, index) => {
-                const row = Math.floor(index / 3) % 5;
-                const col = index % 3;
-
-                const xOffset = col * cellWidth + spacing + margin;
-                const yOffset = row * cellHeight + spacing + margin;
-
-                const img = new Image();
-                img.src = image;
-                img.onload = () => {
-                    let imgWidth = img.width;
-                    let imgHeight = img.height;
-                    let scale = Math.min((cellWidth - spacing) / imgWidth, (cellHeight - spacing) / imgHeight);
-                    let newWidth = imgWidth * scale;
-                    let newHeight = imgHeight * scale;
-
-                    const xCentered = xOffset + (cellWidth - newWidth) / 2;
-                    const yCentered = yOffset + (cellHeight - newHeight) / 2;
-
-                    pdf.addImage(image, 'JPEG', xCentered, yCentered, newWidth, newHeight);
-
-                    if ((index + 1) % 15 === 0 && index + 1 < images.length) {
-                        pdf.addPage();
-                    }
-
-                    if (index === images.length - 1) {
-// Obtener los elementos de fecha, área y oficina (si es aplicable)
-let fecha = document.getElementById('fecha').value;  // Obtener el valor del input de tipo date
-let area = document.getElementById('area').value;    // Obtener el valor del select
-let oficina = document.getElementById('oficina').value; // Obtener el valor del campo de oficina
-
-// Inicializar el nombre del archivo con la fecha y el área
-let nombreArchivo = `${fecha} - Reporte de Supervisión - ${area}`;
-
-// Si el área es "Administración" y la oficina no está vacía, añadir la oficina al nombre del archivo
-if (area === "Administración" && oficina) {
-    nombreArchivo += ` - ${oficina}`;
-}
-
-// Agregar la extensión ".pdf"
-nombreArchivo += ".pdf";
-
-// Generar y descargar el archivo PDF con el nombre dinámico
-pdf.save(nombreArchivo);
-                    }
-                };
-            });
+        questions.forEach((q) => {
+            addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
         });
+        currentY += 10;
+    };
+
+    // Agregar preguntas de secciones, solo si "Sí" fue seleccionado
+    if (calificarOficinasSelect.value === 'Sí') addSection("Oficinas", questionsOficinas);
+    if (calificarPasillosSelect.value === 'Sí') addSection("Pasillos", questionsPasillos);
+    if (calificarFoodSelect.value === 'Sí') addSection("Food Court / Área de Comida", questionsFood);
+    if (calificarBanoSelect.value === 'Sí') addSection("Baños", questionsBano);
+    if (calificarAlrededorSelect.value === 'Sí') addSection("Alrededores", questionsAlrededor);
+    if (calificarPracticaSelect.value === 'Sí') addSection("Buenas Prácticas", questionsPractica);
+
+    // Página de imágenes
+    pdf.addPage();
+
+    const cellWidth = (pageWidth - 2 * margin) / 3;
+    const cellHeight = (pageHeight - 2 * margin) / 5;
+    const spacing = 3;
+
+    images.forEach((image, index) => {
+        const row = Math.floor(index / 3) % 5;
+        const col = index % 3;
+
+        const xOffset = col * cellWidth + spacing + margin;
+        const yOffset = row * cellHeight + spacing + margin;
+
+        const img = new Image();
+        img.src = image;
+        img.onload = () => {
+            let imgWidth = img.width;
+            let imgHeight = img.height;
+            let scale = Math.min((cellWidth - spacing) / imgWidth, (cellHeight - spacing) / imgHeight);
+            let newWidth = imgWidth * scale;
+            let newHeight = imgHeight * scale;
+
+            const xCentered = xOffset + (cellWidth - newWidth) / 2;
+            const yCentered = yOffset + (cellHeight - newHeight) / 2;
+
+            // Convertir la imagen a base64 con un nivel de compresión
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = imgWidth;
+            canvas.height = imgHeight;
+            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+
+            // Comprimir imagen
+            const compressedImage = canvas.toDataURL('image/jpeg', 0.1);
+
+            // Agregar imagen comprimida al PDF
+            pdf.addImage(compressedImage, 'JPEG', xCentered, yCentered, newWidth, newHeight);
+
+            // Nueva página después de 15 imágenes
+            if ((index + 1) % 15 === 0 && index + 1 < images.length) {
+                pdf.addPage();
+            }
+
+            if (index === images.length - 1) {
+                // Obtener los elementos de fecha, área y oficina
+                let fecha = document.getElementById('fecha').value;
+                let area = document.getElementById('area').value;
+                let oficina = document.getElementById('oficina').value;
+
+                let nombreArchivo = `${fecha} - Reporte de Supervisión - ${area}`;
+
+                if (area === "Administración" && oficina) {
+                    nombreArchivo += ` - ${oficina}`;
+                }
+
+                nombreArchivo += ".pdf";
+
+                // Descargar PDF
+                pdf.save(nombreArchivo);
+
+// Ocultar el overlay de espera
+                document.getElementById('overlay').style.display = 'none';  // Ocultar el bloqueador de pantalla
+
+            }
+        };
+    });
+});
+
     </script>
 </body>
 </html>
