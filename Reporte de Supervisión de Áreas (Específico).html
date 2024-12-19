@@ -7,58 +7,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Estilo general para body */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-/* Estilo general para body */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    min-height: 100vh;
-}
+        /* Header */
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.5em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-/* Header */
-.header {
-    background-color: #007BFF;
-    color: white;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 1.5em;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    margin: 0;
-    box-sizing: border-box;
-    position: relative; /* Aseguramos que el header esté dentro del flujo de la página */
-}
+        /* Contenedor del formulario */
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
 
-/* Ajustes para pantallas pequeñas */
-@media (max-width: 768px) {
-    .header {
-        padding: 10px 0; /* Reducimos el padding en pantallas pequeñas */
-        font-size: 1.2em; /* Ajustamos el tamaño de la fuente */
-        box-sizing: border-box; /* Aseguramos que el padding no cause problemas de desbordamiento */
-        width: 100%; /* Aseguramos que ocupe todo el ancho de la pantalla */
-    }
+        /* Mejoras para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .header {
+                font-size: 1.2em;
+                padding: 15px;
+            }
 
-    /* También podemos reducir otros márgenes o padding en otros elementos si es necesario */
-    body, .container {
-        margin: 0;
-        padding: 0;
-    }
-}
+            .container {
+                padding: 20px;
+            }
 
-
-/* Mejoras para pantallas pequeñas (móviles) */
-@media (max-width: 768px) {
-    .header {
-        font-size: 1.5em;
-        padding: 12px 0;
-    }
-}
+            .container input,
+            .container button {
+                font-size: 1em;
+                padding: 12px;
+                width: 100%;
+            }
+        }
 
 /* Contenedor del formulario */
 .container {
