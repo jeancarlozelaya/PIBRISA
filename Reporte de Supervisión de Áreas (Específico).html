@@ -1,1494 +1,1390 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Supervisión</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Estilo general para body */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            width: 100%;
-            font-size: 1.5em;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Contenedor del formulario */
-        .container {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-
-        /* Mejoras para pantallas pequeñas */
-        @media (max-width: 768px) {
-            .header {
-                font-size: 1.2em;
-                padding: 15px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            .container input,
-            .container button {
-                font-size: 1em;
-                padding: 12px;
-                width: 100%;
-            }
-        }
-
-/* Contenedor del formulario */
-.container {
-    background: #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 30px;
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
-    margin: 40px auto;
-    grid-row: 2;
-    height: auto;
-    box-sizing: border-box;
-}
-
-/* Mejoras para pantallas pequeñas (móviles) */
-@media (max-width: 768px) {
-    .container {
-        width: 100%;
-        max-width: none;
-        margin: 20px 0;
-        padding: 20px;
-    }
-
-    .container input,
-    .container button {
-        font-size: 1em;
-        padding: 10px;
-        width: 100%;
-    }
-
-    body {
-        padding: 0 10px;
-    }
-}
-
-/* Estilo para los botones dentro del contenedor */
-.container button {
-    display: inline-block;
-    margin-top: 20px;
-    background-color: #007BFF;
-    color: white;
-    border: 2px solid #007BFF;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-/* Botones en pantallas pequeñas */
-@media (max-width: 768px) {
-    .container button {
-        width: auto;
-        display: inline-block;
-        margin-right: 10px;
-    }
-}
-
-/* Centrado de los botones */
-.container .button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-/* Estilos para el área de arrastrar y soltar */
-.file-drop-area {
-    border: 2px dashed #007BFF;
-    border-radius: 10px;
-    padding: 40px 20px;
-    text-align: center;
-    cursor: pointer;
-    font-size: 16px;
-    background-color: #f0f8ff;
-    color: #007BFF;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    margin: 10px 0;
-}
-
-.file-drop-area.dragover {
-    background-color: #e6f7ff;
-    border-color: #0056b3;
-}
-
-.file-drop-area:hover {
-    background-color: #e6f7ff;
-    border-color: #0056b3;
-}
-
-/* Ocultar el input file real */
-input[type="file"] {
-    display: none;
-}
-
-/* Vista previa de las imágenes */
-#preview {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-#preview .image-container {
-    position: relative;
-    display: inline-block;
-    margin: 10px;
-    cursor: pointer;
-}
-
-#preview img {
-    max-width: 150px;
-    max-height: 150px;
-    margin: 0;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    transition: transform 0.3s, filter 0.3s;
-}
-
-#preview img:hover {
-    filter: brightness(0.8);
-    transform: scale(1.05);
-}
-
-.delete-trash {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 30px;
-    color: red;
-    display: none;
-    transition: opacity 0.3s;
-}
-
-#preview .image-container:hover .delete-trash {
-    display: block;
-    opacity: 1;
-}
-
-/* Estilos generales de los botones */
-button {
-    background-color: #007BFF;
-    color: white;
-    border: 2px solid #007BFF;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s;
-    margin-top: 20px;
-    width: auto;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    border-color: #ccc;
-}
-
-button:hover:not(:disabled) {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
-
-/* Estilo para el campo .file-label */
-.file-label {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.file-label:hover {
-    background-color: #0056b3;
-}
-
-input[type="file"] {
-    display: none;
-}
-
-/* Estilo para los contenedores de preguntas */
-.question-container {
-    margin-bottom: 20px;
-    text-align: left;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s;
-    box-sizing: border-box;
-}
-
-.question-container:hover {
-    border-color: #007BFF;
-}
-
-.question-container input[type="date"],
-.question-container textarea,
-.question-container select {
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-    box-sizing: border-box;
-    margin-top: 5px;
-}
-
-.question-container input[type="date"]:focus,
-.question-container textarea:focus,
-.question-container select:focus {
-    border-color: #007BFF;
-    outline: none;
-}
-
-/* Estilos específicos para el campo select */
-.question-container select {
-    font-size: 16px;
-    padding: 10px;
-}
-
-/* Estilos de las etiquetas */
-.question-container label {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 5px;
-    display: block;
-}
-
-/* Medidas responsivas */
-@media (max-width: 768px) {
-    .question-container {
-        padding: 15px;
-        margin-bottom: 15px;
-    }
-
-    .question-container input[type="date"],
-    .question-container textarea,
-    .question-container select {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    .question-container label {
-        font-size: 18px;
-    }
-}
-
-/* Estilos para la sección "oficina" */
-#oficina {
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-    resize: vertical;
-    box-sizing: border-box;
-}
-
-#oficina:focus {
-    border-color: #007BFF;
-    outline: none;
-}
-
-/* Estilo para el textarea con id "medidas" */
-#medidas {
-    padding: 20px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-    resize: vertical;
-    box-sizing: border-box;
-    height: 250px;
-}
-
-/* Estilo para el botón "Volver al Inicio" */
-.back-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    font-size: 1em;
-    transition: background-color 0.3s, transform 0.3s;
-    position: fixed;
-    top: 80px;
-    left: 0px;
-    z-index: 1001;
-}
-
-.back-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-/* Estilo adicional para dispositivos móviles */
-@media screen and (max-width: 600px) {
-    .back-button {
-        font-size: 0.9em;
-        padding: 12px 18px;
-        top: 57px;
-    }
-}
-
-/* Sección adicional */
-.form-section {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 2px solid #f4f4f9;
-}
-
-/* Ocultar elementos */
-.hidden {
-    display: none;
-}
-
-
-
-/* Estilo del overlay (pantalla bloqueada) */
-#overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
-}
-#loadingMessage {
-  color: white;  /* Texto en blanco */
-  font-size: 24px;  /* Tamaño de fuente para que se vea bien */
-  font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
-  text-align: center;
-  padding: 20px;  /* Espaciado interno */
-}
-
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        Pisos Brillantes
-    </div>
-
-
-
-<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
-<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-
-
-
-    <div class="container">
-        <h1>Reporte de Supervisión de Áreas</h1>
-
-        <!-- Página 0: Ingreso de Fecha y Área -->
-        <div id="page0">
-            <div class="question-container">
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" value="" />
-            </div>
-
-            <div class="question-container">
-                <label for="area">Área:</label>
-                <select id="area">
-<option value="Selecciona una opción">Selecciona una opción</option>
-<option value="Administración">Administración</option>
-<option value="Almacén General">Almacén General</option>
-<option value="Baños de Administración (Hombres)">Baños de Administración (Hombres)</option>
-<option value="Baños de Administración (Mujeres)">Baños de Administración (Mujeres)</option>
-<option value="Baños de Transportistas">Baños de Transportistas</option>
-<option value="Bodega de Limpieza">Bodega de Limpieza</option>
-<option value="Camerinos Contratistas">Camerinos Contratistas</option>
-<option value="Camerinos Permanentes">Camerinos Permanentes</option>
-<option value="Chiminike">Chiminike</option>
-<option value="Club de Argos">Club de Argos</option>
-<option value="Despacho">Despacho</option>
-<option value="Enfermería">Enfermería</option>
-<option value="Equipo Móvil">Equipo Móvil</option>
-<option value="Expedición">Expedición</option>
-<option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
-<option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
-<option value="Machaqueo A">Machaqueo A</option>
-<option value="Posta Principal">Posta Principal</option>
-<option value="Sala de Control">Sala de Control</option>
-<option value="Sala de Maternidad">Sala de Maternidad</option>
-<option value="Salón Vial">Salón Vial</option>
-<option value="Taller Eléctrico">Taller Eléctrico</option>
-                </select>
-            </div>
-
-
-
-
-            <button id="next0">Siguiente</button>
-        </div>
-
-        <!-- Página 1: Calificación de Oficinas -->
-        <div id="page1" class="hidden">
-            <div class="question-container">
-                <label for="calificarOficinas">¿Deseas calificar las Oficinas?</label>
-                <select id="calificarOficinas">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-
-            <div id="questionsSectionOficinas" style="display: none;">
-
-<!-- Casilla "Nombre de Oficina" que estará oculta por defecto -->
-<div id="oficinaAdministracion" class="question-container" style="display: none;">
-    <label for="oficina">Oficina de Administración:</label>
-    <input type="text" id="oficina" placeholder="Especifica la oficina" />
-</div>
-
-
-                <!-- Preguntas generadas dinámicamente para oficinas -->
-            </div>
-
-            <button id="back0">Atrás</button>
-            <button id="next1">Siguiente</button>
-        </div>
-
-        <!-- Página 2: Calificación de Pasillos -->
-        <div id="page2" class="hidden">
-            <div class="question-container">
-                <label for="calificarPasillos">¿Deseas calificar los Pasillos?</label>
-                <select id="calificarPasillos">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-
-            <div id="questionsSectionPasillos" style="display: none;">
-                <!-- Preguntas generadas dinámicamente para pasillos -->
-            </div>
-
-            <button id="back1">Atrás</button>
-            <button id="next2">Siguiente</button>
-        </div>
-
-        <!-- Página 3: Calificación de Food Court / Área de Comida -->
-        <div id="page3" class="hidden">
-            <div class="question-container">
-                <label for="calificarFood">¿Deseas calificar el Food Court / Área de Comida?</label>
-                <select id="calificarFood">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-
-            <div id="questionsSectionFood" style="display: none;">
-                <!-- Preguntas generadas dinámicamente para Food Court / Área de Comida -->
-            </div>
-
-            <button id="back2">Atrás</button>
-            <button id="next3">Siguiente</button>
-        </div>
-
-        <!-- Página 4: Calificación de Baños -->
-        <div id="page4" class="hidden">
-            <div class="question-container">
-                <label for="calificarBano">¿Deseas calificar los Baños?</label>
-                <select id="calificarBano">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-
-            <div id="questionsSectionBano" style="display: none;">
-                <!-- Preguntas generadas dinámicamente para Baños -->
-            </div>
-
-            <button id="back3">Atrás</button>
-            <button id="next4">Siguiente</button>
-        </div>
-
-        <!-- Página 5: Calificación de Alrededores -->
-        <div id="page5" class="hidden">
-            <div class="question-container">
-                <label for="calificarAlrededor">¿Deseas calificar los Alrededores?</label>
-                <select id="calificarAlrededor">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-
-            <div id="questionsSectionAlrededor" style="display: none;">
-                <!-- Preguntas generadas dinámicamente para Alrededores -->
-            </div>
-
-            <button id="back4">Atrás</button>
-            <button id="next5">Siguiente</button>
-        </div>
-
-        <!-- Página 6: Calificación de Buenas Prácticas -->
-        <div id="page6" class="hidden">
-            <div class="question-container">
-                <label for="calificarPractica">¿Deseas calificar las Buenas Prácticas?</label>
-                <select id="calificarPractica">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-
-            <div id="questionsSectionPractica" style="display: none;">
-                <!-- Preguntas generadas dinámicamente para las buenas prácticas -->
-            </div>
-
-            <button id="back5">Atrás</button>
-            <button id="next6">Siguiente</button>
-        </div>
-
-        <!-- Página 7: Comentarios -->
-        <div id="page7" class="hidden">
-            <div class="question-container">
-                <label for="medidas">¿Qué medidas se tomaron en caso de una no conformidad?</label>
-                <textarea id="medidas" rows="4" cols="50" placeholder="Escribe aquí tus comentarios..."></textarea>
-            </div>
-
-            <button id="back6">Atrás</button>
-            <button id="next7">Siguiente</button>
-        </div>
-
-
-
-
-
-
-
-
-        <!-- Página X: Subir imágenes y Descargar PDF -->
-        <div id="pageX" class="hidden">
-
-<div class="form-section">
-    <!-- Contenedor para simular el botón de arrastrar y soltar -->
-    <div class="file-drop-area" id="fileDropArea">
-        <p>Haz clic para seleccionar las imágenes</p>
-        <input type="file" id="imageInput" accept="image/*" multiple>
-    </div>
-    
-    <div id="preview"></div>
-
-    <div class="button-container">
-        <button id="backX">Atrás</button>
-        <button type="button" id="downloadPdf">Generar Reporte</button>
-    </div>
-</div>
-
-
-<!-- Contenedor para bloquear la pantalla -->
-<div id="overlay" style="display: none;">
-  <div id="loadingMessage">
-    <p>Procesando...🥱</p>
-  </div>
-</div>
-
-
-
-
-
-
-    <script>
-
-
-function goBack() {
-    window.history.back();  // Esto hace que el navegador vuelva a la página anterior
-}
-
-        // Establecer la fecha actual por defecto
-        window.onload = function() {
-            const fechaInput = document.getElementById("fecha");
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            let mm = today.getMonth() + 1; // Los meses van de 0 a 11
-            let dd = today.getDate();
-
-            // Formatear la fecha a formato YYYY-MM-DD
-            if (mm < 10) mm = '0' + mm;
-            if (dd < 10) dd = '0' + dd;
-
-            const formattedDate = yyyy + '-' + mm + '-' + dd;
-            fechaInput.value = formattedDate;
-        };
-
-const dropArea = document.getElementById('fileDropArea'); // El área para arrastrar y soltar
-const fileInput = document.getElementById('imageInput'); // El input file real
-const previewDiv = document.getElementById('preview'); // Div para vista previa de las imágenes
-
-// Cuando un archivo está sobre el área (evitar comportamiento predeterminado del navegador)
-dropArea.addEventListener('dragover', (e) => {
-    e.preventDefault(); // Prevenir el comportamiento por defecto (abrir el archivo)
-    dropArea.classList.add('dragover'); // Cambiar el estilo cuando se arrastra un archivo
-});
-
-// Cuando el archivo se deja dentro del área
-dropArea.addEventListener('drop', (e) => {
-    e.preventDefault(); // Prevenir el comportamiento por defecto
-    dropArea.classList.remove('dragover'); // Eliminar la clase de estilo cuando se deja el archivo
-
-    const files = e.dataTransfer.files; // Obtener los archivos arrastrados
-    handleFiles(files); // Manejar los archivos arrastrados
-});
-
-// Si el archivo sale del área sin ser soltado
-dropArea.addEventListener('dragleave', () => {
-    dropArea.classList.remove('dragover'); // Eliminar la clase de estilo cuando el archivo sale del área
-});
-
-// Cuando se hace clic en el área de arrastre, abrir el input file
-dropArea.addEventListener('click', () => {
-    fileInput.click(); // Abrir el cuadro de selección de archivo
-});
-
-// Cuando el input file cambia (selección manual de archivos)
-fileInput.addEventListener('change', () => {
-    const files = fileInput.files;
-    handleFiles(files); // Manejar los archivos seleccionados
-});
-
-// Función para manejar los archivos (tanto arrastrados como seleccionados)
-function handleFiles(files) {
-    previewDiv.innerHTML = ''; // Limpiar la vista previa antes de mostrar nuevas imágenes
-
-    // Mostrar miniaturas de las imágenes seleccionadas
-    Array.from(files).forEach(file => {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file); // Crear una URL temporal para mostrar la imagen
-        previewDiv.appendChild(img); // Añadir la imagen al contenedor de vista previa
-    });
-}
-
-
-
-
-    // Obtener el select y la casilla de "Oficina de Administración"
-    const areaSelect = document.getElementById('area');
-    const oficinaAdministracionDiv = document.getElementById('oficinaAdministracion');
-
-    // Añadir un evento para detectar el cambio en el select
-    areaSelect.addEventListener('change', () => {
-        if (areaSelect.value === 'Administración') {
-            // Mostrar la casilla de Oficina de Administración si se selecciona "Administración"
-            oficinaAdministracionDiv.style.display = 'block';
-        } else {
-            // Ocultar la casilla de Oficina de Administración si se selecciona cualquier otra opción
-            oficinaAdministracionDiv.style.display = 'none';
-        }
-    });
-
-
-
-
-        const questionsOficinas = [
-            { id: 'question1', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
-            { id: 'question2', text: '¿Los escritorios, mesas, estantes, archiveros y demás superficies de trabajo están limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question3', text: '¿Los dispositivos electrónicos compartidos (teléfonos, teclados, computadoras y otros) están limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question4', text: '¿Las superficies de contacto frecuente (manijas, interruptores, pasamanos) están limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question5', text: '¿El oasis se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question6', text: '¿El microondas se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question7', text: '¿Las cafeteras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question8', text: '¿Las refrigeradoras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question9', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question10', text: '¿Las puertas se encuentran limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question11', text: '¿Las sillas están limpias (Sin polvo y patas limpias)?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question12', text: '¿El piso está limpio y sin manchas visibles?', options: ['Sí', 'No'] },
-            { id: 'question13', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question14', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question15', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
-        ];
-
-        const questionsPasillos = [
-            { id: 'question16', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
-            { id: 'question17', text: '¿Las superficies de contacto frecuente (manijas, interruptores, pasamanos) están limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question18', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question19', text: '¿Los extintores se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question20', text: '¿El piso está limpio y sin manchas visibles?', options: ['Sí', 'No'] },
-            { id: 'question21', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question22', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question23', text: '¿Las cafeteras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question24', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
-        ];
-
-        const questionsFood = [
-            { id: 'question25', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
-            { id: 'question26', text: '¿Las superficies de contacto frecuente (manijas, interruptores, pasamanos) están limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question27', text: '¿El oasis se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question28', text: '¿El microondas se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question29', text: '¿Las cafeteras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question30', text: '¿Las refrigeradoras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question31', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question32', text: '¿Las sillas están limpias (Sin polvo y patas limpias)?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question33', text: '¿Las mesas están limpias?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question34', text: '¿El piso está limpio y sin manchas visible?', options: ['Sí', 'No'] },
-            { id: 'question35', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question36', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question37', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
-
-        ];
-
-        const questionsBano = [
-            { id: 'question38', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
-            { id: 'question39', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
-            { id: 'question40', text: '¿Los pisos están limpios?', options: ['Sí', 'No'] },
-            { id: 'question41', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question42', text: '¿Las paredes se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No'] },
-            { id: 'question43', text: '¿Las puertas se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question44', text: '¿Las divisiones (puertas / acrílicos, etc) se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question45', text: '¿Los lavamanos están limpios, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question46', text: '¿Los espejos están limpios y sin presencia de manchas?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question47', text: '¿Los sanitarios están limpios, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question48', text: '¿Los urinarios están limpios, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question49', text: '¿Las duchas están limpias, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question50', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question51', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
-
-
-        ];
-
-        const questionsAlrededor = [
-            { id: 'question52', text: '¿Las áreas exteriores, incluyendo aceras, entradas se encuentran limpias?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question53', text: '¿Las pilas / piletas se encuentran limpias y en buen estado?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question54', text: '¿Hay presencia de basura, hojas u otros desechos en el suelo?', options: ['Sí', 'No'] },
-            { id: 'question55', text: '¿Los contenedores de basura están saturados de basura?', options: ['Sí', 'No', 'N/A'] },
-            { id: 'question56', text: '¿Las paredes se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No'] },
-            { id: 'question57', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
-
-        ];
-
-        const questionsPractica = [
-            { id: 'question58', text: '¿El personal está cumpliendo con la ejecución y el llenado de los reportes diarios en áreas y baños?', options: ['Sí', 'No'] },
-            { id: 'question59', text: '¿El personal asignado está haciendo buen uso del equipo de protección?', options: ['Sí', 'No'] },
-            { id: 'question60', text: '¿El personal asignado está utilizando correctamente el rótulo de "Limpieza en progreso" durante sus actividades?', options: ['Sí', 'No'] },
-            { id: 'question61', text: '¿Se respeta la codificación de colores en los paños de microfibra para evitar la contaminación cruzada?', options: ['Sí', 'No'] },
-            { id: 'question62', text: '¿Se respeta la codificación de colores en las mechas de trapeador para evitar la contaminación cruzada?', options: ['Sí', 'No'] },
-            { id: 'question63', text: '¿El personal asignado está utilizando adecuadamente las herramientas de limpieza durante su manipulación?', options: ['Sí', 'No'] },
-            { id: 'question64', text: '¿El personal asignado está utilizando los productos químicos de forma segura?', options: ['Sí', 'No'] },
-            { id: 'question65', text: '¿Se almacena correctamente el equipo de limpieza, ordenado y sin restos de suciedad?', options: ['Sí', 'No'] },
-            { id: 'question66', text: '¿Hay alguna herramienta que muestre signos de deterioro o desgaste que puedan afectar su funcionamiento?', options: ['Sí', 'No'] },
-            { id: 'question67', text: '¿Todas las herramientas cuentan con un etiquetado claro y legible que facilite su identificación?', options: ['Sí', 'No'] },
-
-        ];
-
-
-
-
-        const questionsSectionOficinas = document.getElementById('questionsSectionOficinas');
-        const questionsSectionPasillos = document.getElementById('questionsSectionPasillos');
-        const questionsSectionFood = document.getElementById('questionsSectionFood');
-        const questionsSectionBano = document.getElementById('questionsSectionBano');
-        const questionsSectionAlrededor = document.getElementById('questionsSectionAlrededor');
-        const questionsSectionPractica = document.getElementById('questionsSectionPractica');
-
-
-
-
-        // Generar preguntas dinámicamente para oficinas
-        questionsOficinas.forEach((q) => {
-            const questionContainer = document.createElement('div');
-            questionContainer.classList.add('question-container');
-            const label = document.createElement('label');
-            label.setAttribute('for', q.id);
-            label.textContent = q.text;
-            questionContainer.appendChild(label);
-
-            const select = document.createElement('select');
-            select.id = q.id;
-            select.name = q.id;
-            select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
-            questionContainer.appendChild(select);
-
-            questionsSectionOficinas.appendChild(questionContainer);
-        });
-
-        // Generar preguntas dinámicamente para pasillos
-        questionsPasillos.forEach((q) => {
-            const questionContainer = document.createElement('div');
-            questionContainer.classList.add('question-container');
-            const label = document.createElement('label');
-            label.setAttribute('for', q.id);
-            label.textContent = q.text;
-            questionContainer.appendChild(label);
-
-            const select = document.createElement('select');
-            select.id = q.id;
-            select.name = q.id;
-            select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
-            questionContainer.appendChild(select);
-
-            questionsSectionPasillos.appendChild(questionContainer);
-        });
-
-        // Generar preguntas dinámicamente para Food Court / Área de Comida
-        questionsFood.forEach((q) => {
-            const questionContainer = document.createElement('div');
-            questionContainer.classList.add('question-container');
-            const label = document.createElement('label');
-            label.setAttribute('for', q.id);
-            label.textContent = q.text;
-            questionContainer.appendChild(label);
-
-            const select = document.createElement('select');
-            select.id = q.id;
-            select.name = q.id;
-            select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
-            questionContainer.appendChild(select);
-
-            questionsSectionFood.appendChild(questionContainer);
-        });
-
-        // Generar preguntas dinámicamente para Baños
-        questionsBano.forEach((q) => {
-            const questionContainer = document.createElement('div');
-            questionContainer.classList.add('question-container');
-            const label = document.createElement('label');
-            label.setAttribute('for', q.id);
-            label.textContent = q.text;
-            questionContainer.appendChild(label);
-
-            const select = document.createElement('select');
-            select.id = q.id;
-            select.name = q.id;
-            select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
-            questionContainer.appendChild(select);
-
-            questionsSectionBano.appendChild(questionContainer);
-        });
-
-        // Generar preguntas dinámicamente para Alrededores
-        questionsAlrededor.forEach((q) => {
-            const questionContainer = document.createElement('div');
-            questionContainer.classList.add('question-container');
-            const label = document.createElement('label');
-            label.setAttribute('for', q.id);
-            label.textContent = q.text;
-            questionContainer.appendChild(label);
-
-            const select = document.createElement('select');
-            select.id = q.id;
-            select.name = q.id;
-            select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
-            questionContainer.appendChild(select);
-
-            questionsSectionAlrededor.appendChild(questionContainer);
-        });
-
-        // Generar preguntas dinámicamente para las buenas prácticas
-        questionsPractica.forEach((q) => {
-            const questionContainer = document.createElement('div');
-            questionContainer.classList.add('question-container');
-            const label = document.createElement('label');
-            label.setAttribute('for', q.id);
-            label.textContent = q.text;
-            questionContainer.appendChild(label);
-
-            const select = document.createElement('select');
-            select.id = q.id;
-            select.name = q.id;
-            select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
-            questionContainer.appendChild(select);
-
-            questionsSectionPractica.appendChild(questionContainer);
-        });
-
-
-
-        // Botones de navegación entre páginas
-        const next0Button = document.getElementById('next0');
-
-        const next1Button = document.getElementById('next1');
-        const back0Button = document.getElementById('back0');
-
-        const back1Button = document.getElementById('back1');
-        const next2Button = document.getElementById('next2');
-
-        const back2Button = document.getElementById('back2');
-        const next3Button = document.getElementById('next3');
-
-        const back3Button = document.getElementById('back3');
-        const next4Button = document.getElementById('next4');
-
-        const back4Button = document.getElementById('back4');
-        const next5Button = document.getElementById('next5');
-
-        const back5Button = document.getElementById('back5');
-        const next6Button = document.getElementById('next6');
-
-        const back6Button = document.getElementById('back6');
-        const next7Button = document.getElementById('next7');
-
-
-
-        const backXButton = document.getElementById('backX');
-
-
-next0Button.addEventListener('click', () => {
-    // Obtén los campos
-    const fechaField = document.getElementById('fecha'); // Reemplaza 'fecha' con el id correcto
-    const areaField = document.getElementById('area');   // Reemplaza 'area' con el id correcto
-    
-    let camposCompletados = true; // Bandera para determinar si todos los campos están completos
-    
-    // Validar el campo de fecha
-    let fechaErrorLabel = document.getElementById('error-fecha');
-    if (!fechaErrorLabel) {
-        fechaErrorLabel = document.createElement('span');
-        fechaErrorLabel.id = 'error-fecha';
-        fechaErrorLabel.style.color = 'red';
-        fechaErrorLabel.style.fontSize = '0.9em';
-        fechaErrorLabel.textContent = 'Por favor, selecciona una fecha.';
-        fechaField.parentElement.appendChild(fechaErrorLabel);
-        fechaErrorLabel.style.display = 'none'; // Por defecto, oculto
-    }
-    if (!fechaField.value.trim()) {
-        fechaErrorLabel.style.display = 'block';
-        camposCompletados = false;
-    } else {
-        fechaErrorLabel.style.display = 'none';
-    }
-
-    // Validar el campo de área
-    let areaErrorLabel = document.getElementById('error-area');
-    if (!areaErrorLabel) {
-        areaErrorLabel = document.createElement('span');
-        areaErrorLabel.id = 'error-area';
-        areaErrorLabel.style.color = 'red';
-        areaErrorLabel.style.fontSize = '0.9em';
-        areaErrorLabel.textContent = 'Por favor, selecciona un área válida.';
-        areaField.parentElement.appendChild(areaErrorLabel);
-        areaErrorLabel.style.display = 'none'; // Por defecto, oculto
-    }
-    if (!areaField.value.trim() || areaField.value === "Selecciona una opción") {
-        areaErrorLabel.style.display = 'block';
-        camposCompletados = false;
-    } else {
-        areaErrorLabel.style.display = 'none';
-    }
-
-    // Agregar validación en tiempo real
-    fechaField.addEventListener('input', () => {
-        if (fechaField.value.trim()) {
-            fechaErrorLabel.style.display = 'none';
-        } else {
-            fechaErrorLabel.style.display = 'block';
-        }
-    });
-
-    areaField.addEventListener('input', () => {
-        if (areaField.value.trim() && areaField.value !== "Selecciona una opción") {
-            areaErrorLabel.style.display = 'none';
-        } else {
-            areaErrorLabel.style.display = 'block';
-        }
-    });
-
-    // Si todos los campos están completos, pasar a la siguiente página
-    if (camposCompletados) {
-        document.getElementById('page0').classList.add('hidden');
-        document.getElementById('page1').classList.remove('hidden');
-    }
-});
-
-
-
-function handleNextButton(button, calificarId, startQuestion, endQuestion, currentPageId, nextPageId) {
-    button.addEventListener('click', () => {
-        const calificarElement = document.getElementById(calificarId);
-        const calificarValue = calificarElement.value.trim() || "No";
-        let preguntasCompletadas = true;
-        let calificarCompletado = true;
-
-        // Validar si la pregunta inicial está completada
-        let calificarErrorLabel = document.getElementById(`error-${calificarId}`);
-        if (!calificarErrorLabel) {
-            calificarErrorLabel = document.createElement('span');
-            calificarErrorLabel.id = `error-${calificarId}`;
-            calificarErrorLabel.style.color = 'red';
-            calificarErrorLabel.style.fontSize = '0.9em';
-            calificarErrorLabel.textContent = 'Por favor, seleccione una opción.';
-            calificarElement.parentElement.appendChild(calificarErrorLabel);
-            calificarErrorLabel.style.display = 'none'; // Por defecto, está oculto
-        }
-
-        if (calificarValue === "No") {
-            calificarErrorLabel.style.display = 'none'; // Si es "No", no hay error
-        } else if (calificarValue === "Sí" && !calificarElement.value.trim()) {
-            calificarErrorLabel.style.display = 'block';
-            calificarCompletado = false;
-        } else {
-            calificarErrorLabel.style.display = 'none';
-        }
-
-        // Agregar validación en tiempo real a la pregunta inicial
-        calificarElement.addEventListener('input', () => {
-            if (calificarElement.value.trim()) {
-                calificarErrorLabel.style.display = 'none';
-            } else {
-                calificarErrorLabel.style.display = 'block';
-            }
-        });
-
-        // Validar subpreguntas si la pregunta inicial es "Sí"
-        if (calificarValue === "Sí") {
-            for (let i = startQuestion; i <= endQuestion; i++) {
-                const pregunta = document.getElementById(`question${i}`);
-                let errorLabel = document.getElementById(`error-question${i}`);
-
-                // Crear un mensaje de error si no existe
-                if (!errorLabel) {
-                    errorLabel = document.createElement('span');
-                    errorLabel.id = `error-question${i}`;
-                    errorLabel.style.color = 'red';
-                    errorLabel.style.fontSize = '0.9em';
-                    errorLabel.textContent = 'Esta pregunta es obligatoria.';
-                    pregunta.parentElement.appendChild(errorLabel);
-                    errorLabel.style.display = 'none'; // Por defecto está oculto
-                }
-
-                // Mostrar o esconder el mensaje de error
-                if (!pregunta || !pregunta.value.trim()) {
-                    preguntasCompletadas = false;
-                    errorLabel.style.display = 'block'; // Mostrar el error si no está contestada
-                } else {
-                    errorLabel.style.display = 'none'; // Ocultar el error si está contestada
-                }
-
-                // Validar en tiempo real si la pregunta es respondida
-                pregunta.addEventListener('input', () => {
-                    if (pregunta.value.trim()) {
-                        errorLabel.style.display = 'none'; // Ocultar el error si se completa
-                    } else {
-                        errorLabel.style.display = 'block'; // Mostrar el error si queda vacío
-                    }
-                });
-            }
-        }
-
-        // Verificar las condiciones finales
-        if (!calificarCompletado || (calificarValue === "Sí" && !preguntasCompletadas)) {
-            return; // Detener la ejecución de la función
-        }
-
-        // Si las condiciones se cumplen, cambiar de página
-        document.getElementById(currentPageId).classList.add('hidden');
-        document.getElementById(nextPageId).classList.remove('hidden');
-    });
-}
-
-// Configurar los botones
-handleNextButton(next1Button, 'calificarOficinas', 1, 15, 'page1', 'page2');
-handleNextButton(next2Button, 'calificarPasillos', 16, 24, 'page2', 'page3');
-handleNextButton(next3Button, 'calificarFood', 25, 37, 'page3', 'page4');
-handleNextButton(next4Button, 'calificarBano', 38, 51, 'page4', 'page5');
-handleNextButton(next5Button, 'calificarAlrededor', 52, 57, 'page5', 'page6');
-handleNextButton(next6Button, 'calificarPractica', 58, 67, 'page6', 'page7');
-
-
-
-
-
-function handleBackButton(button, currentPageId, previousPageId) {
-    button.addEventListener('click', () => {
-        document.getElementById(currentPageId).classList.add('hidden');
-        document.getElementById(previousPageId).classList.remove('hidden');
-    });
-}
-
-// Configurar los botones de retroceso
-handleBackButton(back0Button, 'page1', 'page0');
-handleBackButton(back1Button, 'page2', 'page1');
-handleBackButton(back2Button, 'page3', 'page2');
-handleBackButton(back3Button, 'page4', 'page3');
-handleBackButton(back4Button, 'page5', 'page4');
-handleBackButton(back5Button, 'page6', 'page5');
-handleBackButton(back6Button, 'page7', 'page6');
-
-// Botón de avanzar desde la última página
-next7Button.addEventListener('click', () => {
-    document.getElementById('page7').classList.add('hidden');
-    document.getElementById('pageX').classList.remove('hidden');
-});
-
-
-
-
-
-
-        <!-- Página X:  -->
-
-        backXButton.addEventListener('click', () => {
-            document.getElementById('pageX').classList.add('hidden');
-            document.getElementById('page7').classList.remove('hidden');
-        });
-
-
-
-
-
-        // Manejar la visibilidad de las preguntas según la respuesta
-        const calificarOficinasSelect = document.getElementById('calificarOficinas');
-        calificarOficinasSelect.addEventListener('change', () => {
-            if (calificarOficinasSelect.value === 'Sí') {
-                questionsSectionOficinas.style.display = 'block';
-            } else {
-                questionsSectionOficinas.style.display = 'none';
-            }
-        });
-
-        const calificarPasillosSelect = document.getElementById('calificarPasillos');
-        calificarPasillosSelect.addEventListener('change', () => {
-            if (calificarPasillosSelect.value === 'Sí') {
-                questionsSectionPasillos.style.display = 'block';
-            } else {
-                questionsSectionPasillos.style.display = 'none';
-            }
-        });
-
-        const calificarFoodSelect = document.getElementById('calificarFood');
-        calificarFoodSelect.addEventListener('change', () => {
-            if (calificarFoodSelect.value === 'Sí') {
-                questionsSectionFood.style.display = 'block';
-            } else {
-                questionsSectionFood.style.display = 'none';
-            }
-        });
-
-        const calificarBanoSelect = document.getElementById('calificarBano');
-        calificarBanoSelect.addEventListener('change', () => {
-            if (calificarBanoSelect.value === 'Sí') {
-                questionsSectionBano.style.display = 'block';
-            } else {
-                questionsSectionBano.style.display = 'none';
-            }
-        });
-
-        const calificarAlrededorSelect = document.getElementById('calificarAlrededor');
-        calificarAlrededorSelect.addEventListener('change', () => {
-            if (calificarAlrededorSelect.value === 'Sí') {
-                questionsSectionAlrededor.style.display = 'block';
-            } else {
-                questionsSectionAlrededor.style.display = 'none';
-            }
-        });
-
-        const calificarPracticaSelect = document.getElementById('calificarPractica');
-        calificarPracticaSelect.addEventListener('change', () => {
-            if (calificarPracticaSelect.value === 'Sí') {
-                questionsSectionPractica.style.display = 'block';
-            } else {
-                questionsSectionPractica.style.display = 'none';
-            }
-        });
-
-
-
-
-
-
-        // Manejo de imágenes y PDF (sin cambios)
-        const imageInput = document.getElementById('imageInput');
-        const preview = document.getElementById('preview');
-        const downloadPdfButton = document.getElementById('downloadPdf');
-        const images = [];
-
-        imageInput.addEventListener('change', (event) => {
-            preview.innerHTML = '';
-            images.length = 0;
-            const files = event.target.files;
-
-            if (files.length > 0) {
-                Array.from(files).forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-
-                        const imageContainer = document.createElement('div');
-                        imageContainer.classList.add('image-container');
-                        imageContainer.appendChild(img);
-
-                        const deleteTrash = document.createElement('span');
-                        deleteTrash.classList.add('delete-trash');
-                        deleteTrash.innerHTML = '<i class="fas fa-trash"></i>';
-                        deleteTrash.addEventListener('click', () => {
-                            imageContainer.remove();
-                            images.splice(images.indexOf(e.target.result), 1);
-                        });
-
-                        imageContainer.appendChild(deleteTrash);
-                        preview.appendChild(imageContainer);
-
-                        images.push(e.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-        });
-
-
-
-// Función para generar y descargar el PDF
-downloadPdfButton.addEventListener('click', () => {
-
-    // Verificar si no hay imágenes adjuntas
-    if (images.length === 0) {
-        alert("Sin evidencia no hay reporte. 🤨😝");
-        return; // Si no hay imágenes, no continúa la ejecución
-    }
-
-
-    // Mostrar overlay de espera
-    document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
-
-
-    const { jsPDF } = window.jspdf;
-    
-    // Crear una instancia de jsPDF con tamaño carta (215.9 x 279.4 mm)
-    const pdf = new jsPDF('p', 'mm', 'letter'); // 'p' = página en orientación vertical, 'mm' = milímetros, 'letter' = tamaño carta
-    
-    // Definir los márgenes
-    const margin = 10;
-    
-    // Obtener el tamaño de la página (carta)
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    
-    // Inicializar la posición Y
-    let currentY = margin;
-    
-    const addQuestionAndAnswer = (question, answer) => {
-        // Ajustar la pregunta con un maxWidth para evitar que se desborde
-        const questionLines = pdf.splitTextToSize(question, pageWidth - 2 * margin);  // Dividir la pregunta si excede el ancho
-        pdf.setFont("times", "bold");
-        pdf.text(questionLines, margin, currentY);  // Usamos text con las líneas ajustadas
-        currentY += questionLines.length * 8;  // Aumentamos el espaciado entre la pregunta y la siguiente línea (de 5 a 8)
-
-        // Ajustar la respuesta con maxWidth para que también se ajuste en varias líneas
-        const answerLines = pdf.splitTextToSize(answer || 'No respondida', pageWidth - 2 * margin);  // Dividir la respuesta si excede el ancho
-        pdf.setFont("times", "normal");
-        pdf.text(answerLines, margin, currentY);  // Usamos text con las líneas ajustadas
-        currentY += answerLines.length * 8;  // Aumentamos el espaciado entre la respuesta y la siguiente pregunta (de 5 a 8)
-    };
-
-    // Portada
-    pdf.setFont("times", "bold");
-    pdf.setFontSize(16);  // Establecer tamaño de fuente a 16
-
-    pdf.text("Reporte de Supervisión", margin, currentY);
-    currentY += 15;
-
-    pdf.text("Proyecto: Cementera Argos", margin, currentY);
-    currentY += 15;
-
-    pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", margin, currentY);
-    currentY += 15;
-
-    pdf.text("Correo: jromero@grupomacdel.com", margin, currentY);
-    currentY += 15;
-
-    pdf.text("Actividad: Supervisión de Áreas (Específico)", margin, currentY);
-    currentY += 10;
-
-    // Línea horizontal
-    const lineWidth = 180;
-    pdf.line(margin, currentY, margin + lineWidth, currentY);
-    currentY += 10;  // Espacio debajo de la línea
-
-    pdf.text("Fecha: " + document.getElementById('fecha').value, margin, currentY);
-    currentY += 15;
-
-    pdf.text("Área a Supervisar: " + document.getElementById('area').value, margin, currentY);
-    currentY += 15;
-
-    // Si oficina no está vacía, agregarla
-    let oficinaValue = document.getElementById('oficina').value;
-    if (oficinaValue !== "") {
-        pdf.text("Oficina: " + oficinaValue, margin, currentY);
-        currentY += 15;
-    }
-
-// Obtener el valor de medidas
-let medidas = document.getElementById('medidas').value.trim();
-
-// Eliminar emojis (caracteres no ASCII)
-medidas = medidas.replace(/[^\x00-\x7F]/g, '');
-
-// Solo agregar el texto de medidas si no está vacío
-if (medidas) {
-    // Añadir título
-    pdf.text("Medidas tomadas en caso de una no conformidad:", margin, currentY);
-    currentY += 10;
-
-    // Cambiar la fuente a una que soporte emojis (si es necesario)
-    pdf.setFont("Arial", "normal");
-
-    // Añadir el texto de medidas con un ancho máximo
-    pdf.text(medidas, margin, currentY, { maxWidth: pageWidth - 2 * margin });
-    currentY += 20;
-} else {
-    // Si no hay medidas, no hacer nada
-    console.log("No hay medidas para mostrar.");
-}
-
-
-    // Función para agregar preguntas y respuestas con ajuste de texto
-    const addSection = (sectionName, questions) => {
-        pdf.addPage();
-        currentY = margin;
-        pdf.setFont("times", "bold");
-        pdf.setFontSize(12);  // Establecer tamaño de fuente a 16
-
-        pdf.text(sectionName, margin, currentY);
-
-        // Línea horizontal
-        const lineY = currentY + 2;
-        pdf.line(margin, lineY, pageWidth - margin, lineY);
-        currentY += 10;
-
-        questions.forEach((q) => {
-            addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
-        });
-        currentY += 10;
-    };
-
-    // Agregar preguntas de secciones, solo si "Sí" fue seleccionado
-    if (calificarOficinasSelect.value === 'Sí') addSection("Oficinas", questionsOficinas);
-    if (calificarPasillosSelect.value === 'Sí') addSection("Pasillos", questionsPasillos);
-    if (calificarFoodSelect.value === 'Sí') addSection("Food Court / Área de Comida", questionsFood);
-    if (calificarBanoSelect.value === 'Sí') addSection("Baños", questionsBano);
-    if (calificarAlrededorSelect.value === 'Sí') addSection("Alrededores", questionsAlrededor);
-    if (calificarPracticaSelect.value === 'Sí') addSection("Buenas Prácticas", questionsPractica);
-
-    // Página de imágenes
-    pdf.addPage();
-
-    const cellWidth = (pageWidth - 2 * margin) / 3;
-    const cellHeight = (pageHeight - 2 * margin) / 5;
-    const spacing = 3;
-
-    images.forEach((image, index) => {
-        const row = Math.floor(index / 3) % 5;
-        const col = index % 3;
-
-        const xOffset = col * cellWidth + spacing + margin;
-        const yOffset = row * cellHeight + spacing + margin;
-
-        const img = new Image();
-        img.src = image;
-        img.onload = () => {
-            let imgWidth = img.width;
-            let imgHeight = img.height;
-            let scale = Math.min((cellWidth - spacing) / imgWidth, (cellHeight - spacing) / imgHeight);
-            let newWidth = imgWidth * scale;
-            let newHeight = imgHeight * scale;
-
-            const xCentered = xOffset + (cellWidth - newWidth) / 2;
-            const yCentered = yOffset + (cellHeight - newHeight) / 2;
-
-            // Convertir la imagen a base64 con un nivel de compresión
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = imgWidth;
-            canvas.height = imgHeight;
-            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-
-            // Comprimir imagen
-            const compressedImage = canvas.toDataURL('image/jpeg', 0.1);
-
-            // Agregar imagen comprimida al PDF
-            pdf.addImage(compressedImage, 'JPEG', xCentered, yCentered, newWidth, newHeight);
-
-            // Nueva página después de 15 imágenes
-            if ((index + 1) % 15 === 0 && index + 1 < images.length) {
-                pdf.addPage();
-            }
-
-            if (index === images.length - 1) {
-                // Obtener los elementos de fecha, área y oficina
-                let fecha = document.getElementById('fecha').value;
-                let area = document.getElementById('area').value;
-                let oficina = document.getElementById('oficina').value;
-
-                let nombreArchivo = `${fecha} - Reporte de Supervisión - ${area}`;
-
-                if (area === "Administración" && oficina) {
-                    nombreArchivo += ` - ${oficina}`;
-                }
-
-                nombreArchivo += ".pdf";
-
-                // Descargar PDF
-                pdf.save(nombreArchivo);
-
-// Ocultar el overlay de espera
-                document.getElementById('overlay').style.display = 'none';  // Ocultar el bloqueador de pantalla
-
-            }
-        };
-    });
-});
-
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Reporte de Supervisión</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+		<style>
+			/* Estilo general para body */
+			body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f9f9f9;
+			color: #333;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			min-height: 100vh;
+			}
+			/* Header */
+			.header {
+			background-color: #007BFF;
+			color: white;
+			text-align: center;
+			padding: 15px;
+			width: 100%;
+			font-size: 1.5em;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			}
+			/* Contenedor del formulario */
+			.container {
+			background: #fff;
+			padding: 30px;
+			border-radius: 10px;
+			width: 100%;
+			max-width: 600px;
+			box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+			margin-top: 20px;
+			}
+			/* Mejoras para pantallas pequeñas */
+			@media (max-width: 768px) {
+			.header {
+			font-size: 1.2em;
+			padding: 15px;
+			}
+			.container {
+			padding: 20px;
+			}
+			.container input,
+			.container button {
+			font-size: 1em;
+			padding: 12px;
+			width: 100%;
+			}
+			}
+			/* Contenedor del formulario */
+			.container {
+			background: #ffffff;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			border-radius: 10px;
+			padding: 30px;
+			width: 90%;
+			max-width: 600px;
+			text-align: center;
+			margin: 40px auto;
+			grid-row: 2;
+			height: auto;
+			box-sizing: border-box;
+			}
+			/* Mejoras para pantallas pequeñas (móviles) */
+			@media (max-width: 768px) {
+			.container {
+			width: 100%;
+			max-width: none;
+			margin: 20px 0;
+			padding: 20px;
+			}
+			.container input,
+			.container button {
+			font-size: 1em;
+			padding: 10px;
+			width: 100%;
+			}
+			body {
+			padding: 0 10px;
+			}
+			}
+			/* Estilo para los botones dentro del contenedor */
+			.container button {
+			display: inline-block;
+			margin-top: 20px;
+			background-color: #007BFF;
+			color: white;
+			border: 2px solid #007BFF;
+			padding: 10px 20px;
+			border-radius: 5px;
+			font-size: 16px;
+			cursor: pointer;
+			transition: background-color 0.3s, border-color 0.3s;
+			}
+			/* Botones en pantallas pequeñas */
+			@media (max-width: 768px) {
+			.container button {
+			width: auto;
+			display: inline-block;
+			margin-right: 10px;
+			}
+			}
+			/* Centrado de los botones */
+			.container .button-container {
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			flex-wrap: wrap;
+			}
+			/* Estilos para el área de arrastrar y soltar */
+			.file-drop-area {
+			border: 2px dashed #007BFF;
+			border-radius: 10px;
+			padding: 40px 20px;
+			text-align: center;
+			cursor: pointer;
+			font-size: 16px;
+			background-color: #f0f8ff;
+			color: #007BFF;
+			transition: background-color 0.3s ease, border-color 0.3s ease;
+			margin: 10px 0;
+			}
+			.file-drop-area.dragover {
+			background-color: #e6f7ff;
+			border-color: #0056b3;
+			}
+			.file-drop-area:hover {
+			background-color: #e6f7ff;
+			border-color: #0056b3;
+			}
+			/* Ocultar el input file real */
+			input[type="file"] {
+			display: none;
+			}
+			/* Vista previa de las imágenes */
+			#preview {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 10px;
+			margin: 20px 0;
+			max-height: 300px;
+			overflow-y: auto;
+			}
+			#preview .image-container {
+			position: relative;
+			display: inline-block;
+			margin: 10px;
+			cursor: pointer;
+			}
+			#preview img {
+			max-width: 150px;
+			max-height: 150px;
+			margin: 0;
+			border: 2px solid #ddd;
+			border-radius: 8px;
+			transition: transform 0.3s, filter 0.3s;
+			}
+			#preview img:hover {
+			filter: brightness(0.8);
+			transform: scale(1.05);
+			}
+			.delete-trash {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			font-size: 30px;
+			color: red;
+			display: none;
+			transition: opacity 0.3s;
+			}
+			#preview .image-container:hover .delete-trash {
+			display: block;
+			opacity: 1;
+			}
+			/* Estilos generales de los botones */
+			button {
+			background-color: #007BFF;
+			color: white;
+			border: 2px solid #007BFF;
+			padding: 10px 20px;
+			border-radius: 5px;
+			font-size: 16px;
+			cursor: pointer;
+			transition: background-color 0.3s, border-color 0.3s;
+			margin-top: 20px;
+			width: auto;
+			}
+			button:disabled {
+			background-color: #ccc;
+			cursor: not-allowed;
+			border-color: #ccc;
+			}
+			button:hover:not(:disabled) {
+			background-color: #0056b3;
+			border-color: #0056b3;
+			}
+			/* Estilo para el campo .file-label */
+			.file-label {
+			display: inline-block;
+			padding: 10px 20px;
+			background-color: #007BFF;
+			color: white;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background-color 0.3s;
+			}
+			.file-label:hover {
+			background-color: #0056b3;
+			}
+			input[type="file"] {
+			display: none;
+			}
+			/* Estilo para los contenedores de preguntas */
+			.question-container {
+			margin-bottom: 20px;
+			text-align: left;
+			padding: 10px;
+			border: 2px solid #ccc;
+			border-radius: 5px;
+			background-color: #f9f9f9;
+			transition: border-color 0.3s;
+			box-sizing: border-box;
+			}
+			.question-container:hover {
+			border-color: #007BFF;
+			}
+			.question-container input[type="date"],
+			.question-container textarea,
+			.question-container select {
+			padding: 10px;
+			border: 2px solid #ccc;
+			border-radius: 5px;
+			width: 100%;
+			font-size: 16px;
+			background-color: #f9f9f9;
+			color: #333;
+			transition: border-color 0.3s;
+			box-sizing: border-box;
+			margin-top: 5px;
+			}
+			.question-container input[type="date"]:focus,
+			.question-container textarea:focus,
+			.question-container select:focus {
+			border-color: #007BFF;
+			outline: none;
+			}
+			/* Estilos específicos para el campo select */
+			.question-container select {
+			font-size: 16px;
+			padding: 10px;
+			}
+			/* Estilos de las etiquetas */
+			.question-container label {
+			font-weight: bold;
+			font-size: 16px;
+			margin-bottom: 5px;
+			display: block;
+			}
+			/* Medidas responsivas */
+			@media (max-width: 768px) {
+			.question-container {
+			padding: 15px;
+			margin-bottom: 15px;
+			}
+			.question-container input[type="date"],
+			.question-container textarea,
+			.question-container select {
+			font-size: 14px;
+			padding: 8px;
+			}
+			.question-container label {
+			font-size: 18px;
+			}
+			}
+			/* Estilos para la sección "oficina" */
+			#oficina {
+			padding: 10px;
+			border: 2px solid #ccc;
+			border-radius: 5px;
+			width: 100%;
+			font-size: 16px;
+			background-color: #f9f9f9;
+			color: #333;
+			transition: border-color 0.3s;
+			resize: vertical;
+			box-sizing: border-box;
+			}
+			#oficina:focus {
+			border-color: #007BFF;
+			outline: none;
+			}
+			/* Estilo para el textarea con id "medidas" */
+			#medidas {
+			padding: 20px;
+			border: 2px solid #ccc;
+			border-radius: 5px;
+			width: 100%;
+			font-size: 16px;
+			background-color: #f9f9f9;
+			color: #333;
+			transition: border-color 0.3s;
+			resize: vertical;
+			box-sizing: border-box;
+			height: 250px;
+			}
+			/* Estilo para el botón "Volver al Inicio" */
+			.back-button {
+			display: inline-block;
+			padding: 10px 20px;
+			background-color: #007BFF;
+			color: white;
+			border-radius: 5px;
+			text-decoration: none;
+			text-align: center;
+			font-size: 1em;
+			transition: background-color 0.3s, transform 0.3s;
+			position: fixed;
+			top: 80px;
+			left: 0px;
+			z-index: 1001;
+			}
+			.back-button:hover {
+			background-color: #0056b3;
+			transform: scale(1.05);
+			}
+			/* Estilo adicional para dispositivos móviles */
+			@media screen and (max-width: 600px) {
+			.back-button {
+			font-size: 0.9em;
+			padding: 12px 18px;
+			top: 57px;
+			}
+			}
+			/* Sección adicional */
+			.form-section {
+			margin-top: 40px;
+			padding-top: 20px;
+			border-top: 2px solid #f4f4f9;
+			}
+			/* Ocultar elementos */
+			.hidden {
+			display: none;
+			}
+			/* Estilo del overlay (pantalla bloqueada) */
+			#overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
+			}
+			#loadingMessage {
+			color: white;  /* Texto en blanco */
+			font-size: 24px;  /* Tamaño de fuente para que se vea bien */
+			font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
+			text-align: center;
+			padding: 20px;  /* Espaciado interno */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			Pisos Brillantes
+		</div>
+		<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
+		<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+		<div class="container">
+			<h1>Reporte de Supervisión de Áreas</h1>
+			<!-- Página 0: Ingreso de Fecha y Área -->
+			<div id="page0">
+				<div class="question-container">
+					<label for="fecha">Fecha:</label>
+					<input type="date" id="fecha" value="" />
+				</div>
+				<div class="question-container">
+					<label for="area">Área:</label>
+					<select id="area">
+						<option value="Selecciona una opción">Selecciona una opción</option>
+						<option value="Administración">Administración</option>
+						<option value="Almacén General">Almacén General</option>
+						<option value="Baños de Administración (Hombres)">Baños de Administración (Hombres)</option>
+						<option value="Baños de Administración (Mujeres)">Baños de Administración (Mujeres)</option>
+						<option value="Baños de Transportistas">Baños de Transportistas</option>
+						<option value="Bodega de Limpieza">Bodega de Limpieza</option>
+						<option value="Camerinos Contratistas">Camerinos Contratistas</option>
+						<option value="Camerinos Permanentes">Camerinos Permanentes</option>
+						<option value="Chiminike">Chiminike</option>
+						<option value="Club de Argos">Club de Argos</option>
+						<option value="Despacho">Despacho</option>
+						<option value="Enfermería">Enfermería</option>
+						<option value="Equipo Móvil">Equipo Móvil</option>
+						<option value="Expedición">Expedición</option>
+						<option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
+						<option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+						<option value="Machaqueo A">Machaqueo A</option>
+						<option value="Posta Principal">Posta Principal</option>
+						<option value="Sala de Control">Sala de Control</option>
+						<option value="Sala de Maternidad">Sala de Maternidad</option>
+						<option value="Salón Vial">Salón Vial</option>
+						<option value="Taller Eléctrico">Taller Eléctrico</option>
+					</select>
+				</div>
+				<button id="next0">Siguiente</button>
+			</div>
+			<!-- Página 1: Calificación de Oficinas -->
+			<div id="page1" class="hidden">
+				<div class="question-container">
+					<label for="calificarOficinas">¿Deseas calificar las Oficinas?</label>
+					<select id="calificarOficinas">
+						<option value="">Selecciona una opción</option>
+						<option value="Sí">Sí</option>
+						<option value="No">No</option>
+					</select>
+				</div>
+				<div id="questionsSectionOficinas" style="display: none;">
+					<!-- Casilla "Nombre de Oficina" que estará oculta por defecto -->
+					<div id="oficinaAdministracion" class="question-container" style="display: none;">
+						<label for="oficina">Oficina de Administración:</label>
+						<input type="text" id="oficina" placeholder="Especifica la oficina" />
+					</div>
+					<!-- Preguntas generadas dinámicamente para oficinas -->
+				</div>
+				<button id="back0">Atrás</button>
+				<button id="next1">Siguiente</button>
+			</div>
+			<!-- Página 2: Calificación de Pasillos -->
+			<div id="page2" class="hidden">
+				<div class="question-container">
+					<label for="calificarPasillos">¿Deseas calificar los Pasillos?</label>
+					<select id="calificarPasillos">
+						<option value="">Selecciona una opción</option>
+						<option value="Sí">Sí</option>
+						<option value="No">No</option>
+					</select>
+				</div>
+				<div id="questionsSectionPasillos" style="display: none;">
+					<!-- Preguntas generadas dinámicamente para pasillos -->
+				</div>
+				<button id="back1">Atrás</button>
+				<button id="next2">Siguiente</button>
+			</div>
+			<!-- Página 3: Calificación de Food Court / Área de Comida -->
+			<div id="page3" class="hidden">
+				<div class="question-container">
+					<label for="calificarFood">¿Deseas calificar el Food Court / Área de Comida?</label>
+					<select id="calificarFood">
+						<option value="">Selecciona una opción</option>
+						<option value="Sí">Sí</option>
+						<option value="No">No</option>
+					</select>
+				</div>
+				<div id="questionsSectionFood" style="display: none;">
+					<!-- Preguntas generadas dinámicamente para Food Court / Área de Comida -->
+				</div>
+				<button id="back2">Atrás</button>
+				<button id="next3">Siguiente</button>
+			</div>
+			<!-- Página 4: Calificación de Baños -->
+			<div id="page4" class="hidden">
+				<div class="question-container">
+					<label for="calificarBano">¿Deseas calificar los Baños?</label>
+					<select id="calificarBano">
+						<option value="">Selecciona una opción</option>
+						<option value="Sí">Sí</option>
+						<option value="No">No</option>
+					</select>
+				</div>
+				<div id="questionsSectionBano" style="display: none;">
+					<!-- Preguntas generadas dinámicamente para Baños -->
+				</div>
+				<button id="back3">Atrás</button>
+				<button id="next4">Siguiente</button>
+			</div>
+			<!-- Página 5: Calificación de Alrededores -->
+			<div id="page5" class="hidden">
+				<div class="question-container">
+					<label for="calificarAlrededor">¿Deseas calificar los Alrededores?</label>
+					<select id="calificarAlrededor">
+						<option value="">Selecciona una opción</option>
+						<option value="Sí">Sí</option>
+						<option value="No">No</option>
+					</select>
+				</div>
+				<div id="questionsSectionAlrededor" style="display: none;">
+					<!-- Preguntas generadas dinámicamente para Alrededores -->
+				</div>
+				<button id="back4">Atrás</button>
+				<button id="next5">Siguiente</button>
+			</div>
+			<!-- Página 6: Calificación de Buenas Prácticas -->
+			<div id="page6" class="hidden">
+				<div class="question-container">
+					<label for="calificarPractica">¿Deseas calificar las Buenas Prácticas?</label>
+					<select id="calificarPractica">
+						<option value="">Selecciona una opción</option>
+						<option value="Sí">Sí</option>
+						<option value="No">No</option>
+					</select>
+				</div>
+				<div id="questionsSectionPractica" style="display: none;">
+					<!-- Preguntas generadas dinámicamente para las buenas prácticas -->
+				</div>
+				<button id="back5">Atrás</button>
+				<button id="next6">Siguiente</button>
+			</div>
+			<!-- Página 7: Comentarios -->
+			<div id="page7" class="hidden">
+				<div class="question-container">
+					<label for="medidas">¿Qué medidas se tomaron en caso de una no conformidad?</label>
+					<textarea id="medidas" rows="4" cols="50" placeholder="Escribe aquí tus comentarios..."></textarea>
+				</div>
+				<button id="back6">Atrás</button>
+				<button id="next7">Siguiente</button>
+			</div>
+			<!-- Página X: Subir imágenes y Descargar PDF -->
+			<div id="pageX" class="hidden">
+				<div class="form-section">
+					<!-- Contenedor para simular el botón de arrastrar y soltar -->
+					<div class="file-drop-area" id="fileDropArea">
+						<p>Haz clic para seleccionar las imágenes</p>
+						<input type="file" id="imageInput" accept="image/*" multiple>
+					</div>
+					<div id="preview"></div>
+					<div class="button-container">
+						<button id="backX">Atrás</button>
+						<button type="button" id="downloadPdf">Generar Reporte</button>
+					</div>
+				</div>
+				<!-- Contenedor para bloquear la pantalla -->
+				<div id="overlay" style="display: none;">
+					<div id="loadingMessage">
+						<p>Procesando...🥱</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function goBack() {
+			    window.history.back();  // Esto hace que el navegador vuelva a la página anterior
+			}
+			
+			// Establecer la fecha actual por defecto
+			window.onload = function() {
+			    const fechaInput = document.getElementById("fecha");
+			    const today = new Date();
+			    const yyyy = today.getFullYear();
+			    let mm = today.getMonth() + 1; // Los meses van de 0 a 11
+			    let dd = today.getDate();
+			
+			    // Formatear la fecha a formato YYYY-MM-DD
+			    if (mm < 10) mm = '0' + mm;
+			    if (dd < 10) dd = '0' + dd;
+			
+			    const formattedDate = yyyy + '-' + mm + '-' + dd;
+			    fechaInput.value = formattedDate;
+			};
+			
+			const dropArea = document.getElementById('fileDropArea'); // El área para arrastrar y soltar
+			const fileInput = document.getElementById('imageInput'); // El input file real
+			const previewDiv = document.getElementById('preview'); // Div para vista previa de las imágenes
+			
+			// Cuando un archivo está sobre el área (evitar comportamiento predeterminado del navegador)
+			dropArea.addEventListener('dragover', (e) => {
+			    e.preventDefault(); // Prevenir el comportamiento por defecto (abrir el archivo)
+			    dropArea.classList.add('dragover'); // Cambiar el estilo cuando se arrastra un archivo
+			});
+			
+			// Cuando el archivo se deja dentro del área
+			dropArea.addEventListener('drop', (e) => {
+			    e.preventDefault(); // Prevenir el comportamiento por defecto
+			    dropArea.classList.remove('dragover'); // Eliminar la clase de estilo cuando se deja el archivo
+			
+			    const files = e.dataTransfer.files; // Obtener los archivos arrastrados
+			    handleFiles(files); // Manejar los archivos arrastrados
+			});
+			
+			// Si el archivo sale del área sin ser soltado
+			dropArea.addEventListener('dragleave', () => {
+			    dropArea.classList.remove('dragover'); // Eliminar la clase de estilo cuando el archivo sale del área
+			});
+			
+			// Cuando se hace clic en el área de arrastre, abrir el input file
+			dropArea.addEventListener('click', () => {
+			fileInput.click(); // Abrir el cuadro de selección de archivo
+			});
+			
+			// Cuando el input file cambia (selección manual de archivos)
+			fileInput.addEventListener('change', () => {
+			const files = fileInput.files;
+			handleFiles(files); // Manejar los archivos seleccionados
+			});
+			
+			// Función para manejar los archivos (tanto arrastrados como seleccionados)
+			function handleFiles(files) {
+			previewDiv.innerHTML = ''; // Limpiar la vista previa antes de mostrar nuevas imágenes
+			
+			// Mostrar miniaturas de las imágenes seleccionadas
+			Array.from(files).forEach(file => {
+			    const img = document.createElement('img');
+			    img.src = URL.createObjectURL(file); // Crear una URL temporal para mostrar la imagen
+			    previewDiv.appendChild(img); // Añadir la imagen al contenedor de vista previa
+			});
+			}
+			
+			
+			
+			
+			// Obtener el select y la casilla de "Oficina de Administración"
+			const areaSelect = document.getElementById('area');
+			const oficinaAdministracionDiv = document.getElementById('oficinaAdministracion');
+			
+			// Añadir un evento para detectar el cambio en el select
+			areaSelect.addEventListener('change', () => {
+			    if (areaSelect.value === 'Administración') {
+			        // Mostrar la casilla de Oficina de Administración si se selecciona "Administración"
+			        oficinaAdministracionDiv.style.display = 'block';
+			    } else {
+			        // Ocultar la casilla de Oficina de Administración si se selecciona cualquier otra opción
+			        oficinaAdministracionDiv.style.display = 'none';
+			    }
+			});
+			
+			
+			
+			
+			    const questionsOficinas = [
+			        { id: 'question1', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
+			        { id: 'question2', text: '¿Los escritorios, mesas, estantes, archiveros y demás superficies de trabajo están limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question3', text: '¿Los dispositivos electrónicos compartidos (teléfonos, teclados, computadoras y otros) están limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question4', text: '¿Las superficies de contacto frecuente (manijas, interruptores, pasamanos) están limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question5', text: '¿El oasis se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question6', text: '¿El microondas se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question7', text: '¿Las cafeteras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question8', text: '¿Las refrigeradoras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question9', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question10', text: '¿Las puertas se encuentran limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question11', text: '¿Las sillas están limpias (Sin polvo y patas limpias)?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question12', text: '¿El piso está limpio y sin manchas visibles?', options: ['Sí', 'No'] },
+			        { id: 'question13', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question14', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question15', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
+			    ];
+			
+			    const questionsPasillos = [
+			        { id: 'question16', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
+			        { id: 'question17', text: '¿Las superficies de contacto frecuente (manijas, interruptores, pasamanos) están limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question18', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question19', text: '¿Los extintores se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question20', text: '¿El piso está limpio y sin manchas visibles?', options: ['Sí', 'No'] },
+			        { id: 'question21', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question22', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question23', text: '¿Las cafeteras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question24', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
+			    ];
+			
+			    const questionsFood = [
+			        { id: 'question25', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
+			        { id: 'question26', text: '¿Las superficies de contacto frecuente (manijas, interruptores, pasamanos) están limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question27', text: '¿El oasis se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question28', text: '¿El microondas se encuentra limpio y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question29', text: '¿Las cafeteras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question30', text: '¿Las refrigeradoras se encuentra limpias y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question31', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question32', text: '¿Las sillas están limpias (Sin polvo y patas limpias)?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question33', text: '¿Las mesas están limpias?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question34', text: '¿El piso está limpio y sin manchas visible?', options: ['Sí', 'No'] },
+			        { id: 'question35', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question36', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question37', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
+			
+			    ];
+			
+			    const questionsBano = [
+			        { id: 'question38', text: '¿El área se encuentra aromatizada?', options: ['Sí', 'No'] },
+			        { id: 'question39', text: '¿Se observa presencia de telas de araña?', options: ['Sí', 'No'] },
+			        { id: 'question40', text: '¿Los pisos están limpios?', options: ['Sí', 'No'] },
+			        { id: 'question41', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question42', text: '¿Las paredes se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No'] },
+			        { id: 'question43', text: '¿Las puertas se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question44', text: '¿Las divisiones (puertas / acrílicos, etc) se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question45', text: '¿Los lavamanos están limpios, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question46', text: '¿Los espejos están limpios y sin presencia de manchas?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question47', text: '¿Los sanitarios están limpios, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question48', text: '¿Los urinarios están limpios, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question49', text: '¿Las duchas están limpias, libres de sarro y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question50', text: '¿Los basureros se encuentran limpios y con su respectiva bolsa de basura?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question51', text: '¿Los dispensadores (papel toalla, jabón, gel) están limpios, abastecidos y en funcionamiento?', options: ['Sí', 'No', 'N/A'] },
+			
+			
+			    ];
+			
+			    const questionsAlrededor = [
+			        { id: 'question52', text: '¿Las áreas exteriores, incluyendo aceras, entradas se encuentran limpias?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question53', text: '¿Las pilas / piletas se encuentran limpias y en buen estado?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question54', text: '¿Hay presencia de basura, hojas u otros desechos en el suelo?', options: ['Sí', 'No'] },
+			        { id: 'question55', text: '¿Los contenedores de basura están saturados de basura?', options: ['Sí', 'No', 'N/A'] },
+			        { id: 'question56', text: '¿Las paredes se encuentran limpias y sin manchas visibles?', options: ['Sí', 'No'] },
+			        { id: 'question57', text: '¿Las ventanas y demás vidrios se encuentran limpios?', options: ['Sí', 'No', 'N/A'] },
+			
+			    ];
+			
+			    const questionsPractica = [
+			        { id: 'question58', text: '¿El personal está cumpliendo con la ejecución y el llenado de los reportes diarios en áreas y baños?', options: ['Sí', 'No'] },
+			        { id: 'question59', text: '¿El personal asignado está haciendo buen uso del equipo de protección?', options: ['Sí', 'No'] },
+			        { id: 'question60', text: '¿El personal asignado está utilizando correctamente el rótulo de "Limpieza en progreso" durante sus actividades?', options: ['Sí', 'No'] },
+			        { id: 'question61', text: '¿Se respeta la codificación de colores en los paños de microfibra para evitar la contaminación cruzada?', options: ['Sí', 'No'] },
+			        { id: 'question62', text: '¿Se respeta la codificación de colores en las mechas de trapeador para evitar la contaminación cruzada?', options: ['Sí', 'No'] },
+			        { id: 'question63', text: '¿El personal asignado está utilizando adecuadamente las herramientas de limpieza durante su manipulación?', options: ['Sí', 'No'] },
+			        { id: 'question64', text: '¿El personal asignado está utilizando los productos químicos de forma segura?', options: ['Sí', 'No'] },
+			        { id: 'question65', text: '¿Se almacena correctamente el equipo de limpieza, ordenado y sin restos de suciedad?', options: ['Sí', 'No'] },
+			        { id: 'question66', text: '¿Hay alguna herramienta que muestre signos de deterioro o desgaste que puedan afectar su funcionamiento?', options: ['Sí', 'No'] },
+			        { id: 'question67', text: '¿Todas las herramientas cuentan con un etiquetado claro y legible que facilite su identificación?', options: ['Sí', 'No'] },
+			
+			    ];
+			
+			
+			
+			
+			    const questionsSectionOficinas = document.getElementById('questionsSectionOficinas');
+			    const questionsSectionPasillos = document.getElementById('questionsSectionPasillos');
+			    const questionsSectionFood = document.getElementById('questionsSectionFood');
+			    const questionsSectionBano = document.getElementById('questionsSectionBano');
+			    const questionsSectionAlrededor = document.getElementById('questionsSectionAlrededor');
+			    const questionsSectionPractica = document.getElementById('questionsSectionPractica');
+			
+			
+			
+			
+			    // Generar preguntas dinámicamente para oficinas
+			    questionsOficinas.forEach((q) => {
+			        const questionContainer = document.createElement('div');
+			        questionContainer.classList.add('question-container');
+			        const label = document.createElement('label');
+			        label.setAttribute('for', q.id);
+			        label.textContent = q.text;
+			        questionContainer.appendChild(label);
+			
+			        const select = document.createElement('select');
+			        select.id = q.id;
+			        select.name = q.id;
+			        select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
+			        questionContainer.appendChild(select);
+			
+			        questionsSectionOficinas.appendChild(questionContainer);
+			    });
+			
+			    // Generar preguntas dinámicamente para pasillos
+			    questionsPasillos.forEach((q) => {
+			        const questionContainer = document.createElement('div');
+			        questionContainer.classList.add('question-container');
+			        const label = document.createElement('label');
+			        label.setAttribute('for', q.id);
+			        label.textContent = q.text;
+			        questionContainer.appendChild(label);
+			
+			        const select = document.createElement('select');
+			        select.id = q.id;
+			        select.name = q.id;
+			        select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
+			        questionContainer.appendChild(select);
+			
+			        questionsSectionPasillos.appendChild(questionContainer);
+			    });
+			
+			    // Generar preguntas dinámicamente para Food Court / Área de Comida
+			    questionsFood.forEach((q) => {
+			        const questionContainer = document.createElement('div');
+			        questionContainer.classList.add('question-container');
+			        const label = document.createElement('label');
+			        label.setAttribute('for', q.id);
+			        label.textContent = q.text;
+			        questionContainer.appendChild(label);
+			
+			        const select = document.createElement('select');
+			        select.id = q.id;
+			        select.name = q.id;
+			        select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
+			        questionContainer.appendChild(select);
+			
+			        questionsSectionFood.appendChild(questionContainer);
+			    });
+			
+			    // Generar preguntas dinámicamente para Baños
+			    questionsBano.forEach((q) => {
+			        const questionContainer = document.createElement('div');
+			        questionContainer.classList.add('question-container');
+			        const label = document.createElement('label');
+			        label.setAttribute('for', q.id);
+			        label.textContent = q.text;
+			        questionContainer.appendChild(label);
+			
+			        const select = document.createElement('select');
+			        select.id = q.id;
+			        select.name = q.id;
+			        select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
+			        questionContainer.appendChild(select);
+			
+			        questionsSectionBano.appendChild(questionContainer);
+			    });
+			
+			    // Generar preguntas dinámicamente para Alrededores
+			    questionsAlrededor.forEach((q) => {
+			        const questionContainer = document.createElement('div');
+			        questionContainer.classList.add('question-container');
+			        const label = document.createElement('label');
+			        label.setAttribute('for', q.id);
+			        label.textContent = q.text;
+			        questionContainer.appendChild(label);
+			
+			        const select = document.createElement('select');
+			        select.id = q.id;
+			        select.name = q.id;
+			        select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
+			        questionContainer.appendChild(select);
+			
+			        questionsSectionAlrededor.appendChild(questionContainer);
+			    });
+			
+			    // Generar preguntas dinámicamente para las buenas prácticas
+			    questionsPractica.forEach((q) => {
+			        const questionContainer = document.createElement('div');
+			        questionContainer.classList.add('question-container');
+			        const label = document.createElement('label');
+			        label.setAttribute('for', q.id);
+			        label.textContent = q.text;
+			        questionContainer.appendChild(label);
+			
+			        const select = document.createElement('select');
+			        select.id = q.id;
+			        select.name = q.id;
+			        select.innerHTML = '<option value="">Selecciona una opción</option>' + q.options.map(option => `<option value="${option}">${option}</option>`).join('');
+			        questionContainer.appendChild(select);
+			
+			        questionsSectionPractica.appendChild(questionContainer);
+			    });
+			
+			
+			
+			    // Botones de navegación entre páginas
+			    const next0Button = document.getElementById('next0');
+			
+			    const next1Button = document.getElementById('next1');
+			    const back0Button = document.getElementById('back0');
+			
+			    const back1Button = document.getElementById('back1');
+			    const next2Button = document.getElementById('next2');
+			
+			    const back2Button = document.getElementById('back2');
+			    const next3Button = document.getElementById('next3');
+			
+			    const back3Button = document.getElementById('back3');
+			    const next4Button = document.getElementById('next4');
+			
+			    const back4Button = document.getElementById('back4');
+			    const next5Button = document.getElementById('next5');
+			
+			    const back5Button = document.getElementById('back5');
+			    const next6Button = document.getElementById('next6');
+			
+			    const back6Button = document.getElementById('back6');
+			    const next7Button = document.getElementById('next7');
+			
+			
+			
+			    const backXButton = document.getElementById('backX');
+			
+			
+			next0Button.addEventListener('click', () => {
+			// Obtén los campos
+			const fechaField = document.getElementById('fecha'); // Reemplaza 'fecha' con el id correcto
+			const areaField = document.getElementById('area');   // Reemplaza 'area' con el id correcto
+			
+			let camposCompletados = true; // Bandera para determinar si todos los campos están completos
+			
+			// Validar el campo de fecha
+			let fechaErrorLabel = document.getElementById('error-fecha');
+			if (!fechaErrorLabel) {
+			    fechaErrorLabel = document.createElement('span');
+			    fechaErrorLabel.id = 'error-fecha';
+			    fechaErrorLabel.style.color = 'red';
+			    fechaErrorLabel.style.fontSize = '0.9em';
+			    fechaErrorLabel.textContent = 'Por favor, selecciona una fecha.';
+			    fechaField.parentElement.appendChild(fechaErrorLabel);
+			    fechaErrorLabel.style.display = 'none'; // Por defecto, oculto
+			}
+			if (!fechaField.value.trim()) {
+			    fechaErrorLabel.style.display = 'block';
+			    camposCompletados = false;
+			} else {
+			    fechaErrorLabel.style.display = 'none';
+			}
+			
+			// Validar el campo de área
+			let areaErrorLabel = document.getElementById('error-area');
+			if (!areaErrorLabel) {
+			    areaErrorLabel = document.createElement('span');
+			    areaErrorLabel.id = 'error-area';
+			    areaErrorLabel.style.color = 'red';
+			    areaErrorLabel.style.fontSize = '0.9em';
+			    areaErrorLabel.textContent = 'Por favor, selecciona un área válida.';
+			    areaField.parentElement.appendChild(areaErrorLabel);
+			    areaErrorLabel.style.display = 'none'; // Por defecto, oculto
+			}
+			if (!areaField.value.trim() || areaField.value === "Selecciona una opción") {
+			    areaErrorLabel.style.display = 'block';
+			    camposCompletados = false;
+			} else {
+			    areaErrorLabel.style.display = 'none';
+			}
+			
+			// Agregar validación en tiempo real
+			fechaField.addEventListener('input', () => {
+			    if (fechaField.value.trim()) {
+			        fechaErrorLabel.style.display = 'none';
+			    } else {
+			        fechaErrorLabel.style.display = 'block';
+			    }
+			});
+			
+			areaField.addEventListener('input', () => {
+			    if (areaField.value.trim() && areaField.value !== "Selecciona una opción") {
+			        areaErrorLabel.style.display = 'none';
+			    } else {
+			        areaErrorLabel.style.display = 'block';
+			    }
+			});
+			
+			// Si todos los campos están completos, pasar a la siguiente página
+			if (camposCompletados) {
+			    document.getElementById('page0').classList.add('hidden');
+			    document.getElementById('page1').classList.remove('hidden');
+			}
+			});
+			
+			
+			
+			function handleNextButton(button, calificarId, startQuestion, endQuestion, currentPageId, nextPageId) {
+			button.addEventListener('click', () => {
+			    const calificarElement = document.getElementById(calificarId);
+			    const calificarValue = calificarElement.value.trim() || "No";
+			    let preguntasCompletadas = true;
+			    let calificarCompletado = true;
+			
+			    // Validar si la pregunta inicial está completada
+			    let calificarErrorLabel = document.getElementById(`error-${calificarId}`);
+			    if (!calificarErrorLabel) {
+			        calificarErrorLabel = document.createElement('span');
+			        calificarErrorLabel.id = `error-${calificarId}`;
+			        calificarErrorLabel.style.color = 'red';
+			        calificarErrorLabel.style.fontSize = '0.9em';
+			        calificarErrorLabel.textContent = 'Por favor, seleccione una opción.';
+			        calificarElement.parentElement.appendChild(calificarErrorLabel);
+			        calificarErrorLabel.style.display = 'none'; // Por defecto, está oculto
+			    }
+			
+			    if (calificarValue === "No") {
+			        calificarErrorLabel.style.display = 'none'; // Si es "No", no hay error
+			    } else if (calificarValue === "Sí" && !calificarElement.value.trim()) {
+			        calificarErrorLabel.style.display = 'block';
+			        calificarCompletado = false;
+			    } else {
+			        calificarErrorLabel.style.display = 'none';
+			    }
+			
+			    // Agregar validación en tiempo real a la pregunta inicial
+			    calificarElement.addEventListener('input', () => {
+			        if (calificarElement.value.trim()) {
+			            calificarErrorLabel.style.display = 'none';
+			        } else {
+			            calificarErrorLabel.style.display = 'block';
+			        }
+			    });
+			
+			    // Validar subpreguntas si la pregunta inicial es "Sí"
+			    if (calificarValue === "Sí") {
+			        for (let i = startQuestion; i <= endQuestion; i++) {
+			            const pregunta = document.getElementById(`question${i}`);
+			            let errorLabel = document.getElementById(`error-question${i}`);
+			
+			            // Crear un mensaje de error si no existe
+			            if (!errorLabel) {
+			                errorLabel = document.createElement('span');
+			                errorLabel.id = `error-question${i}`;
+			                errorLabel.style.color = 'red';
+			                errorLabel.style.fontSize = '0.9em';
+			                errorLabel.textContent = 'Esta pregunta es obligatoria.';
+			                pregunta.parentElement.appendChild(errorLabel);
+			                errorLabel.style.display = 'none'; // Por defecto está oculto
+			            }
+			
+			            // Mostrar o esconder el mensaje de error
+			            if (!pregunta || !pregunta.value.trim()) {
+			                preguntasCompletadas = false;
+			                errorLabel.style.display = 'block'; // Mostrar el error si no está contestada
+			            } else {
+			                errorLabel.style.display = 'none'; // Ocultar el error si está contestada
+			            }
+			
+			            // Validar en tiempo real si la pregunta es respondida
+			            pregunta.addEventListener('input', () => {
+			                if (pregunta.value.trim()) {
+			                    errorLabel.style.display = 'none'; // Ocultar el error si se completa
+			                } else {
+			                    errorLabel.style.display = 'block'; // Mostrar el error si queda vacío
+			                }
+			            });
+			        }
+			    }
+			
+			    // Verificar las condiciones finales
+			    if (!calificarCompletado || (calificarValue === "Sí" && !preguntasCompletadas)) {
+			        return; // Detener la ejecución de la función
+			    }
+			
+			    // Si las condiciones se cumplen, cambiar de página
+			    document.getElementById(currentPageId).classList.add('hidden');
+			    document.getElementById(nextPageId).classList.remove('hidden');
+			});
+			}
+			
+			// Configurar los botones
+			handleNextButton(next1Button, 'calificarOficinas', 1, 15, 'page1', 'page2');
+			handleNextButton(next2Button, 'calificarPasillos', 16, 24, 'page2', 'page3');
+			handleNextButton(next3Button, 'calificarFood', 25, 37, 'page3', 'page4');
+			handleNextButton(next4Button, 'calificarBano', 38, 51, 'page4', 'page5');
+			handleNextButton(next5Button, 'calificarAlrededor', 52, 57, 'page5', 'page6');
+			handleNextButton(next6Button, 'calificarPractica', 58, 67, 'page6', 'page7');
+			
+			
+			
+			
+			
+			function handleBackButton(button, currentPageId, previousPageId) {
+			button.addEventListener('click', () => {
+			    document.getElementById(currentPageId).classList.add('hidden');
+			    document.getElementById(previousPageId).classList.remove('hidden');
+			});
+			}
+			
+			// Configurar los botones de retroceso
+			handleBackButton(back0Button, 'page1', 'page0');
+			handleBackButton(back1Button, 'page2', 'page1');
+			handleBackButton(back2Button, 'page3', 'page2');
+			handleBackButton(back3Button, 'page4', 'page3');
+			handleBackButton(back4Button, 'page5', 'page4');
+			handleBackButton(back5Button, 'page6', 'page5');
+			handleBackButton(back6Button, 'page7', 'page6');
+			
+			// Botón de avanzar desde la última página
+			next7Button.addEventListener('click', () => {
+			document.getElementById('page7').classList.add('hidden');
+			document.getElementById('pageX').classList.remove('hidden');
+			});
+			
+			
+			
+			
+			
+			
+			    <!-- Página X:  -->
+			
+			    backXButton.addEventListener('click', () => {
+			        document.getElementById('pageX').classList.add('hidden');
+			        document.getElementById('page7').classList.remove('hidden');
+			    });
+			
+			
+			
+			
+			
+			    // Manejar la visibilidad de las preguntas según la respuesta
+			    const calificarOficinasSelect = document.getElementById('calificarOficinas');
+			    calificarOficinasSelect.addEventListener('change', () => {
+			        if (calificarOficinasSelect.value === 'Sí') {
+			            questionsSectionOficinas.style.display = 'block';
+			        } else {
+			            questionsSectionOficinas.style.display = 'none';
+			        }
+			    });
+			
+			    const calificarPasillosSelect = document.getElementById('calificarPasillos');
+			    calificarPasillosSelect.addEventListener('change', () => {
+			        if (calificarPasillosSelect.value === 'Sí') {
+			            questionsSectionPasillos.style.display = 'block';
+			        } else {
+			            questionsSectionPasillos.style.display = 'none';
+			        }
+			    });
+			
+			    const calificarFoodSelect = document.getElementById('calificarFood');
+			    calificarFoodSelect.addEventListener('change', () => {
+			        if (calificarFoodSelect.value === 'Sí') {
+			            questionsSectionFood.style.display = 'block';
+			        } else {
+			            questionsSectionFood.style.display = 'none';
+			        }
+			    });
+			
+			    const calificarBanoSelect = document.getElementById('calificarBano');
+			    calificarBanoSelect.addEventListener('change', () => {
+			        if (calificarBanoSelect.value === 'Sí') {
+			            questionsSectionBano.style.display = 'block';
+			        } else {
+			            questionsSectionBano.style.display = 'none';
+			        }
+			    });
+			
+			    const calificarAlrededorSelect = document.getElementById('calificarAlrededor');
+			    calificarAlrededorSelect.addEventListener('change', () => {
+			        if (calificarAlrededorSelect.value === 'Sí') {
+			            questionsSectionAlrededor.style.display = 'block';
+			        } else {
+			            questionsSectionAlrededor.style.display = 'none';
+			        }
+			    });
+			
+			    const calificarPracticaSelect = document.getElementById('calificarPractica');
+			    calificarPracticaSelect.addEventListener('change', () => {
+			        if (calificarPracticaSelect.value === 'Sí') {
+			            questionsSectionPractica.style.display = 'block';
+			        } else {
+			            questionsSectionPractica.style.display = 'none';
+			        }
+			    });
+			
+			
+			
+			
+			
+			
+			    // Manejo de imágenes y PDF (sin cambios)
+			    const imageInput = document.getElementById('imageInput');
+			    const preview = document.getElementById('preview');
+			    const downloadPdfButton = document.getElementById('downloadPdf');
+			    const images = [];
+			
+			    imageInput.addEventListener('change', (event) => {
+			        preview.innerHTML = '';
+			        images.length = 0;
+			        const files = event.target.files;
+			
+			        if (files.length > 0) {
+			            Array.from(files).forEach((file, index) => {
+			                const reader = new FileReader();
+			                reader.onload = (e) => {
+			                    const img = document.createElement('img');
+			                    img.src = e.target.result;
+			
+			                    const imageContainer = document.createElement('div');
+			                    imageContainer.classList.add('image-container');
+			                    imageContainer.appendChild(img);
+			
+			                    const deleteTrash = document.createElement('span');
+			                    deleteTrash.classList.add('delete-trash');
+			                    deleteTrash.innerHTML = '<i class="fas fa-trash"></i>';
+			                    deleteTrash.addEventListener('click', () => {
+			                        imageContainer.remove();
+			                        images.splice(images.indexOf(e.target.result), 1);
+			                    });
+			
+			                    imageContainer.appendChild(deleteTrash);
+			                    preview.appendChild(imageContainer);
+			
+			                    images.push(e.target.result);
+			                };
+			                reader.readAsDataURL(file);
+			            });
+			        }
+			    });
+			
+			
+			
+			// Función para generar y descargar el PDF
+			downloadPdfButton.addEventListener('click', () => {
+			
+			// Verificar si no hay imágenes adjuntas
+			if (images.length === 0) {
+			    alert("Sin evidencia no hay reporte. 🤨😝");
+			    return; // Si no hay imágenes, no continúa la ejecución
+			}
+			
+			
+			// Mostrar overlay de espera
+			document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
+			
+			
+			const { jsPDF } = window.jspdf;
+			
+			// Crear una instancia de jsPDF con tamaño carta (215.9 x 279.4 mm)
+			const pdf = new jsPDF('p', 'mm', 'letter'); // 'p' = página en orientación vertical, 'mm' = milímetros, 'letter' = tamaño carta
+			
+			// Definir los márgenes
+			const margin = 10;
+			
+			// Obtener el tamaño de la página (carta)
+			const pageWidth = pdf.internal.pageSize.getWidth();
+			const pageHeight = pdf.internal.pageSize.getHeight();
+			
+			// Inicializar la posición Y
+			let currentY = margin;
+			
+			const addQuestionAndAnswer = (question, answer) => {
+			    // Ajustar la pregunta con un maxWidth para evitar que se desborde
+			    const questionLines = pdf.splitTextToSize(question, pageWidth - 2 * margin);  // Dividir la pregunta si excede el ancho
+			    pdf.setFont("times", "bold");
+			    pdf.text(questionLines, margin, currentY);  // Usamos text con las líneas ajustadas
+			    currentY += questionLines.length * 8;  // Aumentamos el espaciado entre la pregunta y la siguiente línea (de 5 a 8)
+			
+			    // Ajustar la respuesta con maxWidth para que también se ajuste en varias líneas
+			    const answerLines = pdf.splitTextToSize(answer || 'No respondida', pageWidth - 2 * margin);  // Dividir la respuesta si excede el ancho
+			    pdf.setFont("times", "normal");
+			    pdf.text(answerLines, margin, currentY);  // Usamos text con las líneas ajustadas
+			    currentY += answerLines.length * 8;  // Aumentamos el espaciado entre la respuesta y la siguiente pregunta (de 5 a 8)
+			};
+			
+			// Portada
+			pdf.setFont("times", "bold");
+			pdf.setFontSize(16);  // Establecer tamaño de fuente a 16
+			
+			pdf.text("Reporte de Supervisión", margin, currentY);
+			currentY += 15;
+			
+			pdf.text("Proyecto: Cementera Argos", margin, currentY);
+			currentY += 15;
+			
+			pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", margin, currentY);
+			currentY += 15;
+			
+			pdf.text("Correo: jromero@grupomacdel.com", margin, currentY);
+			currentY += 15;
+			
+			pdf.text("Actividad: Supervisión de Áreas (Específico)", margin, currentY);
+			currentY += 10;
+			
+			// Línea horizontal
+			const lineWidth = 180;
+			pdf.line(margin, currentY, margin + lineWidth, currentY);
+			currentY += 10;  // Espacio debajo de la línea
+			
+			pdf.text("Fecha: " + document.getElementById('fecha').value, margin, currentY);
+			currentY += 15;
+			
+			pdf.text("Área a Supervisar: " + document.getElementById('area').value, margin, currentY);
+			currentY += 15;
+			
+			// Si oficina no está vacía, agregarla
+			let oficinaValue = document.getElementById('oficina').value;
+			if (oficinaValue !== "") {
+			    pdf.text("Oficina: " + oficinaValue, margin, currentY);
+			    currentY += 15;
+			}
+			
+			// Obtener el valor de medidas
+			let medidas = document.getElementById('medidas').value.trim();
+
+			// Eliminar solo los emoticones (usando un patrón más específico)
+			medidas = medidas.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF]+/g, '');
+
+			// Solo agregar el texto de medidas si no está vacío
+			if (medidas) {
+    			    // Añadir título
+    			    pdf.text("Medidas tomadas en caso de una no conformidad:", margin, currentY);
+    			    currentY += 10;
+
+    			    // Cambiar la fuente a una que soporte caracteres especiales
+    			    pdf.setFont("Arial", "normal"); // Arial soporta caracteres especiales
+
+    			    // Añadir el texto de medidas con un ancho máximo
+    			    pdf.text(medidas, margin, currentY, { maxWidth: pageWidth - 2 * margin });
+    			    currentY += 20;
+			} else {
+    			    // Si no hay medidas, no hacer nada
+    			    console.log("No hay medidas para mostrar.");
+			}
+
+			
+			// Función para agregar preguntas y respuestas con ajuste de texto
+			const addSection = (sectionName, questions) => {
+			    pdf.addPage();
+			    currentY = margin;
+			    pdf.setFont("times", "bold");
+			    pdf.setFontSize(12);  // Establecer tamaño de fuente a 16
+			
+			    pdf.text(sectionName, margin, currentY);
+			
+			    // Línea horizontal
+			    const lineY = currentY + 2;
+			    pdf.line(margin, lineY, pageWidth - margin, lineY);
+			    currentY += 10;
+			
+			    questions.forEach((q) => {
+			        addQuestionAndAnswer(q.text, document.getElementById(q.id).value);
+			    });
+			    currentY += 10;
+			};
+			
+			// Agregar preguntas de secciones, solo si "Sí" fue seleccionado
+			if (calificarOficinasSelect.value === 'Sí') addSection("Oficinas", questionsOficinas);
+			if (calificarPasillosSelect.value === 'Sí') addSection("Pasillos", questionsPasillos);
+			if (calificarFoodSelect.value === 'Sí') addSection("Food Court / Área de Comida", questionsFood);
+			if (calificarBanoSelect.value === 'Sí') addSection("Baños", questionsBano);
+			if (calificarAlrededorSelect.value === 'Sí') addSection("Alrededores", questionsAlrededor);
+			if (calificarPracticaSelect.value === 'Sí') addSection("Buenas Prácticas", questionsPractica);
+			
+			// Página de imágenes
+			pdf.addPage();
+			
+			const cellWidth = (pageWidth - 2 * margin) / 3;
+			const cellHeight = (pageHeight - 2 * margin) / 5;
+			const spacing = 3;
+			
+			images.forEach((image, index) => {
+			    const row = Math.floor(index / 3) % 5;
+			    const col = index % 3;
+			
+			    const xOffset = col * cellWidth + spacing + margin;
+			    const yOffset = row * cellHeight + spacing + margin;
+			
+			    const img = new Image();
+			    img.src = image;
+			    img.onload = () => {
+			        let imgWidth = img.width;
+			        let imgHeight = img.height;
+			        let scale = Math.min((cellWidth - spacing) / imgWidth, (cellHeight - spacing) / imgHeight);
+			        let newWidth = imgWidth * scale;
+			        let newHeight = imgHeight * scale;
+			
+			        const xCentered = xOffset + (cellWidth - newWidth) / 2;
+			        const yCentered = yOffset + (cellHeight - newHeight) / 2;
+			
+			        // Convertir la imagen a base64 con un nivel de compresión
+			        const canvas = document.createElement('canvas');
+			        const ctx = canvas.getContext('2d');
+			        canvas.width = imgWidth;
+			        canvas.height = imgHeight;
+			        ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+			
+			        // Comprimir imagen
+			        const compressedImage = canvas.toDataURL('image/jpeg', 0.1);
+			
+			        // Agregar imagen comprimida al PDF
+			        pdf.addImage(compressedImage, 'JPEG', xCentered, yCentered, newWidth, newHeight);
+			
+			        // Nueva página después de 15 imágenes
+			        if ((index + 1) % 15 === 0 && index + 1 < images.length) {
+			            pdf.addPage();
+			        }
+			
+			        if (index === images.length - 1) {
+			            // Obtener los elementos de fecha, área y oficina
+			            let fecha = document.getElementById('fecha').value;
+			            let area = document.getElementById('area').value;
+			            let oficina = document.getElementById('oficina').value;
+			
+			            let nombreArchivo = `${fecha} - Reporte de Supervisión - ${area}`;
+			
+			            if (area === "Administración" && oficina) {
+			                nombreArchivo += ` - ${oficina}`;
+			            }
+			
+			            nombreArchivo += ".pdf";
+			
+			            // Descargar PDF
+			            pdf.save(nombreArchivo);
+			
+			// Ocultar el overlay de espera
+			            document.getElementById('overlay').style.display = 'none';  // Ocultar el bloqueador de pantalla
+			
+			        }
+			    };
+			});
+			});
+			
+		</script>
+	</body>
 </html>
