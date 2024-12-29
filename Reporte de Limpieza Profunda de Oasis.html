@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Limpiezas Profundas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        width: 100%;
+        font-size: 1.5em;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Contenedor del formulario */
+    .container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        text-align: center;
+        margin: 40px auto;
+        grid-row: 2;
+        height: auto;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    input[type="date"],
+    textarea,
+    input[type="file"],
+    button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        padding: 12px 0;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilo para los contenedores de vista previa */
+    .image-preview {
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 0px solid #ccc;
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+
+    .image-preview-item {
+        position: relative;
+        width: 85px;
+        height: 85px;
+        overflow: hidden;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .image-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .delete-icon {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .image-preview-item:hover .delete-icon {
+        opacity: 1;
+    }
+
+    /* Estilos para el área de carga de imágenes */
+    .file-upload {
+        display: block;
+        position: relative;
+        width: 100%;
+        padding: 20px;
+        background: #f0f8ff;
+        border: 2px dashed #ccc;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        box-sizing: border-box;
+        border: 2px dashed #007BFF;
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: #f0f8ff;
+        color: #007BFF;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        margin: 10px 0;
+    }
+
+    .file-upload:hover {
+        border-color: #0056b3;
+    }
+
+    .file-upload input[type="file"] {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    /* Estilo para el botón "Volver al Inicio" */
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1em;
+        transition: background-color 0.3s, transform 0.3s;
+        position: fixed;
+        top: 80px;
+        left: 0px;
+        z-index: 1001;
+    }
+
+    /* Estilo para los contenedores de preguntas */
+    .question-container {
+        margin-bottom: 20px;
+        text-align: left;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    .question-container:hover {
+        border-color: #007BFF;
+    }
+
+        .question-container input[type="date"],
+        .question-container textarea,
+        .question-container select {
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+
+        .question-container input[type="date"]:focus,
+        .question-container textarea:focus,
+        .question-container select:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+    /* Estilos de las etiquetas */
+    .question-container label {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    /* Estilo del overlay (pantalla bloqueada) */
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
+    }
+
+    #loadingMessage {
+        color: white;  /* Texto en blanco */
+        font-size: 24px;  /* Tamaño de fuente para que se vea bien */
+        font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
+        text-align: center;
+        padding: 20px;  /* Espaciado interno */
+    }
+</style>
+
+
+</head>
+<body>
+
+ <div class="header">
+  Pisos Brillantes
+ </div>
+
+ <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
+ <div class="container">
+    <h1>Reporte de Limpieza Profunda de Oasis</h1>
+    <div class="form-container">
+        <div class="question-container">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+        </div>
+
+
+   <div class="question-container">
+    <label for="area">Área:</label>
+    <select id="area">
+
+<option value="Selecciona una opción">Selecciona una opción</option>
+<option value="Administración">Administración</option>
+<option value="Almacén General">Almacén General</option>
+<option value="Bodega de Limpieza">Bodega de Limpieza</option>
+<option value="Bodega de Sirel">Bodega de Jomar</option>
+<option value="Cafetería">Cafetería</option>
+<option value="Camerinos Permanentes">Camerinos Permanentes</option>
+<option value="Chiminike">Chiminike</option>
+<option value="Despacho">Despacho</option>
+<option value="Enfermería">Enfermería</option>
+<option value="Equipo Móvil">Equipo Móvil</option>
+<option value="Expedición">Expedición</option>
+<option value="Laboratorio de Calidad Ensayo Físico">Laboratorio de Calidad Ensayo Físico</option>
+<option value="Laboratorio de Calidad 1er Piso">Laboratorio de Calidad 1er Piso</option>
+<option value="Laboratorio de Calidad 2ndo Piso">Laboratorio de Calidad 2ndo Piso</option>
+<option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+<option value="Machaqueo A">Machaqueo A</option>
+<option value="Posta Principal - Guardias">Posta Principal - Guardias</option>
+<option value="Posta Principal - Recepción">Posta Principal - Recepción</option>
+<option value="Sala de Control">Sala de Control</option>
+<option value="Taller Eléctrico">Taller Eléctrico</option>
+
+					</select>
+   </div>
+
+<!-- Casilla "Nombre de Oficina" que estará oculta por defecto -->
+<div id="oficinaAdministracion" class="question-container" style="display: none;">
+  <label for="oficina">Nombre de Oficina:</label>
+  <select id="oficina">
+    <option value="Selecciona una opción">Selecciona una opción</option>
+    <option value="Compras">Compras</option>
+    <option value="Contabilidad">Contabilidad</option>
+    <option value="CRO">CRO</option>
+    <option value="Ejecutores de Mantenimiento">Ejecutores de Mantenimiento</option>
+    <option value="Gerencia">Gerencia</option>
+    <option value="Inspectores de Mantenimiento">Inspectores de Mantenimiento</option>
+    <option value="Materias Primas">Materias Primas</option>
+    <option value="Procesos">Procesos</option>
+    <option value="Producción">Producción</option>
+    <option value="Profesionales Eléctricos">Profesionales Eléctricos</option>
+    <option value="Proyectos">Proyectos</option>
+    <option value="Recursos Humanos">Recursos Humanos</option>
+    <option value="Sala de Reuniones">Sala de Reuniones</option>
+    <option value="SISO">SISO</option>
+  </select>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="question-container">
+            <label for="adjunto1">Proceso de lavado:</label>
+            <div class="file-upload" id="drag-area1" onclick="document.getElementById('adjunto1').click()">
+                <input type="file" id="adjunto1" name="adjunto1" accept="image/*" multiple>
+                <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+            </div>
+            <div id="preview1" class="image-preview"></div>
+        </div>
+
+        <div class="question-container">
+            <label for="adjunto2">Proceso de desinfección:</label>
+            <div class="file-upload" id="drag-area2" onclick="document.getElementById('adjunto2').click()">
+                <input type="file" id="adjunto2" name="adjunto2" accept="image/*" multiple>
+                <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+            </div>
+            <div id="preview2" class="image-preview"></div>
+        </div>
+
+        <div class="question-container">
+            <label for="adjunto3">Proceso final de enjuague:</label>
+            <div class="file-upload" id="drag-area3" onclick="document.getElementById('adjunto3').click()">
+                <input type="file" id="adjunto3" name="adjunto3" accept="image/*" multiple>
+                <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+            </div>
+            <div id="preview3" class="image-preview"></div>
+        </div>
+
+        <button type="button" onclick="generarPDF()">Generar Reporte</button>
+    </div>
+</div>
+
+   <!-- Contenedor para bloquear la pantalla -->
+   <div id="overlay" style="display: none;">
+    <div id="loadingMessage">
+     <p>Procesando...🥱</p>
+    </div>
+   </div>
+
+<script>
+
+  function goBack() {
+  window.history.back();  // Esto hace que el navegador vuelva a la página anterior
+  }
+
+  			// Obtener el select y la casilla de "Oficina de Administración"
+  			const areaSelect = document.getElementById('area');
+  			const oficinaAdministracionDiv = document.getElementById('oficinaAdministracion');
+  			
+  			// Añadir un evento para detectar el cambio en el select
+  			areaSelect.addEventListener('change', () => {
+  			    if (areaSelect.value === 'Administración') {
+  			        // Mostrar la casilla de Oficina de Administración si se selecciona "Administración"
+  			        oficinaAdministracionDiv.style.display = 'block';
+  			    } else {
+  			        // Ocultar la casilla de Oficina de Administración si se selecciona cualquier otra opción
+  			        oficinaAdministracionDiv.style.display = 'none';
+  			    }
+  			});
+
+
+
+
+    // Establecer la fecha actual por defecto
+    window.onload = function() {
+        const fechaInput = document.getElementById("fecha");
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Los meses van de 0 a 11
+        let dd = today.getDate();
+
+        // Formatear la fecha a formato YYYY-MM-DD
+        if (mm < 10) mm = '0' + mm;
+        if (dd < 10) dd = '0' + dd;
+
+        const formattedDate = yyyy + '-' + mm + '-' + dd;
+        fechaInput.value = formattedDate;
+    };
+
+    // Objetos para almacenar las imágenes seleccionadas por vista previa
+    const selectedFiles = {
+        preview1: [],
+        preview2: [],
+        preview3: []
+    };
+
+    function handleFileInput(event, previewId) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById(previewId);
+
+        Array.from(files).forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const div = document.createElement('div');
+                div.classList.add('image-preview-item');
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview">
+                    <div class="delete-icon" onclick="deleteImage('${previewId}', ${selectedFiles[previewId].length})">×</div>
+                `;
+                previewContainer.appendChild(div);
+
+                // Almacena el archivo en la lista correspondiente
+                selectedFiles[previewId].push(file);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Resetea el input para permitir seleccionar los mismos archivos nuevamente si es necesario
+        event.target.value = "";
+    }
+
+    function deleteImage(previewId, index) {
+        const previewContainer = document.getElementById(previewId);
+
+        // Elimina la imagen de la vista previa
+        previewContainer.removeChild(previewContainer.children[index]);
+
+        // Elimina el archivo correspondiente del arreglo
+        selectedFiles[previewId].splice(index, 1);
+
+        // Actualiza los índices de las imágenes restantes en la vista previa
+        Array.from(previewContainer.children).forEach((child, newIndex) => {
+            const deleteIcon = child.querySelector('.delete-icon');
+            deleteIcon.setAttribute('onclick', `deleteImage('${previewId}', ${newIndex})`);
+        });
+    }
+
+    // Eventos para manejar las entradas de archivos
+    document.getElementById('adjunto1').addEventListener('change', (e) => handleFileInput(e, 'preview1'));
+    document.getElementById('adjunto2').addEventListener('change', (e) => handleFileInput(e, 'preview2'));
+    document.getElementById('adjunto3').addEventListener('change', (e) => handleFileInput(e, 'preview3'));
+
+    // Funciones para manejar arrastre de archivos
+    const dragAreas = ['drag-area1', 'drag-area2', 'drag-area3'];
+    dragAreas.forEach(area => {
+        const dragArea = document.getElementById(area);
+        dragArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            dragArea.style.backgroundColor = "#e0f7ff"; // Resaltar el área
+        });
+
+        dragArea.addEventListener('dragleave', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            dragArea.style.backgroundColor = "#f0f8ff"; // Restaurar color de fondo
+        });
+
+        dragArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const files = event.dataTransfer.files;
+            const previewId = area.replace("drag-area", "preview");
+            handleFileInput({ target: { files } }, previewId);
+        });
+    });
+
+    async function generarPDF() {
+        // Verificar si los campos necesarios están vacíos
+if (
+    !document.getElementById('fecha').value.trim() || 
+    !document.getElementById('area').value.trim() || 
+    document.getElementById('area').value === "Selecciona una opción" || // Verifica que el valor del área no sea "Selecciona una opción"
+    (document.getElementById('area').value === "Administración" && 
+        (!document.getElementById('oficina').value.trim() || 
+        document.getElementById('oficina').value === "Selecciona una opción")) || // Verifica si el área es "Administración" y que oficina no esté vacío ni sea "Selecciona una opción"
+    document.getElementById('preview1').children.length === 0 || 
+    document.getElementById('preview2').children.length === 0 || 
+    document.getElementById('preview3').children.length === 0
+) {
+            return; // Si algún campo está vacío, no continúa la ejecución
+        }
+
+        // Mostrar overlay de espera
+        document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ format: 'letter' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        // Obtener datos del formulario
+        const fecha = document.getElementById('fecha').value;
+
+        // Portada
+        pdf.setFont("times", "bold"); // Cambiar a Times y negrita
+        pdf.setFontSize(16);
+        pdf.text("Reporte de Supervisión", 10, 20);
+        pdf.setFontSize(16);
+        pdf.text("Proyecto: Cementera Argos", 10, 35);
+        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", 10, 50);
+        pdf.text("Correo: jromero@grupomacdel.com", 10, 65);
+        pdf.text("Actividad: Limpieza Profunda de Oasis", 10, 80);
+
+        // Línea horizontal
+        pdf.line(10, 90, 190, 90); // Línea desde (x1, y1) hasta (x2, y2)
+
+        // Fecha
+        pdf.text(`Fecha: ${fecha}`, 10, 100);
+
+// Obtener el valor del área seleccionada (por ejemplo, el valor de un <select>)
+const areaSeleccionada = document.getElementById("area").value;
+
+// Verificar si el valor seleccionado no es "Selecciona una opción"
+if (areaSeleccionada && areaSeleccionada !== "Selecciona una opción") {
+    // Agregar el texto al PDF con el valor del área
+    pdf.text(`Área / Departamento: ${areaSeleccionada}`, 10, 115);
+}
+
+
+// Obtener el valor del área seleccionada (por ejemplo, el valor de un <select>)
+const oficinaSeleccionada = document.getElementById("oficina").value;
+
+// Verificar si el valor seleccionado es "Administración"
+if (areaSeleccionada === "Administración") {
+    pdf.text(`Nombre de Oficina: ${oficinaSeleccionada}`, 10, 130);
+}
+
+        // Manejar datos adjuntos
+        for (let i = 1; i <= 3; i++) {
+            const input = document.getElementById(`adjunto${i}`);
+            if (selectedFiles[`preview${i}`].length > 0) {
+                const files = selectedFiles[`preview${i}`];
+                let imgCount = 0;
+
+                // Comenzar una nueva página al principio de cada conjunto de imágenes
+                pdf.addPage();
+                pdf.setFont("times", "bold"); // Cambiar a Times y negrita
+
+                // Establecer el título según el grupo de imágenes (Antes, Durante, Después)
+                let sectionTitle = "";
+                if (i === 1) {
+                    sectionTitle = "Proceso de lavado:";
+                } else if (i === 2) {
+                    sectionTitle = "Proceso de desinfección:";
+                } else if (i === 3) {
+                    sectionTitle = "Proceso final de enjuague:";
+                }
+
+                // Agregar el título correspondiente
+                pdf.text(sectionTitle, 10, 15);
+
+                const imgWidth = 60; // Ancho de imagen ajustado
+                const imgHeight = 40; // Alto de imagen ajustado
+                const marginX = 15; // Margen izquierdo
+                const marginY = 20; // Margen superior
+                const spacingX = 65; // Espacio entre columnas
+                const spacingY = 45; // Espacio entre filas
+                const pageHeight = pdf.internal.pageSize.height; // Altura de la página
+
+                // Iterar a través de las imágenes
+                for (let j = 0; j < files.length; j++) {
+                    const file = files[j];
+                    const imgData = await compressImage(file, 0.5); // Comprimir imagen
+
+                    // Calcular la posición X y Y para la imagen
+                    const x = (imgCount % 3) * spacingX + marginX; // Posición X
+                    const y = Math.floor(imgCount / 3) * spacingY + marginY; // Posición Y
+
+                    // Verificar si la imagen se sale de los márgenes de la página
+                    if (y + imgHeight > pageHeight - marginY) {
+                        // Añadir nueva página si se excede el espacio
+                        pdf.addPage();
+                        pdf.text(`Continuación datos adjuntos #${i}:`, 10, 10);
+                        imgCount = 0; // Reiniciar el conteo para la nueva página
+                    }
+
+                    // Añadir la imagen a la página
+                    pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+                    imgCount++;
+
+                    // Si imgCount llega a 15, reiniciar
+                    if (imgCount === 15) {
+                        imgCount = 0; // Reiniciar el conteo de imágenes para la siguiente página
+
+                        // Solo añadir una nueva página si hay más de 15 imágenes
+                        if (selectedFiles[`preview${i}`].length % 15 !== 0 && selectedFiles[`preview${i}`].length > 0) {
+                            pdf.addPage(); // Añadir nueva página
+
+                            // Establecer el título de la nueva página según la sección
+                            let sectionTitle = "";
+                            if (i === 1) {
+                                sectionTitle = "Proceso de lavado:";
+                            } else if (i === 2) {
+                                sectionTitle = "Proceso de desinfección:";
+                            } else if (i === 3) {
+                                sectionTitle = "Proceso final de enjuague:";
+                            }
+
+                            // Añadir un encabezado a la nueva página
+                            pdf.text(sectionTitle, 10, 15);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Obtener el valor de la fecha
+
+// Obtener los valores de 'fecha', 'area' y 'oficina'
+const area = document.getElementById('area').value;
+let oficina = "";
+
+// Si el área es "Administración", obtenemos el valor de la oficina
+if (area === "Administración") {
+    oficina = document.getElementById('oficina').value;
+}
+
+// Crear un nombre para el archivo basado en la fecha, el área y, si corresponde, la oficina
+let nombreArchivo = `${fecha} - Lavado de Oasis`;
+
+// Si el área es "Administración", agregamos la oficina al nombre del archivo
+if (area === "Administración" && oficina && oficina !== "Selecciona una opción") {
+    nombreArchivo += ` - Administración - ${oficina}`;
+} else if (area !== "Administración") {
+    nombreArchivo += ` - ${area}`;
+}
+
+// Asegurarse de que el nombre del archivo tenga la extensión correcta
+nombreArchivo += ".pdf";
+
+// Descargar el PDF con el nombre dinámico
+pdf.save(nombreArchivo);
+
+
+        // Ocultar el overlay de espera
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    function compressImage(file, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Redimensionar imagen
+                    const maxWidth = 600;
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scale;
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    resolve(dataUrl);
+                };
+                img.src = event.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+
+</body>
+</html>
