@@ -1,422 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Reporte de Supervisión</title>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Limpiezas Profundas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
- <!-- Incluir SweetAlert2 -->
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
 
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- <style>
-  /* Estilo general para body */
-  			body {
-  			font-family: Arial, sans-serif;
-  			margin: 0;
-  			padding: 0;
-  			background-color: #f9f9f9;
-  			color: #333;
-  			display: flex;
-  			flex-direction: column;
-  			align-items: center;
-  			min-height: 100vh;
-  			}
-  			/* Header */
-  			.header {
-  			background-color: #007BFF;
-  			color: white;
-  			text-align: center;
-  			padding: 15px;
-  			width: 100%;
-  			font-size: 1.5em;
-  			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  			}
-  			/* Contenedor del formulario */
-  			.container {
-  			background: #fff;
-  			padding: 30px;
-  			border-radius: 10px;
-  			width: 100%;
-  			max-width: 600px;
-  			box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  			margin-top: 20px;
-  			}
-  			/* Mejoras para pantallas pequeñas */
-  			@media (max-width: 768px) {
-  			.header {
-  			font-size: 1.2em;
-  			padding: 15px;
-  			}
-  			.container {
-  			padding: 20px;
-  			}
-  			.container input,
-  			.container button {
-  			font-size: 1em;
-  			padding: 12px;
-  			width: 100%;
-  			}
-  			}
-  			/* Contenedor del formulario */
-  			.container {
-  			background: #ffffff;
-  			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  			border-radius: 10px;
-  			padding: 30px;
-  			width: 90%;
-  			max-width: 600px;
-  			text-align: center;
-  			margin: 40px auto;
-  			grid-row: 2;
-  			height: auto;
-  			box-sizing: border-box;
-  			}
-  			/* Mejoras para pantallas pequeñas (móviles) */
-  			@media (max-width: 768px) {
-  			.container {
-  			width: 100%;
-  			max-width: none;
-  			margin: 20px 0;
-  			padding: 20px;
-  			}
-  			.container input,
-  			.container button {
-  			font-size: 1em;
-  			padding: 10px;
-  			width: 100%;
-  			}
-  			body {
-  			padding: 0 10px;
-  			}
-  			}
-  			/* Estilo para los botones dentro del contenedor */
-  			.container button {
-  			display: inline-block;
-  			margin-top: 20px;
-  			background-color: #007BFF;
-  			color: white;
-  			border: 2px solid #007BFF;
-  			padding: 10px 20px;
-  			border-radius: 5px;
-  			font-size: 16px;
-  			cursor: pointer;
-  			transition: background-color 0.3s, border-color 0.3s;
-  			}
-  			/* Botones en pantallas pequeñas */
-  			@media (max-width: 768px) {
-  			.container button {
-  			width: auto;
-  			display: inline-block;
-  			margin-right: 10px;
-  			}
-  			}
-  			/* Centrado de los botones */
-  			.container .button-container {
-  			display: flex;
-  			justify-content: center;
-  			gap: 10px;
-  			flex-wrap: wrap;
-  			}
-  			/* Estilos para el área de arrastrar y soltar */
-  			.file-drop-area {
-  			border: 2px dashed #007BFF;
-  			border-radius: 10px;
-  			padding: 40px 20px;
-  			text-align: center;
-  			cursor: pointer;
-  			font-size: 16px;
-  			background-color: #f0f8ff;
-  			color: #007BFF;
-  			transition: background-color 0.3s ease, border-color 0.3s ease;
-  			margin: 10px 0;
-  			}
-  			.file-drop-area.dragover {
-  			background-color: #e6f7ff;
-  			border-color: #0056b3;
-  			}
-  			.file-drop-area:hover {
-  			background-color: #e6f7ff;
-  			border-color: #0056b3;
-  			}
-  			/* Ocultar el input file real */
-  			input[type="file"] {
-  			display: none;
-  			}
-  			/* Vista previa de las imágenes */
-  			#preview {
-  			display: flex;
-  			flex-wrap: wrap;
-  			justify-content: center;
-  			gap: 10px;
-  			margin: 20px 0;
-  			max-height: 300px;
-  			overflow-y: auto;
-  			}
-  			#preview .image-container {
-  			position: relative;
-  			display: inline-block;
-  			margin: 10px;
-  			cursor: pointer;
-  			}
-  			#preview img {
-  			max-width: 150px;
-  			max-height: 150px;
-  			margin: 0;
-  			border: 2px solid #ddd;
-  			border-radius: 8px;
-  			transition: transform 0.3s, filter 0.3s;
-  			}
-  			#preview img:hover {
-  			filter: brightness(0.8);
-  			transform: scale(1.05);
-  			}
-  			.delete-trash {
-  			position: absolute;
-  			top: 10px;
-  			left: 10px;
-  			font-size: 30px;
-  			color: red;
-  			display: none;
-  			transition: opacity 0.3s;
-  			}
-  			#preview .image-container:hover .delete-trash {
-  			display: block;
-  			opacity: 1;
-  			}
-  			/* Estilos generales de los botones */
-  			button {
-  			background-color: #007BFF;
-  			color: white;
-  			border: 2px solid #007BFF;
-  			padding: 10px 20px;
-  			border-radius: 5px;
-  			font-size: 16px;
-  			cursor: pointer;
-  			transition: background-color 0.3s, border-color 0.3s;
-  			margin-top: 20px;
-  			width: auto;
-  			}
-  			button:disabled {
-  			background-color: #ccc;
-  			cursor: not-allowed;
-  			border-color: #ccc;
-  			}
-  			button:hover:not(:disabled) {
-  			background-color: #0056b3;
-  			border-color: #0056b3;
-  			}
-  			/* Estilo para el campo .file-label */
-  			.file-label {
-  			display: inline-block;
-  			padding: 10px 20px;
-  			background-color: #007BFF;
-  			color: white;
-  			border-radius: 5px;
-  			cursor: pointer;
-  			transition: background-color 0.3s;
-  			}
-  			.file-label:hover {
-  			background-color: #0056b3;
-  			}
-  			input[type="file"] {
-  			display: none;
-  			}
-  			/* Estilo para los contenedores de preguntas */
-  			.question-container {
-  			margin-bottom: 20px;
-  			text-align: left;
-  			padding: 10px;
-  			border: 2px solid #ccc;
-  			border-radius: 5px;
-  			background-color: #f9f9f9;
-  			transition: border-color 0.3s;
-  			box-sizing: border-box;
-  			}
-  			.question-container:hover {
-  			border-color: #007BFF;
-  			}
-  			.question-container input[type="date"],
-  			.question-container textarea,
-  			.question-container select {
-  			padding: 10px;
-  			border: 2px solid #ccc;
-  			border-radius: 5px;
-  			width: 100%;
-  			font-size: 16px;
-  			background-color: #f9f9f9;
-  			color: #333;
-  			transition: border-color 0.3s;
-  			box-sizing: border-box;
-  			margin-top: 5px;
-  			}
-  			.question-container input[type="date"]:focus,
-  			.question-container textarea:focus,
-  			.question-container select:focus {
-  			border-color: #007BFF;
-  			outline: none;
-  			}
-  			/* Estilos específicos para el campo select */
-  			.question-container select {
-  			font-size: 16px;
-  			padding: 10px;
-  			}
-  			/* Estilos de las etiquetas */
-  			.question-container label {
-  			font-weight: bold;
-  			font-size: 16px;
-  			margin-bottom: 5px;
-  			display: block;
-  			}
-  			/* Medidas responsivas */
-  			@media (max-width: 768px) {
-  			.question-container {
-  			padding: 15px;
-  			margin-bottom: 15px;
-  			}
-  			.question-container input[type="date"],
-  			.question-container textarea,
-  			.question-container select {
-  			font-size: 14px;
-  			padding: 8px;
-  			}
-  			.question-container label {
-  			font-size: 18px;
-  			}
-  			}
-  			/* Estilos para la sección "oficina" */
-  			#oficina {
-  			padding: 10px;
-  			border: 2px solid #ccc;
-  			border-radius: 5px;
-  			width: 100%;
-  			font-size: 16px;
-  			background-color: #f9f9f9;
-  			color: #333;
-  			transition: border-color 0.3s;
-  			resize: vertical;
-  			box-sizing: border-box;
-  			}
-  			#oficina:focus {
-  			border-color: #007BFF;
-  			outline: none;
-  			}
-  			/* Estilo para el textarea con id "medidas" */
-  			#medidas {
-  			padding: 20px;
-  			border: 2px solid #ccc;
-  			border-radius: 5px;
-  			width: 100%;
-  			font-size: 16px;
-  			background-color: #f9f9f9;
-  			color: #333;
-  			transition: border-color 0.3s;
-  			resize: vertical;
-  			box-sizing: border-box;
-  			height: 250px;
-  			}
-  			/* Estilo para el botón "Volver al Inicio" */
-  			.back-button {
-  			display: inline-block;
-  			padding: 10px 20px;
-  			background-color: #007BFF;
-  			color: white;
-  			border-radius: 5px;
-  			text-decoration: none;
-  			text-align: center;
-  			font-size: 1em;
-  			transition: background-color 0.3s, transform 0.3s;
-  			position: fixed;
-  			top: 80px;
-  			left: 0px;
-  			z-index: 1001;
-  			}
-  			.back-button:hover {
-  			background-color: #0056b3;
-  			transform: scale(1.05);
-  			}
-  			/* Estilo adicional para dispositivos móviles */
-  			@media screen and (max-width: 600px) {
-  			.back-button {
-  			font-size: 0.9em;
-  			padding: 12px 18px;
-  			top: 57px;
-  			}
-  			}
-  			/* Sección adicional */
-  			.form-section {
-  			margin-top: 40px;
-  			padding-top: 20px;
-  			border-top: 2px solid #f4f4f9;
-  			}
-  			/* Ocultar elementos */
-  			.hidden {
-  			display: none;
-  			}
-  			/* Estilo del overlay (pantalla bloqueada) */
-  			#overlay {
-  			position: fixed;
-  			top: 0;
-  			left: 0;
-  			width: 100%;
-  			height: 100%;
-  			background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
-  			display: flex;
-  			justify-content: center;
-  			align-items: center;
-  			z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
-  			}
-  			#loadingMessage {
-  			color: white;  /* Texto en blanco */
-  			font-size: 24px;  /* Tamaño de fuente para que se vea bien */
-  			font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
-  			text-align: center;
-  			padding: 20px;  /* Espaciado interno */
-  			}
-  
+    /* Header */
+    .header {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        width: 100%;
+        font-size: 1.5em;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-  
- </style>
+    /* Contenedor del formulario */
+    .container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        text-align: center;
+        margin: 40px auto;
+        grid-row: 2;
+        height: auto;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    input[type="date"],
+    textarea,
+    input[type="file"],
+    button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        padding: 12px 0;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilo para los contenedores de vista previa */
+    .image-preview {
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 0px solid #ccc;
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+
+    .image-preview-item {
+        position: relative;
+        width: 85px;
+        height: 85px;
+        overflow: hidden;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .image-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .delete-icon {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .image-preview-item:hover .delete-icon {
+        opacity: 1;
+    }
+
+    /* Estilos para el área de carga de imágenes */
+    .file-upload {
+        display: block;
+        position: relative;
+        width: 100%;
+        padding: 20px;
+        background: #f0f8ff;
+        border: 2px dashed #ccc;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        box-sizing: border-box;
+        border: 2px dashed #007BFF;
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: #f0f8ff;
+        color: #007BFF;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        margin: 10px 0;
+    }
+
+    .file-upload:hover {
+        border-color: #0056b3;
+    }
+
+    .file-upload input[type="file"] {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    /* Estilo para el botón "Volver al Inicio" */
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1em;
+        transition: background-color 0.3s, transform 0.3s;
+        position: fixed;
+        top: 80px;
+        left: 0px;
+        z-index: 1001;
+    }
+
+    /* Estilo para los contenedores de preguntas */
+    .question-container {
+        margin-bottom: 20px;
+        text-align: left;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    /* Estilo para el campo de descripción */
+    .question-container textarea {
+    	padding: 15px; /* Aumentar el espacio interno */
+    	border: 2px solid #ccc;
+    	border-radius: 5px;
+    	width: 100%;
+    	font-size: 16px;
+    	background-color: #f9f9f9;
+    	color: #333;
+    	transition: border-color 0.3s;
+    	box-sizing: border-box;
+    	margin-top: 5px;
+    	height: 200px; /* Aumentar la altura para hacerlo más grande */
+    	resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+    }
+
+    .question-container:hover {
+        border-color: #007BFF;
+    }
+
+    .question-container input[type="date"],
+    .question-container textarea {
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+
+    .question-container input[type="date"]:focus,
+    .question-container textarea:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+    /* Estilos de las etiquetas */
+    .question-container label {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    /* Estilo del overlay (pantalla bloqueada) */
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
+    }
+
+    #loadingMessage {
+        color: white;  /* Texto en blanco */
+        font-size: 24px;  /* Tamaño de fuente para que se vea bien */
+        font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
+        text-align: center;
+        padding: 20px;  /* Espaciado interno */
+    }
+</style>
+
+
 </head>
 <body>
+
  <div class="header">
   Pisos Brillantes
  </div>
- <!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
+
  <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
  <div class="container">
-  <h1>Reporte de Limpiezas Profundas</h1>
-<!-- Formulario completo en una sola página -->
-<div class="form-container">
+    <h1>Reporte de Limpiezas Profundas</h1>
+    <div class="form-container">
+        <div class="question-container">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+        </div>
 
-  <!-- Ingreso de Fecha -->
-  <div class="question-container">
-    <label for="fecha">Fecha:</label>
-    <input type="date" id="fecha" value="" />
-  </div>
+        <div class="question-container">
+            <label for="descripcion">Descripción de la actividad:</label>
+            <textarea id="descripcion" name="descripcion" rows="5" placeholder="Describe la actividad realizada"></textarea>
+        </div>
 
-  <!-- Comentarios -->
-  <div class="question-container">
-    <label for="medidas">Descripción de la actividad:</label>
-    <textarea id="medidas" rows="4" cols="50" placeholder="Escribe aquí tus comentarios..."></textarea>
-  </div>
+        <div class="question-container">
+            <label for="adjunto1">Evidencia</label>
+            <div class="file-upload" id="drag-area1" onclick="document.getElementById('adjunto1').click()">
+                <input type="file" id="adjunto1" name="adjunto1" accept="image/*" multiple>
+                <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+            </div>
+            <div id="preview1" class="image-preview"></div>
+        </div>
 
-  <!-- Subir imágenes y Descargar PDF -->
-  <div class="form-section">
-    <!-- Contenedor para simular el botón de arrastrar y soltar -->
-    <div class="file-drop-area" id="fileDropArea">
-      <p>Haz clic para seleccionar las imágenes</p>
-      <input type="file" id="imageInput" accept="image/*" multiple>
+<div class="question-container" style="display: none;">
+    <label for="adjunto2">Durante:</label>
+    <div class="file-upload" id="drag-area2" onclick="document.getElementById('adjunto2').click()">
+        <input type="file" id="adjunto2" name="adjunto2" accept="image/*" multiple>
+        <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
     </div>
-    <div id="preview"></div>
-  </div>
+    <div id="preview2" class="image-preview"></div>
+</div>
 
-  <!-- Botón para generar el reporte -->
-  <div class="button-container">
-    <button type="button" id="downloadPdf">Generar Reporte</button>
-  </div>
 
+<div class="question-container" style="display: none;">
+    <label for="adjunto3">Después:</label>
+    <div class="file-upload" id="drag-area3" onclick="document.getElementById('adjunto3').click()">
+        <input type="file" id="adjunto3" name="adjunto3" accept="image/*" multiple>
+        <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+    </div>
+    <div id="preview3" class="image-preview"></div>
+</div>
+
+
+        <button type="button" onclick="generarPDF()">Generar Reporte</button>
+    </div>
 </div>
 
    <!-- Contenedor para bloquear la pantalla -->
@@ -425,283 +335,281 @@
      <p>Procesando...🥱</p>
     </div>
    </div>
-  </div>
- </div>
- <script>
+
+<script>
+
+
   function goBack() {
-  			    window.history.back();  // Esto hace que el navegador vuelva a la página anterior
-  			}
-  			
-  			// Establecer la fecha actual por defecto
-  			window.onload = function() {
-  			    const fechaInput = document.getElementById("fecha");
-  			    const today = new Date();
-  			    const yyyy = today.getFullYear();
-  			    let mm = today.getMonth() + 1; // Los meses van de 0 a 11
-  			    let dd = today.getDate();
-  			
-  			    // Formatear la fecha a formato YYYY-MM-DD
-  			    if (mm < 10) mm = '0' + mm;
-  			    if (dd < 10) dd = '0' + dd;
-  			
-  			    const formattedDate = yyyy + '-' + mm + '-' + dd;
-  			    fechaInput.value = formattedDate;
-  			};
-  			
-  			const dropArea = document.getElementById('fileDropArea'); // El área para arrastrar y soltar
-  			const fileInput = document.getElementById('imageInput'); // El input file real
-  			const previewDiv = document.getElementById('preview'); // Div para vista previa de las imágenes
-  			
-  			// Cuando un archivo está sobre el área (evitar comportamiento predeterminado del navegador)
-  			dropArea.addEventListener('dragover', (e) => {
-  			    e.preventDefault(); // Prevenir el comportamiento por defecto (abrir el archivo)
-  			    dropArea.classList.add('dragover'); // Cambiar el estilo cuando se arrastra un archivo
-  			});
-  			
-  			// Cuando el archivo se deja dentro del área
-  			dropArea.addEventListener('drop', (e) => {
-  			    e.preventDefault(); // Prevenir el comportamiento por defecto
-  			    dropArea.classList.remove('dragover'); // Eliminar la clase de estilo cuando se deja el archivo
-  			
-  			    const files = e.dataTransfer.files; // Obtener los archivos arrastrados
-  			    handleFiles(files); // Manejar los archivos arrastrados
-  			});
-  			
-  			// Si el archivo sale del área sin ser soltado
-  			dropArea.addEventListener('dragleave', () => {
-  			    dropArea.classList.remove('dragover'); // Eliminar la clase de estilo cuando el archivo sale del área
-  			});
-  			
-  			// Cuando se hace clic en el área de arrastre, abrir el input file
-  			dropArea.addEventListener('click', () => {
-  			fileInput.click(); // Abrir el cuadro de selección de archivo
-  			});
-  			
-  			// Cuando el input file cambia (selección manual de archivos)
-  			fileInput.addEventListener('change', () => {
-  			const files = fileInput.files;
-  			handleFiles(files); // Manejar los archivos seleccionados
-  			});
-  			
-  			// Función para manejar los archivos (tanto arrastrados como seleccionados)
-  			function handleFiles(files) {
-  			previewDiv.innerHTML = ''; // Limpiar la vista previa antes de mostrar nuevas imágenes
-  			
-  			// Mostrar miniaturas de las imágenes seleccionadas
-  			Array.from(files).forEach(file => {
-  			    const img = document.createElement('img');
-  			    img.src = URL.createObjectURL(file); // Crear una URL temporal para mostrar la imagen
-  			    previewDiv.appendChild(img); // Añadir la imagen al contenedor de vista previa
-  			});
-  			}
-  			
-  			
+  window.history.back();  // Esto hace que el navegador vuelva a la página anterior
+  }
 
-  			
-  			    // Manejo de imágenes y PDF (sin cambios)
-  			    const imageInput = document.getElementById('imageInput');
-  			    const preview = document.getElementById('preview');
-  			    const downloadPdfButton = document.getElementById('downloadPdf');
-  			    const images = [];
-  			
-  			    imageInput.addEventListener('change', (event) => {
-  			        preview.innerHTML = '';
-  			        images.length = 0;
-  			        const files = event.target.files;
-  			
-  			        if (files.length > 0) {
-  			            Array.from(files).forEach((file, index) => {
-  			                const reader = new FileReader();
-  			                reader.onload = (e) => {
-  			                    const img = document.createElement('img');
-  			                    img.src = e.target.result;
-  			
-  			                    const imageContainer = document.createElement('div');
-  			                    imageContainer.classList.add('image-container');
-  			                    imageContainer.appendChild(img);
-  			
-  			                    const deleteTrash = document.createElement('span');
-  			                    deleteTrash.classList.add('delete-trash');
-  			                    deleteTrash.innerHTML = '<i class="fas fa-trash"></i>';
-  			                    deleteTrash.addEventListener('click', () => {
-  			                        imageContainer.remove();
-  			                        images.splice(images.indexOf(e.target.result), 1);
-  			                    });
-  			
-  			                    imageContainer.appendChild(deleteTrash);
-  			                    preview.appendChild(imageContainer);
-  			
-  			                    images.push(e.target.result);
-  			                };
-  			                reader.readAsDataURL(file);
-  			            });
-  			        }
-  			    });
-  			
-  			
-  			
-  			// Función para generar y descargar el PDF
-  			downloadPdfButton.addEventListener('click', () => {
-  			
-  			// Verificar si no hay imágenes adjuntas
-  			if (images.length === 0 || !document.getElementById('medidas').value.trim() || !document.getElementById('fecha').value.trim()) {
-      			        return; // Si no hay imágenes, no continúa la ejecución
-  			}
-  
-  		
-  			
-  			// Mostrar overlay de espera
-  			document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
-  			
-  			
-  			const { jsPDF } = window.jspdf;
-  			
-  			// Crear una instancia de jsPDF con tamaño carta (215.9 x 279.4 mm)
-  			const pdf = new jsPDF('p', 'mm', 'letter'); // 'p' = página en orientación vertical, 'mm' = milímetros, 'letter' = tamaño carta
-  			
-  			// Definir los márgenes
-  			const margin = 10;
-  			
-  			// Obtener el tamaño de la página (carta)
-  			const pageWidth = pdf.internal.pageSize.getWidth();
-  			const pageHeight = pdf.internal.pageSize.getHeight();
-  			
-  			// Inicializar la posición Y
-  			let currentY = margin;
-  			
-  			
-  			// Portada
-  			pdf.setFont("times", "bold");
-  			pdf.setFontSize(16);  // Establecer tamaño de fuente a 16
-  			
-  			pdf.text("Reporte de Supervisión", margin, currentY);
-  			currentY += 15;
-  			
-  			pdf.text("Proyecto: Cementera Argos", margin, currentY);
-  			currentY += 15;
-  			
-  			pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", margin, currentY);
-  			currentY += 15;
-  			
-  			pdf.text("Correo: jromero@grupomacdel.com", margin, currentY);
-  			currentY += 15;
-  			
-  			pdf.text("Actividad: Limpiezas profundas / No Rutinarias", margin, currentY);
-  			currentY += 10;
-  			
-  			// Línea horizontal
-  			const lineWidth = 180;
-  			pdf.line(margin, currentY, margin + lineWidth, currentY);
-  			currentY += 10;  // Espacio debajo de la línea
-  			
-  			pdf.text("Fecha: " + document.getElementById('fecha').value, margin, currentY);
-  			currentY += 15;
-   			
-  			// Obtener el valor de medidas
-  			let medidas = document.getElementById('medidas').value.trim();
-  
-  			// Eliminar solo los emoticones (usando un patrón más específico)
-  			medidas = medidas.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF]+/g, '');
-  
-  			// Solo agregar el texto de medidas si no está vacío
-  			if (medidas) {
-      			    // Añadir título
-      			    pdf.text("Descripción de la actividad:", margin, currentY);
-      			    currentY += 10;
-  
-      			    // Cambiar la fuente a una que soporte caracteres especiales
-      			    pdf.setFont("Arial", "normal"); // Arial soporta caracteres especiales
-  
-      			    // Añadir el texto de medidas con un ancho máximo
-      			    pdf.text(medidas, margin, currentY, { maxWidth: pageWidth - 2 * margin });
-      			    currentY += 20;
-  			} else {
-      			    // Si no hay medidas, no hacer nada
-      			    console.log("No hay medidas para mostrar.");
-  			}
-  
-    			
-  			// Página de imágenes
-  			pdf.addPage();
-  			
-  			const cellWidth = (pageWidth - 2 * margin) / 3;
-  			const cellHeight = (pageHeight - 2 * margin) / 5;
-  			const spacing = 3;
-  			
-  			images.forEach((image, index) => {
-  			    const row = Math.floor(index / 3) % 5;
-  			    const col = index % 3;
-  			
-  			    const xOffset = col * cellWidth + spacing + margin;
-  			    const yOffset = row * cellHeight + spacing + margin;
-  			
-  			    const img = new Image();
-img.src = image;
-img.onload = () => {
-    let imgWidth = img.width;
-    let imgHeight = img.height;
 
-    // Redimensionar imagen para mantener un tamaño razonable
-    let maxResolution = 800; // Ajusta según tus necesidades
-    if (imgWidth > maxResolution || imgHeight > maxResolution) {
-        const aspectRatio = imgWidth / imgHeight;
-        if (aspectRatio > 1) {
-            imgWidth = maxResolution;
-            imgHeight = maxResolution / aspectRatio;
-        } else {
-            imgHeight = maxResolution;
-            imgWidth = maxResolution * aspectRatio;
+
+    // Establecer la fecha actual por defecto
+    window.onload = function() {
+        const fechaInput = document.getElementById("fecha");
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Los meses van de 0 a 11
+        let dd = today.getDate();
+
+        // Formatear la fecha a formato YYYY-MM-DD
+        if (mm < 10) mm = '0' + mm;
+        if (dd < 10) dd = '0' + dd;
+
+        const formattedDate = yyyy + '-' + mm + '-' + dd;
+        fechaInput.value = formattedDate;
+    };
+
+    // Objetos para almacenar las imágenes seleccionadas por vista previa
+    const selectedFiles = {
+        preview1: [],
+        preview2: [],
+        preview3: []
+    };
+
+    function handleFileInput(event, previewId) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById(previewId);
+
+        Array.from(files).forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const div = document.createElement('div');
+                div.classList.add('image-preview-item');
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview">
+                    <div class="delete-icon" onclick="deleteImage('${previewId}', ${selectedFiles[previewId].length})">×</div>
+                `;
+                previewContainer.appendChild(div);
+
+                // Almacena el archivo en la lista correspondiente
+                selectedFiles[previewId].push(file);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Resetea el input para permitir seleccionar los mismos archivos nuevamente si es necesario
+        event.target.value = "";
+    }
+
+    function deleteImage(previewId, index) {
+        const previewContainer = document.getElementById(previewId);
+
+        // Elimina la imagen de la vista previa
+        previewContainer.removeChild(previewContainer.children[index]);
+
+        // Elimina el archivo correspondiente del arreglo
+        selectedFiles[previewId].splice(index, 1);
+
+        // Actualiza los índices de las imágenes restantes en la vista previa
+        Array.from(previewContainer.children).forEach((child, newIndex) => {
+            const deleteIcon = child.querySelector('.delete-icon');
+            deleteIcon.setAttribute('onclick', `deleteImage('${previewId}', ${newIndex})`);
+        });
+    }
+
+    // Eventos para manejar las entradas de archivos
+    document.getElementById('adjunto1').addEventListener('change', (e) => handleFileInput(e, 'preview1'));
+    document.getElementById('adjunto2').addEventListener('change', (e) => handleFileInput(e, 'preview2'));
+    document.getElementById('adjunto3').addEventListener('change', (e) => handleFileInput(e, 'preview3'));
+
+    // Funciones para manejar arrastre de archivos
+    const dragAreas = ['drag-area1', 'drag-area2', 'drag-area3'];
+    dragAreas.forEach(area => {
+        const dragArea = document.getElementById(area);
+        dragArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            dragArea.style.backgroundColor = "#e0f7ff"; // Resaltar el área
+        });
+
+        dragArea.addEventListener('dragleave', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            dragArea.style.backgroundColor = "#f0f8ff"; // Restaurar color de fondo
+        });
+
+        dragArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const files = event.dataTransfer.files;
+            const previewId = area.replace("drag-area", "preview");
+            handleFileInput({ target: { files } }, previewId);
+        });
+    });
+
+    async function generarPDF() {
+        // Verificar si los campos necesarios están vacíos
+        if (
+            !document.getElementById('fecha').value.trim() || 
+            !document.getElementById('descripcion').value.trim() || 
+            document.getElementById('preview1').children.length === 0
+        ) {
+            return; // Si algún campo está vacío, no continúa la ejecución
         }
-    }
 
-    // Calcular escala para ajustarse al espacio del PDF
-    let scale = Math.min((cellWidth - spacing) / imgWidth, (cellHeight - spacing) / imgHeight);
-    let newWidth = imgWidth * scale;
-    let newHeight = imgHeight * scale;
+        // Mostrar overlay de espera
+        document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
 
-    const xCentered = xOffset + (cellWidth - newWidth) / 2;
-    const yCentered = yOffset + (cellHeight - newHeight) / 2;
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ format: 'letter' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // Crear canvas para redimensionar y comprimir la imagen
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = imgWidth;
-    canvas.height = imgHeight;
-    ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+        // Obtener datos del formulario
+        const fecha = document.getElementById('fecha').value;
+        const descripcion = document.getElementById('descripcion').value;
 
-    // Comprimir imagen con calidad ajustada
-    const compressedQuality = 0.4; // Ajusta entre 0.4 y 0.6 para balancear calidad/tamaño
-    const compressedImage = canvas.toDataURL('image/jpeg', compressedQuality);
+        // Portada
+        pdf.setFont("times", "bold"); // Cambiar a Times y negrita
+        pdf.setFontSize(16);
+        pdf.text("Reporte de Supervisión", 10, 20);
+        pdf.setFontSize(16);
+        pdf.text("Proyecto: Cementera Argos", 10, 35);
+        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", 10, 50);
+        pdf.text("Correo: jromero@grupomacdel.com", 10, 65);
+        pdf.text("Actividad: Limpiezas Profundas", 10, 80);
 
-    // Agregar imagen comprimida al PDF
-    pdf.addImage(compressedImage, 'JPEG', xCentered, yCentered, newWidth, newHeight);
+        // Línea horizontal
+        pdf.line(10, 90, 190, 90); // Línea desde (x1, y1) hasta (x2, y2)
 
-    // Nueva página después de 15 imágenes
-    if ((index + 1) % 15 === 0 && index + 1 < images.length) {
-        pdf.addPage();
-    }
+        // Fecha
+        pdf.text(`Fecha: ${fecha}`, 10, 100);
 
-    if (index === images.length - 1) {
-        // Obtener los elementos de fecha, área y oficina
+        // Verificar si la descripción está vacía o no
+        if (descripcion && descripcion.trim() !== "") {
+            // Filtrar emoticones de la descripción
+            const descripcionFiltrada = descripcion.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{200D}\u{FE0F}]/gu, "");
 
-  			            let fecha = document.getElementById('fecha').value;
-  			
-  			            let nombreArchivo = `${fecha} - Limpiezas Profundas`;
-  			
-  			            nombreArchivo += ".pdf";
+            // Agregar el texto al PDF solo si no está vacío después del filtro
+            if (descripcionFiltrada.trim() !== "") {
+                pdf.text(`Descripción:`, 10, 115);
+                pdf.setFont("Arial", "normal");
+                pdf.text(descripcionFiltrada, 10, 125, { maxWidth: 190 });
+            }
+        }
 
-        // Descargar PDF
+        // Manejar datos adjuntos
+        for (let i = 1; i <= 3; i++) {
+            const input = document.getElementById(`adjunto${i}`);
+            if (selectedFiles[`preview${i}`].length > 0) {
+                const files = selectedFiles[`preview${i}`];
+                let imgCount = 0;
+
+                // Comenzar una nueva página al principio de cada conjunto de imágenes
+                pdf.addPage();
+                pdf.setFont("times", "bold"); // Cambiar a Times y negrita
+
+                // Establecer el título según el grupo de imágenes (Antes, Durante, Después)
+                let sectionTitle = "";
+                if (i === 1) {
+                    sectionTitle = "Evidencia";
+                } else if (i === 2) {
+                    sectionTitle = "Durante:";
+                } else if (i === 3) {
+                    sectionTitle = "Después:";
+                }
+
+                // Agregar el título correspondiente
+                pdf.text(sectionTitle, 10, 15);
+
+                const imgWidth = 60; // Ancho de imagen ajustado
+                const imgHeight = 40; // Alto de imagen ajustado
+                const marginX = 15; // Margen izquierdo
+                const marginY = 20; // Margen superior
+                const spacingX = 65; // Espacio entre columnas
+                const spacingY = 45; // Espacio entre filas
+                const pageHeight = pdf.internal.pageSize.height; // Altura de la página
+
+                // Iterar a través de las imágenes
+                for (let j = 0; j < files.length; j++) {
+                    const file = files[j];
+                    const imgData = await compressImage(file, 0.5); // Comprimir imagen
+
+                    // Calcular la posición X y Y para la imagen
+                    const x = (imgCount % 3) * spacingX + marginX; // Posición X
+                    const y = Math.floor(imgCount / 3) * spacingY + marginY; // Posición Y
+
+                    // Verificar si la imagen se sale de los márgenes de la página
+                    if (y + imgHeight > pageHeight - marginY) {
+                        // Añadir nueva página si se excede el espacio
+                        pdf.addPage();
+                        pdf.text(`Continuación datos adjuntos #${i}:`, 10, 10);
+                        imgCount = 0; // Reiniciar el conteo para la nueva página
+                    }
+
+                    // Añadir la imagen a la página
+                    pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+                    imgCount++;
+
+                    // Si imgCount llega a 15, reiniciar
+                    if (imgCount === 15) {
+                        imgCount = 0; // Reiniciar el conteo de imágenes para la siguiente página
+
+                        // Solo añadir una nueva página si hay más de 15 imágenes
+                        if (selectedFiles[`preview${i}`].length % 15 !== 0 && selectedFiles[`preview${i}`].length > 0) {
+                            pdf.addPage(); // Añadir nueva página
+
+                            // Establecer el título de la nueva página según la sección
+                            let sectionTitle = "";
+                            if (i === 1) {
+                                sectionTitle = "";
+                            } else if (i === 2) {
+                                sectionTitle = "Durante:";
+                            } else if (i === 3) {
+                                sectionTitle = "Después:";
+                            }
+
+                            // Añadir un encabezado a la nueva página
+                            pdf.text(sectionTitle, 10, 15);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Obtener el valor de la fecha
+
+        // Crear un nombre para el archivo basado en la fecha y el título
+        let nombreArchivo = `${fecha} - Limpiezas Profundas`;
+
+        // Asegurarse de que el nombre del archivo tenga la extensión correcta
+        nombreArchivo += ".pdf";
+
+        // Descargar el PDF con el nombre dinámico
         pdf.save(nombreArchivo);
 
         // Ocultar el overlay de espera
         document.getElementById('overlay').style.display = 'none';
     }
-};
 
-  			});
-  			});
+    function compressImage(file, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
 
+                    // Redimensionar imagen
+                    const maxWidth = 600;
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scale;
 
- </script>
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    resolve(dataUrl);
+                };
+                img.src = event.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+
 </body>
 </html>
