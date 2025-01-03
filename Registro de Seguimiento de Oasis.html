@@ -284,6 +284,8 @@
     border: 2px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
+    /* Aseguramos que haya suficiente espacio para el canvas más grande */
+    min-height: 200px; /* o más, dependiendo de tus necesidades */
 }
 
 /* Botones debajo del lienzo */
@@ -544,9 +546,10 @@ function resizeCanvas() {
     // Establecer el ancho del canvas
     canvas.width = canvasWidth;
 
-    // Establecer la altura del canvas manteniendo una relación de aspecto (por ejemplo, 2:1)
-    canvas.height = canvasWidth / 2; // Puedes ajustar esta proporción como desees
+    // Establecer la altura fija del canvas (500px)
+    canvas.height =200;
 }
+
 
 // Iniciar dibujo en mouse o toque
 canvas.addEventListener("mousedown", (e) => {
