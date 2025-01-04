@@ -480,8 +480,8 @@ const handleChange = () => {
     mantenimiento2Div.style.display = 'none';
   }
 
-  // Mostrar mantenimiento2 si la actividad es "Salida"
-  if (actividadValue === 'Salida') {
+  // Mostrar mantenimiento2 si la actividad es "Entrada"
+  if (actividadValue === 'Entrada') {
     mantenimiento2Div.style.display = 'block';
   }
 };
@@ -491,7 +491,7 @@ const handleChange = () => {
 
 // Evento de cambio para el select dentro de mantenimiento1
 mantenimiento1Div.querySelector('select')?.addEventListener('change', () => {
-  mantenimiento2Div.style.display = mantenimiento1Div.querySelector('select')?.value === 'Salida' ? 'block' : 'none';
+  mantenimiento2Div.style.display = mantenimiento1Div.querySelector('select')?.value === 'Entrada' ? 'block' : 'none';
 });
 
 // Llamar a handleChange inicialmente para establecer los valores correctos
