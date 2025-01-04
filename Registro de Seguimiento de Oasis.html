@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Seguimiento de Oasis</title>
+    <title>Reporte de Seguimiento de Oasis</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
 <style>
@@ -323,7 +323,7 @@
  	<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
 
  	<div class="container">
-    		<h1>Registro de Seguimiento de Oasis</h1>
+    		<h1>Reporte de Seguimiento de Oasis</h1>
 
     		<div class="form-container">
 
@@ -450,53 +450,53 @@
 <!-- Contenedor para MOSTRAR / OCULTAR elementos -->
 
 const areaSelect = document.getElementById('area');
-const oficinaAdministracionDiv = document.getElementById('oficinaAdministracion');
 const actividadSelect = document.getElementById('actividad');
+const oficinaAdministracionDiv = document.getElementById('oficinaAdministracion');
 const motivosalidaDiv = document.getElementById('motivosalida');
 const areacheckDiv = document.getElementById('areacheck');
 const mantenimiento1Div = document.getElementById('mantenimiento1');
 const mantenimiento2Div = document.getElementById('mantenimiento2');
 
-// Función para manejar el cambio de los selectores
+// Función para manejar la visibilidad de los divs según la actividad y el tipo de acción
 const handleChange = () => {
   const areaValue = areaSelect.value;
   const actividadValue = actividadSelect.value;
+  const tipoAccionValue = mantenimiento1Div.querySelector('select')?.value;
 
-  // Mostrar u ocultar la casilla de "Oficina de Administración" solo si 'area' es 'Administración'
-  oficinaAdministracionDiv.style.display = (areaValue === 'Administración') ? 'block' : 'none';
+  // Control de visibilidad según el área
+  oficinaAdministracionDiv.style.display = areaValue === 'Administración' ? 'block' : 'none';
 
-  // Mostrar u ocultar la casilla de "Motivo de Salida" y "Área Check"
-  if (actividadValue === 'Registro de Retiro') {
-    motivosalidaDiv.style.display = 'block';
-    areacheckDiv.style.display = 'block';
-  } else {
-    motivosalidaDiv.style.display = 'none';
-    areacheckDiv.style.display = 'none';
-  }
+  // Control de visibilidad según la actividad
+  motivosalidaDiv.style.display = areacheckDiv.style.display = actividadValue === 'Registro de Retiro' ? 'block' : 'none';
+  areacheckDiv.style.display = actividadValue === 'Registro de Entrega' ? 'block' : areacheckDiv.style.display;
 
-  // Mostrar u ocultar la casilla de "Área Check" para "Registro de Entrega"
-  if (actividadValue === 'Registro de Entrega') {
-    areacheckDiv.style.display = 'block';
-  }
-
-  // Mostrar u ocultar las casillas de "Mantenimiento" y asegurarse de que "Oficina de Administración" se oculte
+  // Mostrar/ocultar mantenimiento1 y mantenimiento2
   if (actividadValue === 'Registro de Mantenimiento') {
     mantenimiento1Div.style.display = 'block';
-    mantenimiento2Div.style.display = 'block';
-    // Ocultar "Oficina de Administración" si está visible, ya que no debería mostrarse con "Registro de Mantenimiento"
     oficinaAdministracionDiv.style.display = 'none';
+    mantenimiento2Div.style.display = tipoAccionValue === 'Salida' ? 'block' : 'none';
   } else {
     mantenimiento1Div.style.display = 'none';
     mantenimiento2Div.style.display = 'none';
   }
+
+  // Mostrar mantenimiento2 si la actividad es "Salida"
+  if (actividadValue === 'Salida') {
+    mantenimiento2Div.style.display = 'block';
+  }
 };
 
-// Añadir el evento de cambio a los selectores
-areaSelect.addEventListener('change', handleChange);
-actividadSelect.addEventListener('change', handleChange);
+// Evento de cambio para los selects
+[areaSelect, actividadSelect].forEach(select => select.addEventListener('change', handleChange));
+
+// Evento de cambio para el select dentro de mantenimiento1
+mantenimiento1Div.querySelector('select')?.addEventListener('change', () => {
+  mantenimiento2Div.style.display = mantenimiento1Div.querySelector('select')?.value === 'Salida' ? 'block' : 'none';
+});
 
 // Llamar a handleChange inicialmente para establecer los valores correctos
 handleChange();
+
 
 <!-- Contenedor para MOSTRAR / OCULTAR elementos -->
 
