@@ -9,6 +9,9 @@
  <!-- Incluir SweetAlert2 -->
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -286,7 +289,7 @@
     padding: 10px;
     border: 2px solid #ccc;
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #fff;
     /* Aseguramos que haya suficiente espacio para el canvas más grande */
     min-height: 200px; /* o más, dependiendo de tus necesidades */
 }
@@ -331,6 +334,27 @@
       			width: 300px;  /* Ajusta el ancho máximo del modal */
       			max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
   			}
+
+
+.icon-button {
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+}
+
+.icon-button.active {
+    background: #007bff;
+    color: #fff;
+}
+
+.icon-button:hover {
+    background: #e2e6ea;
+}
+
 
 
 
@@ -442,15 +466,27 @@
             		<div id="preview1" class="image-preview"></div>
         	</div>
 
-		<div class="question-container">
-    			<label for="firma">Firma del Responsable:</label>
-    			<div id="firmaContainer" class="firma-container">
-        			<canvas id="firmaCanvas" width="400" height="200" style="border: 1px solid #ccc;"></canvas>
-        			<div class="firma-buttons">
-            				<button type="button" id="clearSignature" style="margin-top: 10px;">Limpiar</button>
-        			</div>
-    			</div>
-		</div>
+<div class="question-container">
+    <label for="firma">Firma del Responsable:</label>
+    <div id="firmaContainer" class="firma-container">
+        <canvas id="firmaCanvas" width="400" height="200" style="border: 1px solid #ccc;"></canvas>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+        <button id="toggleEraser" title="Borrador" class="icon-button">
+            <i class="fas fa-eraser"></i>
+        </button>
+        <button id="undo" title="Deshacer" class="icon-button">
+            <i class="fas fa-undo"></i>
+        </button>
+        <button id="redo" title="Rehacer" class="icon-button">
+            <i class="fas fa-redo"></i>
+        </button>
+        <button id="clearSignature" title="Limpiar" class="icon-button">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </div>
+</div>
+
 
 		<!-- Contenedor para bloquear la pantalla -->
 		<div id="overlay" style="display: none;">
@@ -529,129 +565,210 @@ handleChange();
 <!-- Contenedor para la Firma -->
 
 let isDrawing = false;
+let isErasing = false;
 let lastX = 0;
 let lastY = 0;
 const canvas = document.getElementById("firmaCanvas");
 const ctx = canvas.getContext("2d");
 
-// Crear un canvas temporal para almacenar la firma
-const tempCanvas = document.createElement("canvas");
-const tempCtx = tempCanvas.getContext("2d");
+const undoStack = [];
+const redoStack = [];
 
-// Función para guardar el contenido actual del canvas en el canvas temporal
-function saveCanvasState() {
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    tempCtx.drawImage(canvas, 0, 0);
+// Guardar el estado actual del canvas en la pila de deshacer
+function saveToUndoStack() {
+    undoStack.push(canvas.toDataURL());
+    redoStack.length = 0; // Limpiar la pila de rehacer
 }
 
-// Función para restaurar el contenido del canvas temporal al canvas principal
-function restoreCanvasState() {
-    ctx.drawImage(tempCanvas, 0, 0);
-}
-
-// Función para obtener las coordenadas adecuadas tanto en dispositivos con ratón como táctiles
-function getCoordinates(e) {
-    let x, y;
-    if (e.touches) { // Evento táctil
-        x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-        y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
-    } else { // Evento de ratón
-        x = e.offsetX;
-        y = e.offsetY;
+// Deshacer acción
+function undo() {
+    if (undoStack.length > 0) {
+        saveToRedoStack();
+        const lastState = undoStack.pop();
+        const img = new Image();
+        img.src = lastState;
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        };
     }
-    return { x, y };
 }
 
-// Ajuste del tamaño del canvas para el contenedor del formulario
-function resizeCanvas() {
-    // Guardar el estado del canvas antes de redimensionar
-    saveCanvasState();
-
-    const questionContainer = document.querySelector('.question-container');
-    if (!questionContainer) return;
-
-    const questionContainerWidth = questionContainer.offsetWidth;
-    const padding = parseFloat(getComputedStyle(questionContainer).paddingLeft) + parseFloat(getComputedStyle(questionContainer).paddingRight);
-    const availableWidth = questionContainerWidth - padding;
-    const canvasWidth = availableWidth * 0.9;
-
-    canvas.width = canvasWidth;
-    canvas.height = 220;
-
-    // Restaurar el estado del canvas después de redimensionar
-    restoreCanvasState();
+// Rehacer acción
+function redo() {
+    if (redoStack.length > 0) {
+        const lastState = redoStack.pop();
+        undoStack.push(canvas.toDataURL()); // Guardar el estado actual en la pila de deshacer
+        const img = new Image();
+        img.src = lastState;
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        };
+    }
 }
 
-// Iniciar dibujo en mouse o toque
-canvas.addEventListener("mousedown", (e) => {
-    isDrawing = true;
-    const { x, y } = getCoordinates(e);
-    lastX = x;
-    lastY = y;
+// Guardar el estado en la pila de rehacer
+function saveToRedoStack() {
+    redoStack.push(canvas.toDataURL());
+}
+
+// Obtener coordenadas del evento
+function getCoordinates(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width; // Escala en X
+    const scaleY = canvas.height / rect.height; // Escala en Y
+    if (e.touches) {
+        return {
+            x: (e.touches[0].clientX - rect.left) * scaleX,
+            y: (e.touches[0].clientY - rect.top) * scaleY
+        };
+    }
+    return { x: (e.offsetX) * scaleX, y: (e.offsetY) * scaleY };
+}
+
+// Modo borrador
+document.getElementById("toggleEraser").addEventListener("click", () => {
+    isErasing = !isErasing;
+    document.getElementById("toggleEraser").classList.toggle("active");
 });
 
-canvas.addEventListener("touchstart", (e) => {
-    isDrawing = true;
-    const { x, y } = getCoordinates(e);
-    lastX = x;
-    lastY = y;
-    e.preventDefault(); // Previene el comportamiento predeterminado del toque
-});
-
-// Dibujar sobre el lienzo (movimiento del mouse o toque)
 canvas.addEventListener("mousemove", (e) => {
     if (!isDrawing) return;
     const { x, y } = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = isErasing ? "#FFF" : "#000";
+    ctx.lineWidth = isErasing ? 10 : 4;
     ctx.stroke();
+    lastX = x;
+    lastY = y;
+});
+
+// Dibujar o borrar en el canvas
+canvas.addEventListener("mousedown", (e) => {
+    saveToUndoStack();
+    isDrawing = true;
+    const { x, y } = getCoordinates(e);
+    lastX = x;
+    lastY = y;
+});
+
+canvas.addEventListener("mouseup", () => (isDrawing = false));
+canvas.addEventListener("mouseout", () => (isDrawing = false));
+
+// Botones
+document.getElementById("undo").addEventListener("click", undo);
+document.getElementById("redo").addEventListener("click", redo);
+document.getElementById("clearSignature").addEventListener("click", () => {
+    saveToUndoStack();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+// Evitar el desplazamiento de la pantalla en dispositivos móviles
+canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Evita el desplazamiento de la pantalla
+    saveToUndoStack();
+    isDrawing = true;
+    const { x, y } = getCoordinates(e);
     lastX = x;
     lastY = y;
 });
 
 canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // Evita el desplazamiento de la pantalla
     if (!isDrawing) return;
     const { x, y } = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = isErasing ? "#FFF" : "#000";
+    ctx.lineWidth = isErasing ? 10 : 2;
     ctx.stroke();
     lastX = x;
     lastY = y;
-    e.preventDefault(); // Previene el comportamiento predeterminado del toque
 });
 
-// Finalizar dibujo (mouseup o touchend)
-canvas.addEventListener("mouseup", () => {
+canvas.addEventListener("touchend", (e) => {
+    e.preventDefault(); // Evita el desplazamiento de la pantalla
     isDrawing = false;
 });
 
-canvas.addEventListener("touchend", () => {
+canvas.addEventListener("touchcancel", (e) => {
+    e.preventDefault(); // Evita el desplazamiento de la pantalla
     isDrawing = false;
 });
 
-canvas.addEventListener("mouseout", () => {
-    isDrawing = false;
-});
+// Ajustar el tamaño del canvas sin perder el dibujo
+function resizeCanvas() {
+    // Guardar el contenido actual del canvas
+    const currentDrawing = canvas.toDataURL();
 
-// Limpiar la firma cuando el usuario haga clic en el botón
-document.getElementById("clearSignature").addEventListener("click", () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-});
+    // Obtener el contenedor del canvas
+    const container = canvas.parentElement;
 
-// Ajustar el tamaño del canvas cuando la ventana cambia de tamaño (por ejemplo, cuando el usuario rota el móvil)
+    // Ajustar el tamaño visual del canvas al contenedor
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+
+    // Ajustar el tamaño interno del canvas para mantener la resolución
+    const rect = container.getBoundingClientRect();
+    const newWidth = rect.width;
+    const newHeight = rect.height;
+
+    // Solo redimensionar si las dimensiones del canvas han cambiado
+    if (canvas.width !== newWidth || canvas.height !== newHeight) {
+        // Ajustar el tamaño interno del canvas para la nueva resolución
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        // Restaurar el contenido del canvas después de redimensionar
+        const img = new Image();
+        img.src = currentDrawing;
+        img.onload = () => {
+            // Asegurarse de que el contenido se ajuste correctamente al nuevo tamaño
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+    }
+}
+
+// Llamar a la función al cargar la página y al cambiar el tamaño de la ventana
+window.addEventListener("load", resizeCanvas);
 window.addEventListener("resize", resizeCanvas);
 
-// Inicializar el tamaño del canvas al cargar la página
-resizeCanvas();
+// Función para guardar el estado del canvas en el localStorage
+function saveCanvasState() {
+    const canvasData = canvas.toDataURL();
+    localStorage.setItem('canvasState', canvasData);
+}
 
+// Función para restaurar el estado del canvas desde el localStorage
+function restoreCanvasState() {
+    const canvasData = localStorage.getItem('canvasState');
+    if (canvasData) {
+        const img = new Image();
+        img.src = canvasData;
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);  // Limpiar el canvas
+            ctx.drawImage(img, 0, 0);
+        };
+    }
+}
+
+// Guardar el estado del canvas cuando el usuario cambia de campo
+document.querySelectorAll('input, textarea').forEach(element => {
+    element.addEventListener('focus', () => {
+        saveCanvasState();  // Guardamos el estado al hacer focus en un campo
+    });
+});
+
+// Restaurar el estado del canvas cuando se vuelve a la firma
+canvas.addEventListener('click', restoreCanvasState);  // Restauramos al hacer clic en el canvas
+
+// También restaurar el estado al cargar la página
+window.addEventListener('load', restoreCanvasState);
 
 <!-- Contenedor para la Firma -->
 
