@@ -662,6 +662,7 @@ canvas.addEventListener("mouseout", () => (isDrawing = false));
 document.getElementById("undo").addEventListener("click", undo);
 document.getElementById("redo").addEventListener("click", redo);
 document.getElementById("clearSignature").addEventListener("click", () => {
+    localStorage.removeItem('canvasState'); // Elimina el estado guardado
     saveToUndoStack();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
@@ -757,6 +758,9 @@ function restoreCanvasState() {
     }
 }
 
+// Restaurar el estado solo cuando el usuario haga clic en el canvas
+canvas.addEventListener('click', restoreCanvasState);
+
 // Guardar el estado del canvas cuando el usuario cambia de campo
 document.querySelectorAll('input, textarea').forEach(element => {
     element.addEventListener('focus', () => {
@@ -764,11 +768,6 @@ document.querySelectorAll('input, textarea').forEach(element => {
     });
 });
 
-// Restaurar el estado del canvas cuando se vuelve a la firma
-canvas.addEventListener('click', restoreCanvasState);  // Restauramos al hacer clic en el canvas
-
-// También restaurar el estado al cargar la página
-window.addEventListener('load', restoreCanvasState);
 
 <!-- Contenedor para la Firma -->
 
