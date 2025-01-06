@@ -6,6 +6,9 @@
     <title>Reporte de Seguimiento de Oasis</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
+ <!-- Incluir SweetAlert2 -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -512,6 +515,22 @@ let lastY = 0;
 const canvas = document.getElementById("firmaCanvas");
 const ctx = canvas.getContext("2d");
 
+// Crear un canvas temporal para almacenar la firma
+const tempCanvas = document.createElement("canvas");
+const tempCtx = tempCanvas.getContext("2d");
+
+// Función para guardar el contenido actual del canvas en el canvas temporal
+function saveCanvasState() {
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    tempCtx.drawImage(canvas, 0, 0);
+}
+
+// Función para restaurar el contenido del canvas temporal al canvas principal
+function restoreCanvasState() {
+    ctx.drawImage(tempCanvas, 0, 0);
+}
+
 // Función para obtener las coordenadas adecuadas tanto en dispositivos con ratón como táctiles
 function getCoordinates(e) {
     let x, y;
@@ -527,29 +546,23 @@ function getCoordinates(e) {
 
 // Ajuste del tamaño del canvas para el contenedor del formulario
 function resizeCanvas() {
-    // Obtener el contenedor .question-container
+    // Guardar el estado del canvas antes de redimensionar
+    saveCanvasState();
+
     const questionContainer = document.querySelector('.question-container');
-    
-    // Asegurarnos de que el contenedor existe y tiene un tamaño
     if (!questionContainer) return;
 
-    // Obtener el ancho disponible del contenedor .question-container
     const questionContainerWidth = questionContainer.offsetWidth;
-
-    // Considerar el padding del contenedor para calcular el espacio disponible real
     const padding = parseFloat(getComputedStyle(questionContainer).paddingLeft) + parseFloat(getComputedStyle(questionContainer).paddingRight);
     const availableWidth = questionContainerWidth - padding;
-
-    // Tomamos el 90% del ancho disponible del contenedor .question-container para el canvas
     const canvasWidth = availableWidth * 0.9;
 
-    // Establecer el ancho del canvas
     canvas.width = canvasWidth;
+    canvas.height = 220;
 
-    // Establecer la altura fija del canvas (500px)
-    canvas.height =220;
+    // Restaurar el estado del canvas después de redimensionar
+    restoreCanvasState();
 }
-
 
 // Iniciar dibujo en mouse o toque
 canvas.addEventListener("mousedown", (e) => {
@@ -611,6 +624,7 @@ canvas.addEventListener("mouseout", () => {
 // Limpiar la firma cuando el usuario haga clic en el botón
 document.getElementById("clearSignature").addEventListener("click", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 });
 
 // Ajustar el tamaño del canvas cuando la ventana cambia de tamaño (por ejemplo, cuando el usuario rota el móvil)
@@ -618,6 +632,7 @@ window.addEventListener("resize", resizeCanvas);
 
 // Inicializar el tamaño del canvas al cargar la página
 resizeCanvas();
+
 
 <!-- Contenedor para la Firma -->
 
@@ -723,18 +738,110 @@ resizeCanvas();
 
 
 
+// Función para mostrar alertas
+function mostrarAlerta(mensaje) {
+    Swal.fire({
+        text: mensaje,
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+        customClass: {
+            content: 'swal-content',
+            confirmButton: 'swal-button',
+            popup: 'swal-popup',
+        },
+    });
+}
+
+// Función para verificar campos
+function verificarCampos(condiciones, mensajeError) {
+    if (condiciones.some(condicion => condicion)) {
+        mostrarAlerta(mensajeError);
+        return true; // Indica que hay un error
+    }
+    return false; // No hay errores
+}
+
+
+
+
 
 
 
     async function generarPDF() {
-        // Verificar si los campos necesarios están vacíos
-if (
-    !document.getElementById('fecha').value.trim() 
-) {
-alert('Por favor, complete todos los campos antes de continuar.');
 
-            return; // Si algún campo está vacío, no continúa la ejecución
-        }
+
+// Verificar que la fecha y la actividad estén seleccionadas
+if (
+    verificarCampos(
+        [
+            !document.getElementById('fecha').value.trim(), // Verificar que la fecha no esté vacía
+            document.getElementById('actividad').value === 'Selecciona una opción', // Verificar que la actividad esté seleccionada
+        ],
+        'Por favor, complete todos los campos. 🤨😝'
+    )
+) return;
+
+// Verificar campos para "Registro de Entrega"
+if (
+    document.getElementById('actividad').value === 'Registro de Entrega' &&
+    verificarCampos(
+        [
+            document.getElementById('area').value === 'Selecciona una opción', // Verificar área
+            document.getElementById('area').value === 'Administración' &&
+                document.getElementById('oficina').value === 'Selecciona una opción', // Verificar oficina si es Administración
+            document.getElementById('preview1').children.length === 0, // Verificar contenedor vacío
+        ],
+        'Por favor, complete todos los campos. 🤨😝'
+    )
+) return;
+
+// Verificar campos para "Registro de Retiro"
+if (
+    document.getElementById('actividad').value === 'Registro de Retiro' &&
+    verificarCampos(
+        [
+            document.getElementById('area').value === 'Selecciona una opción', // Verificar área
+            document.getElementById('area').value === 'Administración' &&
+                document.getElementById('oficina').value === 'Selecciona una opción', // Verificar oficina si es Administración
+            document.getElementById('preview1').children.length === 0, // Verificar contenedor vacío
+            document.getElementById('motivo').value.trim() === '', // Verificar campo motivo vacío
+        ],
+        'Por favor, complete todos los campos. 🤨😝'
+    )
+) return;
+
+// Verificar campos para "Registro de Mantenimiento"
+if (
+    document.getElementById('actividad').value === 'Registro de Mantenimiento' &&
+    verificarCampos(
+        [
+            document.getElementById('tipoaccion').value === 'Selecciona una opción', // Verificar tipoacción
+            document.getElementById('tipoaccion').value === 'Entrada' &&
+                document.getElementById('comentarios').value.trim() === '', // Verificar comentarios si tipoacción es Entrada
+            document.getElementById('preview1').children.length === 0, // Verificar contenedor vacío
+        ],
+        'Por favor, complete todos los campos. 🤨😝'
+    )
+) return;
+
+// Si todo está correcto, continuar con el resto de la lógica
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Mostrar overlay de espera
         document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
