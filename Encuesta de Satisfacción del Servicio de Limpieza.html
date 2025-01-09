@@ -390,7 +390,23 @@
 }
 
 
-
+  			/* Estilo personalizado para el contenido del mensaje */
+  			.swal-content {
+      			font-size: 0.9em;  /* Reduce el tamaño del texto */
+      			line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+  			}
+  
+  			/* Estilo personalizado para el botón */
+  			.swal-button {
+      			font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
+      			padding: 10px 20px;  /* Reduce el tamaño del botón si es necesario */
+  			}
+  
+  			/* Estilo personalizado para el popup/modal */
+  			.swal-popup {
+      			width: 300px;  /* Ajusta el ancho máximo del modal */
+      			max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+  			}
 
 
 
@@ -408,9 +424,15 @@
 
     <div class="container">
         <h1>Encuesta de Satisfacción del Servicio de Limpieza</h1>
+        <h4>Con el fin de evaluar la calidad de nuestro servicio de limpieza, le agradecemos responder a esta encuesta y de esta manera ofrecer un mejor servicio.</h4>
+
+<div style="border-bottom: 1px solid #ccc; margin: 20px 0;"></div>
+
+
+
         <div class="form-container">
 
-            <div class="question-container">
+            <div class="question-container" style="display: none;">
                 <label for="fecha">Fecha:</label>
                 <input type="date" id="fecha" name="fecha" required>
             </div>
@@ -458,6 +480,7 @@
 
   			</select>
 		</div>
+<div style="border-bottom: 1px solid #ccc; margin: 20px 0;"></div>
 
         <h2>Califique el grado de limpieza de su área</h2>
 
@@ -1061,6 +1084,20 @@ console.log('Archivo guardado con ID:', result);
 
     // Ocultar el overlay de espera
     document.getElementById('overlay').style.display = 'none';
+
+
+      			        Swal.fire({
+          			            text: '¡Envío exitoso! 🥳🎉',   // Mensaje
+          			            icon: 'success',     // Icono de advertencia
+          			            confirmButtonText: 'Aceptar',  // Botón para cerrar
+          			            customClass: {
+              			                    content: 'swal-content',  // Aplica una clase personalizada al contenido
+              			                    confirmButton: 'swal-button',  // Aplica una clase personalizada al botón
+              			                    popup: 'swal-popup'  // Aplica una clase personalizada al popup/modal
+          			            }
+      			        });
+
+
 }
 
 
