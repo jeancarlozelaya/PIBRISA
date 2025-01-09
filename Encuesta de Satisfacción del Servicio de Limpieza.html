@@ -409,6 +409,17 @@
   			}
 
 
+.input-error {
+    border: 2px solid red;
+}
+
+.error-message {
+    margin-top: 4px;
+    display: block;
+}
+
+
+
 
 
 </style>
@@ -950,21 +961,97 @@ function getSelectedRating(questionName) {
 async function generarPDF() {
 
 
-// Verificar si los campos necesarios están vacíos o si no cumplen las condiciones de validación
-if (
-    !document.getElementById('fecha').value.trim() ||  // Verificar si la fecha está vacía
-    document.getElementById('empresa').value === 'Selecciona una opción' ||  // Verificar si la empresa está seleccionada
-    document.getElementById('area').value === 'Selecciona una opción' ||  // Verificar si el área está seleccionada
-    (document.getElementById('area').value === 'Administración' && !document.getElementById('oficina').value.trim()) ||  // Si el área es "Administración", verificar que la oficina no esté vacía
-    !document.querySelector('input[name="rating1"]:checked') ||  // Verificar que haya una estrella seleccionada en rating1
-    !document.querySelector('input[name="rating2"]:checked') ||  // Verificar que haya una estrella seleccionada en rating2
-    !document.querySelector('input[name="rating3"]:checked') ||  // Verificar que haya una estrella seleccionada en rating3
-    !document.querySelector('input[name="rating4"]:checked') ||  // Verificar que haya una estrella seleccionada en rating4
-    !document.querySelector('input[name="rating5"]:checked') ||  // Verificar que haya una estrella seleccionada en rating5
-    !document.querySelector('input[name="rating6"]:checked')    // Verificar que haya una estrella seleccionada en rating6
-) {
-    return; // Si algún campo está vacío o no cumple las condiciones, no continúa la ejecución
+// Eliminar mensajes de error previos
+document.querySelectorAll('.error-message').forEach(el => el.remove());
+document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+let hasError = false;
+
+// Función para mostrar error
+function mostrarError(id, mensaje, isLabel = false) {
+    const elemento = isLabel ? document.querySelector(`label[for="${id}"]`) : document.getElementById(id);
+    const mensajeError = document.createElement('span');
+    mensajeError.className = 'error-message';
+    mensajeError.style.color = 'red';
+    mensajeError.style.fontSize = '0.8em';
+    mensajeError.textContent = mensaje;
+
+    if (!isLabel) {
+        elemento.classList.add('input-error');
+        elemento.insertAdjacentElement('afterend', mensajeError);
+
+        // Agregar eventos para eliminar error al corregir
+        elemento.addEventListener('input', eliminarError);
+        elemento.addEventListener('change', eliminarError);
+    } else {
+        elemento.insertAdjacentElement('afterend', mensajeError);
+
+        // Agregar eventos a los radios del grupo
+        const radios = document.querySelectorAll(`input[name="${id}"]`);
+        radios.forEach(radio => {
+            radio.addEventListener('change', eliminarError);
+        });
+    }
+
+    hasError = true;
 }
+
+// Función para eliminar error de un campo específico
+function eliminarError(event) {
+    const campo = event.target;
+    const isRadio = campo.type === 'radio';
+
+    if (isRadio) {
+        // Eliminar mensaje de error asociado al grupo de radios
+        const label = campo.closest('label') || document.querySelector(`label[for="${campo.name}"]`);
+        const mensajeError = label ? label.nextElementSibling : null;
+        if (mensajeError && mensajeError.classList.contains('error-message')) {
+            mensajeError.remove();
+        }
+    } else {
+        // Eliminar mensaje de error asociado al campo específico
+        campo.classList.remove('input-error');
+        const mensajeError = campo.nextElementSibling;
+        if (mensajeError && mensajeError.classList.contains('error-message')) {
+            mensajeError.remove();
+        }
+    }
+}
+
+// Validaciones
+if (!document.getElementById('fecha').value.trim()) {
+    mostrarError('fecha', 'Por favor, llena este campo.');
+}
+
+if (document.getElementById('empresa').value === 'Selecciona una opción') {
+    mostrarError('empresa', 'Selecciona una empresa válida.');
+}
+
+if (document.getElementById('area').value === 'Selecciona una opción') {
+    mostrarError('area', 'Selecciona un área válida.');
+}
+
+if (
+    document.getElementById('area').value === 'Administración' &&
+    !document.getElementById('oficina').value.trim()
+) {
+    mostrarError('oficina', 'Por favor, llena este campo si es Administración.');
+}
+
+['rating1', 'rating2', 'rating3', 'rating4', 'rating5', 'rating6'].forEach(rating => {
+    if (!document.querySelector(`input[name="${rating}"]:checked`)) {
+        mostrarError(rating, 'Selecciona una calificación.', true);
+    }
+});
+
+// Si hay errores, detener la ejecución
+if (hasError) {
+    return;
+}
+
+
+    // Aquí continua el resto del código si no hay errores
+    document.getElementById('overlay').style.display = 'flex';
 
 
 
