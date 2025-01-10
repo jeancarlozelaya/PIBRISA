@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Limpiezas Profundas</title>
+    <title>Registro de Participación - Momento de Valor</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
  <!-- Incluir SweetAlert2 -->
@@ -862,11 +862,15 @@ async function generarPDF() {
 
 
 const colaboradorValue = document.getElementById('colaborador').value;
+const temaValue = document.getElementById('tema').value;
+
 
 
 if (
     !document.getElementById('fecha').value.trim() || 
-    colaboradorValue === "" || colaboradorValue === "Seleccione una opción"
+    colaboradorValue === "" || colaboradorValue === "Seleccione una opción" || 
+   temaValue === "" || temaValue === "Tema no disponible"
+
 ) {
     return; // Si el colaborador no ha seleccionado un valor válido, no continúa la ejecución
 }
