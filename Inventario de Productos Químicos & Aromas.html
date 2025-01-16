@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Productos Químicos & Aromas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+ <!-- Incluir SweetAlert2 -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        width: 100%;
+        font-size: 1.5em;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Contenedor del formulario */
+    .container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        text-align: center;
+        margin: 40px auto;
+        grid-row: 2;
+        height: auto;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    input[type="date"],
+    textarea,
+    input[type="file"],
+    button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        padding: 12px 0;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+
+
+
+    /* Estilo para el botón "Volver al Inicio" */
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1em;
+        transition: background-color 0.3s, transform 0.3s;
+        position: fixed;
+        top: 80px;
+        left: 0px;
+        z-index: 1001;
+    }
+
+    /* Estilo para los contenedores de preguntas */
+    .question-container {
+        margin-bottom: 20px;
+        text-align: left;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    /* Estilo para el campo de descripción */
+    .question-container textarea {
+    	padding: 15px; /* Aumentar el espacio interno */
+    	border: 2px solid #ccc;
+    	border-radius: 5px;
+    	width: 100%;
+    	font-size: 16px;
+    	background-color: #f9f9f9;
+    	color: #333;
+    	transition: border-color 0.3s;
+    	box-sizing: border-box;
+    	margin-top: 5px;
+    	height: 200px; /* Aumentar la altura para hacerlo más grande */
+    	resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+    }
+
+    .question-container:hover {
+        border-color: #007BFF;
+    }
+
+
+
+
+
+
+/* Estilo para los botones de radio */
+.question-container input[type="radio"] {
+    margin-right: 10px; /* Espacio entre el botón y el texto */
+    accent-color: #007BFF; /* Color del botón de selección */
+    cursor: pointer;
+    transform: scale(1.2); /* Tamaño del botón de selección */
+}
+
+
+
+/* Estilo para el contenedor cuando se selecciona un botón */
+.question-container input[type="radio"]:checked + label {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center; /* Alinea verticalmente el texto y el botón */
+    margin-bottom: 10px; /* Espacio entre opciones */
+}
+
+.radio-group input[type="radio"] {
+    margin: 0 10px 0 0; /* Espacio a la derecha del botón */
+    accent-color: #007BFF; /* Color del botón de selección */
+    cursor: pointer;
+    transform: scale(1.6); /* Aumenta el tamaño del botón */
+}
+
+.radio-group label {
+    font-size: 16px;
+    color: #333;
+    cursor: pointer; /* Cambia el cursor al pasar sobre el texto */
+}
+
+
+
+
+
+
+    .question-container input[type="date"],
+    .question-container textarea,
+    .question-container select {
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+
+    .question-container input[type="date"]:focus,
+    .question-container textarea:focus,
+    .question-container select:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+    /* Estilos de las etiquetas */
+    .question-container label {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    /* Estilo del overlay (pantalla bloqueada) */
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
+    }
+
+    #loadingMessage {
+        color: white;  /* Texto en blanco */
+        font-size: 24px;  /* Tamaño de fuente para que se vea bien */
+        font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
+        text-align: center;
+        padding: 20px;  /* Espaciado interno */
+    }
+
+
+
+
+  			/* Estilos para la sección "tema" */
+  			#producto,
+#dia,
+#mes,
+#anio,
+  			#cantidad {
+  			padding: 10px;
+  			border: 2px solid #ccc;
+  			border-radius: 5px;
+  			width: 100%;
+  			font-size: 16px;
+  			background-color: #f9f9f9;
+  			color: #333;
+  			transition: border-color 0.3s;
+  			resize: vertical;
+  			box-sizing: border-box;
+  			}
+  			#oficina:focus {
+  			border-color: #007BFF;
+  			outline: none;
+  			}
+
+
+
+
+
+
+
+  			/* Estilo personalizado para el contenido del mensaje */
+  			.swal-content {
+      			font-size: 0.9em;  /* Reduce el tamaño del texto */
+      			line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+  			}
+  
+  			/* Estilo personalizado para el botón */
+  			.swal-button {
+      			font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
+      			padding: 10px 20px;  /* Reduce el tamaño del botón si es necesario */
+  			}
+  
+  			/* Estilo personalizado para el popup/modal */
+  			.swal-popup {
+      			width: 300px;  /* Ajusta el ancho máximo del modal */
+      			max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+  			}
+
+
+.input-error {
+    border: 2px solid red;
+}
+
+.error-message {
+    margin-top: 4px;
+    display: block;
+}
+
+
+
+
+table {
+  width: 100%; /* La tabla ocupa todo el ancho disponible */
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  table-layout: fixed; /* Distribuye columnas proporcionalmente */
+}
+
+th, td {
+  padding: 12px;
+  text-align: center; /* Centra contenido */
+  border-bottom: 1px solid #ddd;
+  word-wrap: break-word; /* Ajusta contenido largo */
+  overflow: hidden; /* Evita desbordamientos */
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  position: sticky; /* Mantiene los encabezados fijos */
+  top: 0; /* Posición en la parte superior del contenedor */
+  z-index: 2; /* Asegura que esté encima del contenido */
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alterna colores */
+}
+
+/* Colores de vencimiento */
+.vencimiento-cercano {
+  background-color: yellow !important;
+}
+
+.vencimiento-expirado {
+  background-color: red !important;
+  color: white; /* Contraste */
+}
+
+/* Contenedor para la barra de desplazamiento */
+#tabla-contenedor {
+  max-height: 300px; /* Limita la altura del contenedor */
+  overflow-y: auto; /* Activa desplazamiento vertical */
+  overflow-x: hidden; /* Oculta desplazamiento horizontal */
+  border: 1px solid #ddd; /* Opcional: bordes para el contenedor */
+}
+
+/* Ajustes para dispositivos pequeños */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.9em; /* Reduce el tamaño del texto */
+  }
+
+  th, td {
+    padding: 8px; /* Reduce el relleno */
+  }
+}
+
+
+
+.simbologia {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.simbologia span {
+}
+
+.por-vencerse {
+
+  			padding: 2px 5px;
+
+  			border: 2px solid #ccc;
+  			border-radius: 5px;
+  			width: 100%;
+  			font-size: 15px;
+  			background-color: yellow;
+  			color: black;
+
+}
+
+.vencido {
+
+  			padding: 2px 5px;
+
+  			border: 2px solid #ccc;
+  			border-radius: 5px;
+  			width: 100%;
+  			font-size: 15px;
+  			background-color: red;
+  			color: white;
+
+
+
+}
+
+.fecha-container {
+    display: flex;
+    align-items: center;
+}
+
+.fecha-container input {
+    width: 30px;
+    text-align: center;
+    font-size: 12px;
+    padding: 5px;
+    margin: 0 2px;
+}
+
+.fecha-container span {
+    font-size: 12px;
+    margin: 0 2px;
+}
+</style>
+
+
+</head>
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+
+    <div class="container">
+        <h2>Inventario de Productos Químicos & Aromas</h2>
+
+<div style="border-bottom: 1px solid #ccc; margin: 20px 0;"></div>
+
+
+
+        <div class="form-container">
+
+
+
+
+
+
+
+
+
+<div class="simbologia">
+    <span class="por-vencerse">VENCERÁ</span> | 
+    <span class="vencido">VENCIDO</span>
+</div>
+
+
+<div id="tabla-contenedor">
+<table id="tabla-inventario">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Vence</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+            </div>
+
+<div style="border-bottom: 1px solid #ccc; margin: 20px 0;"></div>
+
+
+
+        <h3>PEPS de Productos</h3>
+
+        <!-- Formulario para registrar productos -->
+            <div class="question-container">
+
+        <label for="tipoMov">Tipo de Movimiento</label>
+        <select id="tipoMov">
+            <option value="entrada">Entrada</option>
+            <option value="salida">Salida</option>
+        </select>
+            </div>
+
+<div class="question-container">
+    <label for="producto">Producto:</label>
+    <select id="producto" required>
+        <option value="">Selecciona una opción</option>
+        <option value="3M">3M</option>
+        <option value="AM 68">AM 68</option>
+        <option value="Aromac">Aromac</option>
+        <option value="AutoClin Abrillantador">AutoClin Abrillantador</option>
+        <option value="Bactigel Spray">Bactigel Spray</option>
+        <option value="Bare Bones">Bare Bones</option>
+        <option value="Citraclin">Citraclin</option>
+        <option value="CitrusMac">CitrusMac</option>
+        <option value="Cloro Mac">Cloro Mac</option>
+        <option value="Detergente">Detergente</option>
+        <option value="Dos Tres">Dos Tres</option>
+        <option value="Easy Dab">Easy Dab</option>
+        <option value="HiGloss Cera Liquida">HiGloss Cera Liquida</option>
+        <option value="Jalim Espuma Fresh">Jalim Espuma Fresh</option>
+        <option value="Jalim Gel">Jalim Gel</option>
+        <option value="Macdel I">Macdel I</option>
+        <option value="Macdel II">Macdel II</option>
+        <option value="MacGlass">MacGlass</option>
+        <option value="One Step">One Step</option>
+        <option value="Pastilla PDC Alambre">Pastilla PDC Alambre</option>
+        <option value="Proshine">Proshine</option>
+        <option value="RC83">RC83</option>
+        <option value="Sanidel">Sanidel</option>
+        <option value="Wac Transparente">Wac Transparente</option>
+        <option value="Wiese">Wiese</option>
+    </select>
+</div>
+
+
+<div class="question-container">
+    <label for="fechaVencimiento">Fecha de Vencimiento</label>
+    <div class="fecha-container">
+        <input type="number" id="dia" maxlength="2" placeholder="DIA" oninput="formatearFecha()">
+        <span>/</span>
+        <input type="number" id="mes" maxlength="2" placeholder="MES" oninput="formatearFecha()">
+        <span>/</span>
+        <input type="number" id="anio" maxlength="4" placeholder="AÑO" oninput="formatearFecha()">
+    </div>
+    <!-- Campo oculto para almacenar la fecha completa -->
+    <input type="hidden" id="fechaVencimiento">
+</div>
+
+            <div class="question-container">
+
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad" placeholder="Cantidad" required>
+     </div>
+
+<div style="border-bottom: 1px solid #ccc; margin: 20px 0;"></div>
+
+        <button id="procesarBtn">Procesar</button>
+        </div>
+
+
+
+
+
+
+    </div>
+
+    <!-- Contenedor para bloquear la pantalla -->
+    <div id="overlay" style="display: none;">
+        <div id="loadingMessage">
+            <p>Procesando...🥱</p>
+        </div>
+    </div>
+
+
+<script>
+
+
+// Función para actualizar el campo fechaVencimiento
+function actualizarFechaVencimiento() {
+    const dia = document.getElementById("dia").value;
+    const mes = document.getElementById("mes").value;
+    const anio = document.getElementById("anio").value;
+
+    // Verificar que todos los valores sean válidos
+    if (dia.length >= 1 && mes.length >= 1 && anio.length >= 1) {
+        // Asegurarse de que el día y mes estén en dos dígitos, y el año en cuatro
+        const diaFormateado = dia.length === 1 ? `0${dia}` : dia; // Completar con cero si tiene un solo dígito
+        const mesFormateado = mes.length === 1 ? `0${mes}` : mes; // Completar con cero si tiene un solo dígito
+        const anioFormateado = anio.length === 4 ? anio : ""; // Solo aceptar 4 dígitos para el año
+
+        if (anioFormateado && diaFormateado && mesFormateado) {
+            // Formatear la fecha como DD/MM/YYYY
+            const fechaCompleta = `${diaFormateado}/${mesFormateado}/${anioFormateado}`;
+            document.getElementById("fechaVencimiento").value = fechaCompleta; // Asignar al campo oculto
+        } else {
+            // Si algún campo no es válido, borrar la fecha
+            document.getElementById("fechaVencimiento").value = "";
+        }
+    } else {
+        // Si alguno de los campos está vacío, borrar la fecha
+        document.getElementById("fechaVencimiento").value = "";
+    }
+}
+
+// Limitar los valores de día y mes
+function validarDiaYMes(event, tipo) {
+    const value = event.target.value;
+
+    // Asegurarse de que el valor solo contenga números
+    if (!/^\d*$/.test(value)) {
+        event.target.value = value.replace(/[^\d]/g, ''); // Eliminar caracteres no numéricos
+        return;
+    }
+
+    // Limitar el valor de día (DD) hasta 31 y mes (MM) hasta 12
+    if (tipo === 'dia' && value > 31) {
+        event.target.value = 31; // Establecer valor máximo de 31
+    }
+
+    if (tipo === 'mes' && value > 12) {
+        event.target.value = 12; // Establecer valor máximo de 12
+    }
+
+    // Actualizar el campo oculto de fecha
+    actualizarFechaVencimiento();
+}
+
+// Llamar a la función de actualización cada vez que cambie un campo de fecha
+document.getElementById("dia").addEventListener("input", function(event) {
+    validarDiaYMes(event, 'dia');
+});
+document.getElementById("mes").addEventListener("input", function(event) {
+    validarDiaYMes(event, 'mes');
+});
+document.getElementById("anio").addEventListener("input", actualizarFechaVencimiento);
+
+// Función para procesar los datos del formulario
+document.getElementById('procesarBtn').addEventListener('click', function() {
+    // Recoger los valores del formulario
+    var tipoMov = document.getElementById('tipoMov').value;
+    var producto = document.getElementById('producto').value;
+    var fechaVencimiento = document.getElementById('fechaVencimiento').value;
+    var cantidad = parseInt(document.getElementById('cantidad').value);
+
+    // Verificar si el campo fechaVencimiento tiene un valor
+    console.log("Fecha Vencimiento: ", fechaVencimiento);
+
+    // Validar que los campos no estén vacíos
+    if (producto && fechaVencimiento && cantidad) {
+        // Llamar a la función para enviar los datos a Google Sheets
+        enviarDatosGoogleSheets(tipoMov, producto, fechaVencimiento, cantidad);
+    } else {
+        alert('Por favor, completa todos los campos.');
+    }
+});
+
+
+
+       function enviarDatosGoogleSheets(tipoMov, producto, fechaVencimiento, cantidad) {
+    // Verificar que los datos sean correctos antes de enviarlos
+    console.log('Datos a enviar:', {
+        tipoMov: tipoMov,
+        producto: producto,
+        fechaVencimiento: fechaVencimiento,
+        cantidad: cantidad
+    });
+
+    // URL del Web App de Google Apps Script
+    var url = 'https://script.google.com/macros/s/AKfycbza6uHw0JsWvAYxIyvXaBSnqv80HRom2nMHrPElkZXdTwlvO7ahEkiasxJFe_O-On1Z/exec';
+
+    // Crear el objeto con los datos a enviar
+    var datos = {
+        tipoMov: tipoMov,
+        producto: producto,
+        fechaVencimiento: fechaVencimiento,
+        cantidad: cantidad
+    };
+
+    // Mostrar overlay de espera
+    document.getElementById('overlay').style.display = 'flex';
+
+
+    // Enviar los datos al Web App de Google Apps Script mediante una solicitud POST
+fetch(url, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(datos),
+    mode: 'no-cors'  // Esto omite la política CORS
+})
+.then(response => {
+    console.log('Solicitud enviada');
+
+    // Ocultar el overlay de espera
+    document.getElementById('overlay').style.display = 'none';
+
+
+    Swal.fire({
+        text: '¡Envío exitoso! 🥳🎉',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        customClass: {
+            content: 'swal-content',
+            confirmButton: 'swal-button',
+            popup: 'swal-popup'
+        }
+    });
+
+    obtenerDatos();
+
+
+})
+.catch(error => {
+    console.error('Error:', error);
+
+    // Ocultar el overlay de espera
+    document.getElementById('overlay').style.display = 'none';
+
+    // Mostrar mensaje de error
+    Swal.fire({
+        text: error.message || 'Ocurrió un error al procesar la solicitud.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        customClass: {
+            content: 'swal-content',
+            confirmButton: 'swal-button',
+            popup: 'swal-popup'
+        }
+    });
+});
+
+}
+
+
+
+
+
+
+
+
+
+
+
+   async function obtenerDatos() {
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzcpMeHmaL-mjASpzd8U3tckPrawf4j6cMSIV-BGIs_ClSifiIPnsyq-rZ3WfXUnkBY/exec";
+
+  try {
+    const response = await fetch(scriptURL);
+    const datos = await response.json();
+    mostrarDatosEnTabla(datos);
+  } catch (error) {
+    console.error("Error al obtener los datos:", error);
+  }
+}
+
+function formatearFecha(fechaISO) {
+  const fecha = new Date(fechaISO);
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const anio = fecha.getFullYear();
+  return `${dia}/${mes}/${anio}`;
+}
+
+function mostrarDatosEnTabla(datos) {
+  const tablaCuerpo = document.querySelector("#tabla-inventario tbody");
+  tablaCuerpo.innerHTML = ""; // Limpiar datos previos
+
+  const hoy = new Date();
+
+  // Ordenar los datos por la fecha de vencimiento (de más cercano a más lejano)
+  datos.sort((a, b) => {
+    const fechaVencimientoA = a[1] ? new Date(a[1]) : null;
+    const fechaVencimientoB = b[1] ? new Date(b[1]) : null;
+    if (fechaVencimientoA && fechaVencimientoB) {
+      return fechaVencimientoA - fechaVencimientoB;
+    }
+    return 0; // Si no hay fecha de vencimiento, no se ordena
+  });
+
+  datos.forEach(fila => {
+    const [producto, vencimiento, cantidad] = fila;
+    const fechaVencimiento = vencimiento ? new Date(vencimiento) : null;
+
+    // Determinar clase de fila según la fecha de vencimiento
+    let claseFila = "";
+    if (fechaVencimiento) {
+      const diferenciaDias = (fechaVencimiento - hoy) / (1000 * 60 * 60 * 24);
+      if (diferenciaDias < 0) {
+        claseFila = "vencimiento-expirado"; // Fecha ya expirada
+      } else if (diferenciaDias <= 60) {
+        claseFila = "vencimiento-cercano"; // Vencimiento en los próximos 60 días
+      }
+    }
+
+    const fechaFormateada = vencimiento ? formatearFecha(vencimiento) : "";
+    const filaHTML = `
+      <tr class="${claseFila}">
+        <td>${producto || ""}</td>
+        <td>${fechaFormateada}</td>
+        <td>${cantidad || ""}</td>
+      </tr>
+    `;
+    tablaCuerpo.insertAdjacentHTML("beforeend", filaHTML);
+  });
+}
+
+    obtenerDatos();
+
+
+
+
+
+  function goBack() {
+  window.history.back();  // Esto hace que el navegador vuelva a la página anterior
+  }
+
+
+
+</script>
+
+</body>
+</html>
