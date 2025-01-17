@@ -704,7 +704,14 @@ document.getElementById('procesarBtn').addEventListener('click', function() {
         // Llamar a la función para enviar los datos a Google Sheets
         enviarDatosGoogleSheets(tipoMov, producto, fechaVencimiento, cantidad);
     } else {
-        alert('Por favor, completa todos los campos.');
+
+            		Swal.fire({
+                		text: 'Por favor, completa todos los campos.',
+                		icon: 'warning',
+                		confirmButtonText: 'Aceptar',
+            		});
+
+
     }
 });
 
