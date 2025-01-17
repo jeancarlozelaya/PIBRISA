@@ -241,6 +241,7 @@
 
   			/* Estilos para la sección "tema" */
   			#producto,
+#filtroProductos,
 #dia,
 #mes,
 #anio,
@@ -453,6 +454,13 @@ tbody tr:nth-child(even) {
 </div>
 
 
+
+<div class="question-container">
+    <input type="text" id="filtroProductos" placeholder="Buscar Productos..." >
+</div>
+
+
+
 <div id="tabla-contenedor">
 <table id="tabla-inventario">
     <thead>
@@ -486,7 +494,7 @@ tbody tr:nth-child(even) {
     <label for="producto">Producto:</label>
     <select id="producto" required>
         <option value="">Selecciona una opción</option>
-        <option value="3M - Stainless Steel Cleaner & Polish">3M - Stainless Steel Cleaner & Polish</option>
+        <option value="3M">3M</option>
         <option value="AM 68">AM 68</option>
         <option value="Aromac">Aromac</option>
         <option value="AutoClin Abrillantador">AutoClin Abrillantador</option>
@@ -555,6 +563,24 @@ tbody tr:nth-child(even) {
 
 
 <script>
+
+
+document.getElementById("filtroProductos").addEventListener("input", function() {
+        const filtro = this.value.toLowerCase();
+        const filas = document.querySelectorAll("table tbody tr");
+
+        filas.forEach(fila => {
+            const textoFila = fila.textContent.toLowerCase();
+            if (textoFila.includes(filtro)) {
+                fila.style.display = ""; // Muestra la fila
+            } else {
+                fila.style.display = "none"; // Oculta la fila
+            }
+        });
+    });
+
+
+
 
 
 // Función para actualizar el campo fechaVencimiento
@@ -629,6 +655,52 @@ document.getElementById('procesarBtn').addEventListener('click', function() {
 
     // Validar que los campos no estén vacíos
     if (producto && fechaVencimiento && cantidad) {
+
+
+    	if (tipoMov === 'salida') {
+        	// Verificar que el producto exista y que la cantidad sea válida
+        	const tabla = document.getElementById('tabla-inventario').getElementsByTagName('tbody')[0];
+        	let productoEncontrado = false;
+        	let cantidadDisponible = 0;
+
+        	// Recorrer las filas de la tabla para buscar coincidencias
+        	for (let fila of tabla.rows) {
+            	const productoTabla = fila.cells[0].textContent.trim();
+            	const fechaTabla = fila.cells[1].textContent.trim();
+            	const cantidadTabla = parseInt(fila.cells[2].textContent.trim(), 10);
+
+            	if (productoTabla === producto && fechaTabla === fechaVencimiento) {
+                	productoEncontrado = true;
+                	cantidadDisponible = cantidadTabla;
+                	break;
+            	}
+        	}
+
+        	// Validar condiciones
+        	if (!productoEncontrado) {
+            		Swal.fire({
+                		text: 'El producto con la fecha de vencimiento ingresada no existe en el inventario.',
+                		icon: 'error',
+                		confirmButtonText: 'Aceptar',
+            		});
+            		return; // Detener el procesamiento
+        	}
+
+        	if (cantidad > cantidadDisponible) {
+            		Swal.fire({
+                		text: 'La cantidad ingresada excede la cantidad disponible en el inventario.',
+                		icon: 'error',
+                		confirmButtonText: 'Aceptar',
+            		});
+            		return; // Detener el procesamiento
+        	}
+    	}
+
+
+
+
+
+
         // Llamar a la función para enviar los datos a Google Sheets
         enviarDatosGoogleSheets(tipoMov, producto, fechaVencimiento, cantidad);
     } else {
