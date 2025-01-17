@@ -682,6 +682,12 @@ document.getElementById('procesarBtn').addEventListener('click', function() {
                 		text: 'El producto con la fecha de vencimiento ingresada no existe en el inventario.',
                 		icon: 'error',
                 		confirmButtonText: 'Aceptar',
+        customClass: {
+            content: 'swal-content',
+            confirmButton: 'swal-button',
+            popup: 'swal-popup'
+        }
+
             		});
             		return; // Detener el procesamiento
         	}
@@ -691,6 +697,12 @@ document.getElementById('procesarBtn').addEventListener('click', function() {
                 		text: 'La cantidad ingresada excede la cantidad disponible en el inventario.',
                 		icon: 'error',
                 		confirmButtonText: 'Aceptar',
+        customClass: {
+            content: 'swal-content',
+            confirmButton: 'swal-button',
+            popup: 'swal-popup'
+        }
+
             		});
             		return; // Detener el procesamiento
         	}
