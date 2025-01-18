@@ -229,6 +229,7 @@
     }
 
         .question-container input[type="date"],
+        .question-container input[type="number"],
         .question-container textarea,
         .question-container select {
         padding: 10px;
@@ -452,6 +453,12 @@
   			</select>
 		</div>
 
+<div id="mantenimiento3" class="question-container" style="display: none;">
+    <label for="mantentsali">Cantidad de Oasis:</label>
+    <input id="mantentsali" name="mantentsali" type="number" placeholder="0" />
+</div>
+
+
         	<div id="mantenimiento2" class="question-container" style="display: none;">
             		<label for="comentarios">Comentarios del Proveedor:</label>
             		<textarea id="comentarios" name="comentarios" rows="5" placeholder="Describe las reparaciones realizadas"></textarea>
@@ -514,6 +521,7 @@ const motivosalidaDiv = document.getElementById('motivosalida');
 const areacheckDiv = document.getElementById('areacheck');
 const mantenimiento1Div = document.getElementById('mantenimiento1');
 const mantenimiento2Div = document.getElementById('mantenimiento2');
+const mantenimiento3Div = document.getElementById('mantenimiento3');
 
 // Función para manejar la visibilidad de los divs según la actividad y el tipo de acción
 const handleChange = () => {
@@ -531,11 +539,13 @@ const handleChange = () => {
   // Mostrar/ocultar mantenimiento1 y mantenimiento2
   if (actividadValue === 'Registro de Mantenimiento') {
     mantenimiento1Div.style.display = 'block';
+    mantenimiento3Div.style.display = 'block'; // Aquí hacemos visible mantenimiento3
     oficinaAdministracionDiv.style.display = 'none';
     mantenimiento2Div.style.display = tipoAccionValue === 'Salida' ? 'block' : 'none';
   } else {
     mantenimiento1Div.style.display = 'none';
     mantenimiento2Div.style.display = 'none';
+    mantenimiento3Div.style.display = 'none'; // Ocultamos mantenimiento3 si no aplica
   }
 
   // Mostrar mantenimiento2 si la actividad es "Entrada"
@@ -554,6 +564,7 @@ mantenimiento1Div.querySelector('select')?.addEventListener('change', () => {
 
 // Llamar a handleChange inicialmente para establecer los valores correctos
 handleChange();
+
 
 
 <!-- Contenedor para MOSTRAR / OCULTAR elementos -->
@@ -954,10 +965,12 @@ if (
             document.getElementById('tipoaccion').value === 'Entrada' &&
                 document.getElementById('comentarios').value.trim() === '', // Verificar comentarios si tipoacción es Entrada
             document.getElementById('preview1').children.length === 0, // Verificar contenedor vacío
+            document.getElementById('mantentsali').value.trim() === '' // Verificar que mantentsali tenga un valor
         ],
         'Por favor, complete todos los campos. 🤨😝'
     )
 ) return;
+
 
 // Si todo está correcto, continuar con el resto de la lógica
 
@@ -1073,7 +1086,11 @@ if (actividad === "Registro de Retiro") {
 if (actividad === "Registro de Mantenimiento") {
         const tipoaccion = document.getElementById('tipoaccion').value;
         const comentarios = document.getElementById('comentarios').value;
+        const mantentsali = document.getElementById('mantentsali').value;
+
         pdf.text(`Tipo de Acción: ${tipoaccion}`, 10, 115);
+        pdf.text(`Cantidad de Oasis: ${mantentsali}`, 10, 130);
+
         // Verificar si la descripción está vacía o no
         if (comentarios && comentarios.trim() !== "") {
 
@@ -1082,9 +1099,9 @@ if (actividad === "Registro de Mantenimiento") {
 
             // Agregar el texto al PDF solo si no está vacío después del filtro
             if (comentariosFiltrada.trim() !== "") {
-                pdf.text(`Comentarios:`, 10, 130);
+                pdf.text(`Comentarios:`, 10, 145);
                 pdf.setFont("Arial", "normal");
-                pdf.text(comentariosFiltrada, 10, 140, { maxWidth: 190 });
+                pdf.text(comentariosFiltrada, 10, 155, { maxWidth: 190 });
             }
         }
 }
