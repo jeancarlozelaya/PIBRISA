@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pisos Brillantes</title>
+    <link rel="icon" href="Imágenes/Icono.png" type="image/png">
+    <link rel="manifest" href="/PIBRISA/manifest.json">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .separator {
+            grid-column: span 2;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        iframe {
+            width: 100%;
+            height: 93vh;
+            border: none;
+            margin-top: 0px;
+        }
+
+        /* Cambios para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* En dispositivos móviles */
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
+                padding: 12px 18px; /* Ajustar el padding */
+
+            top: 57px; /* Mueve el botón a la parte superior */
+            left: 0px; /* Colócalo a la izquierda */
+
+
+            }
+        }
+
+        /* Regla específica para el modo standalone (PWA) */
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0; /* Asegura que no haya márgenes extra */
+                padding: 0; /* Asegura que no haya padding extra */
+            }
+        }
+    </style>
+</head>
+
+<button id="install-button" style="display:none;">
+  <i class="fas fa-download"></i> Instalar App
+</button>
+
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+
+
+    
+<div class="menu-container">
+
+    
+<div class="menu-item" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <a href="Imágenes/Descargas/Timestamp Camera.apk" download="Timestamp Camera.apk" 
+       style="text-decoration: none; color: inherit;">
+        <img src="Imágenes/Descargas/Timestamp Camera.png" alt="Timestamp Camera" 
+             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <p style="margin: 0; font-size: 1.2em; font-weight: bold;">Timestamp Camera</p>
+    </a>
+</div>
+
+<div class="menu-item" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <a href="Imágenes/Descargas/PIBRISA LOGO.PNG" download="PIBRISA_LOGO.PNG" 
+       style="text-decoration: none; color: inherit;">
+        <img src="Imágenes/Descargas/PIBRISA LOGO.PNG" alt="PIBRISA LOGO" 
+             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <p style="margin: 0; font-size: 1.2em; font-weight: bold;">PIBRISA LOGO</p>
+    </a>
+</div>
+
+<div class="separator"></div>
+
+<div class="menu-item" 
+     style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; text-align: center;">
+    <a href="Imágenes/Descargas/Escáner QR.apk" download="Escáner QR.apk" 
+       style="text-decoration: none; color: inherit;">
+        <img src="Imágenes/Descargas/Escaner.webp" alt="Escáner QR" 
+             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <p style="margin: 0; font-size: 1.2em; font-weight: bold;">Escáner QR</p>
+    </a>
+</div>
+
+
+
+       
+    <div class="separator"></div>
+
+
+<div class="menu-item full-width" onclick="window.location.href='index.html';">
+    <p>Menú Principal</p>
+</div>
+
+
+
+    </div>
+
+    <!-- Contenedor del iframe -->
+    <div id="iframe-container" style="display:none;">
+        <iframe id="iframe" src=""></iframe>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    </div>
+
+    <script>
+
+
+        function goBack() {
+            document.getElementById('iframe-container').style.display = 'none';
+            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+        }
+
+
+
+
+
+
+        
+    </script>
+
+</body>
+</html>
