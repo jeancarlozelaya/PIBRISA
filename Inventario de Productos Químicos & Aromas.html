@@ -474,6 +474,13 @@ tbody tr:nth-child(even) {
   </table>
             </div>
 
+<div style="margin-top: 20px; display: none;">
+    <strong>Total de Productos:</strong> <span id="totalCantidad">0</span>
+</div>
+
+
+
+
 <div style="border-bottom: 1px solid #ccc; margin: 20px 0;"></div>
 
 
@@ -527,15 +534,16 @@ tbody tr:nth-child(even) {
 <div class="question-container">
     <label for="fechaVencimiento">Fecha de Vencimiento</label>
     <div class="fecha-container">
-        <input type="number" id="dia" maxlength="2" placeholder="DIA" oninput="formatearFecha()">
+        <input type="number" id="dia" min="1" max="31" placeholder="DIA" oninput="validarDiaMes(this, 31)">
         <span>/</span>
-        <input type="number" id="mes" maxlength="2" placeholder="MES" oninput="formatearFecha()">
+        <input type="number" id="mes" min="1" max="12" placeholder="MES" oninput="validarDiaMes(this, 12)">
         <span>/</span>
-        <input type="number" id="anio" maxlength="4" placeholder="AÑO" oninput="formatearFecha()">
+        <input type="text" id="anio" maxlength="4" placeholder="AÑO" oninput="validarAnio(this)">
     </div>
     <!-- Campo oculto para almacenar la fecha completa -->
     <input type="hidden" id="fechaVencimiento">
 </div>
+
 
             <div class="question-container">
 
@@ -566,19 +574,55 @@ tbody tr:nth-child(even) {
 <script>
 
 
-document.getElementById("filtroProductos").addEventListener("input", function() {
-        const filtro = this.value.toLowerCase();
-        const filas = document.querySelectorAll("table tbody tr");
+function validarDiaMes(input, max) {
+    if (input.value.length > 2) {
+        input.value = input.value.slice(0, 2); // Limita a 2 caracteres
+    }
+    if (parseInt(input.value, 10) > max) {
+        input.value = max; // Asegura que no supere el valor máximo
+    }
+}
 
-        filas.forEach(fila => {
-            const textoFila = fila.textContent.toLowerCase();
-            if (textoFila.includes(filtro)) {
-                fila.style.display = ""; // Muestra la fila
-            } else {
-                fila.style.display = "none"; // Oculta la fila
+function validarAnio(input) {
+    if (input.value.length > 4) {
+        input.value = input.value.slice(0, 4); // Limita a 4 caracteres
+    }
+}
+
+
+
+
+document.getElementById("filtroProductos").addEventListener("input", function () {
+    const filtro = this.value.toLowerCase();
+    const filas = document.querySelectorAll("table tbody tr");
+    let totalCantidad = 0;
+
+    filas.forEach(fila => {
+        const textoFila = fila.textContent.toLowerCase();
+        const cantidadCelda = fila.querySelector("td:nth-child(3)"); // La celda de la cantidad
+
+        if (textoFila.includes(filtro)) {
+            fila.style.display = ""; // Muestra la fila
+            if (cantidadCelda) {
+                totalCantidad += parseInt(cantidadCelda.textContent, 10) || 0; // Suma la cantidad
             }
-        });
+        } else {
+            fila.style.display = "none"; // Oculta la fila
+        }
     });
+
+    // Actualiza el total de productos
+    const totalCantidadElemento = document.getElementById("totalCantidad");
+    totalCantidadElemento.textContent = totalCantidad;
+
+    // Mostrar u ocultar el contador de total
+    if (filtro === "" || totalCantidad === 0) {
+        totalCantidadElemento.parentElement.style.display = "none"; // Oculta el contenedor si no hay filtro o suma 0
+    } else {
+        totalCantidadElemento.parentElement.style.display = "block"; // Muestra el contenedor si hay datos
+    }
+});
+
 
 
 
