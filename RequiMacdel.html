@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Requisición - Productos de Macdel</title>
+
+ <!-- Incluir SweetAlert2 -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <style>
 
         .header {
@@ -65,49 +70,7 @@
 
 
 
-  .modal {
-  position: fixed; /* Posiciona el modal de forma fija en la pantalla */
-  top: 0; /* Lo posiciona desde la parte superior de la pantalla */
-  left: 0; /* Lo posiciona desde la parte izquierda de la pantalla */
-  width: 100%; /* Hace que el modal ocupe todo el ancho de la pantalla */
-  height: 100%; /* Hace que el modal ocupe toda la altura de la pantalla */
-  background-color: rgba(0, 0, 0, 0.5); /* Color de fondo semitransparente (oscurece el fondo) */
-  display: flex; /* Usa Flexbox para alinear los elementos hijos */
-  justify-content: center; /* Centra el contenido (los botones y el mensaje) horizontalmente */
-  align-items: center; /* Centra el contenido (los botones y el mensaje) verticalmente */
-}
 
-.modal-content {
-  background-color: #fff; /* Fondo blanco para el contenido del modal */
-  padding: 20px 40px; /* Menos padding vertical para hacer el mensaje más compacto */
-  border-radius: 5px; /* Bordes redondeados para el modal */
-  text-align: center; /* Centra el texto dentro del modal */
-  width: 400px; /* Ajusta el ancho del contenido para que sea más grande */
-  font-size: 20px; /* Aumenta el tamaño de la fuente del mensaje */
-}
-
-.modal-content .button-container {
-  display: flex; /* Asegura que los botones estén en una fila (Flexbox) */
-  justify-content: center; /* Centra los botones horizontalmente */
-  margin-top: 20px; /* Añade más espacio entre el texto y los botones */
-}
-
-.modal-content button {
-  padding: 10px 20px; /* Añade 10px de espacio arriba y abajo, 20px de espacio a la izquierda y derecha */
-  font-size: 16px; /* Tamaño de la fuente de los botones */
-  background-color: #007bff; /* Fondo azul para los botones */
-  border: none; /* Sin borde alrededor de los botones */
-  color: white; /* Color del texto de los botones en blanco */
-  cursor: pointer; /* Cambia el cursor a mano cuando pasa sobre el botón */
-  border-radius: 5px; /* Bordes redondeados para los botones */
-  transition: background-color 0.3s ease; /* Transición suave para el cambio de color al pasar el mouse */
-  width: 120px; /* Establece el ancho fijo de los botones a 120px */
-  margin: 0 8px; /* Añade margen horizontal de 8px entre los botones */
-}
-
-.modal-content button:hover {
-  background-color: #28a745; /* Cambia el color de fondo a verde cuando se pasa el mouse sobre el botón */
-}
 
 
 
@@ -167,22 +130,25 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    .producto {
-      margin-bottom: 20px;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      background-color: #f9f9f9;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      border: 1px solid #ddd; /* Contorno de cada producto */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      font-size: 12px; /* Reducir aún más el tamaño del texto */
-    }
+
+.producto {
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: 1px solid #ddd; /* Contorno de cada producto */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px; /* Reducir aún más el tamaño del texto */
+  font-weight: bold; /* Texto en negrita */
+}
+
     .producto:hover {
       background-color: #e0e0e0;
     }
@@ -234,6 +200,7 @@
     width: 180px; /* Ajuste para pantallas aún más grandes */
   }
 }
+
     .cantidad button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
@@ -262,6 +229,7 @@
   margin-top: 0; /* Elimina cualquier margen superior extra */
   margin-right: 10px; /* Espacio a la derecha del botón */
   padding: 10px 20px;
+  width: 100%; /* Abarca todo el ancho del formulario */
 
   background-color: #28a745; /* Verde */
   color: white;
@@ -297,14 +265,6 @@
 }
 
 
-
-
-
-
-
-
-
-
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
@@ -336,48 +296,158 @@
 }
 
     }
+
+
+/* Estilo personalizado para el contenido del mensaje */
+.swal-content {
+    font-size: 0.9em;  /* Reduce el tamaño del texto */
+    line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+}
+
+/* Estilo personalizado para ambos botones */
+.swal-button, .swal-button-cancel {
+    font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
+    padding: 10px 20px;  /* Espaciado interno */
+    min-width: 100px;  /* Ancho mínimo para igualar botones */
+    text-align: center;  /* Centra el texto dentro del botón */
+}
+
+/* Estilo personalizado para el popup/modal */
+.swal-popup {
+    width: 300px;  /* Ajusta el ancho máximo del modal */
+    max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+}
+
+/* Opcional: colores específicos para cada botón */
+.swal-button {
+    background-color: #28a745;  /* Verde para el botón de "Sí" */
+    color: white;  /* Texto en blanco */
+    border: none;
+    border-radius: 4px;
+}
+
+.swal-button-cancel {
+    background-color: #f5f5f5;  /* Gris claro para el botón de "No" */
+    color: #333;  /* Texto oscuro */
+    border: none;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+    /* Estilo del overlay (pantalla bloqueada) */
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
+    }
+
+    #loadingMessage {
+        color: white;  /* Texto en blanco */
+        font-size: 24px;  /* Tamaño de fuente para que se vea bien */
+        font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
+        text-align: center;
+        padding: 20px;  /* Espaciado interno */
+    }
+
+
+    /* Estilo para los contenedores de preguntas */
+    .question-container {
+        margin-bottom: 20px;
+        text-align: left;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    /* Estilo para el campo de descripción */
+    .question-container textarea {
+    	padding: 15px; /* Aumentar el espacio interno */
+    	border: 2px solid #ccc;
+    	border-radius: 5px;
+    	width: 100%;
+    	font-size: 16px;
+    	background-color: #f9f9f9;
+    	color: #333;
+    	transition: border-color 0.3s;
+    	box-sizing: border-box;
+    	margin-top: 5px;
+    	height: 200px; /* Aumentar la altura para hacerlo más grande */
+    	resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+    }
+
+    .question-container:hover {
+        border-color: #007BFF;
+    }
+
+
+    .question-container input[type="date"],
+    .question-container textarea,
+    .question-container select {
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+
+    .question-container input[type="date"]:focus,
+    .question-container textarea:focus,
+    .question-container select:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+    /* Estilos de las etiquetas */
+    .question-container label {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+
+
   </style>
 </head>
 <body>
-
-    <div class="header">
-        Pisos Brillantes
-    </div>
-
-
-<div id="mensajeModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <p id="mensajeTexto"></p>
-    <button id="cerrarModalBtn">Cerrar</button>
-  </div>
+<div class="header">
+    Pisos Brillantes
 </div>
 
-<div id="confirmacionModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <p id="confirmacionTexto">¿Estás seguro de enviar los datos?</p>
-    <button id="confirmarEnvioBtn">Sí</button>
-    <button id="cancelarEnvioBtn">No</button>
-  </div>
-</div>
+<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
 
-
-
-
-
-  <div class="form-container">
+<div class="form-container">
     <h1>Requisición - Productos de Macdel</h1>
 
-
- <div class="select-container">
+    <div class="question-container">
         <div>
-          <label for="fecha"><strong>Fecha:<strong></label>
-          <input type="date" id="fecha" name="fecha">
+            <label for="fecha"><strong>Fecha:</strong></label>
+            <input type="date" id="fecha" name="fecha">
         </div>
 
-        <div>
-          <label for="colaborador"><strong>Colaborador:</strong></label>
-          <select id="colaborador" name="colaborador">
+        <label for="colaborador"><strong>Colaborador:</strong></label>
+        <select id="colaborador" name="colaborador">
             <option value="">Seleccionar colaborador</option>
+            <option value="Colaborador Externo">Colaborador Externo</option>
             <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
             <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
             <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
@@ -388,14 +458,11 @@
             <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
             <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
             <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
-          </select>
-        </div>
+        </select>
 
-        <div>
-          <label for="area"><strong>Área a abastecer:</strong></label>
-          <select id="area" name="area">
+        <label for="area"><strong>Área a abastecer:</strong></label>
+        <select id="area" name="area">
             <option value="">Seleccionar área</option>
-            <option value="USO PROPIO">USO PROPIO</option>
             <option value="Administración">Administración</option>
             <option value="Almacén General">Almacén General</option>
             <option value="Baños de Tolderos">Baños de Tolderos</option>
@@ -409,6 +476,7 @@
             <option value="Despacho">Despacho</option>
             <option value="Enfermería">Enfermería</option>
             <option value="Equipo Móvil">Equipo Móvil</option>
+            <option value="ERT">ERT</option>
             <option value="Expedición">Expedición</option>
             <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
             <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
@@ -419,36 +487,29 @@
             <option value="Sala de Control">Sala de Control</option>
             <option value="Salón Vial">Salón Vial</option>
             <option value="Taller Eléctrico">Taller Eléctrico</option>
-          </select>
-        </div>
-      </div>
-
-         <label><strong>Seleccione los productos a requisar:</strong></label>
-
-
-
-
-    <form id="formulario">
-      <div class="productos-container" id="productos">
-        <!-- Los productos se cargarán aquí mediante el script -->
-      </div>
-      <br>
-
-<div class="button-container">
-
-<button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
-
-</div>
-
-
-    </form>
-  </div>
-
-
-    <div>
-        <a href="javascript:void(0);" class="back-button" onclick="window.history.back()">Volver al Inicio</a>
+        </select>
     </div>
 
+    <label><strong>Seleccione los productos a requisar:</strong></label>
+
+    <form id="formulario">
+        <div class="productos-container" id="productos">
+            <!-- Los productos se cargarán aquí mediante el script -->
+        </div>
+        <br>
+
+        <div class="button-container">
+            <button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Contenedor para bloquear la pantalla -->
+<div id="overlay" style="display: none;">
+    <div id="loadingMessage">
+        <p>Procesando...🥱</p>
+    </div>
+</div>
 
 
 
@@ -584,45 +645,6 @@ productos.forEach((producto, index) => {
 
 
 
-
-function mostrarConfirmacion(mensaje, callback) {
-  document.getElementById('confirmacionTexto').textContent = mensaje;
-  document.getElementById('confirmacionModal').style.display = 'flex';
-
-  // Botón "Sí"
-  document.getElementById('confirmarEnvioBtn').onclick = function () {
-    document.getElementById('confirmacionModal').style.display = 'none';
-    callback(true); // Llama al callback con true si el usuario confirma
-  };
-
-  // Botón "No"
-  document.getElementById('cancelarEnvioBtn').onclick = function () {
-    document.getElementById('confirmacionModal').style.display = 'none';
-    callback(false); // Llama al callback con false si el usuario cancela
-  };
-}
-
-function mostrarMensaje(mensaje, recargar = false) {
-  document.getElementById('mensajeTexto').textContent = mensaje;
-  document.getElementById('mensajeModal').style.display = 'flex';
-
-  // Botón cerrar con lógica condicional
-  document.getElementById('cerrarModalBtn').onclick = function () {
-    document.getElementById('mensajeModal').style.display = 'none';
-    
-    // Recargar solo si es necesario
-    if (recargar) {
-      location.reload(); // Solo recarga la página si `recargar` es true
-    }
-  };
-}
-
-
-function cerrarModal() {
-  // Oculta el modal y recarga la página
-  document.getElementById('mensajeModal').style.display = 'none';
-}
-
 function enviardatos() {
   let seleccion = [];
 
@@ -645,13 +667,25 @@ function enviardatos() {
 
   // Verificar los datos antes de enviarlos
   if (seleccion.length > 0) {
-  let datosTexto = '¿Estás seguro de continuar? 🤔';
-
-    // Mostrar confirmación antes de enviar
-    mostrarConfirmacion(datosTexto, function (confirmado) {
-      if (confirmado) {
+    Swal.fire({
+      text: '¿Estás seguro de continuar? 🤔',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí 🫡',
+      cancelButtonText: 'No 😬',
+      customClass: {
+        content: 'swal-content',
+        confirmButton: 'swal-button',
+        cancelButton: 'swal-button-cancel',
+        popup: 'swal-popup'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
         // Usuario confirmó, proceder con el envío
-    bloquearFormulario(true);
+
+    // Mostrar overlay de espera
+    document.getElementById('overlay').style.display = 'flex'
+
         $.ajax({
           url: "https://script.google.com/macros/s/AKfycbxJn66GDZ7y58ipU_eL58P2qnoJCUvL7Z_nRXfQQ3qcZ6a2xFkIOLk81RL2a7KAe6RS/exec",
           type: "POST",
@@ -663,55 +697,62 @@ function enviardatos() {
           },
           success: function(response) {
             console.log("Respuesta del servidor:", response);
-            mostrarMensaje("¡Envío exitoso! 🥳🎉", true); // Recarga al enviar exitosamente
-        bloquearFormulario(false);
+
+
+    // Ocultar el overlay de espera
+    document.getElementById('overlay').style.display = 'none';
+
+            Swal.fire({
+              text: '¡Envío exitoso! 🥳🎉',
+              icon: 'success',
+              confirmButtonText: 'Aceptar',
+              customClass: {
+                content: 'swal-content',
+                confirmButton: 'swal-button',
+                popup: 'swal-popup'
+              }
+
+
+            }).then(() => {
+              // Recargar la página después de la confirmación
+              location.reload();
+            });
+
+
+
+
+
 
           },
           error: function(xhr, status, error) {
             console.error("Error al enviar los datos:", xhr.responseText);
-            mostrarMensaje("Hubo un problema al enviar los datos. Intenta nuevamente. 😢");
+
+    // Ocultar el overlay de espera
+    document.getElementById('overlay').style.display = 'none';
+
+            Swal.fire({
+              text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+              icon: 'error',
+              confirmButtonText: 'Aceptar',
+              customClass: {
+                content: 'swal-content',
+                confirmButton: 'swal-button',
+                popup: 'swal-popup'
+              }
+            });
           }
         });
       }
     });
-  } else {
-    mostrarMensaje("No has seleccionado ningún producto. ¡Por favor, selecciona algo! 🌟", false);
-  }
+  } 
 }
 
-// Asocia el evento de clic al botón cerrar
-document.getElementById('cerrarModalBtn').addEventListener('click', cerrarModal);
-
-function bloquearFormulario(bloquear) {
-  // Bloquear inputs, selects, textareas, botones, y también el enlace 'back-button'
-  $('input, select, textarea, button').prop('disabled', bloquear);
-
-  if (bloquear) {
-    // Deshabilitar funcionalidad del enlace 'back-button'
-    $('.back-button')
-      .addClass('disabled') // Añadir clase para cambiar el estilo
-      .css('pointer-events', 'none') // Desactiva clics
-      .css('opacity', '0.5'); // Cambia la apariencia
-
-    // Añadir capa de bloqueo visual
-    $('#formulario').append('<div id="bloqueoFormulario" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px;">Procesando...🥱</div>');
-  } else {
-    // Habilitar funcionalidad del enlace 'back-button'
-    $('.back-button')
-      .removeClass('disabled')
-      .css('pointer-events', '')
-      .css('opacity', '1'); // Restaurar apariencia
-
-    // Eliminar capa de bloqueo visual
-    $('#bloqueoFormulario').remove();
+  function goBack() {
+  window.history.back();  // Esto hace que el navegador vuelva a la página anterior
   }
-}
-
-
-
-
 
     cargarProductos();
+
   </script>
 </body>
 </html>
