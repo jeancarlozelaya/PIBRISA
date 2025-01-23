@@ -229,7 +229,8 @@
 
 
   			/* Estilos para la sección "tema" */
-  			#tema {
+  			#tema,
+#nota {
   			padding: 10px;
   			border: 2px solid #ccc;
   			border-radius: 5px;
@@ -422,6 +423,51 @@
 
 
 
+
+
+
+.respuesta-correcta-texto {
+    margin-top: 5px;
+    color: red;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
+/* Estilo para el contenedor de la nota */
+        #notac {
+            display: none; /* Inicialmente oculto */
+            width: 100%; /* Ancho fijo */
+            padding: 20px; /* Espaciado interno */
+            background-color: #f8f8f8; /* Fondo suave */
+            border-radius: 10px; /* Bordes redondeados */
+            border: 2px solid #4CAF50; /* Borde verde */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            text-align: center; /* Centrado de texto */
+            font-family: Arial, sans-serif; /* Fuente moderna */
+            margin-top: 20px; /* Espaciado superior */
+            transition: transform 0.3s ease, opacity 0.3s ease; /* Transiciones suaves */
+        }
+
+        #notac input {
+            font-size: 24px; /* Tamaño de la fuente para la nota */
+            padding: 10px;
+            width: 100%; /* El input ocupa todo el ancho del contenedor */
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave alrededor del input */
+        }
+
+        /* Estilo cuando el contenedor se vuelve visible */
+        #notac.visible {
+            display: block; /* Cambiar a visible */
+            opacity: 1;
+            transform: translateY(0); /* Desplazamiento suave desde abajo */
+        }
+
+
 </style>
 
 
@@ -502,6 +548,10 @@
     </div>
 </div>
 
+<div id="notac" class="question-container" style="display: none;">
+    <input type="text" id="nota">
+</div>
+
 
 
 
@@ -551,60 +601,62 @@ document.addEventListener("DOMContentLoaded", async function () {
         preguntasContainer.innerHTML = "";
 
         // Crear las preguntas dinámicamente
-        data.preguntas.forEach((pregunta, index) => {
-            // Crear un div separado para cada pregunta con un id único
-            const preguntaDiv = document.createElement("div");
-            preguntaDiv.id = `pregunta${index + 1}`;
-            preguntaDiv.classList.add("question-container");
+// Crear las preguntas dinámicamente
+data.preguntas.forEach((pregunta, index) => {
+    const preguntaDiv = document.createElement("div");
+    preguntaDiv.id = `pregunta${index + 1}`;
+    preguntaDiv.classList.add("question-container");
 
-            // Agregar el texto de la pregunta
-            const preguntaTexto = document.createElement("label");
-            preguntaTexto.textContent = pregunta.texto;
-            preguntaDiv.appendChild(preguntaTexto);
+    const preguntaTexto = document.createElement("label");
+    preguntaTexto.textContent = pregunta.texto;
+    preguntaDiv.appendChild(preguntaTexto);
 
-            // Generar las opciones dependiendo del tipo de pregunta
-            const select = document.createElement("select");
-            select.name = `pregunta${pregunta.id}`;
+    // Input oculto para la respuesta correcta
+    const respuestaCorrecta = document.createElement("input");
+    respuestaCorrecta.value = pregunta.respuestaCorrecta;
+    respuestaCorrecta.classList.add("respuesta-correcta");
+    preguntaDiv.appendChild(respuestaCorrecta);
+    respuestaCorrecta.type = "hidden"; // Ocultar el campo
+    const select = document.createElement("select");
+    select.name = `pregunta${pregunta.id}`;
 
-            if (pregunta.tipo === 1) {
-                // Lista desplegable para Verdadero/Falso
-                ["Selecciona una opción", "Verdadero", "Falso"].forEach((opcion) => {
-                    const option = document.createElement("option");
-                    option.value = opcion === "Selecciona una opción" ? "" : opcion;
-                    option.textContent = opcion;
-                    select.appendChild(option);
-                });
-            } else if (pregunta.tipo === 2) {
-                // Lista desplegable para opciones múltiples
-                const defaultOption = document.createElement("option");
-                defaultOption.value = "";
-                defaultOption.textContent = "Selecciona una opción";
-                defaultOption.selected = true;
-                select.appendChild(defaultOption);
-                pregunta.opciones.forEach((opcion) => {
-                    const option = document.createElement("option");
-                    option.value = opcion;
-                    option.textContent = opcion;
-                    select.appendChild(option);
-                });
-            } else if (pregunta.tipo === 3) {
-                // Campo de texto para respuesta libre
-                const textoLibre = document.createElement("textarea");
-                textoLibre.name = `pregunta${pregunta.id}`;
-                textoLibre.placeholder = "Escribe tu respuesta aquí";
-                textoLibre.style.width = "100%";
-                textoLibre.style.height = "200px";
-                preguntaDiv.appendChild(textoLibre);
-            }
 
-            // Solo agregar el desplegable si no es una pregunta de tipo texto libre
-            if (pregunta.tipo !== 3) {
-                preguntaDiv.appendChild(select);
-            }
-
-            // Añadir el div de la pregunta al contenedor principal
-            preguntasContainer.appendChild(preguntaDiv);
+    if (pregunta.tipo === 1) {
+        ["Selecciona una opción", "Verdadero", "Falso"].forEach((opcion) => {
+            const option = document.createElement("option");
+            option.value = opcion === "Selecciona una opción" ? "" : opcion;
+            option.textContent = opcion;
+            select.appendChild(option);
         });
+    } else if (pregunta.tipo === 2) {
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Selecciona una opción";
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        pregunta.opciones.forEach((opcion) => {
+            const option = document.createElement("option");
+            option.value = opcion;
+            option.textContent = opcion;
+            select.appendChild(option);
+        });
+    } else if (pregunta.tipo === 3) {
+        const textoLibre = document.createElement("textarea");
+        textoLibre.name = `pregunta${pregunta.id}`;
+        textoLibre.placeholder = "Escribe tu respuesta aquí";
+        textoLibre.style.width = "100%";
+        textoLibre.style.height = "200px";
+        preguntaDiv.appendChild(textoLibre);
+    }
+
+    if (pregunta.tipo !== 3) {
+        preguntaDiv.appendChild(select);
+    }
+
+    preguntasContainer.appendChild(preguntaDiv);
+});
+
     } catch (error) {
         alert("Hubo un error al cargar las preguntas: " + error.message);
     } finally {
@@ -858,23 +910,16 @@ document.querySelectorAll('input, textarea').forEach(element => {
 
 
 async function generarPDF() {
+    const colaboradorValue = document.getElementById('colaborador').value;
+    const temaValue = document.getElementById('tema').value;
 
-
-
-const colaboradorValue = document.getElementById('colaborador').value;
-const temaValue = document.getElementById('tema').value;
-
-
-
-if (
-    !document.getElementById('fecha').value.trim() || 
-    colaboradorValue === "" || colaboradorValue === "Seleccione una opción" || 
-   temaValue === "" || temaValue === "Tema no disponible"
-
-) {
-    return; // Si el colaborador no ha seleccionado un valor válido, no continúa la ejecución
-}
-
+    if (
+        !document.getElementById('fecha').value.trim() || 
+        colaboradorValue === "" || colaboradorValue === "Seleccione una opción" || 
+        temaValue === "" || temaValue === "Tema no disponible"
+    ) {
+        return; // Si el colaborador no ha seleccionado un valor válido, no continúa la ejecución
+    }
 
     // Mostrar overlay de espera
     document.getElementById('overlay').style.display = 'flex';
@@ -892,56 +937,114 @@ if (
     const preguntasContainer = document.getElementById("preguntas");
 
     // Portada
-    pdf.setFont("times", "bold"); // Cambiar a Times y negrita
+    pdf.setFont("times", "bold");
     pdf.setFontSize(16);
     pdf.text("Registro de participación - Momento de Valor", 10, 20);
     pdf.text(`Tema: ${tema}`, 10, 35, { maxWidth: 190 });
     pdf.text(`Colaborador: ${colaborador}`, 10, 50);
-
-
     pdf.text(`Fecha: ${fecha}`, 10, 65);
     pdf.addImage(firmaDataUrl, 'PNG', 160, 50, 38, 25); // Ajusta el tamaño y posición según sea necesario
 
-
-
     pdf.setFontSize(14);
+    pdf.line(10, 75, 200, 75); // Línea horizontal
 
-
-    // Línea horizontal
-    pdf.line(10, 75, 200, 75);
-
-    // Configuración inicial para preguntas
     let cursorY = 85;
     const marginLeft = 10;
     const lineSpacing = 10;
 
+let totalPreguntas = 0; // Contador para las preguntas totales
+let totalRespuestasCorrectas = 0; // Contador para las respuestas correctas
+
+
     // Agregar preguntas y respuestas al PDF
     preguntasContainer.querySelectorAll(".question-container").forEach((preguntaDiv, index) => {
-        const preguntaTexto = preguntaDiv.querySelector("label").textContent;
-        const respuesta = preguntaDiv.querySelector("textarea, select")?.value || "Sin respuesta";
 
-        // Verificar si hay suficiente espacio en la página, de lo contrario, agregar una nueva página
+    totalPreguntas++; // Incrementar el total de preguntas
+
+
+        const preguntaTexto = preguntaDiv.querySelector("label").textContent;
+let respuesta = preguntaDiv.querySelector("textarea, select")?.value || "Sin respuesta";
+        const respuestaCorrecta = preguntaDiv.querySelector(".respuesta-correcta")?.value || "No especificada";
+
+        // Verificar si hay suficiente espacio en la página
         if (cursorY + 20 > pageHeight) {
             pdf.addPage();
             cursorY = 20; // Reiniciar el cursor en la nueva página
         }
 
-// Agregar pregunta
-pdf.setFont("times", "bold");
-const lineasPregunta = pdf.splitTextToSize(`${index + 1}) ${preguntaTexto}`, 190); // Dividir pregunta en líneas
-pdf.text(lineasPregunta, marginLeft, cursorY); // Dibujar pregunta en el PDF
-cursorY += lineasPregunta.length * lineSpacing; // Ajustar cursor según el número de líneas ocupadas por la pregunta
+        // Agregar pregunta
+        pdf.setFont("times", "bold");
+        const lineasPregunta = pdf.splitTextToSize(`${index + 1}) ${preguntaTexto}`, 190);
+        pdf.text(lineasPregunta, marginLeft, cursorY);
+        cursorY += lineasPregunta.length * lineSpacing;
 
 // Ajuste dinámico entre pregunta y respuesta
 // Si la pregunta tiene más de una línea, dejamos un pequeño espacio
 const espacioPreguntaRespuesta = lineasPregunta.length > 1 ? -6 : -3;  // Puedes ajustar este valor
 cursorY += espacioPreguntaRespuesta;  // Ajustar espacio entre pregunta y respuesta
 
-// Agregar respuesta
-pdf.setFont("times", "normal");
-const lineasRespuesta = pdf.splitTextToSize(`R:/ ${respuesta}`, 180); // Dividir respuesta en líneas
-pdf.text(lineasRespuesta, marginLeft + 10, cursorY); // Dibujar respuesta en el PDF
-cursorY += lineasRespuesta.length * lineSpacing; // Ajustar cursor según el número de líneas ocupadas por la respuesta
+
+        // Verificar si la respuesta es correcta o incorrecta
+        const esCorrecta = respuesta.trim().toLowerCase() === respuestaCorrecta.trim().toLowerCase();
+
+    if (esCorrecta) {
+        totalRespuestasCorrectas++; // Incrementar el contador de respuestas correctas
+    }
+
+const colorRespuesta = esCorrecta ? [0, 128, 0] : [255, 0, 0]; // Verde si es correcta, rojo si es incorrecta
+
+
+    // Cambiar color del contenedor según si la respuesta es correcta o incorrecta
+    preguntaDiv.style.backgroundColor = esCorrecta ? "rgba(0, 128, 0, 0.2)" : "rgba(255, 0, 0, 0.2)";
+    preguntaDiv.style.border = esCorrecta ? "2px solid green" : "2px solid red";
+
+
+    // Si la respuesta es incorrecta, mostrar la respuesta correcta
+    if (!esCorrecta) {
+        // Crear un elemento visible para mostrar la respuesta correcta
+        let respuestaCorrectaTexto = preguntaDiv.querySelector(".respuesta-correcta-texto");
+
+        if (!respuestaCorrectaTexto) {
+            respuestaCorrectaTexto = document.createElement("div");
+            respuestaCorrectaTexto.className = "respuesta-correcta-texto";
+            respuestaCorrectaTexto.style.marginTop = "5px"; // Espaciado para claridad
+            respuestaCorrectaTexto.style.color = "red"; // Color rojo para destacar
+            respuestaCorrectaTexto.style.fontWeight = "bold";
+            preguntaDiv.appendChild(respuestaCorrectaTexto);
+        }
+
+        // Mostrar la respuesta correcta
+        respuestaCorrectaTexto.textContent = `Respuesta Correcta: ${respuestaCorrecta}`;
+    }
+
+    // Bloquear los elementos dentro del contenedor de la pregunta
+    const elementosInteractivos = preguntaDiv.querySelectorAll("textarea, select, input");
+    elementosInteractivos.forEach(elemento => {
+        elemento.disabled = true; // Deshabilitar el elemento para evitar edición
+    });
+
+
+
+// Si la respuesta es incorrecta, agregar la respuesta correcta al lado
+if (!esCorrecta) {
+    respuesta += ` (La respuesta correcta era: ${respuestaCorrecta})`;
+}
+
+
+
+
+
+
+
+
+
+
+        // Agregar respuesta
+        pdf.setFont("times", "normal");
+        pdf.setTextColor(...colorRespuesta);
+        const lineasRespuesta = pdf.splitTextToSize(`R:/ ${respuesta}`, 180);
+        pdf.text(lineasRespuesta, marginLeft + 10, cursorY);
+        cursorY += lineasRespuesta.length * lineSpacing;
 
 // Ajuste del espacio entre la respuesta larga y la siguiente pregunta
 // Si la respuesta tiene muchas líneas, reduce el espacio
@@ -955,47 +1058,107 @@ if (cursorY + lineSpacing > pageHeight) {
 }
 
 
-
+        // Reiniciar color a negro para siguientes elementos
+        pdf.setTextColor(0, 0, 0);
     });
+
+// Calcular la calificación
+const calificacion = (totalRespuestasCorrectas * 100) / totalPreguntas;
+
+// Texto de la calificación
+const calificacionTexto = `Nota: ${calificacion.toFixed(2)}%`;
+
+            // Obtén el contenedor por ID
+            const preguntaContenedor = document.getElementById('notac');
+
+            // Obtén el input por ID
+            const notaInput = document.getElementById('nota');
+
+            if (notaInput && preguntaContenedor) {
+                // Asigna el valor calculado al input
+                notaInput.value = calificacionTexto;
+
+                // Hacer el contenedor visible
+                preguntaContenedor.style.display = 'block'; // Cambiar el display a 'block' para hacerlo visible
+            }
+
+
+// Tamaño de fuente y color
+pdf.setFontSize(30);
+pdf.setTextColor(0, 128, 0);
+
+// Limpiar el área (opcional, si ya hay texto montado)
+pdf.setFillColor(255, 255, 255); // Blanco
+pdf.rect(160, 5, 50, 10, 'F'); // Dibuja un rectángulo blanco para limpiar el área
+
+// Medir ancho del texto
+const textWidth = pdf.getTextWidth(calificacionTexto);
+
+// Verificar si se desborda
+const maxX = 200; // Margen derecho máximo
+let calificacionX = 160; // Posición inicial
+if (160 + textWidth > maxX) {
+    calificacionX = maxX - textWidth; // Ajustar si se desborda
+}
+
+pdf.setFont("times", "bold");
+
+// Dibujar el texto
+pdf.text(calificacionTexto, calificacionX, 20);
+
+
+
+
 
     // Crear un nombre para el archivo basado en la fecha y el título
     let nombreArchivo = `${fecha} - Registro de Participación - ${colaborador}`;
-
-    // Asegurarse de que el nombre del archivo tenga la extensión correcta
     nombreArchivo += ".pdf";
 
-    // Convierte el PDF generado a base64
-    const pdfBase64 = pdf.output('datauristring').split(',')[1]; // Elimina la parte 'data:application/pdf;base64,'
+    // Convertir el PDF generado a base64
+    const pdfBase64 = pdf.output('datauristring').split(',')[1];
 
-    // Crea la solicitud para enviar el archivo al script de Google Apps
+    // Enviar el archivo al script de Google Apps
     const response = await fetch('https://script.google.com/macros/s/AKfycbyhOCwHZ_SVtrxwNwVJ59MHg6KtB7TEKd5sdFf-KphdRWXi8HUyMfIOamvnUkHFQ1_9/exec', {
         method: 'POST',
         body: new URLSearchParams({
             pdfFile: pdfBase64,
-            fileName: nombreArchivo  // Agrega el nombre del archivo
+            fileName: nombreArchivo
         })
     });
 
-    // Esperar respuesta del servidor
     const result = await response.text();
-
-    // Mostrar el ID del archivo guardado en Google Drive
     console.log('Archivo guardado con ID:', result);
 
     // Ocultar el overlay de espera
     document.getElementById('overlay').style.display = 'none';
 
-    Swal.fire({
-        text: '¡Envío exitoso! 🥳🎉',
-        icon: 'success',
-        confirmButtonText: 'Aceptar',
-        customClass: {
-            content: 'swal-content',
-            confirmButton: 'swal-button',
-            popup: 'swal-popup'
-        }
+Swal.fire({
+    text: '¡Envío exitoso! 🥳🎉',
+    icon: 'success',
+    confirmButtonText: 'Aceptar',
+    customClass: {
+        content: 'swal-content',
+        confirmButton: 'swal-button',
+        popup: 'swal-popup'
+    }
+}).then(() => {
+    // Selecciona todos los contenedores de preguntas y deshabilítalos
+    const questionContainers = document.querySelectorAll('.question-container');
+    questionContainers.forEach(container => {
+        container.style.pointerEvents = 'none'; // Bloquea interacciones
     });
+
+    // Deshabilita el botón "Enviar"
+    const enviarButton = document.querySelector('button[onclick="generarPDF()"]');
+    if (enviarButton) {
+        enviarButton.disabled = true; // Deshabilita el botón
+        enviarButton.style.pointerEvents = 'none'; // Bloquea interacciones
+    }
+});
+
 }
+
+
 
 
 
