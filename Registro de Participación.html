@@ -1083,6 +1083,9 @@ const calificacionTexto = `Nota: ${calificacion.toFixed(2)}%`;
             }
 
 
+// Asegurarse de que el código se ejecute en la primera página
+pdf.setPage(1);
+
 // Tamaño de fuente y color
 pdf.setFontSize(30);
 pdf.setTextColor(0, 128, 0);
