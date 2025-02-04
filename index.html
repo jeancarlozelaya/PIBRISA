@@ -422,7 +422,7 @@ function verificarCumpleaños() {
 
     if (cumpleañero && !localStorage.getItem('cumpleañosHoy')) {
         document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
-        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂🎈 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎉`;
+        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎉`;
 
         const modal = document.getElementById("birthdayModal");
         modal.style.opacity = 1;
