@@ -6,6 +6,11 @@
     <title>Pisos Brillantes</title>
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
     <link rel="manifest" href="/PIBRISA/manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
@@ -162,6 +167,85 @@
                 padding: 0; /* Asegura que no haya padding extra */
             }
         }
+
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.modal-content {
+    background: transparent;
+    padding: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+}
+
+.cerrar-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+}
+
+.modal img {
+    max-width: 150px;
+    border-radius: 50%;
+    margin: 10px auto;
+    display: block;
+    border: 3px solid white;
+}
+
+.modal h2 {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 10px;
+}
+
+#mensajeCumple {
+    font-size: 1.2rem;
+    color: white;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Contenedor para animaciones dentro del modal */
+#animaciones {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1100; /* Se asegura de que esté sobre el modal */
+    pointer-events: none; /* Para que no interfiera con la interacción */
+}
+
+
+
+
+
+
+
+
     </style>
 </head>
 
@@ -170,6 +254,21 @@
 </button>
 
 <body>
+
+<div id="birthdayModal" class="modal">
+    <div id="animaciones"></div> <!-- Animaciones dentro del modal -->
+    <div class="modal-content">
+        <button class="cerrar-modal" onclick="cerrarModal()">✖</button>
+        <img id="fotoCumpleañero" src="" alt="Foto del cumpleañero">
+        <p id="mensajeCumple"></p>
+    </div>
+</div>
+
+
+
+
+
+
     <div class="header">
         Pisos Brillantes
     </div>
@@ -293,6 +392,96 @@
                 });
             });
         });
+
+
+
+
+const cumpleañeros = [
+    { nombre: "Ariel", fecha: "21/11", foto: "Imágenes/Colaboradores/ArielMachado.webp" },
+    { nombre: "Cintia", fecha: "21/07", foto: "Imágenes/Colaboradores/Cintia Machado.jpg" },
+    { nombre: "Gertrudis", fecha: "04/07", foto: "Imágenes/Colaboradores/Gertrudis.png" },
+    { nombre: "Mari", fecha: "24/01", foto: "Imágenes/Colaboradores/María Portillo.jpg" },
+    { nombre: "Esther", fecha: "30/06", foto: "Imágenes/Colaboradores/EstherDonaire.webp" },
+    { nombre: "Mayra", fecha: "18/02", foto: "Imágenes/Colaboradores/MayraNicolás.webp" },
+    { nombre: "Omar", fecha: "10/04", foto: "Imágenes/Colaboradores/Olban.jpg" },
+    { nombre: "Yarahi", fecha: "21/08", foto: "Imágenes/Colaboradores/YarahiLópez.webp" },
+    { nombre: "Yosselin", fecha: "06/04", foto: "Imágenes/Colaboradores/Yosselin.jpg" },
+    { nombre: "Jeancarlo", fecha: "09/11", foto: "Imágenes/Colaboradores/Jzelaya.png" }
+];
+
+let confettiInterval;
+let fuegosArtificialesInterval;
+
+function verificarCumpleaños() {
+    const fechaHoy = new Date();
+    const diaHoy = String(fechaHoy.getDate()).padStart(2, '0');
+    const mesHoy = String(fechaHoy.getMonth() + 1).padStart(2, '0');
+    const fechaHoyFormateada = `${diaHoy}/${mesHoy}`;
+
+    const cumpleañero = cumpleañeros.find(c => c.fecha === fechaHoyFormateada);
+
+    if (cumpleañero && !localStorage.getItem('cumpleañosHoy')) {
+        document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
+        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎉 🎂 Que tengas un gran día. 🥳`;
+
+        const modal = document.getElementById("birthdayModal");
+        modal.style.opacity = 1;
+        modal.style.visibility = "visible";
+
+        localStorage.setItem('cumpleañosHoy', 'true');  // Evita que se repita el mensaje durante el día
+        lanzarConfeti();
+        fuegosArtificiales();
+    }
+}
+
+function cerrarModal() {
+    const modal = document.getElementById("birthdayModal");
+    modal.style.opacity = 0;
+    modal.style.visibility = "hidden";
+
+    // Detener confeti y fuegos artificiales cuando se cierre el modal
+    clearInterval(confettiInterval);
+    clearInterval(fuegosArtificialesInterval);
+
+    // Limpiar las animaciones
+    document.getElementById("animaciones").innerHTML = "";
+}
+
+function lanzarConfeti() {
+    confettiInterval = setInterval(() => {
+        confetti({
+            particleCount: 100,
+            spread: 160,
+            origin: { y: 0.6, x: 0.5 },
+            zIndex: 1100 // Asegura que esté sobre el modal
+        });
+    }, 1000);  // Cambié el intervalo a 1 segundo (1000 ms)
+}
+
+function fuegosArtificiales() {
+    fuegosArtificialesInterval = setInterval(function () {
+        confetti({
+            particleCount: 100,
+            spread: 90,
+            angle: 90,
+            origin: { x: Math.random(), y: Math.random() },
+            colors: ['#FF0000', '#FFFF00', '#00FF00', '#0000FF'], // Colores de fuegos artificiales
+            shapes: ['circle', 'square'],
+            scalar: 1.5
+        });
+    }, 1000);  // Cambié el intervalo a 1 segundo (1000 ms)
+}
+
+// Verifica cumpleaños cada segundo
+setInterval(() => {
+    verificarCumpleaños();
+}, 1000);
+
+
+
+
+
+
     </script>
 
 </body>
