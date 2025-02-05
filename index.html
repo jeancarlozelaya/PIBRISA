@@ -418,17 +418,25 @@ function verificarCumpleaños() {
     const mesHoy = String(fechaHoy.getMonth() + 1).padStart(2, '0');
     const fechaHoyFormateada = `${diaHoy}/${mesHoy}`;
 
+    // Verificar si ya se mostró el mensaje hoy
+    const ultimaFechaMostrada = localStorage.getItem('ultimaFechaCumple');
+
+    if (ultimaFechaMostrada !== fechaHoyFormateada) {
+        localStorage.removeItem('cumpleañosHoy'); // Restablecer el mensaje para el nuevo día
+        localStorage.setItem('ultimaFechaCumple', fechaHoyFormateada); // Guardar la nueva fecha
+    }
+
     const cumpleañero = cumpleañeros.find(c => c.fecha === fechaHoyFormateada);
 
     if (cumpleañero && !localStorage.getItem('cumpleañosHoy')) {
         document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
-        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎉`;
+        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂🎈 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎊🎉`;
 
         const modal = document.getElementById("birthdayModal");
         modal.style.opacity = 1;
         modal.style.visibility = "visible";
 
-        localStorage.setItem('cumpleañosHoy', 'true');  // Evita que se repita el mensaje durante el día
+        localStorage.setItem('cumpleañosHoy', 'true'); // Marcar como mostrado por hoy
         lanzarConfeti();
         fuegosArtificiales();
     }
