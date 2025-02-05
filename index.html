@@ -418,41 +418,87 @@ function verificarCumpleaños() {
     const mesHoy = String(fechaHoy.getMonth() + 1).padStart(2, '0');
     const fechaHoyFormateada = `${diaHoy}/${mesHoy}`;
 
-    // Verificar si ya se mostró el mensaje hoy
     const ultimaFechaMostrada = localStorage.getItem('ultimaFechaCumple');
 
     if (ultimaFechaMostrada !== fechaHoyFormateada) {
-        localStorage.removeItem('cumpleañosHoy'); // Restablecer el mensaje para el nuevo día
-        localStorage.setItem('ultimaFechaCumple', fechaHoyFormateada); // Guardar la nueva fecha
+        localStorage.removeItem('cumpleañosHoy'); 
+        localStorage.setItem('ultimaFechaCumple', fechaHoyFormateada);
     }
 
     const cumpleañero = cumpleañeros.find(c => c.fecha === fechaHoyFormateada);
 
-    if (cumpleañero && !localStorage.getItem('cumpleañosHoy')) {
+    if (cumpleañero) {
         document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
-        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂🎈 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎊🎉`;
+        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎉`;
 
-        const modal = document.getElementById("birthdayModal");
-        modal.style.opacity = 1;
-        modal.style.visibility = "visible";
-
-        localStorage.setItem('cumpleañosHoy', 'true'); // Marcar como mostrado por hoy
-        lanzarConfeti();
-        fuegosArtificiales();
+        if (!localStorage.getItem('cumpleañosHoy')) {
+            mostrarModal();
+        } else {
+            mostrarBotonFlotante();
+        }
     }
 }
+
+function mostrarModal() {
+    const modal = document.getElementById("birthdayModal");
+    modal.style.opacity = 1;
+    modal.style.visibility = "visible";
+
+    ocultarBotonFlotante();
+
+    localStorage.setItem('cumpleañosHoy', 'true');
+
+    lanzarConfeti();
+    fuegosArtificiales();
+}
+
 
 function cerrarModal() {
     const modal = document.getElementById("birthdayModal");
     modal.style.opacity = 0;
     modal.style.visibility = "hidden";
 
-    // Detener confeti y fuegos artificiales cuando se cierre el modal
-    clearInterval(confettiInterval);
-    clearInterval(fuegosArtificialesInterval);
+    detenerEfectos(); // Detiene confeti y fuegos artificiales
 
-    // Limpiar las animaciones
-    document.getElementById("animaciones").innerHTML = "";
+    mostrarBotonFlotante();
+}
+
+function mostrarBotonFlotante() {
+    let boton = document.getElementById("botonCumple");
+
+    if (!boton) {
+        boton = document.createElement("button");
+        boton.id = "botonCumple";
+        boton.innerHTML = "🎂";
+        boton.style.position = "fixed";
+        boton.style.bottom = "20px";
+        boton.style.left = "20px";
+        boton.style.width = "50px";
+        boton.style.height = "50px";
+        boton.style.fontSize = "24px";
+        boton.style.border = "none";
+        boton.style.borderRadius = "50%";
+        boton.style.backgroundColor = "#ffcc00";
+        boton.style.color = "#fff";
+        boton.style.cursor = "pointer";
+        boton.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.2)";
+        boton.style.zIndex = "1200";
+        boton.addEventListener("click", () => {
+            ocultarBotonFlotante();
+            mostrarModal();
+        });
+
+        document.body.appendChild(boton);
+    }
+
+    boton.style.display = "block";
+}
+
+function ocultarBotonFlotante() {
+    const boton = document.getElementById("botonCumple");
+    if (boton) {
+        boton.style.display = "none";
+    }
 }
 
 function lanzarConfeti() {
@@ -480,16 +526,14 @@ function fuegosArtificiales() {
     }, 1000);  // Cambié el intervalo a 1 segundo (1000 ms)
 }
 
-// Verifica cumpleaños cada segundo
-setInterval(() => {
-    verificarCumpleaños();
-}, 1000);
+function detenerEfectos() {
+    clearInterval(confettiInterval);
+    clearInterval(fuegosArtificialesInterval);
+}
 
-
-
-
-
-
+// Verificar cumpleaños al cargar la página
+verificarCumpleaños();
+        
     </script>
 
 </body>
