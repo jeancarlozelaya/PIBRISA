@@ -411,6 +411,14 @@ const cumpleañeros = [
 
 let confettiInterval;
 let fuegosArtificialesInterval;
+let audio = new Audio('cumpleaños.mp3');  // Reemplaza con la URL de tu audio
+let audioPermitido = false;  // Variable para verificar si el audio puede reproducirse
+
+// Detectar la primera interacción del usuario para habilitar el audio
+document.addEventListener("click", function habilitarAudio() {
+    audioPermitido = true;
+    document.removeEventListener("click", habilitarAudio); // Se ejecuta solo una vez
+});
 
 function verificarCumpleaños() {
     const fechaHoy = new Date();
@@ -432,12 +440,73 @@ function verificarCumpleaños() {
         document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎉`;
 
         if (!localStorage.getItem('cumpleañosHoy')) {
-            mostrarModal();
+            mostrarRegalo(); // 🛍️ Mostrar el regalo antes del modal
         } else {
             mostrarBotonFlotante();
         }
     }
 }
+
+function mostrarRegalo() {
+    let regalo = document.getElementById("pantallaRegalo");
+
+    if (!regalo) {
+        regalo = document.createElement("div");
+        regalo.id = "pantallaRegalo";
+        regalo.style.position = "fixed";
+        regalo.style.top = "0";
+        regalo.style.left = "0";
+        regalo.style.width = "100vw";
+        regalo.style.height = "100vh";
+        regalo.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Fondo semi-transparente
+        regalo.style.display = "flex";
+        regalo.style.justifyContent = "center";
+        regalo.style.alignItems = "center";
+        regalo.style.zIndex = "1500"; // Asegurar que está por encima de todo
+
+        // Crear el ícono del regalo
+        let iconoRegalo = document.createElement("div");
+        iconoRegalo.innerHTML = "🎁";
+        iconoRegalo.style.fontSize = "100px";
+        iconoRegalo.style.cursor = "pointer";
+        iconoRegalo.style.animation = "latir 1.5s infinite"; // Animación de latido
+        iconoRegalo.addEventListener("click", abrirRegalo);
+
+        regalo.appendChild(iconoRegalo);
+        document.body.appendChild(regalo);
+
+        // Agregar animación con CSS
+        let estilo = document.createElement("style");
+        estilo.innerHTML = `
+            @keyframes latir {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(estilo);
+    }
+
+    regalo.style.display = "flex";
+}
+
+
+function abrirRegalo() {
+    const regalo = document.getElementById("pantallaRegalo");
+    if (regalo) {
+        regalo.style.display = "none"; // Ocultar el regalo después del primer clic
+    }
+
+    // Habilitar el audio al hacer clic en el regalo
+    audioPermitido = true;
+
+    mostrarModal();
+}
+
+
+
+
+
 
 function mostrarModal() {
     const modal = document.getElementById("birthdayModal");
@@ -450,6 +519,10 @@ function mostrarModal() {
 
     lanzarConfeti();
     fuegosArtificiales();
+    
+    // Habilitar el audio si aún no está permitido
+    audioPermitido = true;  
+    reproducirAudio();  // 🔊 Asegura que el audio se inicie correctamente
 }
 
 
@@ -459,6 +532,7 @@ function cerrarModal() {
     modal.style.visibility = "hidden";
 
     detenerEfectos(); // Detiene confeti y fuegos artificiales
+    detenerAudio();  // Detener el audio
 
     mostrarBotonFlotante();
 }
@@ -501,6 +575,7 @@ function ocultarBotonFlotante() {
     }
 }
 
+
 function lanzarConfeti() {
     confettiInterval = setInterval(() => {
         confetti({
@@ -529,6 +604,19 @@ function fuegosArtificiales() {
 function detenerEfectos() {
     clearInterval(confettiInterval);
     clearInterval(fuegosArtificialesInterval);
+}
+
+// 🔊 Funciones para el audio 🎶
+function reproducirAudio() {
+    if (audioPermitido) {
+        audio.currentTime = 0;  // Reinicia el audio desde el inicio
+        audio.play().catch(error => console.error("Error al reproducir el audio:", error));
+    }
+}
+
+function detenerAudio() {
+    audio.pause();
+    audio.currentTime = 0;  // Reinicia el audio para la próxima vez
 }
 
 // Verificar cumpleaños al cargar la página
