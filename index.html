@@ -437,8 +437,36 @@ function verificarCumpleaños() {
 
     if (cumpleañero) {
         document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
-        document.getElementById("mensajeCumple").textContent = `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este día esté lleno de alegría, amor y momentos especiales. ¡Disfruta mucho tu día! 🥳🎉`;
 
+const mensajes = [
+  `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este nuevo año de vida te acerque a cumplir todos tus sueños. Sigue adelante con valentía y determinación. ¡El futuro es tuyo! 🚀✨`,
+  `🎂 ¡Muchas felicidades, ${cumpleañero.nombre}! 🥳 Que este día sea el comienzo de un año lleno de oportunidades, crecimiento y éxito. ¡Disfruta tu día y sigue brillando! 🌟🎊`,
+  `🎈 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎉 Que la felicidad, la salud y el amor te acompañen siempre. Nunca dejes de soñar en grande y luchar por lo que quieres. 🚀🥂`,
+  `🎁 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Hoy celebramos tu vida y todo lo increíble que eres. Que sigas conquistando metas y viviendo momentos inolvidables. 🎊🥳`,
+  `🎊 ¡Que viva el cumpleañero, ${cumpleañero.nombre}! 🥳 Que este año traiga nuevas aventuras, aprendizajes y muchas victorias. Confía en ti mismo y sigue adelante. 🎂🔥`,
+  `🥳 ¡Hoy es tu día, ${cumpleañero.nombre}! 🎈 Que cada día sea una nueva oportunidad para crecer, aprender y disfrutar la vida al máximo. ¡Eres capaz de lograrlo todo! 🌟🎁`,
+  `🎉 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Que este nuevo ciclo te llene de energía, motivación y grandes logros. Cree en ti mismo y el éxito vendrá. 💪🚀`,
+  `🎊 ¡Un año más de vida, ${cumpleañero.nombre}! 🎂 Que cada paso que des te acerque más a tus sueños. Tienes el poder de hacer cosas extraordinarias, ¡no lo olvides! ✨🥳`,
+  `🎈 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que la felicidad y la abundancia sean parte de tu camino. Sigue construyendo la vida que deseas con pasión y determinación. 🔥🎉`,
+  `🎁 ¡Muchas felicidades, ${cumpleañero.nombre}! 🎂 Que la vida te sorprenda con momentos increíbles, llenos de amor, alegría y éxito. Sigue adelante con fuerza. 🚀💖`,
+  `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este año sea mejor que el anterior y te acerque aún más a tus sueños. ¡Lo mejor está por venir! 🥳🎈`,
+  `🎂 ¡Muchas felicidades, ${cumpleañero.nombre}! 🥳 Hoy es un día especial porque celebramos a alguien increíble. Que la vida te llene de bendiciones y nuevos logros. 🎊✨`,
+  `🎊 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Que cada día te acerque más a la mejor versión de ti mismo. No dejes de soñar y trabajar por lo que deseas. 🚀🥳`,
+  `🎁 ¡Hoy es tu día, ${cumpleañero.nombre}! 🎂 Aprovecha este nuevo año de vida para seguir creciendo, aprendiendo y disfrutando. ¡Eres capaz de todo! 🔥🎉`,
+  `🥳 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎈 Que la vida te regale momentos llenos de amor, felicidad y éxito. ¡Nunca dejes de creer en ti! 🌟🎊`,
+  `🎉 ¡Muchas felicidades, ${cumpleañero.nombre}! 🎂 Que cada día de este nuevo año de vida esté lleno de energía positiva y grandes oportunidades. ¡A por todas! 💪✨`,
+  `🎊 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este año traiga nuevos retos y muchas victorias. Confía en ti mismo y sigue luchando por tus sueños. 🚀🥳`,
+  `🎁 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Que la alegría, la prosperidad y la paz te acompañen en cada paso que des. ¡Sigue brillando con tu luz única! 🌟🎉`,
+  `🎂 ¡Hoy celebramos a alguien increíble, ${cumpleañero.nombre}! 🎈 Que este nuevo año de vida esté lleno de momentos inolvidables y grandes logros. ¡A disfrutarlo! 🎊🥳`,
+  `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que nunca te falten motivos para sonreír y seguir adelante con entusiasmo. ¡El éxito y la felicidad te esperan! 🚀✨`
+];
+
+// Seleccionar un mensaje aleatorio
+const mensajeAleatorio = mensajes[Math.floor(Math.random() * mensajes.length)];
+
+// Asignarlo al elemento HTML
+document.getElementById("mensajeCumple").textContent = mensajeAleatorio;
+        
         if (!localStorage.getItem('cumpleañosHoy')) {
             mostrarRegalo(); // 🛍️ Mostrar el regalo antes del modal
         } else {
