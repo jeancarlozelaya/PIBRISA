@@ -2,427 +2,320 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Registro</title>
-    <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Registro de Asistencia Diaria</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
+    body, html {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+    }
 
-/* Capa de bloqueo de la pantalla */
-    .overlay {
+    /* Header */
+    .header {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        width: 100%;
+        font-size: 1.5em;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
+    }
+
+    /* Contenedor del formulario */
+    .container {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 20px auto; /* Centra el contenedor */
+        text-align: center;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin: 0 0 20px 0; /* Ajusta el margen inferior */
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    input[type="date"],
+    input[type="time"],
+    select,
+    button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        padding: 12px 0;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilo para el botón "Volver al Inicio" */
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1em;
+        transition: background-color 0.3s, transform 0.3s;
+        position: fixed;
+        top: 80px;
+        left: 0px;
+        z-index: 1001;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    .back-button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Estilo para los contenedores de preguntas */
+    .question-container {
+        margin-bottom: 20px;
+        text-align: left;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    .question-container:hover {
+        border-color: #007BFF;
+    }
+
+    .question-container input[type="date"],
+    .question-container input[type="time"],
+    .question-container select {
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        transition: border-color 0.3s;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+        margin-top: 5px;
+    }
+
+    .question-container input[type="date"]:focus,
+    .question-container input[type="time"]:focus,
+    .question-container select:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+    /* Estilo del overlay (pantalla bloqueada) */
+    #overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Fondo translúcido */
-        display: none; /* Inicialmente oculta */
-        z-index: 999; /* Asegura que esté por encima del contenido */
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 9999;
     }
 
-    /* Mensaje de "Procesando..." sin fondo */
-    .processing-message {
+    #loadingMessage {
         color: white;
         font-size: 24px;
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        z-index: 1000;
-        background-color: transparent; /* Elimina el fondo */
+        font-family: 'Times New Roman', Times, serif;
         text-align: center;
+        padding: 20px;
     }
 
-    /* Estilos del mensaje de confirmación flotante y mensaje de éxito */
-    .floating-message {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%); /* Centrado vertical y horizontal */
-        background-color: white; /* Fondo blanco */
-        color: black; /* Texto en negro */
-        padding: 20px 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        z-index: 1000; /* Asegura que esté por encima de todo */
-        font-size: 18px;
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        animation: slideIn 0.5s ease-out;
-        width: 90%; /* Ajustado al 90% del ancho de la pantalla, similar al formulario */
-        max-width: 500px; /* Establecer un máximo de ancho para que no sea demasiado grande */
+.swal-actions {
+    display: flex; /* Coloca los botones en una fila */
+    justify-content: center; /* Centra los botones horizontalmente */
+    gap: 10px; /* Espacio entre los botones */
+}
+
+
+    /* Estilo personalizado para el contenido del mensaje */
+    .swal-content {
+        font-size: 0.9em;  /* Reduce el tamaño del texto */
+        line-height: 1.4;  /* Ajusta el espaciado entre líneas */
     }
 
-    /* Estilos para los botones de confirmación */
-    .confirm-buttons {
-        margin-top: 20px;
-        display: flex;
-        gap: 20px;
+    /* Estilo personalizado para ambos botones */
+    .swal-button, .swal-button-cancel {
+        font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
+        padding: 10px 20px;  /* Espaciado interno */
+        min-width: 100px;  /* Ancho mínimo para igualar botones */
+        text-align: center;  /* Centra el texto dentro del botón */
     }
 
-    .confirm-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #007bff; /* Fondo azul para los botones */
+    /* Estilo personalizado para el popup/modal */
+    .swal-popup {
+        width: 300px;  /* Ajusta el ancho máximo del modal */
+        max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+    }
+
+    /* Opcional: colores específicos para cada botón */
+    .swal-button {
+        background-color: #28a745;  /* Verde para el botón de "Sí" */
+        color: white;  /* Texto en blanco */
         border: none;
-        color: white;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-        width: 120px; /* Asegura que ambos botones tengan el mismo tamaño */
+        border-radius: 4px;
     }
 
-    .confirm-button:hover,
-    .confirm-button:active {
-        background-color: #28a745; /* Cambio a verde al pasar el cursor o presionar */
-    }
-
-
-    /* Estilo del botón de cerrar */
-    .close-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #007bff;
+    .swal-button-cancel {
+        background-color: #f5f5f5;  /* Gris claro para el botón de "No" */
+        color: #333;  /* Texto oscuro */
         border: none;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        border-radius: 5px;
-        margin-top: 20px; /* Espaciado del texto */
-        width: 120px; /* Asegura que el botón de cerrar tenga el mismo tamaño */
+        border-radius: 4px;
     }
 
-    .close-button:hover {
-        background-color: #28a745; /* Cambio a verde al pasar el cursor o presionar */
+    .swal2-actions {
+        display: flex !important;  /* Asegura que los botones estén en una fila */
+        justify-content: center;   /* Centra los botones horizontalmente */
+        gap: 10px;                 /* Agrega espacio entre los botones */
+        flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
     }
 
+</style>
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .header {
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            font-size: 1.5em;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .menu-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 20px;
-        }
-
-        .menu-item {
-            background-color: #fff;
-            border: 2px solid #007BFF;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            user-select: none;
-        }
-
-        .menu-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .menu-item span {
-            font-size: 2em;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .menu-item p {
-            margin: 0;
-            font-size: 1em;
-            font-weight: bold;
-            color: #007BFF;
-        }
-
-        .full-width {
-            grid-column: span 2;
-        }
-
-        .separator {
-            grid-column: span 2;
-            border-top: 1px solid #ddd;
-            margin: 10px 0;
-        }
-
-        iframe {
-            width: 100%;
-            height: 93vh;
-            border: none;
-            margin-top: 0px;
-        }
-
-
-/* Estilo para el botón "Volver al Inicio" */
-.back-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    font-size: 1em;
-    transition: background-color 0.3s, transform 0.3s;
-    position: fixed;
-    top: 80px; /* Mueve el botón a la parte superior */
-    left: 0px; /* Colócalo a la izquierda */
-    z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
-}
-
-.back-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-/* Estilo adicional para dispositivos móviles */
-@media screen and (max-width: 600px) {
-    .back-button {
-        font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-        padding: 12px 18px; /* Ajustar el padding */
-        top: 57px; /* Mueve el botón a la parte superior */
-        left: 0px; /* Colócalo a la izquierda */
-    }
-}
-
-
-        /* Regla específica para el modo standalone (PWA) */
-        @media screen and (display-mode: standalone) {
-            body {
-                margin: 0; /* Asegura que no haya márgenes extra */
-                padding: 0; /* Asegura que no haya padding extra */
-            }
-        }
-    .container {
-        width: 90%; /* Ajusta al 90% del ancho de la pantalla */
-        max-width: 600px; /* Establece un ancho máximo para evitar que sea demasiado grande */
-        height: auto; /* Ajusta la altura automáticamente al contenido */
-        margin: 50px auto; /* Centrado horizontal y margen superior */
-        background-color: #fff; /* Fondo blanco */
-        padding: 20px; /* Espaciado interno */
-        border-radius: 8px; /* Bordes redondeados */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
-        box-sizing: border-box; /* Incluye padding y border en el tamaño total */
-    }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        label {
-            font-size: 16px;
-            color: #555;
-            display: block;
-            margin-bottom: 8px;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        select {
-            cursor: pointer;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        button:hover:enabled {
-            background-color: #45a049;
-        }
-        .message-box {
-            display: none;
-            text-align: center;
-            padding: 50px;
-            background-color: #e0f7e0;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .message-box h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .message-box button {
-            background-color: #007BFF;
-            padding: 12px 30px;
-            font-size: 16px;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .message-box button:hover {
-            background-color: #0056b3;
-        }
-
-        .loading-message {
-            text-align: center;
-            font-size: 14px;
-            color: #888;
-            margin-top: 10px;
-        }
-    </style>
 </head>
-
-
 <body>
 
     <div class="header">
         Pisos Brillantes
     </div>
 
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
 
-    <!-- Formulario de Registro -->
-    <div class="container" id="form-container">
+    <div class="container">
         <h1>Registro de Asistencia Diaria</h1>
-        <form id="registro-form">
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" required><br>
+        <div class="form-container">
+            <div class="question-container">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
 
-            <label for="hora">Hora:</label>
-            <input type="time" id="hora" name="hora" required><br>
+            <div class="question-container">
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" name="hora" required>
+            </div>
 
-            <label for="estado">Estado:</label>
-            <select id="estado" name="estado" required>
-                <option value="">Por favor seleccione</option>
-                <option value="Entrada">Entrada</option>
-                <option value="Salida">Salida</option>
-            </select><br>
+            <div class="question-container">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Por favor seleccione</option>
+                    <option value="Entrada">Entrada</option>
+                    <option value="Salida">Salida</option>
+                </select>
+            </div>
 
-            <label for="colaborador">Colaborador:</label>
-            <select id="colaborador" name="colaborador" required>
-                <option value="">Por favor seleccione</option>
-                <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
-                <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
-                <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
-                <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
-                <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
-                <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
-            </select><br>
+            <div class="question-container">
+                <label for="colaborador">Colaborador:</label>
+                <select id="colaborador" name="colaborador" required>
+                    <option value="">Por favor seleccione</option>
+                    <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
+                    <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
+                    <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
+                    <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
+                    <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
+                    <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+                    <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
+                    <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
+                    <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
+                </select>
+            </div>
 
-            <button type="submit" id="enviar" disabled>Enviar</button>
-        </form>
-
-<!-- Contenedor del mensaje de confirmación flotante -->
-<div id="confirm-message" class="floating-message" style="display: none;">
-    <span>¿Estás seguro de continuar? 🤔</span>
-    <div class="confirm-buttons">
-        <button id="confirm-yes" class="confirm-button">Sí</button>
-        <button id="confirm-no" class="confirm-button">No</button>
-    </div>
-</div>
-
-<!-- Contenedor de la capa de bloqueo mientras se envían los datos -->
-<div id="overlay" class="overlay">
-    <div class="processing-message">Procesando...🥱</div>
-</div>
-
-<!-- Contenedor del mensaje flotante de éxito (centrado) -->
-<div id="message-floating" class="floating-message" style="display: none;">
-    <span>¡Envío exitoso! 🥳🎉</span>
-    <button id="close-message" class="close-button">Cerrar</button>
-</div>
-
-
-
-
+            <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
+        </div>
     </div>
 
-
-
-<!-- El botón "Volver al Inicio" ahora está fuera del iframe-container para que siempre sea visible -->
-<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-
-
-
+    <!-- Contenedor para bloquear la pantalla -->
+    <div id="overlay" style="display: none;">
+        <div id="loadingMessage">
+            <p>Procesando...🥱</p>
+        </div>
+    </div>
 
     <script>
-
-
-
-function goBack() {
-    window.history.back();  // Esto hace que el navegador vuelva a la página anterior
-}
-
-
-        // URL de tu Google Apps Script (reemplaza con la URL de tu script)
+        // URL del script de Google Apps Script
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrs_9aAOI97Syrp8jMC2y9U48dnIldhgpWliJXZWpZQQjtar5pHpTXNTPWXCWTlZ3lrw/exec";
 
         // Prellenar fecha y hora
+        function prellenarFechaHora() {
+            let today = new Date();
+            let year = today.getFullYear();
+            let month = String(today.getMonth() + 1).padStart(2, '0');
+            let day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('fecha').value = `${year}-${month}-${day}`;
 
+            // Prellenar la hora en formato de 24 horas
+            let hour = String(today.getHours()).padStart(2, '0');
+            let minute = String(today.getMinutes()).padStart(2, '0');
+            document.getElementById('hora').value = `${hour}:${minute}`;
+        }
 
-let today = new Date();
-let year = today.getFullYear();
-let month = String(today.getMonth() + 1).padStart(2, '0'); // El mes comienza desde 0, por eso sumamos 1
-let day = String(today.getDate()).padStart(2, '0'); // Añadimos ceros si es necesario
-
-document.getElementById('fecha').value = `${year}-${month}-${day}`; // Asigna la fecha correcta en formato YYYY-MM-DD
-
-
-
-
-        document.getElementById('hora').value = new Date().toTimeString().split(' ')[0].substring(0, 5); // Hora actual
-
-        // Función para habilitar o deshabilitar el botón de enviar según si los campos están completos
-        function validateForm() {
+        // Función para habilitar/deshabilitar el botón de enviar
+        function validarCampos() {
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
             const estado = document.getElementById('estado').value;
             const colaborador = document.getElementById('colaborador').value;
 
-            // Habilitar el botón de envío solo si todos los campos están completos
-            document.getElementById('enviar').disabled = !fecha || !hora || !estado || !colaborador;
+            const enviarBtn = document.getElementById('enviarBtn');
+
+            if (fecha && hora && estado && colaborador) {
+                enviarBtn.disabled = false;
+            } else {
+                enviarBtn.disabled = true;
+            }
         }
 
-        // Verificar cada vez que el usuario cambie un campo
-        document.querySelectorAll('#fecha, #hora, #estado, #colaborador').forEach(input => {
-            input.addEventListener('input', validateForm);
-        });
+        // Asignar eventos a los campos para validar en tiempo real
+        document.getElementById('fecha').addEventListener('change', validarCampos);
+        document.getElementById('hora').addEventListener('change', validarCampos);
+        document.getElementById('estado').addEventListener('change', validarCampos);
+        document.getElementById('colaborador').addEventListener('change', validarCampos);
 
         // Función para convertir la hora de 24 horas a 12 horas con AM/PM
         function formatTimeTo12Hour(hora24) {
@@ -434,87 +327,95 @@ document.getElementById('fecha').value = `${year}-${month}-${day}`; // Asigna la
             hour = hour ? hour : 12; // Cambiar el 0 a 12 para medianoche
             hour = hour < 10 ? '0' + hour : hour; // Agregar 0 a horas menores a 10
             minute = minute.padStart(2, '0'); // Asegurar que los minutos tengan dos dígitos
-            
+
             return `${hour}:${minute} ${ampm}`;
         }
 
-
-
-
-
-// Función para mostrar el mensaje de confirmación antes de enviar
-    document.getElementById('registro-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        // Bloquear el formulario y mostrar el mensaje de confirmación
-        document.getElementById('registro-form').querySelectorAll('input, select, button').forEach(el => el.disabled = true);
-        document.getElementById('confirm-message').style.display = 'flex';
+        // Función para mostrar el mensaje de confirmación con SweetAlert2
+function confirmarEnvio() {
+    Swal.fire({
+        text: '¿Estás seguro de continuar? 🤔',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí 🫡',
+        cancelButtonText: 'No 😬',
+        customClass: {
+            popup: 'swal-popup', // Clase para el modal
+            confirmButton: 'swal-button', // Clase para el botón de confirmación
+            cancelButton: 'swal-button-cancel', // Clase para el botón de cancelación
+            actions: 'swal-actions' // Clase para el contenedor de los botones
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar el overlay de "Procesando..."
+            document.getElementById('overlay').style.display = 'flex';
+            enviarDatos();
+        }
     });
+}
 
-    // Cuando el usuario hace clic en "Sí" para confirmar el envío
-    document.getElementById('confirm-yes').addEventListener('click', function() {
-        // Cerrar el mensaje de confirmación
-        document.getElementById('confirm-message').style.display = 'none';
+        // Función para enviar los datos a Google Sheets
+        function enviarDatos() {
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const estado = document.getElementById('estado').value;
+            const colaborador = document.getElementById('colaborador').value;
 
-        // Bloquear el formulario y mostrar el mensaje de "Procesando..."
-        document.getElementById('overlay').style.display = 'flex';
+            // Convertir la hora a formato 12 horas (AM/PM)
+            const horaFormateada = formatTimeTo12Hour(hora);
 
-        const fecha = document.getElementById('fecha').value;
-        const hora = document.getElementById('hora').value;
-        const estado = document.getElementById('estado').value;
-        const colaborador = document.getElementById('colaborador').value;
+            const formData = new FormData();
+            formData.append("fecha", fecha);
+            formData.append("hora", horaFormateada); // Usar la hora formateada
+            formData.append("estado", estado);
+            formData.append("colaborador", colaborador);
 
-        // Convertir la hora a formato de 12 horas
-        const horaFormateada = formatTimeTo12Hour(hora);
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Ocultar el overlay de "Procesando..."
+                document.getElementById('overlay').style.display = 'none';
 
-        // Crear un objeto FormData para enviar al servidor
-        const formData = new FormData();
-        formData.append("fecha", fecha);
-        formData.append("hora", horaFormateada); // Usar la hora formateada
-        formData.append("estado", estado);
-        formData.append("colaborador", colaborador);
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    text: '¡Envío exitoso! 🥳🎉',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        content: 'swal-content',
+                        confirmButton: 'swal-button',
+                        popup: 'swal-popup'
+                    }
+                }).then(() => {
+                    window.location.reload(); // Recargar la página
+                });
+            })
+            .catch(error => {
+                // Ocultar el overlay de "Procesando..." y mostrar mensaje de error
+                document.getElementById('overlay').style.display = 'none';
+                Swal.fire({
+                    text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        content: 'swal-content',
+                        confirmButton: 'swal-button',
+                        popup: 'swal-popup'
+                    }
+                });
+            });
+        }
 
-        // Enviar los datos al Google Apps Script usando fetch
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-            // Ocultar el mensaje de "Procesando..."
-            document.getElementById('overlay').style.display = 'none';
+        // Función para volver al inicio
+        function goBack() {
+            window.history.back();
+        }
 
-            // Mostrar el mensaje de éxito
-            document.getElementById('message-floating').style.display = 'flex';
-        })
-        .catch(error => {
-            // En caso de error, ocultar el mensaje de carga y mostrar el mensaje de error
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('message-floating').style.display = 'flex';
-        });
-    });
-
-    // Cuando el usuario hace clic en "No", cancelar el envío
-    document.getElementById('confirm-no').addEventListener('click', function() {
-        // Ocultar el mensaje de confirmación y desbloquear el formulario
-        document.getElementById('confirm-message').style.display = 'none';
-        document.getElementById('registro-form').querySelectorAll('input, select, button').forEach(el => el.disabled = false);
-    });
-
-    // Cerrar el mensaje de éxito y actualizar la página
-    document.getElementById('close-message').addEventListener('click', function() {
-        location.reload(); // Recarga la página para restablecer el formulario
-    });
-
-
-
-
-
-
-
-
-
+        // Prellenar fecha y hora al cargar la página
+        window.onload = prellenarFechaHora;
     </script>
-
 </body>
 </html>
