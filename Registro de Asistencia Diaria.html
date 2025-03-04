@@ -43,8 +43,11 @@
         width: 90%;
         max-width: 600px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        margin: 20px auto; /* Centra el contenedor */
+        margin-top: 20px;
         text-align: center;
+        margin: 40px auto;
+        grid-row: 2;
+        height: auto;
         box-sizing: border-box; /* Incluye el padding en el ancho total */
     }
 
@@ -168,11 +171,11 @@
         padding: 20px;
     }
 
-.swal-actions {
-    display: flex; /* Coloca los botones en una fila */
-    justify-content: center; /* Centra los botones horizontalmente */
-    gap: 10px; /* Espacio entre los botones */
-}
+    .swal-actions {
+        display: flex; /* Coloca los botones en una fila */
+        justify-content: center; /* Centra los botones horizontalmente */
+        gap: 10px; /* Espacio entre los botones */
+    }
 
 
     /* Estilo personalizado para el contenido del mensaje */
@@ -277,145 +280,148 @@
         </div>
     </div>
 
-    <script>
-        // URL del script de Google Apps Script
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrs_9aAOI97Syrp8jMC2y9U48dnIldhgpWliJXZWpZQQjtar5pHpTXNTPWXCWTlZ3lrw/exec";
+<script>
 
-        // Prellenar fecha y hora
-        function prellenarFechaHora() {
-            let today = new Date();
-            let year = today.getFullYear();
-            let month = String(today.getMonth() + 1).padStart(2, '0');
-            let day = String(today.getDate()).padStart(2, '0');
-            document.getElementById('fecha').value = `${year}-${month}-${day}`;
+    // URL del script de Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrs_9aAOI97Syrp8jMC2y9U48dnIldhgpWliJXZWpZQQjtar5pHpTXNTPWXCWTlZ3lrw/exec";
 
-            // Prellenar la hora en formato de 24 horas
-            let hour = String(today.getHours()).padStart(2, '0');
-            let minute = String(today.getMinutes()).padStart(2, '0');
-            document.getElementById('hora').value = `${hour}:${minute}`;
+    // Prellenar fecha y hora
+    function prellenarFechaHora() {
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = String(today.getMonth() + 1).padStart(2, '0');
+        let day = String(today.getDate()).padStart(2, '0');
+        document.getElementById('fecha').value = `${year}-${month}-${day}`;
+
+        // Prellenar la hora en formato de 24 horas
+        let hour = String(today.getHours()).padStart(2, '0');
+        let minute = String(today.getMinutes()).padStart(2, '0');
+        document.getElementById('hora').value = `${hour}:${minute}`;
+    }
+
+    // Función para habilitar/deshabilitar el botón de enviar
+    function validarCampos() {
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const estado = document.getElementById('estado').value;
+        const colaborador = document.getElementById('colaborador').value;
+
+        const enviarBtn = document.getElementById('enviarBtn');
+
+        if (fecha && hora && estado && colaborador) {
+            enviarBtn.disabled = false;
+        } else {
+            enviarBtn.disabled = true;
         }
+    }
 
-        // Función para habilitar/deshabilitar el botón de enviar
-        function validarCampos() {
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const estado = document.getElementById('estado').value;
-            const colaborador = document.getElementById('colaborador').value;
+    // Asignar eventos a los campos para validar en tiempo real
+    document.getElementById('fecha').addEventListener('change', validarCampos);
+    document.getElementById('hora').addEventListener('change', validarCampos);
+    document.getElementById('estado').addEventListener('change', validarCampos);
+    document.getElementById('colaborador').addEventListener('change', validarCampos);
 
-            const enviarBtn = document.getElementById('enviarBtn');
+    // Función para convertir la hora de 24 horas a 12 horas con AM/PM
+    function formatTimeTo12Hour(hora24) {
+        let [hour, minute] = hora24.split(':');
+        hour = parseInt(hour);
 
-            if (fecha && hora && estado && colaborador) {
-                enviarBtn.disabled = false;
-            } else {
-                enviarBtn.disabled = true;
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        hour = hour ? hour : 12; // Cambiar el 0 a 12 para medianoche
+        hour = hour < 10 ? '0' + hour : hour; // Agregar 0 a horas menores a 10
+        minute = minute.padStart(2, '0'); // Asegurar que los minutos tengan dos dígitos
+
+        return `${hour}:${minute} ${ampm}`;
+    }
+
+    // Función para mostrar el mensaje de confirmación con SweetAlert2
+    function confirmarEnvio() {
+        Swal.fire({
+            text: '¿Estás seguro de continuar? 🤔',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí 🫡',
+            cancelButtonText: 'No 😬',
+            customClass: {
+                popup: 'swal-popup', // Clase para el modal
+                confirmButton: 'swal-button', // Clase para el botón de confirmación
+                cancelButton: 'swal-button-cancel', // Clase para el botón de cancelación
+                actions: 'swal-actions' // Clase para el contenedor de los botones
             }
-        }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mostrar el overlay de "Procesando..."
+                document.getElementById('overlay').style.display = 'flex';
+                enviarDatos();
+            }
+        });
+    }
 
-        // Asignar eventos a los campos para validar en tiempo real
-        document.getElementById('fecha').addEventListener('change', validarCampos);
-        document.getElementById('hora').addEventListener('change', validarCampos);
-        document.getElementById('estado').addEventListener('change', validarCampos);
-        document.getElementById('colaborador').addEventListener('change', validarCampos);
+    // Función para enviar los datos a Google Sheets
+    function enviarDatos() {
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const estado = document.getElementById('estado').value;
+        const colaborador = document.getElementById('colaborador').value;
 
-        // Función para convertir la hora de 24 horas a 12 horas con AM/PM
-        function formatTimeTo12Hour(hora24) {
-            let [hour, minute] = hora24.split(':');
-            hour = parseInt(hour);
+        // Convertir la hora a formato 12 horas (AM/PM)
+        const horaFormateada = formatTimeTo12Hour(hora);
 
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            hour = hour % 12;
-            hour = hour ? hour : 12; // Cambiar el 0 a 12 para medianoche
-            hour = hour < 10 ? '0' + hour : hour; // Agregar 0 a horas menores a 10
-            minute = minute.padStart(2, '0'); // Asegurar que los minutos tengan dos dígitos
+        const formData = new FormData();
+        formData.append("fecha", fecha);
+        formData.append("hora", horaFormateada); // Usar la hora formateada
+        formData.append("estado", estado);
+        formData.append("colaborador", colaborador);
 
-            return `${hour}:${minute} ${ampm}`;
-        }
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Ocultar el overlay de "Procesando..."
+            document.getElementById('overlay').style.display = 'none';
 
-        // Función para mostrar el mensaje de confirmación con SweetAlert2
-function confirmarEnvio() {
-    Swal.fire({
-        text: '¿Estás seguro de continuar? 🤔',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí 🫡',
-        cancelButtonText: 'No 😬',
-        customClass: {
-            popup: 'swal-popup', // Clase para el modal
-            confirmButton: 'swal-button', // Clase para el botón de confirmación
-            cancelButton: 'swal-button-cancel', // Clase para el botón de cancelación
-            actions: 'swal-actions' // Clase para el contenedor de los botones
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Mostrar el overlay de "Procesando..."
-            document.getElementById('overlay').style.display = 'flex';
-            enviarDatos();
-        }
-    });
-}
-
-        // Función para enviar los datos a Google Sheets
-        function enviarDatos() {
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const estado = document.getElementById('estado').value;
-            const colaborador = document.getElementById('colaborador').value;
-
-            // Convertir la hora a formato 12 horas (AM/PM)
-            const horaFormateada = formatTimeTo12Hour(hora);
-
-            const formData = new FormData();
-            formData.append("fecha", fecha);
-            formData.append("hora", horaFormateada); // Usar la hora formateada
-            formData.append("estado", estado);
-            formData.append("colaborador", colaborador);
-
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                // Ocultar el overlay de "Procesando..."
-                document.getElementById('overlay').style.display = 'none';
-
-                // Mostrar mensaje de éxito con SweetAlert2
-                Swal.fire({
-                    text: '¡Envío exitoso! 🥳🎉',
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar',
-                    customClass: {
-                        content: 'swal-content',
-                        confirmButton: 'swal-button',
-                        popup: 'swal-popup'
-                    }
-                }).then(() => {
-                    window.location.reload(); // Recargar la página
-                });
-            })
-            .catch(error => {
-                // Ocultar el overlay de "Procesando..." y mostrar mensaje de error
-                document.getElementById('overlay').style.display = 'none';
-                Swal.fire({
-                    text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    customClass: {
-                        content: 'swal-content',
-                        confirmButton: 'swal-button',
-                        popup: 'swal-popup'
-                    }
-                });
+            // Mostrar mensaje de éxito con SweetAlert2
+            Swal.fire({
+                text: '¡Envío exitoso! 🥳🎉',
+                icon: 'success',
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    content: 'swal-content',
+                    confirmButton: 'swal-button',
+                    popup: 'swal-popup'
+                }
+            }).then(() => {
+                window.location.reload(); // Recargar la página
             });
-        }
+        })
+        .catch(error => {
+            // Ocultar el overlay de "Procesando..." y mostrar mensaje de error
+            document.getElementById('overlay').style.display = 'none';
+            Swal.fire({
+                text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    content: 'swal-content',
+                    confirmButton: 'swal-button',
+                    popup: 'swal-popup'
+                }
+            });
+        });
+    }
 
-        // Función para volver al inicio
-        function goBack() {
-            window.history.back();
-        }
+    // Función para volver al inicio
+    function goBack() {
+        window.history.back();
+    }
 
-        // Prellenar fecha y hora al cargar la página
-        window.onload = prellenarFechaHora;
-    </script>
+    // Prellenar fecha y hora al cargar la página
+    window.onload = prellenarFechaHora;
+
+</script>
+
 </body>
 </html>
