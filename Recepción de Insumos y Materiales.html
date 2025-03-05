@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <style>
+
+
     /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
     body, html {
         font-family: Arial, sans-serif;
@@ -510,7 +512,7 @@
 				</select>
 			</div>
 			<div class="question-container">
-				<label for="comentarios">Comentarios / Observaciones::</label>
+				<label for="comentarios">Comentarios:</label>
 				<textarea id="comentarios" name="comentarios" rows="5" placeholder="Específica aquí..."></textarea>
 			</div>
 			<div class="question-container">
@@ -524,7 +526,7 @@
 			<div class="question-container">
 				<label for="firma">Firma del Proveedor:</label>
 				<div id="firmaContainer" class="firma-container">
-					<canvas id="firmaCanvas" width="400" height="200" style="border: 1px solid #ccc;"></canvas>
+					<canvas id="firmaCanvas" width="400" height="250" style="border: 1px solid #ccc;"></canvas>
 				</div>
 				<div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
 					<button id="toggleEraser" title="Borrador" class="icon-button">
