@@ -1,414 +1,413 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Recepción de Insumos y Materiales</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Recepción de Insumos y Materiales</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+	<link rel="stylesheet" href="styles.css">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
 <style>
-    /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
-    body, html {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f9f9f9;
-        color: #333;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden; /* Oculta el desplazamiento horizontal */
-    }
-
-    /* Header */
-    .header {
-        background-color: #007BFF;
-        color: white;
-        text-align: center;
-        padding: 15px;
-        width: 100%;
-        font-size: 1.5em;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
-    }
-
-    /* Contenedor del formulario */
-    .container {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        text-align: center;
-        margin: 40px auto;
-        grid-row: 2;
-        height: auto;
-        box-sizing: border-box; /* Incluye el padding en el ancho total */
-    }
-
-    h1 {
-        text-align: center;
-        color: #333;
-        margin: 0 0 20px 0; /* Ajusta el margen inferior */
-    }
-
-    label {
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
-    }
-
-    input[type="date"],
-    input[type="time"],
-    textarea,
-    select,
-    button {
-        width: 100%;
-        margin-top: 5px;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box; /* Incluye el padding en el ancho total */
-    }
-
-    button {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        padding: 12px 0;
-    }
-
-    button:hover {
-        background-color: #0056b3;
-    }
-
-    /* Estilo para el botón "Volver al Inicio" */
-    .back-button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #007BFF;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        text-align: center;
-        font-size: 1em;
-        transition: background-color 0.3s, transform 0.3s;
-        position: fixed;
-        top: 80px;
-        left: 0px;
-        z-index: 1001;
-        box-sizing: border-box; /* Incluye el padding en el ancho total */
-    }
-
-    .back-button:hover {
-        background-color: #0056b3;
-        transform: scale(1.05);
-    }
-
-    /* Estilo para los contenedores de preguntas */
-    .question-container {
-        margin-bottom: 20px;
-        text-align: left;
-        padding: 10px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        transition: border-color 0.3s;
-        box-sizing: border-box; /* Incluye el padding en el ancho total */
-    }
-
-    .question-container:hover {
-        border-color: #007BFF;
-    }
-
-    .question-container input[type="date"],
-    .question-container input[type="time"],
-    .question-container textarea,
-    .question-container select {
-        padding: 10px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        width: 100%;
-        font-size: 16px;
-        background-color: #f9f9f9;
-        color: #333;
-        transition: border-color 0.3s;
-        box-sizing: border-box; /* Incluye el padding en el ancho total */
-        margin-top: 5px;
-    }
-
-    .question-container input[type="date"]:focus,
-    .question-container input[type="time"]:focus,
-    .question-container textarea:focus,
-    .question-container select:focus {
-        border-color: #007BFF;
-        outline: none;
-    }
-
-    /* Estilo del overlay (pantalla bloqueada) */
-    #overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    #loadingMessage {
-        color: white;
-        font-size: 24px;
-        font-family: 'Times New Roman', Times, serif;
-        text-align: center;
-        padding: 20px;
-    }
-
-    .swal-actions {
-        display: flex; /* Coloca los botones en una fila */
-        justify-content: center; /* Centra los botones horizontalmente */
-        gap: 10px; /* Espacio entre los botones */
-    }
 
 
-    /* Estilo personalizado para el contenido del mensaje */
-    .swal-content {
-        font-size: 0.9em;  /* Reduce el tamaño del texto */
-        line-height: 1.4;  /* Ajusta el espaciado entre líneas */
-    }
+	/* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
+	body, html {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #f9f9f9;
+	color: #333;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-height: 100vh;
+	width: 100%;
+	max-width: 100%;
+	overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+	}
 
-    /* Estilo personalizado para ambos botones */
-    .swal-button, .swal-button-cancel {
-        font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
-        padding: 10px 20px;  /* Espaciado interno */
-        min-width: 100px;  /* Ancho mínimo para igualar botones */
-        text-align: center;  /* Centra el texto dentro del botón */
-    }
+	/* Header */
+	.header {
+	background-color: #007BFF;
+	color: white;
+	text-align: center;
+	padding: 15px;
+	width: 100%;
+	font-size: 1.5em;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
+	}
 
-    /* Estilo personalizado para el popup/modal */
-    .swal-popup {
-        width: 300px;  /* Ajusta el ancho máximo del modal */
-        max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
-    }
+	/* Contenedor del formulario */
+	.container {
+	background: #ffffff;
+	padding: 20px;
+	border-radius: 10px;
+	width: 90%;
+	max-width: 600px;
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+	margin-top: 20px;
+	text-align: center;
+	margin: 40px auto;
+	grid-row: 2;
+	height: auto;
+	box-sizing: border-box; /* Incluye el padding en el ancho total */
+	}
 
-    /* Opcional: colores específicos para cada botón */
-    .swal-button {
-        background-color: #28a745;  /* Verde para el botón de "Sí" */
-        color: white;  /* Texto en blanco */
-        border: none;
-        border-radius: 4px;
-    }
+	h1 {
+	text-align: center;
+	color: #333;
+	margin: 0 0 20px 0; /* Ajusta el margen inferior */
+	}
 
-    .swal-button-cancel {
-        background-color: #FF6347 ;  /* Rojo para el botón de "No" */
-        color: white;  /* Texto oscuro */
-        border: none;
-        border-radius: 4px;
-    }
+	label {
+	display: block;
+	margin-top: 10px;
+	font-weight: bold;
+	}
 
-    .swal2-actions {
-        display: flex !important;  /* Asegura que los botones estén en una fila */
-        justify-content: center;   /* Centra los botones horizontalmente */
-        gap: 10px;                 /* Agrega espacio entre los botones */
-        flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
-    }
+	input[type="date"],
+	input[type="time"],
+	textarea,
+	select,
+	button {
+	width: 100%;
+	margin-top: 5px;
+	padding: 10px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box; /* Incluye el padding en el ancho total */
+	}
 
+	button {
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+	padding: 12px 0;
+	}
+	button:hover {
+	background-color: #0056b3;
+	}
+	/* Estilo para el botón "Volver al Inicio" */
+	.back-button {
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: #007BFF;
+	color: white;
+	border-radius: 5px;
+	text-decoration: none;
+	text-align: center;
+	font-size: 1em;
+	transition: background-color 0.3s, transform 0.3s;
+	position: fixed;
+	top: 80px;
+	left: 0px;
+	z-index: 1001;
+	box-sizing: border-box; /* Incluye el padding en el ancho total */
+	}
+	.back-button:hover {
+	background-color: #0056b3;
+	transform: scale(1.05);
+	}
+	/* Estilo para los contenedores de preguntas */
+	.question-container {
+	margin-bottom: 20px;
+	text-align: left;
+	padding: 10px;
+	border: 2px solid #ccc;
+	border-radius: 5px;
+	background-color: #f9f9f9;
+	transition: border-color 0.3s;
+	box-sizing: border-box; /* Incluye el padding en el ancho total */
+	}
+	.question-container:hover {
+	border-color: #007BFF;
+	}
+	.question-container input[type="date"],
+	.question-container input[type="time"],
+	.question-container textarea,
+	.question-container select {
+	padding: 10px;
+	border: 2px solid #ccc;
+	border-radius: 5px;
+	width: 100%;
+	font-size: 16px;
+	background-color: #f9f9f9;
+	color: #333;
+	transition: border-color 0.3s;
+	box-sizing: border-box; /* Incluye el padding en el ancho total */
+	margin-top: 5px;
+	}
+	.question-container input[type="date"]:focus,
+	.question-container input[type="time"]:focus,
+	.question-container textarea:focus,
+	.question-container select:focus {
+	border-color: #007BFF;
+	outline: none;
+	}
 
-/* Estilo para el contenedor de la firma */
-.firma-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    /* Aseguramos que haya suficiente espacio para el canvas más grande */
-    min-height: 200px; /* o más, dependiendo de tus necesidades */
-}
-
-/* Botones debajo del lienzo */
-.firma-buttons {
-    margin-top: 10px;
-}
-
-/* Estilo para el botón de limpiar */
-.firma-buttons button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.firma-buttons button:hover {
-    background-color: #d32f2f;
-}
-
-
-.icon-button {
-    background: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #333;
-}
-
-.icon-button.active {
-    background: #007bff;
-    color: #fff;
-}
-
-.icon-button:hover {
-    background: #e2e6ea;
-}
-
-
-
-    /* Estilo para los contenedores de vista previa */
-    .image-preview {
-        width: 100%;
-        max-height: 200px;
-        overflow-y: auto;
-        border: 0px solid #ccc;
-        padding: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        box-sizing: border-box;
-    }
-
-    .image-preview-item {
-        position: relative;
-        width: 85px;
-        height: 85px;
-        overflow: hidden;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-    }
-
-    .image-preview-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .delete-icon {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        width: 20px;
-        height: 20px;
-        background: rgba(255, 0, 0, 0.8);
-        color: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        cursor: pointer;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-
-    .image-preview-item:hover .delete-icon {
-        opacity: 1;
-    }
-
-    /* Estilos para el área de carga de imágenes */
-    .file-upload {
-        display: block;
-        position: relative;
-        width: 100%;
-        padding: 20px;
-        background: #f0f8ff;
-        border: 2px dashed #ccc;
-        text-align: center;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 10px;
-        box-sizing: border-box;
-        border: 2px dashed #007BFF;
-        border-radius: 10px;
-        padding: 40px 20px;
-        text-align: center;
-        cursor: pointer;
-        font-size: 16px;
-        background-color: #f0f8ff;
-        color: #007BFF;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-        margin: 10px 0;
-    }
-
-    .file-upload:hover {
-        border-color: #0056b3;
-    }
-
-    .file-upload input[type="file"] {
-        display: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        cursor: pointer;
-    }
+	/* Estilo para el botón de enviar cuando está habilitado */
+	#enviarBtn {
+	background-color: #007bff; /* Color azul */
+	color: white;
+	border: none;
+	cursor: pointer;
+	padding: 12px 0;
+	font-size: 16px;
+	border-radius: 5px;
+	transition: background-color 0.3s ease, opacity 0.3s ease;
+	}
+	/* Estilo para el botón de enviar cuando está deshabilitado */
+	#enviarBtn:disabled {
+	background-color: #ccc; /* Color gris */
+	color: #666666; /* Texto gris oscuro */
+	cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+	opacity: 0.7; /* Reduce la opacidad para dar un aspecto deshabilitado */
+	}
+	/* Efecto hover solo cuando el botón está habilitado */
+	#enviarBtn:not(:disabled):hover {
+	background-color: #0056b3; /* Color azul más oscuro al pasar el mouse */
+	}
 
 
+	<!-- Contenedor para Procesando -->
 
 
+	/* Estilo del overlay (pantalla bloqueada) */
+	#overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+	}
+	#loadingMessage {
+	color: white;
+	font-size: 24px;
+	font-family: 'Times New Roman', Times, serif;
+	text-align: center;
+	padding: 20px;
+	}
 
 
-/* Estilo para el botón de enviar cuando está habilitado */
-#enviarBtn {
-    background-color: #007bff; /* Color azul */
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 12px 0;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, opacity 0.3s ease;
-}
+	<!-- Contenedor para Procesando -->
 
-/* Estilo para el botón de enviar cuando está deshabilitado */
-#enviarBtn:disabled {
-    background-color: #ccc; /* Color gris */
-    color: #666666; /* Texto gris oscuro */
-    cursor: not-allowed; /* Cambia el cursor a "no permitido" */
-    opacity: 0.7; /* Reduce la opacidad para dar un aspecto deshabilitado */
-}
 
-/* Efecto hover solo cuando el botón está habilitado */
-#enviarBtn:not(:disabled):hover {
-    background-color: #0056b3; /* Color azul más oscuro al pasar el mouse */
-}
+	<!-- Contenedor para Mensajes -->
+
+
+	.swal-actions {
+	display: flex; /* Coloca los botones en una fila */
+	justify-content: center; /* Centra los botones horizontalmente */
+	gap: 10px; /* Espacio entre los botones */
+	}
+	/* Estilo personalizado para el contenido del mensaje */
+	.swal-content {
+	font-size: 0.9em;  /* Reduce el tamaño del texto */
+	line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+	}
+	/* Estilo personalizado para ambos botones */
+	.swal-button, .swal-button-cancel {
+	font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
+	padding: 10px 20px;  /* Espaciado interno */
+	min-width: 100px;  /* Ancho mínimo para igualar botones */
+	text-align: center;  /* Centra el texto dentro del botón */
+	}
+	/* Estilo personalizado para el popup/modal */
+	.swal-popup {
+	width: 300px;  /* Ajusta el ancho máximo del modal */
+	max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+	}
+	/* Opcional: colores específicos para cada botón */
+	.swal-button {
+	background-color: #28a745;  /* Verde para el botón de "Sí" */
+	color: white;  /* Texto en blanco */
+	border: none;
+	border-radius: 4px;
+	}
+	.swal-button-cancel {
+	background-color: #FF6347 ;  /* Rojo para el botón de "No" */
+	color: white;  /* Texto oscuro */
+	border: none;
+	border-radius: 4px;
+	}
+	.swal2-actions {
+	display: flex !important;  /* Asegura que los botones estén en una fila */
+	justify-content: center;   /* Centra los botones horizontalmente */
+	gap: 10px;                 /* Agrega espacio entre los botones */
+	flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
+	}
+	
+
+	<!-- Contenedor para Mensajes -->
+
+
+	<!-- Contenedor para la Firma -->
+
+
+	/* Estilo para el contenedor de la firma */
+	.firma-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	border: 2px solid #ccc;
+	border-radius: 5px;
+	background-color: #fff;
+	/* Aseguramos que haya suficiente espacio para el canvas más grande */
+	min-height: 200px; /* o más, dependiendo de tus necesidades */
+	}
+	/* Botones debajo del lienzo */
+	.firma-buttons {
+	margin-top: 10px;
+	}
+	/* Estilo para el botón de limpiar */
+	.firma-buttons button {
+	background-color: #f44336;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 14px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+	}
+	.firma-buttons button:hover {
+	background-color: #d32f2f;
+	}
+	.icon-button {
+	background: #f8f9fa;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 5px;
+	cursor: pointer;
+	font-size: 18px;
+	color: #333;
+	}
+	.icon-button.active {
+	background: #007bff;
+	color: #fff;
+	}
+	.icon-button:hover {
+	background: #e2e6ea;
+	}
+
+
+	<!-- Contenedor para la Firma -->
+
+
+	<!-- Contenedor para Datos Adjuntos -->
+
+
+	/* Estilo para los contenedores de vista previa */
+	.image-preview {
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+	border: 0px solid #ccc;
+	padding: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	box-sizing: border-box;
+	}
+	.image-preview-item {
+	position: relative;
+	width: 85px;
+	height: 85px;
+	overflow: hidden;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+	}
+	.image-preview-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	}
+	.delete-icon {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	width: 20px;
+	height: 20px;
+	background: rgba(255, 0, 0, 0.8);
+	color: #fff;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.3s;
+	}
+	.image-preview-item:hover .delete-icon {
+	opacity: 1;
+	}
+	/* Estilos para el área de carga de imágenes */
+	.file-upload {
+	display: block;
+	position: relative;
+	width: 100%;
+	padding: 20px;
+	background: #f0f8ff;
+	border: 2px dashed #ccc;
+	text-align: center;
+	border-radius: 5px;
+	font-size: 16px;
+	cursor: pointer;
+	margin-top: 10px;
+	box-sizing: border-box;
+	border: 2px dashed #007BFF;
+	border-radius: 10px;
+	padding: 40px 20px;
+	text-align: center;
+	cursor: pointer;
+	font-size: 16px;
+	background-color: #f0f8ff;
+	color: #007BFF;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
+	margin: 10px 0;
+	}
+	.file-upload:hover {
+	border-color: #0056b3;
+	}
+	.file-upload input[type="file"] {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+	}
+
+
+	<!-- Contenedor para Datos Adjuntos -->
+
 
 </style>
 
+
 </head>
 
+
 <body>
+
 
 	<div class="header">
 		Pisos Brillantes
@@ -525,10 +524,11 @@
 	</div>
 
 
-
-
 <script>
+
+
 	<!-- Contenedor para Datos Adjuntos -->
+	
 	
 	    // Objetos para almacenar las imágenes seleccionadas por vista previa
 	    const selectedFiles = {
@@ -609,16 +609,39 @@
 	        });
 	    });
 	
+	// Definir la función compressImage en el ámbito global
+	function compressImage(file, quality) {
+	    return new Promise((resolve, reject) => {
+	        const reader = new FileReader();
+	        reader.onload = (event) => {
+	            const img = new Image();
+	            img.onload = () => {
+	                const canvas = document.createElement('canvas');
+	                const ctx = canvas.getContext('2d');
+	
+	                // Redimensionar imagen
+	                const maxWidth = 600;
+	                const scale = maxWidth / img.width;
+	                canvas.width = maxWidth;
+	                canvas.height = img.height * scale;
+	
+	                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+	                resolve(dataUrl);
+	            };
+	            img.src = event.target.result;
+	        };
+	        reader.onerror = reject;
+	        reader.readAsDataURL(file);
+	    });
+	}
+	
 	
 	<!-- Contenedor para Datos Adjuntos -->
-	
-	
-	
-	
-	
-	
+		
 	
 	<!-- Contenedor para la Firma -->
+	
 	
 	let isDrawing = false;
 	let isErasing = false;
@@ -826,20 +849,10 @@
 	
 	
 	<!-- Contenedor para la Firma -->
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+			
 	
 	<!-- Contenedor para Ocultar / Mostrar Opciones-->
+	
 	
 	document.addEventListener("DOMContentLoaded", function() {
 	    function toggleVisibility(selectId, targetIds) {
@@ -860,7 +873,9 @@
 	    toggleVisibility("insumos1", ["insumos2", "insumos3"]);
 	});
 	
+	
 	<!-- Contenedor para Ocultar / Mostrar Opciones-->
+		
 	
 	<!-- Contenedor para Precargar Fecha-->
 	
@@ -874,11 +889,12 @@
 	        document.getElementById('fecha').value = `${year}-${month}-${day}`;
 	    }
 	
+	
 	<!-- Contenedor para Precargar Fecha-->
 	
-	
-	
+		
 	<!-- Contenedor para Validar Campos-->
+	
 	
 	function validarCampos() {
 	    const fecha = document.getElementById('fecha').value;
@@ -950,6 +966,7 @@
 	
 	<!-- Contenedor para Confirmar Envío-->
 	
+	
 	    // Función para mostrar el mensaje de confirmación con SweetAlert2
 	    function confirmarEnvio() {
 	        Swal.fire({
@@ -973,37 +990,12 @@
 	        });
 	    }
 	
+	
 	<!-- Contenedor para Confirmar Envío-->
 	
 	
-	    // Función para enviar los datos a Google Sheets
-	
-	// Definir la función compressImage en el ámbito global
-	function compressImage(file, quality) {
-	    return new Promise((resolve, reject) => {
-	        const reader = new FileReader();
-	        reader.onload = (event) => {
-	            const img = new Image();
-	            img.onload = () => {
-	                const canvas = document.createElement('canvas');
-	                const ctx = canvas.getContext('2d');
-	
-	                // Redimensionar imagen
-	                const maxWidth = 600;
-	                const scale = maxWidth / img.width;
-	                canvas.width = maxWidth;
-	                canvas.height = img.height * scale;
-	
-	                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-	                const dataUrl = canvas.toDataURL('image/jpeg', quality);
-	                resolve(dataUrl);
-	            };
-	            img.src = event.target.result;
-	        };
-	        reader.onerror = reject;
-	        reader.readAsDataURL(file);
-	    });
-	}
+	<!-- Contenedor para EnviarDatos-->
+		
 	
 	// Función enviarDatos
 	async function enviarDatos() {
@@ -1210,6 +1202,9 @@
 	}
 	
 	
+	<!-- Contenedor para EnviarDatos-->
+	
+	
 	    // Función para volver al inicio
 	    function goBack() {
 	        window.history.back();
@@ -1219,6 +1214,7 @@
 	    window.onload = prellenarFechaHora;
 	
 </script>
-</body>
 
+
+</body>
 </html>
