@@ -405,3 +405,820 @@
 }
 
 </style>
+
+</head>
+
+<body>
+
+	<div class="header">
+		Pisos Brillantes
+	</div>
+	<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+	<div class="container">
+		<h1>Recepción de Insumos y Materiales</h1>
+		<div class="form-container">
+			<div class="question-container">
+				<label for="fecha">Fecha:</label>
+				<input type="date" id="fecha" name="fecha" required>
+			</div>
+			<div class="question-container">
+				<label for="herramienta1s">¿Todas las herramientas recibidas están en buen estado, sin daños evidentes o signos de deterioro, además la cantidad recibida coincide con lo facturado?</label>
+				<select id="herramientas1" name="herramientas1" required>
+					<option value="">Por favor seleccione</option>
+					<option value="Entrada">Si</option>
+					<option value="Salida">No</option>
+				</select>
+			</div>
+			<div class="question-container" hidden>
+				<label for="herramientas2">Indique qué herramientas no cumplieron con los estándares debido a su estado no satisfactorio:</label>
+				<textarea id="herramientas2" name="herramientas2" rows="5" placeholder="Específica aquí..."></textarea>
+			</div>
+			<div class="question-container" hidden>
+				<label for="herramientas3">Seleccione el destino de las herramientas que no cumplieron con los estándares requeridos:</label>
+				<select id="herramientas3" name="herramientas3" required>
+					<option value="">Por favor seleccione</option>
+					<option value="Entrada">Se aceptarán en el pedido</option>
+					<option value="Salida">Se devolverán al proveedor para su reemplazo</option>
+				</select>
+			</div>
+			<div class="question-container">
+				<label for="quimicos1">¿Todos los productos químicos recibidos están en buen estado, dentro de su fecha de caducidad, además la cantidad recibida coincide con lo facturado?</label>
+				<select id="quimicos1" name="quimicos1" required>
+					<option value="">Por favor seleccione</option>
+					<option value="Entrada">Si</option>
+					<option value="Salida">No</option>
+				</select>
+			</div>
+			<div class="question-container" hidden>
+				<label for="quimicos2">Indique qué productos químicos no cumplieron con los estándares debido a su estado no satisfactorio:</label>
+				<textarea id="quimicos2" name="quimicos2" rows="5" placeholder="Específica aquí..."></textarea>
+			</div>
+			<div class="question-container" hidden>
+				<label for="quimicos3">Seleccione el destino de los productos químicos que no cumplieron con los estándares requeridos:</label>
+				<select id="quimicos3" name="quimicos3" required>
+					<option value="">Por favor seleccione</option>
+					<option value="Entrada">Se aceptarán en el pedido</option>
+					<option value="Salida">Se devolverán al proveedor para su reemplazo</option>
+				</select>
+			</div>
+			<div class="question-container">
+				<label for="insumos1">¿Todos los insumos están en buen estado, dentro de su fecha de caducidad, además la cantidad recibida coincide con lo facturado?
+				</label>
+				<select id="insumos1" name="insumos1" required>
+					<option value="">Por favor seleccione</option>
+					<option value="Entrada">Si</option>
+					<option value="Salida">No</option>
+				</select>
+			</div>
+			<div class="question-container" hidden>
+				<label for="insumos2">Indique qué insumos no cumplieron con los estándares debido a su estado no satisfactorio:</label>
+				<textarea id="insumos2" name="insumos2" rows="5" placeholder="Específica aquí..."></textarea>
+			</div>
+			<div class="question-container" hidden>
+				<label for="insumos3">Seleccione el destino de los insumos que no cumplieron con los estándares requeridos:</label>
+				<select id="insumos3" name="insumos3" required>
+					<option value="">Por favor seleccione</option>
+					<option value="Entrada">Se aceptarán en el pedido</option>
+					<option value="Salida">Se devolverán al proveedor para su reemplazo</option>
+				</select>
+			</div>
+			<div class="question-container">
+				<label for="comentarios">Comentarios / Observaciones::</label>
+				<textarea id="comentarios" name="comentarios" rows="5" placeholder="Específica aquí..."></textarea>
+			</div>
+			<div class="question-container">
+				<label for="adjunto1">Evidencia:</label>
+				<div class="file-upload" id="drag-area1" onclick="document.getElementById('adjunto1').click()">
+					<input type="file" id="adjunto1" name="adjunto1" accept="image/*" multiple>
+					<span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+				</div>
+				<div id="preview1" class="image-preview"></div>
+			</div>
+			<div class="question-container">
+				<label for="firma">Firma del Proveedor:</label>
+				<div id="firmaContainer" class="firma-container">
+					<canvas id="firmaCanvas" width="400" height="200" style="border: 1px solid #ccc;"></canvas>
+				</div>
+				<div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+					<button id="toggleEraser" title="Borrador" class="icon-button">
+					<i class="fas fa-eraser"></i>
+					</button>
+					<button id="undo" title="Deshacer" class="icon-button">
+					<i class="fas fa-undo"></i>
+					</button>
+					<button id="redo" title="Rehacer" class="icon-button">
+					<i class="fas fa-redo"></i>
+					</button>
+					<button id="clearSignature" title="Limpiar" class="icon-button">
+					<i class="fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+			<button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
+		</div>
+	</div>
+	<!-- Contenedor para bloquear la pantalla -->
+	<div id="overlay" style="display: none;">
+		<div id="loadingMessage">
+			<p>Procesando...🥱</p>
+		</div>
+	</div>
+
+
+
+
+<script>
+	<!-- Contenedor para Datos Adjuntos -->
+	
+	    // Objetos para almacenar las imágenes seleccionadas por vista previa
+	    const selectedFiles = {
+	        preview1: []
+	    };
+	
+	    function handleFileInput(event, previewId) {
+	        const files = event.target.files;
+	        const previewContainer = document.getElementById(previewId);
+	
+	        Array.from(files).forEach((file) => {
+	            const reader = new FileReader();
+	            reader.onload = function (e) {
+	                const div = document.createElement('div');
+	                div.classList.add('image-preview-item');
+	                div.innerHTML = `
+	                    <img src="${e.target.result}" alt="Preview">
+	                    <div class="delete-icon" onclick="deleteImage('${previewId}', ${selectedFiles[previewId].length})">×</div>
+	                `;
+	                previewContainer.appendChild(div);
+	
+	                // Almacena el archivo en la lista correspondiente
+	                selectedFiles[previewId].push(file);
+	
+	                // Validar campos después de agregar una imagen
+	                validarCampos();
+	
+	            };
+	            reader.readAsDataURL(file);
+	        });
+	
+	        // Resetea el input para permitir seleccionar los mismos archivos nuevamente si es necesario
+	        event.target.value = "";
+	    }
+	
+	    function deleteImage(previewId, index) {
+	        const previewContainer = document.getElementById(previewId);
+	
+	        // Elimina la imagen de la vista previa
+	        previewContainer.removeChild(previewContainer.children[index]);
+	
+	        // Elimina el archivo correspondiente del arreglo
+	        selectedFiles[previewId].splice(index, 1);
+	        validarCampos(); // Validar campos después de eliminar una imagen
+	
+	        // Actualiza los índices de las imágenes restantes en la vista previa
+	        Array.from(previewContainer.children).forEach((child, newIndex) => {
+	            const deleteIcon = child.querySelector('.delete-icon');
+	            deleteIcon.setAttribute('onclick', `deleteImage('${previewId}', ${newIndex})`);
+	        });
+	    }
+	
+	    // Eventos para manejar las entradas de archivos
+	    document.getElementById('adjunto1').addEventListener('change', (e) => handleFileInput(e, 'preview1'));
+	
+	    // Funciones para manejar arrastre de archivos
+	    const dragAreas = ['drag-area1'];
+	    dragAreas.forEach(area => {
+	        const dragArea = document.getElementById(area);
+	        dragArea.addEventListener('dragover', (event) => {
+	            event.preventDefault();
+	            event.stopPropagation();
+	            dragArea.style.backgroundColor = "#e0f7ff"; // Resaltar el área
+	        });
+	
+	        dragArea.addEventListener('dragleave', (event) => {
+	            event.preventDefault();
+	            event.stopPropagation();
+	            dragArea.style.backgroundColor = "#f0f8ff"; // Restaurar color de fondo
+	        });
+	
+	        dragArea.addEventListener('drop', (event) => {
+	            event.preventDefault();
+	            event.stopPropagation();
+	            const files = event.dataTransfer.files;
+	            const previewId = area.replace("drag-area", "preview");
+	            handleFileInput({ target: { files } }, previewId);
+	        });
+	    });
+	
+	
+	<!-- Contenedor para Datos Adjuntos -->
+	
+	
+	
+	
+	
+	
+	
+	<!-- Contenedor para la Firma -->
+	
+	let isDrawing = false;
+	let isErasing = false;
+	let lastX = 0;
+	let lastY = 0;
+	const canvas = document.getElementById("firmaCanvas");
+	const ctx = canvas.getContext("2d");
+	
+	const undoStack = [];
+	const redoStack = [];
+	
+	// Guardar el estado actual del canvas en la pila de deshacer
+	function saveToUndoStack() {
+	    undoStack.push(canvas.toDataURL());
+	    redoStack.length = 0; // Limpiar la pila de rehacer
+	}
+	
+	// Deshacer acción
+	function undo() {
+	    if (undoStack.length > 0) {
+	        saveToRedoStack();
+	        const lastState = undoStack.pop();
+	        const img = new Image();
+	        img.src = lastState;
+	        img.onload = () => {
+	            ctx.clearRect(0, 0, canvas.width, canvas.height);
+	            ctx.drawImage(img, 0, 0);
+	        };
+	    }
+	}
+	
+	// Rehacer acción
+	function redo() {
+	    if (redoStack.length > 0) {
+	        const lastState = redoStack.pop();
+	        undoStack.push(canvas.toDataURL()); // Guardar el estado actual en la pila de deshacer
+	        const img = new Image();
+	        img.src = lastState;
+	        img.onload = () => {
+	            ctx.clearRect(0, 0, canvas.width, canvas.height);
+	            ctx.drawImage(img, 0, 0);
+	        };
+	    }
+	}
+	
+	// Guardar el estado en la pila de rehacer
+	function saveToRedoStack() {
+	    redoStack.push(canvas.toDataURL());
+	}
+	
+	// Obtener coordenadas del evento
+	function getCoordinates(e) {
+	    const rect = canvas.getBoundingClientRect();
+	    const scaleX = canvas.width / rect.width; // Escala en X
+	    const scaleY = canvas.height / rect.height; // Escala en Y
+	    if (e.touches) {
+	        return {
+	            x: (e.touches[0].clientX - rect.left) * scaleX,
+	            y: (e.touches[0].clientY - rect.top) * scaleY
+	        };
+	    }
+	    return { x: (e.offsetX) * scaleX, y: (e.offsetY) * scaleY };
+	}
+	
+	// Modo borrador
+	document.getElementById("toggleEraser").addEventListener("click", () => {
+	    isErasing = !isErasing;
+	    document.getElementById("toggleEraser").classList.toggle("active");
+	});
+	
+	canvas.addEventListener("mousemove", (e) => {
+	    if (!isDrawing) return;
+	    const { x, y } = getCoordinates(e);
+	    ctx.beginPath();
+	    ctx.moveTo(lastX, lastY);
+	    ctx.lineTo(x, y);
+	    ctx.strokeStyle = isErasing ? "#FFF" : "#000";
+	    ctx.lineWidth = isErasing ? 10 : 4;
+	    ctx.stroke();
+	    lastX = x;
+	    lastY = y;
+	});
+	
+	// Dibujar o borrar en el canvas
+	canvas.addEventListener("mousedown", (e) => {
+	    saveToUndoStack();
+	    isDrawing = true;
+	    const { x, y } = getCoordinates(e);
+	    lastX = x;
+	    lastY = y;
+	});
+	
+	canvas.addEventListener("mouseup", () => (isDrawing = false));
+	canvas.addEventListener("mouseout", () => (isDrawing = false));
+	
+	// Botones
+	document.getElementById("undo").addEventListener("click", undo);
+	document.getElementById("redo").addEventListener("click", redo);
+	document.getElementById("clearSignature").addEventListener("click", () => {
+	    localStorage.removeItem('canvasState'); // Elimina el estado guardado
+	    saveToUndoStack();
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	});
+	
+	// Evitar el desplazamiento de la pantalla en dispositivos móviles
+	canvas.addEventListener("touchstart", (e) => {
+	    e.preventDefault(); // Evita el desplazamiento de la pantalla
+	    saveToUndoStack();
+	    isDrawing = true;
+	    const { x, y } = getCoordinates(e);
+	    lastX = x;
+	    lastY = y;
+	});
+	
+	canvas.addEventListener("touchmove", (e) => {
+	    e.preventDefault(); // Evita el desplazamiento de la pantalla
+	    if (!isDrawing) return;
+	    const { x, y } = getCoordinates(e);
+	    ctx.beginPath();
+	    ctx.moveTo(lastX, lastY);
+	    ctx.lineTo(x, y);
+	    ctx.strokeStyle = isErasing ? "#FFF" : "#000";
+	    ctx.lineWidth = isErasing ? 10 : 2;
+	    ctx.stroke();
+	    lastX = x;
+	    lastY = y;
+	});
+	
+	canvas.addEventListener("touchend", (e) => {
+	    e.preventDefault(); // Evita el desplazamiento de la pantalla
+	    isDrawing = false;
+	});
+	
+	canvas.addEventListener("touchcancel", (e) => {
+	    e.preventDefault(); // Evita el desplazamiento de la pantalla
+	    isDrawing = false;
+	});
+	
+	// Ajustar el tamaño del canvas sin perder el dibujo
+	function resizeCanvas() {
+	    // Guardar el contenido actual del canvas
+	    const currentDrawing = canvas.toDataURL();
+	
+	    // Obtener el contenedor del canvas
+	    const container = canvas.parentElement;
+	
+	    // Ajustar el tamaño visual del canvas al contenedor
+	    canvas.style.width = "100%";
+	    canvas.style.height = "100%";
+	
+	    // Ajustar el tamaño interno del canvas para mantener la resolución
+	    const rect = container.getBoundingClientRect();
+	    const newWidth = rect.width;
+	    const newHeight = rect.height;
+	
+	    // Solo redimensionar si las dimensiones del canvas han cambiado
+	    if (canvas.width !== newWidth || canvas.height !== newHeight) {
+	        // Ajustar el tamaño interno del canvas para la nueva resolución
+	        canvas.width = newWidth;
+	        canvas.height = newHeight;
+	
+	        // Restaurar el contenido del canvas después de redimensionar
+	        const img = new Image();
+	        img.src = currentDrawing;
+	        img.onload = () => {
+	            // Asegurarse de que el contenido se ajuste correctamente al nuevo tamaño
+	            ctx.clearRect(0, 0, canvas.width, canvas.height);
+	            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	        };
+	    }
+	}
+	
+	// Llamar a la función al cargar la página y al cambiar el tamaño de la ventana
+	window.addEventListener("load", resizeCanvas);
+	window.addEventListener("resize", resizeCanvas);
+	
+	// Función para guardar el estado del canvas en el localStorage
+	function saveCanvasState() {
+	    const canvasData = canvas.toDataURL();
+	    localStorage.setItem('canvasState', canvasData);
+	}
+	
+	// Función para restaurar el estado del canvas desde el localStorage
+	function restoreCanvasState() {
+	    const canvasData = localStorage.getItem('canvasState');
+	    if (canvasData) {
+	        const img = new Image();
+	        img.src = canvasData;
+	        img.onload = () => {
+	            ctx.clearRect(0, 0, canvas.width, canvas.height);  // Limpiar el canvas
+	            ctx.drawImage(img, 0, 0);
+	        };
+	    }
+	}
+	
+	// Restaurar el estado solo cuando el usuario haga clic en el canvas
+	canvas.addEventListener('click', restoreCanvasState);
+	
+	// Guardar el estado del canvas cuando el usuario cambia de campo
+	document.querySelectorAll('input, textarea').forEach(element => {
+	    element.addEventListener('focus', () => {
+	        saveCanvasState();  // Guardamos el estado al hacer focus en un campo
+	    });
+	});
+	
+	
+	<!-- Contenedor para la Firma -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- Contenedor para Ocultar / Mostrar Opciones-->
+	
+	document.addEventListener("DOMContentLoaded", function() {
+	    function toggleVisibility(selectId, targetIds) {
+	        const selectElement = document.getElementById(selectId);
+	        
+	        selectElement.addEventListener("change", function() {
+	            const showFields = selectElement.value === "Salida"; // Se muestra si la respuesta es "No"
+	
+	            targetIds.forEach(id => {
+	                document.getElementById(id).parentElement.hidden = !showFields;
+	            });
+	        });
+	    }
+	
+	    // Aplicar la función a cada campo
+	    toggleVisibility("herramientas1", ["herramientas2", "herramientas3"]);
+	    toggleVisibility("quimicos1", ["quimicos2", "quimicos3"]);
+	    toggleVisibility("insumos1", ["insumos2", "insumos3"]);
+	});
+	
+	<!-- Contenedor para Ocultar / Mostrar Opciones-->
+	
+	<!-- Contenedor para Precargar Fecha-->
+	
+	
+	    // Prellenar fecha y hora
+	    function prellenarFechaHora() {
+	        let today = new Date();
+	        let year = today.getFullYear();
+	        let month = String(today.getMonth() + 1).padStart(2, '0');
+	        let day = String(today.getDate()).padStart(2, '0');
+	        document.getElementById('fecha').value = `${year}-${month}-${day}`;
+	    }
+	
+	<!-- Contenedor para Precargar Fecha-->
+	
+	
+	
+	<!-- Contenedor para Validar Campos-->
+	
+	function validarCampos() {
+	    const fecha = document.getElementById('fecha').value;
+	    const herramientas1 = document.getElementById('herramientas1').value;
+	    const quimicos1 = document.getElementById('quimicos1').value;
+	    const insumos1 = document.getElementById('insumos1').value;
+	
+	    const enviarBtn = document.getElementById('enviarBtn');
+	
+	    // Validar campos adicionales si la respuesta es "No"
+	    let herramientasCompletas = true;
+	    let quimicosCompletos = true;
+	    let insumosCompletos = true;
+	
+	    if (herramientas1 === "Salida") {
+	        const herramientas2 = document.getElementById('herramientas2').value.trim();
+	        const herramientas3 = document.getElementById('herramientas3').value.trim();
+	        herramientasCompletas = herramientas2 !== "" && herramientas3 !== "";
+	    }
+	
+	    if (quimicos1 === "Salida") {
+	        const quimicos2 = document.getElementById('quimicos2').value.trim();
+	        const quimicos3 = document.getElementById('quimicos3').value.trim();
+	        quimicosCompletos = quimicos2 !== "" && quimicos3 !== "";
+	    }
+	
+	    if (insumos1 === "Salida") {
+	        const insumos2 = document.getElementById('insumos2').value.trim();
+	        const insumos3 = document.getElementById('insumos3').value.trim();
+	        insumosCompletos = insumos2 !== "" && insumos3 !== "";
+	    }
+	
+	    // Validar que haya al menos una imagen adjunta
+	    const hayImagenAdjunta = document.getElementById('preview1').children.length > 0;
+	
+	    // Habilitar el botón solo si todos los campos están completos
+	    if (
+	        fecha &&
+	        herramientas1 &&
+	        quimicos1 &&
+	        insumos1 &&
+	        herramientasCompletas &&
+	        quimicosCompletos &&
+	        insumosCompletos &&
+	        hayImagenAdjunta
+	    ) {
+	        enviarBtn.disabled = false;
+	    } else {
+	        enviarBtn.disabled = true;
+	    }
+	}
+	
+	// Asignar eventos a los campos para validar en tiempo real
+	document.getElementById('fecha').addEventListener('change', validarCampos);
+	document.getElementById('herramientas1').addEventListener('change', validarCampos);
+	document.getElementById('quimicos1').addEventListener('change', validarCampos);
+	document.getElementById('insumos1').addEventListener('change', validarCampos);
+	document.getElementById('herramientas2').addEventListener('input', validarCampos);
+	document.getElementById('herramientas3').addEventListener('input', validarCampos);
+	document.getElementById('quimicos2').addEventListener('input', validarCampos);
+	document.getElementById('quimicos3').addEventListener('input', validarCampos);
+	document.getElementById('insumos2').addEventListener('input', validarCampos);
+	document.getElementById('insumos3').addEventListener('input', validarCampos);
+	document.getElementById('adjunto1').addEventListener('change', (e) => handleFileInput(e, 'preview1'));
+	
+	
+	<!-- Contenedor para Validar Campos-->
+	
+	
+	<!-- Contenedor para Confirmar Envío-->
+	
+	    // Función para mostrar el mensaje de confirmación con SweetAlert2
+	    function confirmarEnvio() {
+	        Swal.fire({
+	            text: '¿Estás seguro de continuar? 🤔',
+	            icon: 'question',
+	            showCancelButton: true,
+	            confirmButtonText: 'Sí 🫡',
+	            cancelButtonText: 'No 😬',
+	            customClass: {
+	                popup: 'swal-popup', // Clase para el modal
+	                confirmButton: 'swal-button', // Clase para el botón de confirmación
+	                cancelButton: 'swal-button-cancel', // Clase para el botón de cancelación
+	                actions: 'swal-actions' // Clase para el contenedor de los botones
+	            }
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                // Mostrar el overlay de "Procesando..."
+	                document.getElementById('overlay').style.display = 'flex';
+	                enviarDatos();
+	            }
+	        });
+	    }
+	
+	<!-- Contenedor para Confirmar Envío-->
+	
+	
+	    // Función para enviar los datos a Google Sheets
+	
+	// Definir la función compressImage en el ámbito global
+	function compressImage(file, quality) {
+	    return new Promise((resolve, reject) => {
+	        const reader = new FileReader();
+	        reader.onload = (event) => {
+	            const img = new Image();
+	            img.onload = () => {
+	                const canvas = document.createElement('canvas');
+	                const ctx = canvas.getContext('2d');
+	
+	                // Redimensionar imagen
+	                const maxWidth = 600;
+	                const scale = maxWidth / img.width;
+	                canvas.width = maxWidth;
+	                canvas.height = img.height * scale;
+	
+	                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+	                resolve(dataUrl);
+	            };
+	            img.src = event.target.result;
+	        };
+	        reader.onerror = reject;
+	        reader.readAsDataURL(file);
+	    });
+	}
+	
+	// Función enviarDatos
+	async function enviarDatos() {
+	    try {
+	        // Mostrar el overlay de "Procesando..."
+	        document.getElementById('overlay').style.display = 'flex';
+	
+	        // Obtener valores del formulario
+	        const fecha = document.getElementById('fecha').value;
+	        const herramientas1 = document.getElementById('herramientas1').value === "Entrada" ? "Sí" : "No";
+	        const herramientas2 = document.getElementById('herramientas2').value;
+	        const herramientas3 = document.getElementById('herramientas3').options[document.getElementById('herramientas3').selectedIndex].text;
+	        const quimicos1 = document.getElementById('quimicos1').value === "Entrada" ? "Sí" : "No";
+	        const quimicos2 = document.getElementById('quimicos2').value;
+	        const quimicos3 = document.getElementById('quimicos3').options[document.getElementById('quimicos3').selectedIndex].text;
+	        const insumos1 = document.getElementById('insumos1').value === "Entrada" ? "Sí" : "No";
+	        const insumos2 = document.getElementById('insumos2').value;
+	        const insumos3 = document.getElementById('insumos3').options[document.getElementById('insumos3').selectedIndex].text;
+	        const comentarios = document.getElementById('comentarios').value;
+	
+	        // Obtener la firma como una imagen en formato Data URL
+	        const firmaDataUrl = canvas.toDataURL("image/png");
+	
+	        // Crear el PDF
+	        const { jsPDF } = window.jspdf;
+	        const pdf = new jsPDF({ format: 'letter' });
+	        const pageWidth = pdf.internal.pageSize.getWidth();
+	        const pageHeight = pdf.internal.pageSize.getHeight();
+	
+	        // Función para agregar texto con manejo de nuevas páginas
+	        function addTextWithPageBreak(text, x, y, options = {}) {
+	            const lineHeight = 10; // Altura de línea
+	            const marginBottom = 10; // Margen inferior
+	            let currentY = y;
+	
+	            // Dividir el texto en líneas
+	            const lines = pdf.splitTextToSize(text, options.maxWidth || pageWidth - x - 10);
+	
+	            // Agregar cada línea al PDF
+	            lines.forEach((line) => {
+	                if (currentY + lineHeight > pageHeight - marginBottom) {
+	                    pdf.addPage(); // Agregar nueva página
+	                    currentY = 20; // Reiniciar la posición Y en la nueva página
+	                }
+	                pdf.text(line, x, currentY);
+	                currentY += lineHeight; // Mover a la siguiente línea
+	            });
+	
+	            return currentY; // Devolver la posición Y final
+	        }
+	
+	        // Portada
+	        pdf.setFont("times", "bold");
+	        pdf.setFontSize(16);
+	        pdf.text("Recepción de Insumos y Materiales", 10, 20);
+	        pdf.text("Proyecto: Cementera Argos", 10, 35);
+	        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", 10, 50);
+	        pdf.text("Correo: jromero@grupomacdel.com", 10, 65);
+	
+	        // Línea horizontal
+	        pdf.line(10, 75, 190, 75);
+	
+	        // Fecha y firma
+	        pdf.text(`Fecha: ${fecha}`, 10, 85);
+	        pdf.text("Firma del Responsable:", 150, 85);
+	        pdf.addImage(firmaDataUrl, 'PNG', 160, 90, 40, 25);
+	
+	        // Agregar datos de las preguntas
+	        let yPosition = 100; // Posición inicial para los datos de las preguntas
+	
+	        // Herramientas
+	        pdf.setFont("times", "bold");
+	        pdf.text("Herramientas:", 10, yPosition);
+	        pdf.setFont("times", "normal");
+	        yPosition = addTextWithPageBreak(`¿Todas las herramientas están en buen estado?: ${herramientas1}`, 15, yPosition + 10, { maxWidth: 180 });
+	        if (herramientas1 === "No") {
+	            yPosition = addTextWithPageBreak(`Herramientas no satisfactorias: ${herramientas2}`, 15, yPosition + 5, { maxWidth: 180 }); // Menos espacio
+	            yPosition = addTextWithPageBreak(`Destino de las herramientas no satisfactorias: ${herramientas3}`, 15, yPosition + 5, { maxWidth: 180 }); // Menos espacio
+	        } else {
+	            yPosition += 15; // Ajustar posición para la siguiente sección
+	        }
+	
+	        // Químicos
+	        pdf.setFont("times", "bold");
+	        pdf.text("Químicos:", 10, yPosition);
+	        pdf.setFont("times", "normal");
+	        yPosition = addTextWithPageBreak(`¿Todos los productos químicos están en buen estado?: ${quimicos1}`, 15, yPosition + 10, { maxWidth: 180 });
+	        if (quimicos1 === "No") {
+	            yPosition = addTextWithPageBreak(`Productos químicos no satisfactorios: ${quimicos2}`, 15, yPosition + 5, { maxWidth: 180 }); // Menos espacio
+	            yPosition = addTextWithPageBreak(`Destino de los productos químicos no satisfactorios: ${quimicos3}`, 15, yPosition + 5, { maxWidth: 180 }); // Menos espacio
+	        } else {
+	            yPosition += 15; // Ajustar posición para la siguiente sección
+	        }
+	
+	        // Insumos
+	        pdf.setFont("times", "bold");
+	        pdf.text("Insumos:", 10, yPosition);
+	        pdf.setFont("times", "normal");
+	        yPosition = addTextWithPageBreak(`¿Todos los insumos están en buen estado?: ${insumos1}`, 15, yPosition + 10, { maxWidth: 180 });
+	        if (insumos1 === "No") {
+	            yPosition = addTextWithPageBreak(`Insumos no satisfactorios: ${insumos2}`, 15, yPosition + 5, { maxWidth: 180 }); // Menos espacio
+	            yPosition = addTextWithPageBreak(`Destino de los insumos no satisfactorios: ${insumos3}`, 15, yPosition + 5, { maxWidth: 180 }); // Menos espacio
+	        } else {
+	            yPosition += 15; // Ajustar posición para la siguiente sección
+	        }
+	
+	        // Comentarios (filtrados de emoticones)
+	        if (comentarios && comentarios.trim() !== "") {
+	            const comentariosFiltrada = comentarios.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{200D}\u{FE0F}]/gu, "");
+	            if (comentariosFiltrada.trim() !== "") {
+	                pdf.setFont("times", "bold");
+	                yPosition = addTextWithPageBreak(`Comentarios:`, 10, yPosition + 10);
+	                pdf.setFont("times", "normal");
+	                yPosition = addTextWithPageBreak(comentariosFiltrada, 15, yPosition + 5, { maxWidth: 190 });
+	            }
+	        }
+	
+	        // Manejar datos adjuntos (imágenes)
+	       // Manejar datos adjuntos (imágenes)
+	for (let i = 1; i <= 1; i++) {
+	    const files = selectedFiles[`preview${i}`];
+	    if (files.length > 0) {
+	        for (let j = 0; j < files.length; j++) {
+	            const file = files[j];
+	            const imgData = await compressImage(file, 0.8); // Comprimir imagen con menor compresión
+	
+	            // Crear una nueva página para cada imagen
+	            pdf.addPage();
+	
+	            // Obtener las dimensiones de la imagen
+	            const img = new Image();
+	            img.src = imgData;
+	            await new Promise((resolve) => (img.onload = resolve)); // Esperar a que la imagen se cargue
+	
+	            // Calcular las dimensiones para que la imagen ocupe la mayor parte de la página
+	            const maxWidth = pageWidth - 20; // Margen de 10 a cada lado
+	            const maxHeight = pageHeight - 20; // Margen de 10 arriba y abajo
+	            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+	            const width = img.width * ratio;
+	            const height = img.height * ratio;
+	
+	            // Centrar la imagen en la página
+	            const x = (pageWidth - width) / 2;
+	            const y = (pageHeight - height) / 2;
+	
+	            // Añadir la imagen a la página
+	            pdf.addImage(imgData, 'JPEG', x, y, width, height);
+	        }
+	    }
+	}
+	
+	        // Crear un nombre para el archivo basado en la fecha
+	        const nombreArchivo = `${fecha} - Recepción de Insumos y Materiales.pdf`;
+	
+	        // Convertir el PDF generado a base64
+	        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+	
+	        // Enviar el archivo al script de Google Apps
+	        const response = await fetch('https://script.google.com/macros/s/AKfycbyhOCwHZ_SVtrxwNwVJ59MHg6KtB7TEKd5sdFf-KphdRWXi8HUyMfIOamvnUkHFQ1_9/exec', {
+	            method: 'POST',
+	            body: new URLSearchParams({
+	                pdfFile: pdfBase64,
+	                fileName: nombreArchivo
+	            })
+	        });
+	
+	        const result = await response.text();
+	        console.log('Archivo guardado con ID:', result);
+	
+	        // Ocultar el overlay de "Procesando..."
+	        document.getElementById('overlay').style.display = 'none';
+	
+	        // Mostrar mensaje de éxito con SweetAlert2
+	        Swal.fire({
+	            text: '¡Envío exitoso! 🥳🎉',
+	            icon: 'success',
+	            confirmButtonText: 'Aceptar',
+	            customClass: {
+	                content: 'swal-content',
+	                confirmButton: 'swal-button',
+	                popup: 'swal-popup'
+	            }
+	        }).then(() => {
+	            window.location.reload(); // Recargar la página
+	        });
+	    } catch (error) {
+	        console.error('Error al enviar los datos:', error);
+	
+	        // Ocultar el overlay de "Procesando..."
+	        document.getElementById('overlay').style.display = 'none';
+	
+	        // Mostrar mensaje de error con SweetAlert2
+	        Swal.fire({
+	            text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+	            icon: 'error',
+	            confirmButtonText: 'Aceptar',
+	            customClass: {
+	                content: 'swal-content',
+	                confirmButton: 'swal-button',
+	                popup: 'swal-popup'
+	            }
+	        });
+	    }
+	}
+	
+	
+	    // Función para volver al inicio
+	    function goBack() {
+	        window.history.back();
+	    }
+	
+	    // Prellenar fecha y hora al cargar la página
+	    window.onload = prellenarFechaHora;
+	
+</script>
+</body>
+
+</html>
