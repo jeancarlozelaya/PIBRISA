@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INSERTAR NOMBRE</title>
+    <title>Reporte de Supervisión</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1780,8 +1780,19 @@ async function enviarDatos() {
             }
         }
 
-        // Crear un nombre para el archivo basado en la fecha
-        const nombreArchivo = `${fecha} - Reporte de Supervisión.pdf`;
+        let area = document.getElementById('area').value;
+        let oficina = document.getElementById('oficina').value;
+
+        // Crear un nombre para el archivo basado en la fecha y el área
+        let nombreArchivo = `${fecha} - Reporte de Supervisión - ${area}`;
+
+        // Si el área es "Administración" y hay una oficina especificada, agregarla al nombre
+        if (area === "Administración" && oficina) {
+            nombreArchivo += ` - ${oficina}`;
+        }
+
+        // Agregar la extensión .pdf al nombre del archivo
+        nombreArchivo += ".pdf";
 
         // Convertir el PDF generado a base64
         const pdfBase64 = pdf.output("datauristring").split(",")[1];
