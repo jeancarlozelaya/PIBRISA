@@ -1592,8 +1592,8 @@ async function enviarDatos() {
             });
         }
 
-        // Convertir la imagen del logo a base64 usando tu función
-        const logoBase64 = await getLogoBase64("Imágenes/Icono.png");
+        // Convertir la imagen del logo a base64 usando una ruta relativa
+        const logoBase64 = await getLogoBase64("Imágenes/Icono.png"); // Asegúrate de que la ruta sea correcta
 
         // Función para agregar texto con manejo de nuevas páginas
         function addTextWithPageBreak(text, x, y, options = {}) {
@@ -1622,40 +1622,56 @@ async function enviarDatos() {
 
         // Portada
         pdf.setFont("times", "bold");
-        pdf.setFontSize(16);
 
-        // Agregar el logo (usando la cadena base64 generada automáticamente)
-        pdf.addImage(logoBase64, "PNG", 10, 10, 50, 50); // Ajusta las coordenadas y el tamaño según sea necesario
+        // Agregar el logo centrado en la parte superior
+        const logoWidth = 50; // Ancho del logo
+        const logoHeight = 50; // Alto del logo
+        const logoX = (pageWidth - logoWidth) / 2; // Centrar horizontalmente
+        const logoY = 20; // Posición Y del logo
+        pdf.addImage(logoBase64, "PNG", logoX, logoY, logoWidth, logoHeight);
 
-        // Título del reporte
+        // Título del reporte (debajo del logo)
         pdf.setFontSize(24);
-        pdf.text("Reporte de Supervisión", pageWidth / 2, 30, { align: "center" });
+        pdf.text("Reporte de Supervisión", pageWidth / 2, logoY + logoHeight + 20, { align: "center" });
 
-        // Información del proyecto
+        // Información del proyecto (lista ordenada y centrada)
         pdf.setFontSize(16);
-        pdf.text("Proyecto: Cementera Argos", pageWidth / 2, 50, { align: "center" });
-        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", pageWidth / 2, 65, { align: "center" });
-        pdf.text("Correo: jromero@grupomacdel.com", pageWidth / 2, 80, { align: "center" });
-        pdf.text("Actividad: Supervisión de Áreas (Específico)", pageWidth / 2, 95, { align: "center" });
+        let yPosition = logoY + logoHeight + 40; // Posición Y inicial para el contenido
+        const lineHeight = 10; // Espaciado entre líneas
 
-        // Línea horizontal
-        pdf.line(10, 105, pageWidth - 10, 105);
+        const projectInfo = [
+            `Proyecto: Cementera Argos`,
+            `Nombre del Supervisor: Jeancarlo Zelaya`,
+            `Correo: jromero@grupomacdel.com`,
+            `Actividad: Supervisión de Áreas (Específico)`,
+        ];
 
-        // Fecha y firma
-        pdf.text(`Fecha: ${fecha}`, 10, 115);
+        projectInfo.forEach((info) => {
+            pdf.text(info, pageWidth / 2, yPosition, { align: "center" });
+            yPosition += lineHeight + 5; // Espaciado entre elementos
+        });
+
+        // Línea horizontal para separar la información
+        pdf.setDrawColor(0); // Color de la línea (negro)
+        pdf.line(10, yPosition + 10, pageWidth - 10, yPosition + 10);
+
+        // Fecha y firma (alineadas a la izquierda)
+        yPosition += 20; // Espaciado después de la línea
+        pdf.setFontSize(14);
+        pdf.text(`Fecha: ${fecha}`, 10, yPosition);
         pdf.text(
             "Área a Supervisar: " + document.getElementById("area").value,
             10,
-            130
+            yPosition + 15
         );
 
         // Si oficina no está vacía, agregarla
         let oficinaValue = document.getElementById("oficina").value;
         if (oficinaValue !== "") {
-            pdf.text("Oficina: " + oficinaValue, 10, 145);
-            yPosition = 160;
+            pdf.text("Oficina: " + oficinaValue, 10, yPosition + 30);
+            yPosition += 45;
         } else {
-            yPosition = 145;
+            yPosition += 30;
         }
 
         // Comentarios (filtrados de emoticones)
