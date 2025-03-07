@@ -645,14 +645,18 @@ window.onload = prellenarFechaHora;
 
 <!-- Contenedor para Precargar Fecha-->
 
-// Prellenar fecha y hora
+
 function prellenarFechaHora() {
     let today = new Date();
     let year = today.getFullYear();
     let month = String(today.getMonth() + 1).padStart(2, "0");
     let day = String(today.getDate()).padStart(2, "0");
     document.getElementById("fecha").value = `${year}-${month}-${day}`;
+
+    // Llamar a validatePage para actualizar los bordes
+    validatePage(1);
 }
+
 
 <!-- Contenedor para Precargar Fecha-->
 
@@ -806,7 +810,9 @@ function validatePage(pageIndex) {
         const questionContainers = currentPageElement.querySelectorAll('.question-container');
         questionContainers.forEach(container => {
             const input = container.querySelector('input, select, textarea');
-            if (input.value.trim() === "") {
+            if (input.id === "fecha" && fecha.trim() !== "") {
+                container.style.borderColor = 'green'; // Fecha precargada, borde verde
+            } else if (input.value.trim() === "") {
                 container.style.borderColor = 'red';
             } else {
                 container.style.borderColor = 'green';
