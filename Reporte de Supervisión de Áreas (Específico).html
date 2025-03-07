@@ -196,8 +196,10 @@
         display: flex; /* Coloca los botones en una fila */
         justify-content: center; /* Centra los botones horizontalmente */
         gap: 10px; /* Espacio entre los botones */
+        width: 80%; /* Limita el ancho del contenedor al 80% del modal */
+        margin: 0 auto; /* Centra el contenedor horizontalmente */
+        flex-wrap: nowrap; /* Evita que los botones se apilen en dos filas */
     }
-
 
     /* Estilo personalizado para el contenido del mensaje */
     .swal-content {
@@ -206,11 +208,17 @@
     }
 
     /* Estilo personalizado para ambos botones */
-    .swal-button, .swal-button-cancel {
-        font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
-        padding: 10px 20px;  /* Espaciado interno */
-        min-width: 100px;  /* Ancho mínimo para igualar botones */
-        text-align: center;  /* Centra el texto dentro del botón */
+    .swal-button,
+    .swal-button-cancel {
+        flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+        min-width: 120px; /* Ancho mínimo para ambos botones */
+        padding: 10px 20px; /* Espaciado interno */
+        font-size: 14px; /* Tamaño de fuente */
+        text-align: center; /* Centra el texto dentro del botón */
+        border: none; /* Elimina el borde predeterminado */
+        border-radius: 4px; /* Bordes redondeados */
+        color: white; /* Texto en blanco */
+        transition: background-color 0.3s ease; /* Transición suave para el hover */
     }
 
     /* Estilo personalizado para el popup/modal */
@@ -2050,8 +2058,8 @@ function preguntarContinuar() {
             text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
             icon: "question",
             showCancelButton: true,
-            confirmButtonText: "¡Sí, continuar!",
-            cancelButtonText: "No, reiniciar",
+            confirmButtonText: "Sí, continuar 😍",
+            cancelButtonText: "No, reiniciar 🤡",
             customClass: {
                 popup: "swal-popup",
                 confirmButton: "swal-button",
