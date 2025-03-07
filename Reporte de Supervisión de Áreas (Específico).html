@@ -1597,7 +1597,7 @@ async function enviarDatos() {
 
         // Función para agregar texto con manejo de nuevas páginas
         function addTextWithPageBreak(text, x, y, options = {}) {
-            const lineHeight = options.lineHeight || 8; // Espaciado entre líneas reducido
+            const lineHeight = options.lineHeight || 6; // Espaciado entre líneas reducido
             const marginBottom = 10; // Margen inferior
             let currentY = y;
 
@@ -1627,17 +1627,17 @@ async function enviarDatos() {
         const logoWidth = 50; // Ancho del logo
         const logoHeight = 50; // Alto del logo
         const logoX = (pageWidth - logoWidth) / 2; // Centrar horizontalmente
-        const logoY = 20; // Posición Y del logo
+        const logoY = 10; // Posición Y del logo (más arriba)
         pdf.addImage(logoBase64, "PNG", logoX, logoY, logoWidth, logoHeight);
 
         // Título del reporte (debajo del logo, más cerca)
         pdf.setFontSize(24);
-        pdf.text("Reporte de Supervisión", pageWidth / 2, logoY + logoHeight + 10, { align: "center" });
+        pdf.text("Reporte de Supervisión", pageWidth / 2, logoY + logoHeight + 5, { align: "center" });
 
         // Información del proyecto (lista ordenada y centrada, con menos espacio)
-        pdf.setFontSize(14); // Reducir el tamaño de la fuente
-        let yPosition = logoY + logoHeight + 30; // Posición Y inicial para el contenido
-        const lineHeight = 8; // Espaciado entre líneas reducido
+        pdf.setFontSize(12); // Reducir el tamaño de la fuente
+        let yPosition = logoY + logoHeight + 20; // Posición Y inicial para el contenido
+        const lineHeight = 6; // Espaciado entre líneas reducido
 
         const projectInfo = [
             `Proyecto: Cementera Argos`,
@@ -1648,7 +1648,7 @@ async function enviarDatos() {
 
         projectInfo.forEach((info) => {
             pdf.text(info, pageWidth / 2, yPosition, { align: "center" });
-            yPosition += lineHeight + 5; // Espaciado entre elementos reducido
+            yPosition += lineHeight + 4; // Espaciado entre elementos reducido
         });
 
         // Línea horizontal para separar la información (más arriba)
@@ -1657,21 +1657,21 @@ async function enviarDatos() {
 
         // Fecha y firma (alineadas a la izquierda, con menos espacio)
         yPosition += 10; // Espaciado después de la línea reducido
-        pdf.setFontSize(12); // Reducir el tamaño de la fuente
+        pdf.setFontSize(10); // Reducir el tamaño de la fuente
         pdf.text(`Fecha: ${fecha}`, 10, yPosition);
         pdf.text(
             "Área a Supervisar: " + document.getElementById("area").value,
             10,
-            yPosition + 10
+            yPosition + 8
         );
 
         // Si oficina no está vacía, agregarla
         let oficinaValue = document.getElementById("oficina").value;
         if (oficinaValue !== "") {
-            pdf.text("Oficina: " + oficinaValue, 10, yPosition + 20);
-            yPosition += 30;
+            pdf.text("Oficina: " + oficinaValue, 10, yPosition + 16);
+            yPosition += 24;
         } else {
-            yPosition += 20;
+            yPosition += 16;
         }
 
         // Comentarios (filtrados de emoticones, con espacio optimizado para 20 renglones)
