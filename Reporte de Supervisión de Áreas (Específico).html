@@ -455,7 +455,7 @@
                 <div class="question-container">
                     <label for="area">Área:</label>
                     <select id="area">
-                        <option value="Selecciona una opción">Selecciona una opción</option>
+                        <option value="">Selecciona una opción</option>
                         <option value="Administración">Administración</option>
                         <option value="Almacén General">Almacén General</option>
                         <option value="Baños de Administración (Hombres)">Baños de Administración (Hombres)</option>
@@ -802,7 +802,7 @@ function validatePage(pageIndex) {
         const fecha = document.getElementById("fecha").value;
         const area = document.getElementById("area").value;
 
-        if (fecha.trim() === "" || area === "Selecciona una opción") {
+        if (fecha.trim() === "" || area === "") {
             allFieldsValid = false;
         }
 
