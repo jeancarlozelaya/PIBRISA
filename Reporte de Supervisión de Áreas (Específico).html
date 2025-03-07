@@ -118,6 +118,7 @@
         transform: scale(1.05);
     }
 
+
     /* Estilo para los contenedores de preguntas */
     .question-container {
         margin-bottom: 20px;
@@ -787,12 +788,9 @@ showPage(currentPage);
 document.getElementById('adjunto1').addEventListener('change', (e) => handleFileInput(e, 'preview1'));
 
 // Función para validar si todos los campos de la página actual están completos
-// Función para validar si todos los campos de la página actual están completos
 function validatePage(pageIndex) {
     const currentPageElement = document.getElementById(`page${pageIndex}`);
-    const inputs = currentPageElement.querySelectorAll(
-        "input, select, textarea"
-    );
+    const inputs = currentPageElement.querySelectorAll("input, select, textarea");
     let allFieldsValid = true;
 
     // Validación específica para la página 1 (Fecha y Área)
@@ -803,17 +801,26 @@ function validatePage(pageIndex) {
         if (fecha.trim() === "" || area === "Selecciona una opción") {
             allFieldsValid = false;
         }
+
+        // Cambiar el color del borde de los contenedores de preguntas
+        const questionContainers = currentPageElement.querySelectorAll('.question-container');
+        questionContainers.forEach(container => {
+            const input = container.querySelector('input, select, textarea');
+            if (input.value.trim() === "") {
+                container.style.borderColor = 'red';
+            } else {
+                container.style.borderColor = 'green';
+            }
+        });
+
         return allFieldsValid;
     }
 
     // Validación para la página 2 (Oficinas)
     if (pageIndex === 2) {
-        const calificarOficinas = document.getElementById("calificarOficinas")
-            .value;
+        const calificarOficinas = document.getElementById("calificarOficinas").value;
         const area = document.getElementById("area").value;
-        const oficinaAdministracionDiv = document.getElementById(
-            "oficinaAdministracion"
-        );
+        const oficinaAdministracionDiv = document.getElementById("oficinaAdministracion");
 
         // Mostrar u ocultar el campo "Oficina de Administración" según el área y la respuesta
         if (area === "Administración" && calificarOficinas === "Sí") {
@@ -829,9 +836,7 @@ function validatePage(pageIndex) {
 
         // Si la respuesta es "Sí", se revisan las preguntas dinámicas
         if (calificarOficinas === "Sí") {
-            const preguntasDinamicas = currentPageElement.querySelectorAll(
-                ".question-container select"
-            );
+            const preguntasDinamicas = currentPageElement.querySelectorAll(".question-container select");
             preguntasDinamicas.forEach((select) => {
                 if (select.value === "") {
                     allFieldsValid = false;
@@ -846,13 +851,24 @@ function validatePage(pageIndex) {
                 }
             }
         }
+
+        // Cambiar el color del borde de los contenedores de preguntas
+        const questionContainers = currentPageElement.querySelectorAll('.question-container');
+        questionContainers.forEach(container => {
+            const input = container.querySelector('input, select, textarea');
+            if (input.value.trim() === "") {
+                container.style.borderColor = 'red';
+            } else {
+                container.style.borderColor = 'green';
+            }
+        });
+
         return allFieldsValid;
     }
 
     // Validación para las páginas 3 a 7 (Preguntas principales y dinámicas)
     if (pageIndex >= 3 && pageIndex <= 7) {
-        const preguntaPrincipal = currentPageElement.querySelector("select")
-            .value;
+        const preguntaPrincipal = currentPageElement.querySelector("select").value;
 
         // Si la respuesta es "No" o está vacía, no se revisan las preguntas dinámicas
         if (preguntaPrincipal === "No" || preguntaPrincipal === "") {
@@ -861,15 +877,25 @@ function validatePage(pageIndex) {
 
         // Si la respuesta es "Sí", se revisan las preguntas dinámicas
         if (preguntaPrincipal === "Sí") {
-            const preguntasDinamicas = currentPageElement.querySelectorAll(
-                ".question-container select"
-            );
+            const preguntasDinamicas = currentPageElement.querySelectorAll(".question-container select");
             preguntasDinamicas.forEach((select) => {
                 if (select.value === "") {
                     allFieldsValid = false;
                 }
             });
         }
+
+        // Cambiar el color del borde de los contenedores de preguntas
+        const questionContainers = currentPageElement.querySelectorAll('.question-container');
+        questionContainers.forEach(container => {
+            const input = container.querySelector('input, select, textarea');
+            if (input.value.trim() === "") {
+                container.style.borderColor = 'red';
+            } else {
+                container.style.borderColor = 'green';
+            }
+        });
+
         return allFieldsValid;
     }
 
@@ -889,6 +915,7 @@ function validatePage(pageIndex) {
     return allFieldsValid;
 }
 
+
 // Función para habilitar o deshabilitar el botón "Siguiente"
 function toggleNextButton() {
     const nextButton = document.getElementById("next");
@@ -904,9 +931,7 @@ function toggleNextButton() {
 // Escuchar cambios en los campos de la página actual
 function addInputListeners(pageIndex) {
     const currentPageElement = document.getElementById(`page${pageIndex}`);
-    const inputs = currentPageElement.querySelectorAll(
-        "input, select, textarea"
-    );
+    const inputs = currentPageElement.querySelectorAll("input, select, textarea");
 
     inputs.forEach((input) => {
         input.addEventListener("change", toggleNextButton);
