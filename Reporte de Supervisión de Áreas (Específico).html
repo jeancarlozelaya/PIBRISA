@@ -2027,8 +2027,16 @@ function cargarRespuestas() {
             const input = document.getElementById(key);
             if (input) {
                 input.value = formData[key];
+
+                // Disparar el evento "change" en los selects para que se muestren/oculten las preguntas dinámicas
+                if (input.tagName === 'SELECT') {
+                    input.dispatchEvent(new Event('change'));
+                }
             }
         });
+
+        // Validar la página actual después de cargar los datos
+        toggleNextButton();
     }
 }
 
@@ -2074,7 +2082,6 @@ window.onload = function() {
     preguntarContinuar();
     prellenarFechaHora(); // Asegúrate de que esta función se llame si es necesaria
 };
-	
 	
 </script>
 </body>
