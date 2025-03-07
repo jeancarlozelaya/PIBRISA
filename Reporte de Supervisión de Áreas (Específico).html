@@ -250,6 +250,13 @@
     }
 
 
+    /* Eliminar el borde negro del ícono personalizado */
+    .swal2-icon.swal2-icon-show {
+        border: none !important; /* Elimina el borde */
+        background-color: transparent !important; /* Fondo transparente */
+    }
+
+
     /* Estilo para Mensajes */
 
 
@@ -2056,10 +2063,10 @@ function preguntarContinuar() {
     if (savedData) {
         Swal.fire({
             text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
-            icon: "question",
+            iconHtml: "🫵🏻",
             showCancelButton: true,
-            confirmButtonText: "Sí, continuar 😍",
-            cancelButtonText: "No, reiniciar 🤡",
+            confirmButtonText: "Sí, continuar 😎",
+            cancelButtonText: "No, reiniciar 🤓",
             allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
             customClass: {
                 popup: "swal-popup",
