@@ -1599,30 +1599,40 @@ async function enviarDatos() {
         // Portada
         pdf.setFont("times", "bold");
         pdf.setFontSize(16);
-        pdf.text("Reporte de Supervisión", 10, 20);
-        pdf.text("Proyecto: Cementera Argos", 10, 35);
-        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", 10, 50);
-        pdf.text("Correo: jromero@grupomacdel.com", 10, 65);
-        pdf.text("Actividad: Supervisión de Áreas (Específico)", 10, 80);
+
+        // Agregar el logo
+        const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."; // Aquí va tu imagen en base64
+        pdf.addImage(logoBase64, 'PNG', 10, 10, 50, 50); // Ajusta las coordenadas y el tamaño según sea necesario
+
+        // Título del reporte
+        pdf.setFontSize(24);
+        pdf.text("Reporte de Supervisión", pageWidth / 2, 30, { align: "center" });
+
+        // Información del proyecto
+        pdf.setFontSize(16);
+        pdf.text("Proyecto: Cementera Argos", pageWidth / 2, 50, { align: "center" });
+        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", pageWidth / 2, 65, { align: "center" });
+        pdf.text("Correo: jromero@grupomacdel.com", pageWidth / 2, 80, { align: "center" });
+        pdf.text("Actividad: Supervisión de Áreas (Específico)", pageWidth / 2, 95, { align: "center" });
 
         // Línea horizontal
-        pdf.line(10, 90, 190, 90);
+        pdf.line(10, 105, pageWidth - 10, 105);
 
         // Fecha y firma
-        pdf.text(`Fecha: ${fecha}`, 10, 100);
+        pdf.text(`Fecha: ${fecha}`, 10, 115);
         pdf.text(
             "Área a Supervisar: " + document.getElementById("area").value,
             10,
-            115
+            130
         );
 
         // Si oficina no está vacía, agregarla
         let oficinaValue = document.getElementById("oficina").value;
         if (oficinaValue !== "") {
-            pdf.text("Oficina: " + oficinaValue, 10, 130);
-            yPosition = 145;
+            pdf.text("Oficina: " + oficinaValue, 10, 145);
+            yPosition = 160;
         } else {
-            yPosition = 130;
+            yPosition = 145;
         }
 
         // Comentarios (filtrados de emoticones)
@@ -1948,6 +1958,28 @@ function recopilarRespuestas() {
 
 
 <!-- Contenedor para EnviarDatos-->
+
+
+function getBase64Image(url, callback) {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/png');
+        callback(dataURL);
+    };
+    img.src = url;
+}
+
+// Llamar a la función con la URL de la imagen
+getBase64Image('Imágenes/Icono.png', function(base64Image) {
+    console.log(base64Image); // Aquí tienes la imagen en base64
+});
+
 	
 	
 </script>
