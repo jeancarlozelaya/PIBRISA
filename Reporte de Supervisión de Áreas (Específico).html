@@ -2001,6 +2001,8 @@ function recopilarRespuestas() {
 <!-- Contenedor para EnviarDatos-->
 
 
+<!-- Contenedor para Auto Guardado-->
+
 
 // Función para guardar las respuestas en localStorage
 function guardarRespuestas() {
@@ -2045,11 +2047,11 @@ function preguntarContinuar() {
     const savedData = localStorage.getItem('formData');
     if (savedData) {
         Swal.fire({
-            text: "¿Deseas continuar con las respuestas guardadas?",
+            text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
             icon: "question",
             showCancelButton: true,
-            confirmButtonText: "Sí, continuar",
-            cancelButtonText: "No, comenzar de nuevo",
+            confirmButtonText: "¡Sí, continuar!",
+            cancelButtonText: "No, reiniciar",
             customClass: {
                 popup: "swal-popup",
                 confirmButton: "swal-button",
@@ -2082,6 +2084,10 @@ window.onload = function() {
     preguntarContinuar();
     prellenarFechaHora(); // Asegúrate de que esta función se llame si es necesaria
 };
+
+
+<!-- Contenedor para Auto Guardado-->
+
 	
 </script>
 </body>
