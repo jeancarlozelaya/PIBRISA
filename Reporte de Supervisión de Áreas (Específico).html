@@ -1571,7 +1571,7 @@ async function enviarDatos() {
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Definir la función imageToBase64 tal como la compartiste
+        // Definir la función imageToBase64
         function imageToBase64(imgPath, callback) {
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -1880,6 +1880,8 @@ async function enviarDatos() {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Si el usuario hace clic en "Aceptar", recargar la página
+                limpiarRespuestasGuardadas();
+
             }
         });
 
@@ -1997,6 +1999,81 @@ function recopilarRespuestas() {
 
 
 <!-- Contenedor para EnviarDatos-->
+
+
+
+// Función para guardar las respuestas en localStorage
+function guardarRespuestas() {
+    const formData = {};
+
+    // Recopilar todos los campos del formulario
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.type !== 'file') { // Excluimos los campos de archivo
+            formData[input.id] = input.value;
+        }
+    });
+
+    // Guardar en localStorage
+    localStorage.setItem('formData', JSON.stringify(formData));
+}
+
+// Función para cargar las respuestas guardadas
+function cargarRespuestas() {
+    const savedData = localStorage.getItem('formData');
+    if (savedData) {
+        const formData = JSON.parse(savedData);
+        Object.keys(formData).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) {
+                input.value = formData[key];
+            }
+        });
+    }
+}
+
+// Función para preguntar al usuario si desea continuar con las respuestas guardadas
+function preguntarContinuar() {
+    const savedData = localStorage.getItem('formData');
+    if (savedData) {
+        Swal.fire({
+            text: "¿Deseas continuar con las respuestas guardadas?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, continuar",
+            cancelButtonText: "No, comenzar de nuevo",
+            customClass: {
+                popup: "swal-popup",
+                confirmButton: "swal-button",
+                cancelButton: "swal-button-cancel",
+                actions: "swal-actions",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cargarRespuestas();
+            } else {
+                localStorage.removeItem('formData'); // Eliminar respuestas guardadas
+            }
+        });
+    }
+}
+
+// Limpiar respuestas guardadas al enviar el formulario
+function limpiarRespuestasGuardadas() {
+    localStorage.removeItem('formData');
+}
+
+// Escuchar cambios en los campos del formulario
+document.querySelectorAll('input, select, textarea').forEach(input => {
+    input.addEventListener('input', guardarRespuestas);
+    input.addEventListener('change', guardarRespuestas);
+});
+
+// Llamar a la función al cargar la página
+window.onload = function() {
+    preguntarContinuar();
+    prellenarFechaHora(); // Asegúrate de que esta función se llame si es necesaria
+};
 	
 	
 </script>
