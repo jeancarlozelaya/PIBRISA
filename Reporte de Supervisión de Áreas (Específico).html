@@ -1571,6 +1571,30 @@ async function enviarDatos() {
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
+        // Función para convertir una imagen a base64
+        function getBase64Image(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous"; // Permitir imágenes de diferentes dominios
+                img.onload = function () {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+                    const dataURL = canvas.toDataURL("image/png");
+                    resolve(dataURL); // Resolver con la cadena base64
+                };
+                img.onerror = function (error) {
+                    reject(error); // Rechazar si hay un error al cargar la imagen
+                };
+                img.src = url; // Cargar la imagen desde la URL
+            });
+        }
+
+        // Convertir la imagen del logo a base64
+        const logoBase64 = await getBase64Image("Imágenes\Icono.png");
+
         // Función para agregar texto con manejo de nuevas páginas
         function addTextWithPageBreak(text, x, y, options = {}) {
             const lineHeight = 10; // Altura de línea
@@ -1600,9 +1624,8 @@ async function enviarDatos() {
         pdf.setFont("times", "bold");
         pdf.setFontSize(16);
 
-        // Agregar el logo
-        const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."; // Aquí va tu imagen en base64
-        pdf.addImage(logoBase64, 'PNG', 10, 10, 50, 50); // Ajusta las coordenadas y el tamaño según sea necesario
+        // Agregar el logo (usando la cadena base64 generada automáticamente)
+        pdf.addImage(logoBase64, "PNG", 10, 10, 50, 50); // Ajusta las coordenadas y el tamaño según sea necesario
 
         // Título del reporte
         pdf.setFontSize(24);
@@ -1958,28 +1981,6 @@ function recopilarRespuestas() {
 
 
 <!-- Contenedor para EnviarDatos-->
-
-
-function getBase64Image(url, callback) {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = function() {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        const dataURL = canvas.toDataURL('image/png');
-        callback(dataURL);
-    };
-    img.src = url;
-}
-
-// Llamar a la función con la URL de la imagen
-getBase64Image('Imágenes/Icono.png', function(base64Image) {
-    console.log(base64Image); // Aquí tienes la imagen en base64
-});
-
 	
 	
 </script>
