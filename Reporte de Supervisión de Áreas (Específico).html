@@ -599,11 +599,11 @@
                 </div>
             </div>
 
-<div class="botones-container">
+            <div class="botones-container">
                 <button type="button" id="back">Regresar</button>
                 <button type="button" id="next">Siguiente</button>
                 <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
-</div>
+            </div>
 
             <!-- Contenedor para bloquear la pantalla -->
             <div id="overlay" style="display: none;">
@@ -1430,144 +1430,38 @@ const questionsPractica = [
 ];
 
 
-const questionsSectionOficinas = document.getElementById("questionsSectionOficinas");
-const questionsSectionPasillos = document.getElementById("questionsSectionPasillos");
-const questionsSectionFood = document.getElementById("questionsSectionFood");
-const questionsSectionBano = document.getElementById("questionsSectionBano");
-const questionsSectionAlrededor = document.getElementById("questionsSectionAlrededor");
-const questionsSectionPractica = document.getElementById("questionsSectionPractica");
+// Función para generar preguntas dinámicamente
+function generateQuestions(questions, sectionId) {
+    const section = document.getElementById(sectionId);
 
-// Generar preguntas dinámicamente para oficinas
-questionsOficinas.forEach((q) => {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question-container");
-    const label = document.createElement("label");
-    label.setAttribute("for", q.id);
-    label.textContent = q.text;
-    questionContainer.appendChild(label);
+    questions.forEach((q) => {
+        const questionContainer = document.createElement("div");
+        questionContainer.classList.add("question-container");
 
-    const select = document.createElement("select");
-    select.id = q.id;
-    select.name = q.id;
-    select.innerHTML =
-        '<option value="">Selecciona una opción</option>' +
-        q.options
-            .map((option) => `<option value="${option}">${option}</option>`)
-            .join("");
-    questionContainer.appendChild(select);
+        const label = document.createElement("label");
+        label.setAttribute("for", q.id);
+        label.textContent = q.text;
+        questionContainer.appendChild(label);
 
-    questionsSectionOficinas.appendChild(questionContainer);
-});
+        const select = document.createElement("select");
+        select.id = q.id;
+        select.name = q.id;
+        select.innerHTML =
+            '<option value="">Selecciona una opción</option>' +
+            q.options.map((option) => `<option value="${option}">${option}</option>`).join("");
+        questionContainer.appendChild(select);
 
-// Generar preguntas dinámicamente para pasillos
-questionsPasillos.forEach((q) => {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question-container");
-    const label = document.createElement("label");
-    label.setAttribute("for", q.id);
-    label.textContent = q.text;
-    questionContainer.appendChild(label);
+        section.appendChild(questionContainer);
+    });
+}
 
-    const select = document.createElement("select");
-    select.id = q.id;
-    select.name = q.id;
-    select.innerHTML =
-        '<option value="">Selecciona una opción</option>' +
-        q.options
-            .map((option) => `<option value="${option}">${option}</option>`)
-            .join("");
-    questionContainer.appendChild(select);
-
-    questionsSectionPasillos.appendChild(questionContainer);
-});
-
-// Generar preguntas dinámicamente para Food Court / Área de Comida
-questionsFood.forEach((q) => {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question-container");
-    const label = document.createElement("label");
-    label.setAttribute("for", q.id);
-    label.textContent = q.text;
-    questionContainer.appendChild(label);
-
-    const select = document.createElement("select");
-    select.id = q.id;
-    select.name = q.id;
-    select.innerHTML =
-        '<option value="">Selecciona una opción</option>' +
-        q.options
-            .map((option) => `<option value="${option}">${option}</option>`)
-            .join("");
-    questionContainer.appendChild(select);
-
-    questionsSectionFood.appendChild(questionContainer);
-});
-
-// Generar preguntas dinámicamente para Baños
-questionsBano.forEach((q) => {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question-container");
-    const label = document.createElement("label");
-    label.setAttribute("for", q.id);
-    label.textContent = q.text;
-    questionContainer.appendChild(label);
-
-    const select = document.createElement("select");
-    select.id = q.id;
-    select.name = q.id;
-    select.innerHTML =
-        '<option value="">Selecciona una opción</option>' +
-        q.options
-            .map((option) => `<option value="${option}">${option}</option>`)
-            .join("");
-    questionContainer.appendChild(select);
-
-    questionsSectionBano.appendChild(questionContainer);
-});
-
-// Generar preguntas dinámicamente para Alrededores
-questionsAlrededor.forEach((q) => {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question-container");
-    const label = document.createElement("label");
-    label.setAttribute("for", q.id);
-    label.textContent = q.text;
-    questionContainer.appendChild(label);
-
-    const select = document.createElement("select");
-    select.id = q.id;
-    select.name = q.id;
-    select.innerHTML =
-        '<option value="">Selecciona una opción</option>' +
-        q.options
-            .map((option) => `<option value="${option}">${option}</option>`)
-            .join("");
-    questionContainer.appendChild(select);
-
-    questionsSectionAlrededor.appendChild(questionContainer);
-});
-
-// Generar preguntas dinámicamente para las buenas prácticas
-questionsPractica.forEach((q) => {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question-container");
-    const label = document.createElement("label");
-    label.setAttribute("for", q.id);
-    label.textContent = q.text;
-    questionContainer.appendChild(label);
-
-    const select = document.createElement("select");
-    select.id = q.id;
-    select.name = q.id;
-    select.innerHTML =
-        '<option value="">Selecciona una opción</option>' +
-        q.options
-            .map((option) => `<option value="${option}">${option}</option>`)
-            .join("");
-    questionContainer.appendChild(select);
-
-    questionsSectionPractica.appendChild(questionContainer);
-});
+// Generar preguntas para cada sección
+generateQuestions(questionsOficinas, "questionsSectionOficinas");
+generateQuestions(questionsPasillos, "questionsSectionPasillos");
+generateQuestions(questionsFood, "questionsSectionFood");
+generateQuestions(questionsBano, "questionsSectionBano");
+generateQuestions(questionsAlrededor, "questionsSectionAlrededor");
+generateQuestions(questionsPractica, "questionsSectionPractica");
 
 
 <!-- Contenedor de Generación de Preguntas-->
