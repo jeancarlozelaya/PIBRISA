@@ -441,6 +441,17 @@
         }
 
 
+
+
+.question-container.incomplete {
+    border-color: red;
+}
+
+.question-container.complete {
+    border-color: green;
+}
+
+
 </style>
 
 
@@ -636,6 +647,10 @@ data.preguntas.forEach((pregunta, index) => {
     // Ocultar el overlay de espera
     document.getElementById('overlay').style.display = 'none';
     }
+
+// Llamar a setupQuestionContainers después de agregar las preguntas dinámicas
+setupQuestionContainers();
+
 });
 
 
@@ -1137,6 +1152,56 @@ Swal.fire({
 
 
 
+
+<!-- Contenedor para Saber si la Pregunta esta Completa -->
+
+
+function checkQuestionContainer(container) {
+    const inputs = container.querySelectorAll('input, textarea, select');
+    let isComplete = true;
+
+    inputs.forEach(input => {
+        if (input.type === 'date' && !input.value.trim()) {
+            isComplete = false;
+        } else if (input.type === 'text' && !input.value.trim()) {
+            isComplete = false;
+        } else if (input.tagName === 'TEXTAREA' && !input.value.trim()) {
+            isComplete = false;
+        } else if (input.tagName === 'SELECT' && input.value === "") {
+            isComplete = false;
+        }
+    });
+
+    if (isComplete) {
+        container.classList.remove('incomplete');
+        container.classList.add('complete');
+    } else {
+        container.classList.remove('complete');
+        container.classList.add('incomplete');
+    }
+}
+
+function setupQuestionContainers() {
+    const questionContainers = document.querySelectorAll('.question-container');
+    questionContainers.forEach(container => {
+        const inputs = container.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => checkQuestionContainer(container));
+            input.addEventListener('change', () => checkQuestionContainer(container));
+        });
+
+        // Verificar el estado inicial
+        checkQuestionContainer(container);
+    });
+}
+
+// Llamar a la función cuando el DOM esté completamente cargado
+document.addEventListener("DOMContentLoaded", function () {
+    setupQuestionContainers();
+});
+
+
+<!-- Contenedor para Saber si la Pregunta esta Completa -->
 
 
 
