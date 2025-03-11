@@ -598,9 +598,10 @@ async function enviarDatos() {
                 confirmButton: 'swal-button',
                 popup: 'swal-popup'
             }
+        }).then(() => {
+            // Recargar la página después de hacer clic en "Aceptar"
+            window.location.reload();
         });
-        document.getElementById("form-container").reset(); // Limpia el formulario después del envío
-        submitButton.disabled = true; // Deshabilita el botón de enviar después de enviar el formulario
     })
     .catch(error => {
         // Oculta el overlay
