@@ -432,6 +432,18 @@ button:not(:disabled) {
                 </div>
             </div>
 
+
+                <div class="question-container">
+                    <label for="adjunto1">Evidencia (Opcional):</label>
+                    <div class="file-upload" id="drag-area1" onclick="document.getElementById('adjunto1').click()">
+                        <input type="file" id="adjunto1" name="adjunto1" accept="image/*" multiple>
+                        <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
+                    </div>
+                    <div id="preview1" class="image-preview"></div>
+                </div>
+
+
+
             <div class="botones-container">
                 <button type="submit" id="submit-button" disabled>Enviar</button>
             </div>
@@ -481,7 +493,74 @@ button:not(:disabled) {
         });
 
 // Función para enviar los datos
-function enviarDatos() {
+async function enviarDatos() {
+    // Verificar si hay imágenes adjuntas
+    const hasImages = selectedFiles.preview1.length > 0;
+
+    // Crear el PDF solo si hay imágenes
+    let pdfBase64 = null;
+    if (hasImages) {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ format: "letter" });
+
+        // Manejar datos adjuntos (imágenes)
+        for (let i = 1; i <= 1; i++) {
+            if (selectedFiles[`preview${i}`].length > 0) {
+                const files = selectedFiles[`preview${i}`];
+                let imgCount = 0;
+
+                // Establecer el título según el grupo de imágenes
+                pdf.setFont("times", "bold");
+                let sectionTitle = "Evidencia:";
+                pdf.text(sectionTitle, 10, 15);
+
+                const imgWidth = 60; // Ancho de imagen ajustado
+                const imgHeight = 40; // Alto de imagen ajustado
+                const marginX = 15; // Margen izquierdo
+                const marginY = 20; // Margen superior
+                const spacingX = 65; // Espacio entre columnas
+                const spacingY = 45; // Espacio entre filas
+                const pageHeight = pdf.internal.pageSize.height; // Altura de la página
+
+                // Iterar a través de las imágenes
+                for (let j = 0; j < files.length; j++) {
+                    const file = files[j];
+                    const imgData = await compressImage(file, 0.5); // Comprimir imagen
+
+                    // Calcular la posición X y Y para la imagen
+                    const x = (imgCount % 3) * spacingX + marginX; // Posición X
+                    const y = Math.floor(imgCount / 3) * spacingY + marginY; // Posición Y
+
+                    // Verificar si la imagen se sale de los márgenes de la página
+                    if (y + imgHeight > pageHeight - marginY) {
+                        // Añadir nueva página si se excede el espacio
+                        pdf.addPage();
+                        pdf.text(`Continuación datos adjuntos #${i}:`, 10, 10);
+                        imgCount = 0; // Reiniciar el conteo para la nueva página
+                    }
+
+                    // Añadir la imagen a la página
+                    pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
+                    imgCount++;
+
+                    // Si imgCount llega a 15, reiniciar
+                    if (imgCount === 15) {
+                        imgCount = 0; // Reiniciar el conteo de imágenes para la siguiente página
+
+                        // Solo añadir una nueva página si hay más de 15 imágenes
+                        if (files.length % 15 !== 0 && files.length > 0) {
+                            pdf.addPage(); // Añadir nueva página
+                            pdf.text(sectionTitle, 10, 15);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Convertir el PDF a base64
+        pdfBase64 = pdf.output('datauristring').split(',')[1];
+    }
+
     // Captura los valores del formulario
     const area = areaSelect.value;
     const insumos = Array.from(insumosCheckboxes)
@@ -494,7 +573,8 @@ function enviarDatos() {
     const datos = {
         area: area,
         insumos: insumos,
-        administracion: administracion
+        administracion: administracion,
+        pdf: pdfBase64 || "" // Enviar el PDF solo si existe
     };
 
     // Envía los datos al servidor
@@ -540,6 +620,7 @@ function enviarDatos() {
     });
 }
 
+
 // Manejar el envío del formulario
 document.getElementById("form-container").addEventListener("submit", function(event) {
     event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
@@ -565,6 +646,124 @@ document.getElementById("form-container").addEventListener("submit", function(ev
         }
     });
 });
+
+
+
+
+<!-- Contenedor para Datos Adjuntos -->
+
+// Objetos para almacenar las imágenes seleccionadas por vista previa
+const selectedFiles = {
+    preview1: [],
+};
+
+function handleFileInput(event, previewId) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById(previewId);
+
+    Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const div = document.createElement("div");
+            div.classList.add("image-preview-item");
+            div.innerHTML = `
+	                    <img src="${e.target.result}" alt="Preview">
+	                    <div class="delete-icon" onclick="deleteImage('${previewId}', ${selectedFiles[previewId].length})">×</div>
+	                `;
+            previewContainer.appendChild(div);
+
+            // Almacena el archivo en la lista correspondiente
+            selectedFiles[previewId].push(file);
+
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Resetea el input para permitir seleccionar los mismos archivos nuevamente si es necesario
+    event.target.value = "";
+}
+
+function deleteImage(previewId, index) {
+    const previewContainer = document.getElementById(previewId);
+
+    // Elimina la imagen de la vista previa
+    previewContainer.removeChild(previewContainer.children[index]);
+
+    // Elimina el archivo correspondiente del arreglo
+    selectedFiles[previewId].splice(index, 1);
+
+    // Actualiza los índices de las imágenes restantes en la vista previa
+    Array.from(previewContainer.children).forEach((child, newIndex) => {
+        const deleteIcon = child.querySelector(".delete-icon");
+        deleteIcon.setAttribute(
+            "onclick",
+            `deleteImage('${previewId}', ${newIndex})`
+        );
+    });
+}
+
+// Eventos para manejar las entradas de archivos
+document
+    .getElementById("adjunto1")
+    .addEventListener("change", (e) => handleFileInput(e, "preview1"));
+
+// Funciones para manejar arrastre de archivos
+const dragAreas = ["drag-area1"];
+dragAreas.forEach((area) => {
+    const dragArea = document.getElementById(area);
+    dragArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dragArea.style.backgroundColor = "#e0f7ff"; // Resaltar el área
+    });
+
+    dragArea.addEventListener("dragleave", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dragArea.style.backgroundColor = "#f0f8ff"; // Restaurar color de fondo
+    });
+
+    dragArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const files = event.dataTransfer.files;
+        const previewId = area.replace("drag-area", "preview");
+        handleFileInput({ target: { files } }, previewId);
+    });
+});
+
+// Definir la función compressImage en el ámbito global
+function compressImage(file, quality) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                // Redimensionar imagen
+                const maxWidth = 600;
+                const scale = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scale;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL("image/jpeg", quality);
+                resolve(dataUrl);
+            };
+            img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+
+<!-- Contenedor para Datos Adjuntos -->
+
+
+
     </script>
 </body>
 </html>
