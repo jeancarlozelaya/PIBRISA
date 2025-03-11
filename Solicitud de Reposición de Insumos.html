@@ -593,6 +593,7 @@ async function enviarDatos() {
             text: 'Hemos recibido tu solicitud. Pronto atenderemos tu requerimiento.',
             icon: 'success',
             confirmButtonText: 'Aceptar',
+            allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
             customClass: {
                 content: 'swal-content',
                 confirmButton: 'swal-button',
@@ -633,6 +634,7 @@ document.getElementById("form-container").addEventListener("submit", function(ev
         showCancelButton: true,
         confirmButtonText: "Sí 🫡",
         cancelButtonText: "No 😬",
+        allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
         customClass: {
             popup: "swal-popup", // Clase para el modal
             confirmButton: "swal-button", // Clase para el botón de confirmación
