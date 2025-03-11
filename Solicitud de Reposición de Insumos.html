@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PIBRISA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<style>
+
+
+    /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
+    body, html {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+    }
+
+
+
+.header-image {
+    max-width: 100%; /* La imagen no excederá el ancho del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    max-height: 100px; /* Ajusta la altura máxima de la imagen */
+    margin-top: 50px; /* Mueve la imagen hacia abajo */
+}
+
+
+
+    /* Contenedor del formulario */
+    .container {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        text-align: center;
+        margin: 40px auto;
+        grid-row: 2;
+        height: auto;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin: 0 0 20px 0; /* Ajusta el margen inferior */
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    input[type="date"],
+    input[type="time"],
+    textarea,
+    select,
+    #oficina,
+    button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        padding: 12px 0;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+
+    /* Estilo para los contenedores de preguntas */
+    .question-container {
+        margin-bottom: 20px;
+        text-align: left;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+    }
+
+    .question-container:hover {
+        border-color: #007BFF;
+    }
+
+    .question-container input[type="date"],
+    .question-container input[type="time"],
+    .question-container textarea,
+    .question-container oficina,
+    .question-container select {
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        transition: border-color 0.3s;
+        box-sizing: border-box; /* Incluye el padding en el ancho total */
+        margin-top: 5px;
+    }
+
+    .question-container input[type="date"]:focus,
+    .question-container input[type="time"]:focus,
+    .question-container textarea:focus,
+    .question-container oficina:focus,
+    .question-container select:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+
+    /* Estilo del overlay (pantalla bloqueada */
+
+
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    #loadingMessage {
+        color: white;
+        font-size: 24px;
+        font-family: 'Times New Roman', Times, serif;
+        text-align: center;
+        padding: 20px;
+    }
+
+
+    /* Estilo del overlay (pantalla bloqueada */
+
+
+    /* Estilo para Mensajes */
+
+
+    .swal-actions {
+        display: flex; /* Coloca los botones en una fila */
+        justify-content: center; /* Centra los botones horizontalmente */
+        gap: 10px; /* Espacio entre los botones */
+        width: 80%; /* Limita el ancho del contenedor al 80% del modal */
+        margin: 0 auto; /* Centra el contenedor horizontalmente */
+        flex-wrap: nowrap; /* Evita que los botones se apilen en dos filas */
+    }
+
+    /* Estilo personalizado para el contenido del mensaje */
+    .swal-content {
+        font-size: 0.9em;  /* Reduce el tamaño del texto */
+        line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+    }
+
+    /* Estilo personalizado para ambos botones */
+    .swal-button,
+    .swal-button-cancel {
+        flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+        min-width: 120px; /* Ancho mínimo para ambos botones */
+        padding: 10px 20px; /* Espaciado interno */
+        font-size: 14px; /* Tamaño de fuente */
+        text-align: center; /* Centra el texto dentro del botón */
+        border: none; /* Elimina el borde predeterminado */
+        border-radius: 4px; /* Bordes redondeados */
+        color: white; /* Texto en blanco */
+        transition: background-color 0.3s ease; /* Transición suave para el hover */
+    }
+
+    /* Estilo personalizado para el popup/modal */
+    .swal-popup {
+        width: 300px;  /* Ajusta el ancho máximo del modal */
+        max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+    }
+
+    /* Opcional: colores específicos para cada botón */
+    .swal-button {
+        background-color: #28a745;  /* Verde para el botón de "Sí" */
+        color: white;  /* Texto en blanco */
+        border: none;
+        border-radius: 4px;
+    }
+
+.swal2-popup .swal2-actions .swal-button-cancel {
+    background-color: #FF6347 !important; /* Usa !important para forzar el estilo */
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+}
+
+    .swal2-actions {
+        display: flex !important;  /* Asegura que los botones estén en una fila */
+        justify-content: center;   /* Centra los botones horizontalmente */
+        gap: 10px;                 /* Agrega espacio entre los botones */
+        flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
+    }
+
+
+    /* Eliminar el borde negro del ícono personalizado */
+    .swal2-icon.swal2-icon-show {
+        background-color: transparent !important; /* Fondo transparente */
+    }
+
+
+    /* Estilo para Mensajes */
+
+
+    /* Estilo para Datos Adjuntos */
+
+
+    .image-preview {
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 0px solid #ccc;
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+
+    .image-preview-item {
+        position: relative;
+        width: 85px;
+        height: 85px;
+        overflow: hidden;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .image-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .delete-icon {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .image-preview-item:hover .delete-icon {
+        opacity: 1;
+    }
+
+    /* Estilos para el área de carga de imágenes */
+    .file-upload {
+        display: block;
+        position: relative;
+        width: 100%;
+        padding: 20px;
+        background: #f0f8ff;
+        border: 2px dashed #ccc;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        box-sizing: border-box;
+        border: 2px dashed #007BFF;
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: #f0f8ff;
+        color: #007BFF;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        margin: 10px 0;
+    }
+
+    .file-upload:hover {
+        border-color: #0056b3;
+    }
+
+    .file-upload input[type="file"] {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+
+    /* Estilo para Datos Adjuntos */
+
+/* Estilo para el botón deshabilitado */
+button:disabled {
+    background-color: #cccccc; /* Color de fondo gris */
+    color: #666666; /* Color de texto gris oscuro */
+    cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+    opacity: 0.7; /* Reduce la opacidad para que parezca deshabilitado */
+}
+
+/* Estilo para el botón habilitado */
+button:not(:disabled) {
+    background-color: #007bff; /* Color de fondo azul */
+    color: #fff; /* Color de texto blanco */
+    cursor: pointer; /* Cambia el cursor a "puntero" */
+    opacity: 1; /* Opacidad completa */
+}
+
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <img src="https://github.com/jeancarlozelaya/PIBRISA/blob/main/Im%C3%A1genes/Icono.png?raw=true" alt="Pisos Brillantes" class="header-image">
+</div>
+    <div class="container">
+        <h1>Solicitud de Reposición de Insumos</h1>
+        <form id="form-container">
+
+            <div class="question-container">
+                <label for="area">Área:</label>
+                <select id="area" name="area">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Administración">Administración</option>
+                    <option value="Almacén General">Almacén General</option>
+                    <option value="Baños de Transportistas">Baños de Transportistas</option>
+                    <option value="Camerinos Contratistas">Camerinos Contratistas</option>
+                    <option value="Camerinos Permanentes">Camerinos Permanentes</option>
+                    <option value="Chiminike">Chiminike</option>
+                    <option value="Despacho">Despacho</option>
+                    <option value="Enfermería">Enfermería</option>
+                    <option value="Equipo Móvil">Equipo Móvil</option>
+                    <option value="Expedición">Expedición</option>
+                    <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
+                    <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+                    <option value="Machaqueo A">Machaqueo A</option>
+                    <option value="Posta Principal">Posta Principal</option>
+                    <option value="Sala de Control">Sala de Control</option>
+                    <option value="Sala de Maternidad">Sala de Maternidad</option>
+                    <option value="Salón Vial">Salón Vial</option>
+                    <option value="Taller Eléctrico">Taller Eléctrico</option>
+                </select>
+            </div>
+
+            <div class="question-container" id="oficina-bano-container" style="display: none;">
+                <label for="administracion">Oficina / Baño:</label>
+                <select id="administracion" name="administracion">
+                    <option value="">Selecciona una opción</option>
+<option value="Baño de Gerencia">Baño de Gerencia</option>
+<option value="Baño de Mujeres">Baño de Mujeres</option>
+<option value="Baño de Sala de Reuniones">Baño de Sala de Reuniones</option>
+<option value="Baño de Varones">Baño de Varones</option>
+<option value="Compras">Compras</option>
+<option value="Contabilidad">Contabilidad</option>
+<option value="CRO">CRO</option>
+<option value="Ejecutores de Mantenimiento">Ejecutores de Mantenimiento</option>
+<option value="Gestión Humana">Gestión Humana</option>
+<option value="Inspectores de Mantenimiento">Inspectores de Mantenimiento</option>
+<option value="Lobby">Lobby</option>
+<option value="Materias Primas">Materias Primas</option>
+<option value="Procesos">Procesos</option>
+<option value="Producción">Producción</option>
+<option value="Profesionales Eléctricos">Profesionales Eléctricos</option>
+<option value="Proyectos">Proyectos</option>
+<option value="Sala de Espera de Gerencia">Sala de Espera de Gerencia</option>
+<option value="Sala de Reuniones">Sala de Reuniones</option>
+<option value="Sala de Reuniones de Mantenimiento">Sala de Reuniones de Mantenimiento</option>
+<option value="SISO">SISO</option>
+<option value="Sub Gerencia">Sub Gerencia</option>
+
+                </select>
+            </div>
+
+            <div class="question-container">
+                <label>Insumos:</label>
+                <div>
+                    <label><input type="checkbox" name="insumo" value="Papel Higiénico"> Papel Higiénico</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="insumo" value="Papel Toalla"> Papel Toalla</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="insumo" value="Jabón"> Jabón</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="insumo" value="Gel"> Gel</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="insumo" value="Vasos Cónicos"> Vasos Cónicos</label>
+                </div>
+            </div>
+
+            <div class="botones-container">
+                <button type="submit" id="submit-button" disabled>Enviar</button>
+            </div>
+
+            <!-- Contenedor para bloquear la pantalla -->
+            <div id="overlay" style="display: none;">
+                <div id="loadingMessage">
+                    <p>Procesando...🥱</p>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        const areaSelect = document.getElementById("area");
+        const oficinaBanoContainer = document.getElementById("oficina-bano-container");
+        const administracionSelect = document.getElementById("administracion");
+        const insumosCheckboxes = document.querySelectorAll('input[name="insumo"]');
+        const submitButton = document.getElementById("submit-button");
+
+        function checkForm() {
+            const areaSelected = areaSelect.value !== "";
+            const administracionSelected = areaSelect.value === "Administración" ? administracionSelect.value !== "" : true;
+            const atLeastOneInsumoChecked = Array.from(insumosCheckboxes).some(checkbox => checkbox.checked);
+
+            if (areaSelected && administracionSelected && atLeastOneInsumoChecked) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        areaSelect.addEventListener("change", function() {
+            if (this.value === "Administración") {
+                oficinaBanoContainer.style.display = "block";
+            } else {
+                oficinaBanoContainer.style.display = "none";
+            }
+            checkForm();
+        });
+
+        administracionSelect.addEventListener("change", checkForm);
+
+        insumosCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", checkForm);
+        });
+
+// Función para enviar los datos
+function enviarDatos() {
+    // Captura los valores del formulario
+    const area = areaSelect.value;
+    const insumos = Array.from(insumosCheckboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value)
+        .join(", ");
+    const administracion = areaSelect.value === "Administración" ? administracionSelect.value : "";
+
+    // Prepara los datos para enviar
+    const datos = {
+        area: area,
+        insumos: insumos,
+        administracion: administracion
+    };
+
+    // Envía los datos al servidor
+    fetch("https://script.google.com/macros/s/AKfycbx9lQ4ke6B1Y-O4gHBaZZ5WOj2Nq3YbM2tGr1tuqHJUaChl-xSSEtxKWCH81kCT2Ch8/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(datos)
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Oculta el overlay
+        document.getElementById("overlay").style.display = "none";
+
+        // Muestra un mensaje de éxito con SweetAlert2
+        Swal.fire({
+            text: 'Hemos recibido tu solicitud. Pronto atenderemos tu requerimiento.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            customClass: {
+                content: 'swal-content',
+                confirmButton: 'swal-button',
+                popup: 'swal-popup'
+            }
+        });
+        document.getElementById("form-container").reset(); // Limpia el formulario después del envío
+        submitButton.disabled = true; // Deshabilita el botón de enviar después de enviar el formulario
+    })
+    .catch(error => {
+        // Oculta el overlay
+        document.getElementById("overlay").style.display = "none";
+
+        // Muestra un mensaje de error con SweetAlert2
+        Swal.fire({
+            text: 'Ups, algo salió mal. Intenta nuevamente.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            customClass: {
+                content: 'swal-content',
+                confirmButton: 'swal-button',
+                popup: 'swal-popup'
+            }
+        });
+    });
+}
+
+// Manejar el envío del formulario
+document.getElementById("form-container").addEventListener("submit", function(event) {
+    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+
+    // Mostrar el mensaje de confirmación
+    Swal.fire({
+        text: "¿Seguro de continuar? 🤔\n\n Esperamos que tu solicitud sea legítima, ya que una mala información puede causar retrasos.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí 🫡",
+        cancelButtonText: "No 😬",
+        customClass: {
+            popup: "swal-popup", // Clase para el modal
+            confirmButton: "swal-button", // Clase para el botón de confirmación
+            cancelButton: "swal-button-cancel", // Clase para el botón de cancelación
+            actions: "swal-actions", // Clase para el contenedor de los botones
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar el overlay de "Procesando..."
+            document.getElementById("overlay").style.display = "flex";
+            enviarDatos(); // Llamar a la función para enviar los datos
+        }
+    });
+});
+    </script>
+</body>
+</html>
