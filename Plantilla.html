@@ -6,6 +6,8 @@
     <title>Escanear Código QR</title>
     <!-- FontAwesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <style>
         /* Estilos generales */
         body {
@@ -53,6 +55,7 @@
             border: 4px solid #fff;
             border-radius: 20px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            pointer-events: none;
         }
 
         /* Botón de linterna */
@@ -60,6 +63,24 @@
             position: absolute;
             top: 20px;
             left: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Botón de subir imagen */
+        #upload-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background-color: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
@@ -89,13 +110,42 @@
             width: 100%;
         }
 
+        /* Pantalla de recorte de imagen */
+        #crop-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #000;
+            position: relative;
+        }
+
+        #crop-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 20px;
+        }
+
+        #crop-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
         /* Pantalla de resultados */
         #result-screen {
             display: none;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background-color: #f0f0f0;
             color: #000;
             padding: 20px;
@@ -145,13 +195,13 @@
         #temp-message {
             margin-top: 10px;
             font-size: 0.9em;
-            color: #28a745; /* Color verde para el mensaje */
-            display: none; /* Oculto por defecto */
+            color: #28a745;
+            display: none;
             padding: 10px 20px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            animation: fadeInOut 3s ease-in-out; /* Animación de entrada y salida */
+            animation: fadeInOut 3s ease-in-out;
         }
 
         @keyframes fadeInOut {
@@ -166,9 +216,16 @@
         <video id="video" autoplay></video>
         <div id="overlay"></div>
         <button id="flashlight">🔦</button>
+        <button id="upload-image"><i class="fas fa-image"></i></button>
         <div id="zoom-control">
             <input type="range" id="zoom-slider" min="1" max="5" step="0.1" value="1">
         </div>
+    </div>
+
+    <!-- Pantalla de recorte de imagen -->
+    <div id="crop-screen">
+        <img id="crop-image" src="" alt="Imagen para recortar">
+        <button id="crop-button">Recortar y Escanear</button>
     </div>
 
     <!-- Pantalla de resultados -->
@@ -185,22 +242,30 @@
                 <i class="fas fa-redo"></i>
             </button>
         </div>
-        <div id="temp-message">Copiado</div> <!-- Mensaje temporal -->
+        <div id="temp-message">Copiado</div>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
         const video = document.getElementById('video');
         const cameraScreen = document.getElementById('camera-screen');
+        const cropScreen = document.getElementById('crop-screen');
         const resultScreen = document.getElementById('result-screen');
         const resultText = document.getElementById('result');
         const flashlightButton = document.getElementById('flashlight');
+        const uploadImageButton = document.getElementById('upload-image');
         const zoomSlider = document.getElementById('zoom-slider');
         const copyButton = document.getElementById('copy-button');
         const openButton = document.getElementById('open-button');
         const rescanButton = document.getElementById('rescan-button');
         const tempMessage = document.getElementById('temp-message');
+        const cropImage = document.getElementById('crop-image');
+        const cropButton = document.getElementById('crop-button');
         let stream;
         let torchEnabled = false;
+        let cropper;
 
         // Solicitar acceso a la cámara
         function startCamera() {
@@ -208,13 +273,13 @@
                 .then(function(s) {
                     stream = s;
                     video.srcObject = stream;
-                    video.setAttribute("playsinline", true); // iOS
+                    video.setAttribute("playsinline", true);
                     video.play();
                     requestAnimationFrame(tick);
                 })
                 .catch(function(err) {
                     console.error("Error al acceder a la cámara: ", err);
-                    showError('Error al acceder a la cámara. Asegúrate de permitir el acceso.');
+                    showTempMessage('Error al acceder a la cámara. Asegúrate de permitir el acceso.');
                 });
         }
 
@@ -231,7 +296,7 @@
                     flashlightButton.style.backgroundColor = torchEnabled ? "#fff" : "rgba(255, 255, 255, 0.2)";
                     flashlightButton.style.color = torchEnabled ? "#000" : "#fff";
                 } else {
-                    showWarning('Tu dispositivo no soporta la linterna.');
+                    showTempMessage('Tu dispositivo no soporta la linterna.');
                 }
             }
         });
@@ -246,7 +311,56 @@
             }
         });
 
-        // Detectar código QR
+        // Subir imagen
+        uploadImageButton.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        stopCamera();
+                        cameraScreen.style.display = 'none';
+                        cropScreen.style.display = 'flex';
+                        cropImage.src = event.target.result;
+
+                        // Inicializar Cropper.js
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        cropper = new Cropper(cropImage, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 1,
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+
+        // Recortar y escanear imagen
+        cropButton.addEventListener('click', () => {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas();
+                const imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+
+                if (code) {
+                    cropScreen.style.display = 'none';
+                    showResult(code.data);
+                } else {
+                    showTempMessage('No se encontró ningún código QR');
+                }
+            }
+        });
+
+        // Detectar código QR en la cámara
         function tick() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 const canvas = document.createElement('canvas');
@@ -281,15 +395,6 @@
         // Detener la cámara
         function stopCamera() {
             if (stream) {
-                // Desactivar la linterna
-                const track = stream.getVideoTracks()[0];
-                if (track.getCapabilities().torch && torchEnabled) {
-                    track.applyConstraints({ advanced: [{ torch: false }] });
-                    torchEnabled = false;
-                    flashlightButton.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
-                    flashlightButton.style.color = "#fff";
-                }
-
                 stream.getTracks().forEach(track => track.stop());
                 video.srcObject = null;
             }
@@ -297,8 +402,9 @@
 
         // Mostrar pantalla de resultados
         function showResult(data) {
-            cameraScreen.style.display = "none";
-            resultScreen.style.display = "flex";
+            cameraScreen.style.display = 'none';
+            cropScreen.style.display = 'none';
+            resultScreen.style.display = 'flex';
             resultText.textContent = data;
 
             // Copiar texto
@@ -324,7 +430,7 @@
 
             // Volver a escanear
             rescanButton.addEventListener('click', () => {
-                location.reload(); // Recargar la página para reiniciar la cámara
+                location.reload();
             });
         }
 
@@ -334,9 +440,8 @@
             tempMessage.style.display = 'block';
             setTimeout(() => {
                 tempMessage.style.display = 'none';
-            }, 3000); // Desaparece después de 3 segundos
+            }, 3000);
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </body>
 </html>
