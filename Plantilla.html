@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Escanear Código QR</title>
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Estilos generales */
         body {
@@ -48,8 +48,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 250px; /* Tamaño del cuadrado */
-            height: 250px; /* Tamaño del cuadrado */
+            width: 300px; /* Tamaño del cuadrado aumentado */
+            height: 300px; /* Tamaño del cuadrado aumentado */
             border: 4px solid #fff;
             border-radius: 20px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
@@ -120,73 +120,43 @@
             gap: 10px;
         }
 
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
+        /* Estilo para los botones con iconos */
+        .icon-button {
+            padding: 10px;
+            font-size: 1.5em;
             border: none;
-            border-radius: 5px;
+            border-radius: 50%;
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Estilos personalizados para SweetAlert2 */
-        .swal-actions {
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 10px;
-            width: 80%;
-            margin: 0 auto;
-            flex-wrap: nowrap;
-        }
-
-        .swal-content {
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-
-        .swal-button,
-        .swal-button-cancel {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px 20px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            border-radius: 4px;
-            color: white;
+            width: 50px;
+            height: 50px;
             transition: background-color 0.3s ease;
         }
 
-        .swal-button {
-            background-color: #28a745;
+        .icon-button:hover {
+            background-color: #0056b3;
         }
 
-        .swal2-popup .swal2-actions .swal-button-cancel {
-            background-color: #FF6347 !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 4px !important;
+        /* Mensaje temporal */
+        #temp-message {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #28a745; /* Color verde para el mensaje */
+            display: none; /* Oculto por defecto */
+            padding: 10px 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeInOut 3s ease-in-out; /* Animación de entrada y salida */
         }
 
-        .swal2-actions {
-            display: flex !important;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: nowrap;
-        }
-
-        .swal2-icon.swal2-icon-show {
-            background-color: transparent !important;
-        }
-
-        .swal-popup {
-            width: 300px;
-            max-width: 90%;
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -205,14 +175,19 @@
     <div id="result-screen">
         <div id="result">Cargando resultado...</div>
         <div id="buttons">
-            <button id="copy-button">Copiar</button>
-            <button id="open-button">Abrir enlace</button>
-            <button id="rescan-button">Volver a escanear</button>
+            <button class="icon-button" id="copy-button" title="Copiar">
+                <i class="fas fa-copy"></i>
+            </button>
+            <button class="icon-button" id="open-button" title="Abrir enlace">
+                <i class="fas fa-external-link-alt"></i>
+            </button>
+            <button class="icon-button" id="rescan-button" title="Volver a escanear">
+                <i class="fas fa-redo"></i>
+            </button>
         </div>
+        <div id="temp-message">Copiado</div> <!-- Mensaje temporal -->
     </div>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const video = document.getElementById('video');
         const cameraScreen = document.getElementById('camera-screen');
@@ -223,6 +198,7 @@
         const copyButton = document.getElementById('copy-button');
         const openButton = document.getElementById('open-button');
         const rescanButton = document.getElementById('rescan-button');
+        const tempMessage = document.getElementById('temp-message');
         let stream;
         let torchEnabled = false;
 
@@ -329,10 +305,10 @@
             copyButton.addEventListener('click', () => {
                 navigator.clipboard.writeText(data)
                     .then(() => {
-                        showSuccess('El texto se ha copiado al portapeles.');
+                        showTempMessage('Copiado');
                     })
                     .catch(() => {
-                        showError('No se pudo copiar el texto.');
+                        showTempMessage('Error al copiar');
                     });
             });
 
@@ -342,61 +318,23 @@
                     new URL(data);
                     window.open(data, '_blank');
                 } catch {
-                    showWarning('No es un enlace válido.');
+                    showTempMessage('No es un enlace válido');
                 }
             });
 
             // Volver a escanear
             rescanButton.addEventListener('click', () => {
-                resultScreen.style.display = "none";
-                cameraScreen.style.display = "flex";
-                startCamera(); // Reiniciar la cámara correctamente
+                location.reload(); // Recargar la página para reiniciar la cámara
             });
         }
 
-        // Mostrar mensaje de éxito
-        function showSuccess(message) {
-            Swal.fire({
-                text: message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar',
-                allowOutsideClick: false,
-                customClass: {
-                    content: 'swal-content',
-                    confirmButton: 'swal-button',
-                    popup: 'swal-popup'
-                }
-            });
-        }
-
-        // Mostrar mensaje de error
-        function showError(message) {
-            Swal.fire({
-                text: message,
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                allowOutsideClick: false,
-                customClass: {
-                    content: 'swal-content',
-                    confirmButton: 'swal-button',
-                    popup: 'swal-popup'
-                }
-            });
-        }
-
-        // Mostrar mensaje de advertencia
-        function showWarning(message) {
-            Swal.fire({
-                text: message,
-                icon: 'warning',
-                confirmButtonText: 'Aceptar',
-                allowOutsideClick: false,
-                customClass: {
-                    content: 'swal-content',
-                    confirmButton: 'swal-button',
-                    popup: 'swal-popup'
-                }
-            });
+        // Mostrar mensaje temporal
+        function showTempMessage(message) {
+            tempMessage.textContent = message;
+            tempMessage.style.display = 'block';
+            setTimeout(() => {
+                tempMessage.style.display = 'none';
+            }, 3000); // Desaparece después de 3 segundos
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
