@@ -122,49 +122,20 @@
             position: relative;
         }
 
+        #crop-container {
+            position: relative;
+            width: 90%; /* Ajustar al ancho del móvil */
+            max-width: 500px; /* Limitar el tamaño máximo */
+        }
+
         #crop-image {
             max-width: 100%;
-            max-height: 70vh;
+            max-height: 60vh; /* Reducir altura para dejar espacio a los botones */
             border-radius: 20px;
+            display: block;
         }
 
-        #crop-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Pantalla de resultados */
-        #result-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100vh;
-            background-color: #f0f0f0;
-            color: #000;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        #result {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            word-wrap: break-word;
-            margin-top: 20px;
-        }
-
-        #buttons {
+        #crop-buttons {
             margin-top: 20px;
             display: flex;
             gap: 10px;
@@ -189,6 +160,45 @@
 
         .icon-button:hover {
             background-color: #0056b3;
+        }
+
+        /* Mensaje de error en la pantalla de recorte */
+        #crop-error {
+            margin-top: 10px;
+            color: #ff4444;
+            display: none;
+        }
+
+        /* Pantalla de resultados */
+        #result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Alinear contenido en la parte superior */
+            width: 100%;
+            height: 100vh;
+            background-color: #f0f0f0;
+            color: #000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #result {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+
+        #buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
         }
 
         /* Mensaje temporal */
@@ -224,8 +234,18 @@
 
     <!-- Pantalla de recorte de imagen -->
     <div id="crop-screen">
-        <img id="crop-image" src="" alt="Imagen para recortar">
-        <button id="crop-button">Recortar y Escanear</button>
+        <div id="crop-container">
+            <img id="crop-image" src="" alt="Imagen para recortar">
+        </div>
+        <div id="crop-buttons">
+            <button class="icon-button" id="back-button" title="Atrás">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button class="icon-button" id="crop-button" title="Recortar y Escanear">
+                <i class="fas fa-crop"></i>
+            </button>
+        </div>
+        <div id="crop-error">No se encontró ningún código QR</div>
     </div>
 
     <!-- Pantalla de resultados -->
@@ -263,6 +283,8 @@
         const tempMessage = document.getElementById('temp-message');
         const cropImage = document.getElementById('crop-image');
         const cropButton = document.getElementById('crop-button');
+        const backButton = document.getElementById('back-button');
+        const cropError = document.getElementById('crop-error');
         let stream;
         let torchEnabled = false;
         let cropper;
@@ -342,6 +364,13 @@
             input.click();
         });
 
+        // Botón de "Atrás" en la pantalla de recorte
+        backButton.addEventListener('click', () => {
+            cropScreen.style.display = 'none';
+            cameraScreen.style.display = 'flex';
+            startCamera();
+        });
+
         // Recortar y escanear imagen
         cropButton.addEventListener('click', () => {
             if (cropper) {
@@ -355,7 +384,7 @@
                     cropScreen.style.display = 'none';
                     showResult(code.data);
                 } else {
-                    showTempMessage('No se encontró ningún código QR');
+                    cropError.style.display = 'block'; // Mostrar mensaje de error
                 }
             }
         });
