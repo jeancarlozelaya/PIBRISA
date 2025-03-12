@@ -18,10 +18,8 @@
             color: #333;
         }
 
-
         .header {
             background-color: #007BFF;
-
             color: white;
             text-align: center;
             padding: 15px 0;
@@ -225,7 +223,6 @@
             10%, 90% { opacity: 1; transform: translateY(0); }
         }
 
-
         /* Títulos generales */
         .screen-title {
             font-size: 2em;
@@ -234,8 +231,6 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
             margin-bottom: 10px; /* Espacio debajo del título */
         }
-
-
     </style>
 </head>
 <body>
@@ -243,7 +238,6 @@
     <div class="header">
         Pisos Brillantes
     </div>
-
 
     <!-- Pantalla de la cámara -->
     <div id="camera-screen">
@@ -412,21 +406,27 @@
 
         // Recortar y escanear imagen
         cropButton.addEventListener('click', () => {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas();
-                const imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
-
-                if (code) {
-                    cropScreen.style.display = 'none';
-                    showResult(code.data);
-                } else {
-                    cropError.style.display = 'block'; // Mostrar mensaje de error
-                }
-            }
+    if (cropper) {
+        const canvas = cropper.getCroppedCanvas({
+            width: 500, // Ajusta el ancho del canvas
+            height: 500, // Ajusta la altura del canvas
         });
+        const imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "dontInvert",
+        });
+
+        if (code) {
+            cropScreen.style.display = 'none';
+            showResult(code.data);
+        } else {
+            cropError.style.display = 'block'; // Mostrar mensaje de error
+            setTimeout(() => {
+                cropError.style.display = 'none'; // Ocultar mensaje de error después de 3 segundos
+            }, 3000);
+        }
+    }
+});
 
         // Detectar código QR en la cámara
         function tick() {
