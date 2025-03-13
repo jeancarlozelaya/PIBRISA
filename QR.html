@@ -29,7 +29,7 @@
 
         /* Contenedor de la cámara */
         #camera-screen {
-            margin-top: 80px;
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -62,11 +62,16 @@
             pointer-events: none;
         }
 
+        /* Contenedor de los botones */
+        #button-container {
+            display: none; /* Oculto por defecto */
+            justify-content: center;
+            gap: 20px; /* Espacio entre los botones */
+            margin-top: 20px; /* Espacio entre la cámara y los botones */
+        }
+
         /* Botón de linterna */
         #flashlight {
-            position: absolute;
-            top: 0px;
-            left: 20px;
             background-color: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
@@ -82,9 +87,6 @@
 
         /* Botón de subir imagen */
         #upload-image {
-            position: absolute;
-            top: 0px;
-            right: 20px;
             background-color: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
@@ -312,12 +314,17 @@
         <div class="screen-title2">Escáner QR</div>
         <video id="video" autoplay></video>
         <div id="overlay"></div>
-        <button id="flashlight"><i class="fas fa-bolt"></i></button>
-        <button id="upload-image"><i class="fas fa-image"></i></button>
         <div id="zoom-control">
             <input type="range" id="zoom-slider" min="1" max="5" step="0.1" value="1">
         </div>
     </div>
+
+    <!-- Contenedor de los botones -->
+    <div id="button-container">
+        <button id="flashlight"><i class="fas fa-bolt"></i></button>
+        <button id="upload-image"><i class="fas fa-image"></i></button>
+    </div>
+
 
     <!-- Pantalla de recorte de imagen -->
     <div id="crop-screen">
@@ -379,6 +386,7 @@
     <script>
         const video = document.getElementById('video');
         const cameraScreen = document.getElementById('camera-screen');
+        const buttonContainer = document.getElementById('button-container');
         const cropScreen = document.getElementById('crop-screen');
         const resultScreen = document.getElementById('result-screen');
         const historyScreen = document.getElementById('history-screen');
@@ -405,6 +413,8 @@
 
         // Solicitar acceso a la cámara
         function startCamera() {
+            // Mostrar el button-container cuando la cámara esté activa
+            document.getElementById('button-container').style.display = 'flex';
             navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
                 .then(function(s) {
                     stream = s;
@@ -412,6 +422,9 @@
                     video.setAttribute("playsinline", true);
                     video.play();
                     requestAnimationFrame(tick);
+
+                    // Mostrar el button-container cuando la cámara esté activa
+                    document.getElementById('button-container').style.display = 'flex';
                 })
                 .catch(function(err) {
                     console.error("Error al acceder a la cámara: ", err);
@@ -467,6 +480,7 @@
                         }
 
                         stopCamera();
+                        document.getElementById('button-container').style.display = 'none'; // Ocultar
                         cameraScreen.style.display = 'none';
                         cropScreen.style.display = 'flex';
                         cropImage.src = event.target.result;
@@ -566,6 +580,7 @@
 
         // Mostrar pantalla de resultados
         function showResult(data) {
+            document.getElementById('button-container').style.display = 'none'; // Ocultar
             cameraScreen.style.display = 'none';
             cropScreen.style.display = 'none';
             resultScreen.style.display = 'flex';
@@ -616,6 +631,7 @@
 
         // Mostrar pantalla de historial
         function showHistory() {
+            document.getElementById('button-container').style.display = 'none'; // Ocultar
             resultScreen.style.display = 'none';
             cameraScreen.style.display = 'none';
             cropScreen.style.display = 'none';
@@ -626,7 +642,7 @@
         // Renderizar el historial
         function renderHistory() {
             historyList.innerHTML = '';
-            history.slice(-10).forEach((item, index) => {
+            history.slice(-5).forEach((item, index) => {
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
                 historyItem.innerHTML = `
