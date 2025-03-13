@@ -210,9 +210,9 @@
         /* Mensaje temporal */
         #temp-message {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 80px; /* Cambia de bottom a top */
+            right: 20px; /* Cambia de left a right */
+            transform: none; /* Elimina transform: translateX(-50%) */
             font-size: 0.9em;
             color: #28a745;
             display: none;
@@ -328,7 +328,7 @@
 
     <!-- Pantalla de recorte de imagen -->
     <div id="crop-screen">
-        <div class="screen-title2">Buscar QR</div>
+        <div class="screen-title2">Captura el QR</div>
         <div id="crop-container">
             <img id="crop-image" src="" alt="Imagen para recortar">
         </div>
@@ -368,7 +368,7 @@
 
     <!-- Pantalla de historial -->
     <div id="history-screen">
-        <div class="screen-title">Historial de Escaneos</div>
+        <div class="screen-title">Historial</div>
         <div id="history-list"></div>
         <div id="history-buttons">
             <button class="icon-button" id="history-back-button" title="Atrás">
