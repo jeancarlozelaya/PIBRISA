@@ -2029,6 +2029,22 @@ window.onload = function() {
 
 <!-- Contenedor para Auto Guardado-->
 
+
+<!-- Contenedor para Evitar Botón Atrás del Móvil-->
+
+
+    // Reemplazar la entrada actual del historial con la URL de tu página
+    history.replaceState(null, document.title, window.location.href);
+
+    // Escuchar el evento "popstate" que se dispara cuando el usuario intenta retroceder
+    window.addEventListener('popstate', function(event) {
+        // Vuelve a agregar la entrada al historial para evitar que salga de la página
+        history.pushState(null, document.title, window.location.href);
+    });
+
+
+<!-- Contenedor para Evitar Botón Atrás del Móvil-->
+
 	
 </script>
 </body>
