@@ -274,6 +274,101 @@
         }
 
 
+
+
+/* Estilo del ícono flotante de notificaciones */
+#notification-icon {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#notification-icon:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+#notification-icon:active {
+    transform: scale(0.9);
+}
+
+/* Badge de notificaciones */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+/* Ventana emergente de notificaciones */
+.notification-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.notification-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#notification-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#notification-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#notification-list li:last-child {
+    border-bottom: none;
+}
+
+
+
     </style>
 </head>
 
@@ -385,6 +480,23 @@
     <div id="qr-icon" onclick="window.location.href='QR.html';">
         <i class="fas fa-qrcode"></i>
     </div>
+
+
+<!-- Ícono flotante para notificaciones -->
+<div id="notification-icon" onclick="mostrarNotificaciones()">
+    <i class="fas fa-bell"></i>
+    <span id="notification-badge" class="notification-badge">0</span>
+</div>
+
+<!-- Ventana emergente de notificaciones -->
+<div id="notification-modal" class="notification-modal">
+    <div class="notification-modal-content">
+        <span class="close-modal" onclick="cerrarNotificaciones()">&times;</span>
+        <h2>Notificaciones</h2>
+        <ul id="notification-list"></ul>
+    </div>
+</div>
+
 
 
 
@@ -686,6 +798,77 @@ function detenerAudio() {
 // Verificar cumpleaños al cargar la página
 verificarCumpleaños();
         
+
+
+
+
+<!-- Contenedor para Notificaciones-->
+
+
+// URL de tu script de Google Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXmiIPYUskMzx8jPYFoZKOpvcVL_PD7oI8qzmHuyjaDHLiLLhkOejXUzOTVmRMmt9u/exec"; // Reemplaza con la URL de tu script
+
+// Función para obtener notificaciones desde Google Sheets
+async function obtenerNotificaciones() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const notificaciones = await response.json();
+        return notificaciones;
+    } catch (error) {
+        console.error("Error al obtener notificaciones:", error);
+        return [];
+    }
+}
+
+// Función para mostrar notificaciones en la ventana emergente
+async function mostrarNotificaciones() {
+    const notificaciones = await obtenerNotificaciones();
+    const notificationList = document.getElementById("notification-list");
+    notificationList.innerHTML = ""; // Limpiar lista anterior
+
+    notificaciones.forEach((notificacion) => {
+        const [fecha, hora, mensaje] = notificacion;
+
+        // Reemplazar saltos de línea (\n) con <br> para que se muestren en HTML
+        const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
+
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${fecha} ${hora}</strong><br>${mensajeFormateado}`;
+        notificationList.appendChild(li);
+    });
+
+    // Mostrar la ventana emergente
+    const modal = document.getElementById("notification-modal");
+    modal.style.opacity = 1;
+    modal.style.visibility = "visible";
+
+    // Actualizar el badge de notificaciones
+    document.getElementById("notification-badge").textContent = notificaciones.length;
+}
+
+// Función para cerrar la ventana emergente
+function cerrarNotificaciones() {
+    const modal = document.getElementById("notification-modal");
+    modal.style.opacity = 0;
+    modal.style.visibility = "hidden";
+}
+
+// Verificar nuevas notificaciones cada 5 minutos
+setInterval(async () => {
+    const notificaciones = await obtenerNotificaciones();
+    document.getElementById("notification-badge").textContent = notificaciones.length;
+}, 300000); // 300000 ms = 5 minutos
+
+// Cargar notificaciones al iniciar la página
+window.addEventListener("load", async () => {
+    const notificaciones = await obtenerNotificaciones();
+    document.getElementById("notification-badge").textContent = notificaciones.length;
+});
+
+
+<!-- Contenedor para Notificaciones-->
+
+
     </script>
 
 </body>
