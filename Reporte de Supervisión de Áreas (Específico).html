@@ -2050,6 +2050,11 @@ window.onload = function() {
         return "¿Estás seguro de que deseas salir? Tu progreso no se guardará.";
     };
 
+    // Redirigir al usuario a la misma página si intenta retroceder
+    window.onunload = function(event) {
+        window.location.href = window.location.href;
+    };
+
 
 <!-- Contenedor para Evitar Botón Atrás del Móvil-->
 
