@@ -250,10 +250,13 @@
         flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
     }
 
-
     /* Eliminar el borde negro del ícono personalizado */
     .swal2-icon.swal2-icon-show {
-        border: none !important; /* Elimina el borde */
+        background-color: transparent !important; /* Fondo transparente */
+    }
+
+    .no-border-icon {
+        border: none !important; /* Elimina el borde circular */
         background-color: transparent !important; /* Fondo transparente */
     }
 
@@ -1998,6 +2001,7 @@ function preguntarContinuar() {
                 confirmButton: "swal-button",
                 cancelButton: "swal-button-cancel",
                 actions: "swal-actions",
+                icon: "no-border-icon", // Clase personalizada para el ícono
             },
         }).then((result) => {
             if (result.isConfirmed) {
@@ -2042,7 +2046,7 @@ window.addEventListener("popstate", function (event) {
         // Mostrar el Swal.fire cuando se presiona el botón atrás por primera vez
         Swal.fire({
             text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
-            iconHtml: "⚠️",
+            icon: "warning",
             showCancelButton: false, // Eliminamos el botón de cancelar
             confirmButtonText: "Quedarme.", // Cambiamos el texto del botón de confirmar
             allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
@@ -2050,6 +2054,7 @@ window.addEventListener("popstate", function (event) {
                 popup: "swal-popup",
                 confirmButton: "swal-button",
                 actions: "swal-actions",
+                icon: "swal-icon-circle", // Clase personalizada para el icono
             },
         }).then((result) => {
             if (result.isConfirmed) {
