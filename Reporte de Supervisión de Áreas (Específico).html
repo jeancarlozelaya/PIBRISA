@@ -2033,11 +2033,38 @@ window.onload = function() {
 <!-- Contenedor para Evitar Botón Atrás del Móvil-->
 
 
-// Bloquear el botón atrás sin alertas
-history.pushState(null, null, document.URL);
+let backPressCount = 0; // Contador para rastrear el número de veces que se presiona el botón atrás
+
+history.pushState(null, null, document.URL); // Bloqueamos el historial
 
 window.addEventListener("popstate", function (event) {
-    history.pushState(null, null, document.URL);
+    if (backPressCount === 0) {
+        // Mostrar el Swal.fire cuando se presiona el botón atrás por primera vez
+        Swal.fire({
+            text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
+            iconHtml: "⚠️",
+            showCancelButton: false, // Eliminamos el botón de cancelar
+            confirmButtonText: "No, quedarme", // Cambiamos el texto del botón de confirmar
+            allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
+            customClass: {
+                popup: "swal-popup",
+                confirmButton: "swal-button",
+                actions: "swal-actions",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario hace clic en "No, quedarme", reiniciamos el contador y bloqueamos el historial nuevamente
+                history.pushState(null, null, document.URL);
+                backPressCount = 0; // Reiniciamos el contador
+            }
+        });
+
+        backPressCount++; // Aumentamos el contador para la siguiente vez
+    } else {
+        // Si el contador ya es mayor a 0, dejamos que el usuario salga del formulario
+        backPressCount = 0; // Reiniciamos el contador
+        history.back(); // Dejamos que el usuario salga
+    }
 });
 
 
