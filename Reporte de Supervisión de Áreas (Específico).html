@@ -627,7 +627,7 @@
 
 // Función para volver al inicio
 function goBack() {
-    window.history.back();
+    window.location.href = "Supervisión.html";
 }
 
 
@@ -2036,10 +2036,9 @@ window.onload = function() {
 window.history.pushState(null, null, window.location.href);
 window.addEventListener('popstate', function (event) {
     window.history.pushState(null, null, window.location.href);
-    alert("No puedes volver atrás en este formulario.");
 });
 
-	
+
 <!-- Contenedor para Evitar Botón Atrás del Móvil-->
 
 	
