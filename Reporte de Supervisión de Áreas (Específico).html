@@ -2044,7 +2044,7 @@ window.addEventListener("popstate", function (event) {
             text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
             iconHtml: "⚠️",
             showCancelButton: false, // Eliminamos el botón de cancelar
-            confirmButtonText: "No, quedarme", // Cambiamos el texto del botón de confirmar
+            confirmButtonText: "Quedarme.", // Cambiamos el texto del botón de confirmar
             allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
             customClass: {
                 popup: "swal-popup",
@@ -2053,7 +2053,7 @@ window.addEventListener("popstate", function (event) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                // Si el usuario hace clic en "No, quedarme", reiniciamos el contador y bloqueamos el historial nuevamente
+                // Si el usuario hace clic en "Quedarme", reiniciamos el contador y bloqueamos el historial nuevamente
                 history.pushState(null, null, document.URL);
                 backPressCount = 0; // Reiniciamos el contador
             }
