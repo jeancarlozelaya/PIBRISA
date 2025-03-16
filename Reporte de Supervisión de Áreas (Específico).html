@@ -2033,14 +2033,22 @@ window.onload = function() {
 <!-- Contenedor para Evitar Botón Atrás del Móvil-->
 
 
-    // Reemplazar la entrada actual del historial con la URL de tu página
-    history.replaceState(null, document.title, window.location.href);
+    // Agregar una nueva entrada al historial para evitar que el botón "Atrás" regrese a la página anterior
+    history.pushState(null, document.title, window.location.href);
 
     // Escuchar el evento "popstate" que se dispara cuando el usuario intenta retroceder
     window.addEventListener('popstate', function(event) {
         // Vuelve a agregar la entrada al historial para evitar que salga de la página
         history.pushState(null, document.title, window.location.href);
+
+        // Mostrar una advertencia al usuario
+        alert("No puedes retroceder. Si deseas salir, usa el botón 'Volver al Inicio'.");
     });
+
+    // Mostrar una advertencia si el usuario intenta salir de la página
+    window.onbeforeunload = function(event) {
+        return "¿Estás seguro de que deseas salir? Tu progreso no se guardará.";
+    };
 
 
 <!-- Contenedor para Evitar Botón Atrás del Móvil-->
