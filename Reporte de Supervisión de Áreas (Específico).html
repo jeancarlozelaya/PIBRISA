@@ -2033,10 +2033,10 @@ window.onload = function() {
 <!-- Contenedor para Evitar Botón Atrás del Móvil-->
 
 
-window.history.pushState(null, null, window.location.href);
-window.addEventListener('popstate', function (event) {
-    window.history.pushState(null, null, window.location.href);
-    alert("No puedes volver atrás en este formulario.");
+// Evita que el usuario salga con el botón atrás
+history.pushState(null, null, location.href);
+window.addEventListener("popstate", function () {
+    history.pushState(null, null, location.href);
 });
 
 
