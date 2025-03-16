@@ -2038,8 +2038,8 @@ window.onload = function() {
 
     // Escuchar el evento "popstate" que se dispara cuando el usuario intenta retroceder
     window.addEventListener('popstate', function(event) {
-        // Vuelve a agregar la entrada al historial para evitar que salga de la página
-        history.pushState(null, document.title, window.location.href);
+        // Redirigir al usuario a la misma página si intenta retroceder
+        window.location.href = window.location.href;
 
         // Mostrar una advertencia al usuario
         alert("No puedes retroceder. Si deseas salir, usa el botón 'Volver al Inicio'.");
