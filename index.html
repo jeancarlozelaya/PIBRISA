@@ -854,16 +854,25 @@ verificarCumpleaños();
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXmiIPYUskMzx8jPYFoZKOpvcVL_PD7oI8qzmHuyjaDHLiLLhkOejXUzOTVmRMmt9u/exec";
 
         // Función para obtener notificaciones desde Google Sheets
-        async function obtenerNotificaciones() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const notificaciones = await response.json();
-                return notificaciones;
-            } catch (error) {
-                console.error("Error al obtener notificaciones:", error);
-                return [];
-            }
-        }
+async function obtenerNotificaciones() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const notificaciones = await response.json();
+        return notificaciones;
+    } catch (error) {
+        console.error("Error al obtener notificaciones:", error);
+        return [];
+    }
+}
+
+// Función para formatear la hora de 24 horas a 12 horas
+function formatearHora(hora24) {
+    const [hora, minutos, segundos] = hora24.split(":");
+    const horaNum = parseInt(hora, 10);
+    const ampm = horaNum >= 12 ? "PM" : "AM";
+    const hora12 = horaNum % 12 || 12; // Convertir 0 a 12
+    return `${hora12}:${minutos} ${ampm}`;
+}
 
 // Función para mostrar notificaciones en la ventana emergente
 async function mostrarNotificaciones() {
@@ -871,8 +880,26 @@ async function mostrarNotificaciones() {
     const notificationList = document.getElementById("notification-list");
     notificationList.innerHTML = ""; // Limpiar lista anterior
 
+    // Obtener notificaciones vistas del localStorage
+    const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
+
+    // Contador de notificaciones no vistas
+    let contadorNoVistas = 0;
+
     notificaciones.forEach((notificacion) => {
         const [fecha, hora, mensaje] = notificacion;
+        const notificacionString = JSON.stringify(notificacion);
+
+        // Verificar si la notificación ya fue vista
+        const esVista = notificacionesVistas.includes(notificacionString);
+
+        // Incrementar el contador si la notificación no ha sido vista
+        if (!esVista) {
+            contadorNoVistas++;
+        }
+
+        // Formatear la hora de 24 horas a 12 horas
+        const horaFormateada = formatearHora(hora);
 
         // Reemplazar saltos de línea (\n) con <br> para que se muestren en HTML
         const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
@@ -880,11 +907,15 @@ async function mostrarNotificaciones() {
         const li = document.createElement("li");
         li.className = "notification-item";
         li.innerHTML = `
-            <strong>${fecha} ${hora}</strong>
+            <strong>${fecha} ${horaFormateada}</strong>
             <p>${mensajeFormateado}</p>
         `;
         notificationList.appendChild(li);
     });
+
+    // Marcar todas las notificaciones como vistas cuando el usuario abre la ventana
+    const nuevasNotificacionesVistas = notificaciones.map(notificacion => JSON.stringify(notificacion));
+    localStorage.setItem('notificacionesVistas', JSON.stringify(nuevasNotificacionesVistas));
 
     // Mostrar la ventana emergente
     const modal = document.getElementById("notification-modal");
@@ -892,13 +923,14 @@ async function mostrarNotificaciones() {
 
     // Actualizar el badge de notificaciones
     const badge = document.getElementById("notification-badge");
-    if (notificaciones.length > 0) {
-        badge.textContent = notificaciones.length; // Mostrar el número de notificaciones
+    if (contadorNoVistas > 0) {
+        badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
         badge.style.display = "block"; // Mostrar el badge
     } else {
-        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones
+        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
     }
 }
+
 
         // Función para cerrar la ventana emergente
         function cerrarNotificaciones() {
@@ -909,26 +941,50 @@ async function mostrarNotificaciones() {
 // Verificar nuevas notificaciones cada 5 minutos
 setInterval(async () => {
     const notificaciones = await obtenerNotificaciones();
+    const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
+
+    // Contar las notificaciones no vistas
+    let contadorNoVistas = 0;
+    notificaciones.forEach(notificacion => {
+        const notificacionString = JSON.stringify(notificacion);
+        if (!notificacionesVistas.includes(notificacionString)) {
+            contadorNoVistas++;
+        }
+    });
+
     const badge = document.getElementById("notification-badge");
-    if (notificaciones.length > 0) {
-        badge.textContent = notificaciones.length; // Mostrar el número de notificaciones
+    if (contadorNoVistas > 0) {
+        badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
         badge.style.display = "block"; // Mostrar el badge
     } else {
-        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones
+        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
     }
-}, 300000); // 300000 ms = 5 minutos
+}, 1000); // 300000 ms = 5 minutos
 
 // Cargar notificaciones al iniciar la página
 window.addEventListener("load", async () => {
     const notificaciones = await obtenerNotificaciones();
+    const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
+
+    // Contar las notificaciones no vistas
+    let contadorNoVistas = 0;
+    notificaciones.forEach(notificacion => {
+        const notificacionString = JSON.stringify(notificacion);
+        if (!notificacionesVistas.includes(notificacionString)) {
+            contadorNoVistas++;
+        }
+    });
+
     const badge = document.getElementById("notification-badge");
-    if (notificaciones.length > 0) {
-        badge.textContent = notificaciones.length; // Mostrar el número de notificaciones
+    if (contadorNoVistas > 0) {
+        badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
         badge.style.display = "block"; // Mostrar el badge
     } else {
-        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones
+        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
     }
 });
+
+
 
 <!-- Contenedor para Notificaciones-->
 
