@@ -412,6 +412,29 @@
             color: #333;
         }
 
+.refresh-button {
+    background: none;
+    border: none;
+    color: #007BFF; /* Color del ícono */
+    font-size: 0.8em; /* Tamaño más pequeño */
+    cursor: pointer;
+    margin-left: 10px; /* Espacio entre el texto y el ícono */
+    padding: 5px; /* Espaciado interno */
+    border-radius: 50%; /* Forma circular */
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.refresh-button:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Fondo sutil al pasar el mouse */
+    transform: scale(1.1); /* Efecto de escala al pasar el mouse */
+}
+
+.refresh-button:active {
+    transform: scale(0.9); /* Efecto de escala al hacer clic */
+}
+
+
+
 
     </style>
 </head>
@@ -535,10 +558,12 @@
     <!-- Ventana emergente de notificaciones -->
     <div id="notification-modal" class="notification-modal">
         <div class="notification-modal-content">
-            <div class="notification-header">
-                <h2>Notificaciones</h2>
-                <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
-            </div>
+<div class="notification-header">
+    <h2>Notificaciones <button class="refresh-button" onclick="actualizarNotificaciones()">
+        <i class="fas fa-sync-alt"></i> <!-- Ícono de FontAwesome -->
+    </button></h2>
+    <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
+</div>
             <ul class="notification-list" id="notification-list"></ul>
         </div>
     </div>
@@ -886,33 +911,42 @@ verificarCumpleaños();
         }
 
         // Función para mostrar notificaciones en la ventana emergente
-        async function mostrarNotificaciones() {
-            const notificationIcon = document.getElementById("notification-icon");
-            notificationIcon.style.pointerEvents = "none"; // Desactivar clics mientras se cargan las notificaciones
+async function mostrarNotificaciones() {
+    const notificationIcon = document.getElementById("notification-icon");
+    notificationIcon.style.pointerEvents = "none"; // Desactivar clics mientras se cargan las notificaciones
 
-            const notificaciones = await obtenerNotificaciones();
-            const notificationList = document.getElementById("notification-list");
-            notificationList.innerHTML = ""; // Limpiar lista anterior
+    const notificaciones = await obtenerNotificaciones();
+    const notificationList = document.getElementById("notification-list");
+    notificationList.innerHTML = ""; // Limpiar lista anterior
 
-            // Obtener notificaciones vistas del localStorage
-            const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
+    // Obtener notificaciones vistas del localStorage
+    const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
 
-            // Contador de notificaciones no vistas
-            let contadorNoVistas = 0;
+    // Contador de notificaciones no vistas
+    let contadorNoVistas = 0;
 
-            // Mostrar todas las notificaciones
-            notificaciones.forEach((notificacion) => {
-                const [fecha, hora, mensaje] = notificacion;
-                const notificacionString = JSON.stringify(notificacion);
+    // Mostrar todas las notificaciones
+    if (notificaciones.length === 0) {
+        // Si no hay notificaciones, mostrar un mensaje
+        const li = document.createElement("li");
+        li.className = "notification-item";
+        li.textContent = "No hay notificaciones";
+        notificationList.appendChild(li);
+    } else {
+        notificaciones.forEach((notificacion) => {
+            const [fecha, hora, mensaje] = notificacion;
 
-                // Verificar si la notificación ya fue vista
-                const esVista = notificacionesVistas.includes(notificacionString);
+            // Verificar si la notificación ya fue vista
+            const notificacionString = JSON.stringify(notificacion);
+            const esVista = notificacionesVistas.includes(notificacionString);
 
-                // Incrementar el contador si la notificación no ha sido vista
-                if (!esVista) {
-                    contadorNoVistas++;
-                }
+            // Incrementar el contador si la notificación no ha sido vista
+            if (!esVista) {
+                contadorNoVistas++;
+            }
 
+            // Solo mostrar fecha y hora si están definidas
+            if (fecha && hora && mensaje) {
                 // Formatear la hora de 24 horas a 12 horas
                 const horaFormateada = formatearHora(hora);
 
@@ -926,27 +960,44 @@ verificarCumpleaños();
                     <p>${mensajeFormateado}</p>
                 `;
                 notificationList.appendChild(li);
-            });
-
-            // Marcar todas las notificaciones como vistas cuando el usuario abre la ventana
-            const nuevasNotificacionesVistas = notificaciones.map(notificacion => JSON.stringify(notificacion));
-            localStorage.setItem('notificacionesVistas', JSON.stringify(nuevasNotificacionesVistas));
-
-            // Mostrar la ventana emergente
-            const modal = document.getElementById("notification-modal");
-            modal.classList.add("active");
-
-            // Actualizar el badge de notificaciones
-            const badge = document.getElementById("notification-badge");
-            if (contadorNoVistas > 0) {
-                badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
-                badge.style.display = "block"; // Mostrar el badge
-            } else {
-                badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
             }
+        });
+    }
 
-            notificationIcon.style.pointerEvents = "auto"; // Reactivar clics
-        }
+    // Marcar todas las notificaciones como vistas cuando el usuario abre la ventana
+    const nuevasNotificacionesVistas = notificaciones.map(notificacion => JSON.stringify(notificacion));
+    localStorage.setItem('notificacionesVistas', JSON.stringify(nuevasNotificacionesVistas));
+
+    // Mostrar la ventana emergente
+    const modal = document.getElementById("notification-modal");
+    modal.classList.add("active");
+
+    // Actualizar el badge de notificaciones
+    const badge = document.getElementById("notification-badge");
+    if (contadorNoVistas > 0) {
+        badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
+        badge.style.display = "block"; // Mostrar el badge
+    } else {
+        badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
+    }
+
+    notificationIcon.style.pointerEvents = "auto"; // Reactivar clics
+}
+
+// Función para forzar la actualización de notificaciones
+async function actualizarNotificaciones() {
+    // Limpiar la caché de notificaciones
+    notificacionesCache = null;
+    ultimaActualizacion = null;
+
+    // Obtener notificaciones nuevamente
+    const notificaciones = await obtenerNotificaciones();
+
+    // Mostrar las notificaciones actualizadas
+    mostrarNotificaciones();
+}
+
+
 
         // Función para cerrar la ventana emergente
         function cerrarNotificaciones() {
