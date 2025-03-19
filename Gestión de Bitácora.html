@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bitácora de Actividades Diarias en Áreas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
+        body, html {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+        }
+
+        /* Header */
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.5em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
+        }
+
+        /* Contenedor del formulario */
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: center;
+            margin: 40px auto;
+            grid-row: 2;
+            height: auto;
+            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 20px 0; /* Ajusta el margen inferior */
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        input[type="text"],
+        textarea,
+        select,
+        #oficina,
+        button {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 12px 0;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilo para el botón "Volver al Inicio" */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px;
+            left: 0px;
+            z-index: 1001;
+            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Estilo para los contenedores de preguntas */
+        .question-container {
+            margin-bottom: 20px;
+            text-align: left;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s;
+            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        }
+
+        .question-container:hover {
+            border-color: #007BFF;
+        }
+
+        .question-container input[type="date"],
+        .question-container input[type="time"],
+        .question-container input[type="text"],
+        .question-container textarea,
+        .question-container select {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s;
+            box-sizing: border-box; /* Incluye el padding en el ancho total */
+            margin-top: 5px;
+        }
+
+        .question-container input[type="date"]:focus,
+        .question-container input[type="time"]:focus,
+        .question-container input[type="text"]:focus,
+        .question-container textarea:focus,
+        .question-container select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        /* Estilo del overlay (pantalla bloqueada) */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #loadingMessage {
+            color: white;
+            font-size: 24px;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Estilo para Mensajes */
+        .swal-actions {
+            display: flex; /* Coloca los botones en una fila */
+            justify-content: center; /* Centra los botones horizontalmente */
+            gap: 10px; /* Espacio entre los botones */
+            width: 80%; /* Limita el ancho del contenedor al 80% del modal */
+            margin: 0 auto; /* Centra el contenedor horizontalmente */
+            flex-wrap: nowrap; /* Evita que los botones se apilen en dos filas */
+        }
+
+        /* Estilo personalizado para el contenido del mensaje */
+        .swal-content {
+            font-size: 0.9em;  /* Reduce el tamaño del texto */
+            line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+        }
+
+        .swal2-html-container {
+            margin-bottom: 15px;
+        }
+
+        /* Estilo personalizado para ambos botones */
+        .swal-button,
+        .swal-button-cancel {
+            flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+            min-width: 120px; /* Ancho mínimo para ambos botones */
+            padding: 10px 20px; /* Espaciado interno */
+            font-size: 14px; /* Tamaño de fuente */
+            text-align: center; /* Centra el texto dentro del botón */
+            border: none; /* Elimina el borde predeterminado */
+            border-radius: 4px; /* Bordes redondeados */
+            color: white; /* Texto en blanco */
+            transition: background-color 0.3s ease; /* Transición suave para el hover */
+        }
+
+        /* Opcional: colores específicos para cada botón */
+        .swal-button {
+            background-color: #28a745;  /* Verde para el botón de "Sí" */
+            color: white;  /* Texto en blanco */
+            border: none;
+            border-radius: 4px;
+        }
+
+        .swal-button-cancel {
+            background-color: #FF6347 ;  /* Rojo para el botón de "No" */
+            color: white;  /* Texto oscuro */
+            border: none;
+            border-radius: 4px;
+        }
+
+        .swal2-actions {
+            display: flex !important;  /* Asegura que los botones estén en una fila */
+            justify-content: center;   /* Centra los botones horizontalmente */
+            gap: 10px;                 /* Agrega espacio entre los botones */
+            flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
+        }
+
+        /* Eliminar el borde negro del ícono personalizado */
+        .swal2-icon.swal2-icon-show {
+            background-color: transparent !important; /* Fondo transparente */
+        }
+
+        .no-border-icon {
+            border: none !important; /* Elimina el borde circular */
+            background-color: transparent !important; /* Fondo transparente */
+        }
+
+        /* Estilo para Botones, Habilitar/Deshabilitar */
+        #enviarBtn {
+            background-color: #007bff; /* Color azul */
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Estilo para el botón de enviar cuando está deshabilitado */
+        #enviarBtn:disabled {
+            background-color: #ccc; /* Color gris */
+            color: #666666; /* Texto gris oscuro */
+            cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+            opacity: 0.7; /* Reduce la opacidad para dar un aspecto deshabilitado */
+        }
+
+        /* Efecto hover solo cuando el botón está habilitado */
+        #enviarBtn:not(:disabled):hover {
+            background-color: #0056b3; /* Color azul más oscuro al pasar el mouse */
+        }
+
+        /* Estilo para Botones, Misma Linea */
+        .botones-container {
+            display: flex; /* Hace que los botones estén en la misma línea */
+            justify-content: space-between; /* Espacio entre los botones */
+            gap: 10px; /* Espacio entre los botones */
+            margin-top: 20px; /* Margen superior para separar del contenido anterior */
+        }
+
+        /* Estilo para los botones dentro del contenedor */
+        .botones-container button {
+            flex: 1; /* Hace que los botones ocupen el espacio disponible */
+            margin: 0; /* Elimina el margen predeterminado */
+        }
+
+
+
+
+
+        .table-container {
+            overflow-x: auto; /* Scroll horizontal */
+            max-height: 500px; /* Altura máxima para el scroll vertical */
+            overflow-y: auto; /* Scroll vertical */
+            position: relative; /* Necesario para el posicionamiento de los encabezados */
+        }
+
+        table {
+            width: auto; /* Ajusta el ancho automáticamente */
+            min-width: 100%; /* Ocupa al menos el 100% del contenedor */
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px; /* Tamaño de fuente más pequeño */
+            table-layout: fixed; /* Fuerza el mismo ancho para todas las celdas */
+        }
+
+
+
+        table, th, td {
+            border: 1px solid #000000;
+        }
+
+        th, td {
+            padding: 8px; /* Reducir el padding */
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            position: sticky; /* Encabezados pegajosos */
+            top: 0; /* Encabezados pegados arriba */
+            z-index: 2; /* Asegura que estén por encima del contenido */
+        }
+
+        /* Columnas inmovibles horizontalmente */
+        th:first-child,
+        td:first-child {
+            position: sticky;
+            left: 0; /* Columna 1 pegada a la izquierda */
+            background-color: #f4f4f4; /* Color de fondo para la columna pegajosa */
+            z-index: 1; /* Asegura que estén por encima del contenido */
+            border-right: 2px solid #ccc; /* Borde derecho para separación visual */
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            position: sticky;
+            left: 216px; /* Columna 2 pegada a la izquierda (ajusta según el ancho de la columna 1) */
+            background-color: #f4f4f4; /* Color de fondo para la columna pegajosa */
+            z-index: 1; /* Asegura que estén por encima del contenido */
+            border-right: 2px solid #ccc; /* Borde derecho para separación visual */
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        }
+
+        th:first-child,
+        td:first-child {
+            width: 200px !important; /* Fuerza el ancho de la primera columna */
+            min-width: 200px !important; /* Evita que se reduzca más allá de este ancho */
+            max-width: 200px !important; /* Evita que se expanda más allá de este ancho */
+            white-space: normal; /* Permite que el texto se divida en varias líneas */
+        }
+
+        .fila-diario {
+            background-color: #A6D5FA; /* Azul pastel */
+        }
+
+        .fila-semanal {
+            background-color: #A6D5FA; /* Rosa pastel */
+        }
+
+        /* Estilos para el botón de pantalla completa */
+        .fullscreen-btn {
+            margin-bottom: 10px;
+            background-color: #28a745; /* Verde */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: #218838; /* Verde más oscuro */
+        }
+
+        /* Estilos para el modo de pantalla completa */
+        :fullscreen .table-container {
+            max-height: 90vh; /* Ajusta la altura máxima en pantalla completa */
+        }
+
+
+        /* Estilo para separar las semanas */
+        th.semana-separador,
+        td.semana-separador {
+            border-left: 7px solid #FFFFFF; /* Línea divisoria más gruesa */
+        }
+
+
+/* Negrita para la columna de Actividad */
+td:nth-child(1) {
+    font-weight: bold;
+}
+
+/* Negrita para la columna de Frecuencia */
+td:nth-child(2) {
+    font-weight: bold;
+}
+
+/* Negrita para las celdas que contienen "X" */
+td.bold-x {
+    font-weight: bold;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+    <div class="container">
+        <h1>Gestión de Bitácoras de Limpieza</h1>
+        <form id="filterForm">
+            <div class="question-container" id="mesContainer">
+                <label for="mes">Mes:</label>
+                <select id="mes" name="mes" required>
+                    <option value="">Selecciona un mes</option>
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+
+                    <option value="8">Agosto</option>
+
+                    <!-- Agrega más meses -->
+                </select>
+            </div>
+
+            <div class="question-container" id="anioContainer">
+                <label for="anio">Año:</label>
+                <select id="anio" name="anio" required>
+                    <option value="">Selecciona un año</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+
+            <div class="question-container" id="areaContainer">
+                <label for="area">Área:</label>
+                <select id="area" name="area" required>
+                    <option value="">Selecciona una opción</option>
+                    <option value="Administración">Administración</option>
+                    <option value="Almacén General">Almacén General</option>
+                    <option value="Bodega de Limpieza">Bodega de Limpieza</option>
+                    <option value="Chiminike">Chiminike</option>
+                    <option value="Despacho">Despacho</option>
+                    <option value="Enfermería">Enfermería</option>
+                    <option value="Equipo Móvil">Equipo Móvil</option>
+                    <option value="Expedición">Expedición</option>
+                    <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
+                    <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+                    <option value="Machaqueo A">Machaqueo A</option>
+                    <option value="Posta Principal">Posta Principal</option>
+                    <option value="Sala de Control">Sala de Control</option>
+                    <option value="Sala de Maternidad">Sala de Maternidad</option>
+                    <option value="Salón Vial">Salón Vial</option>
+                    <option value="Taller Eléctrico">Taller Eléctrico</option>
+                </select>
+            </div>
+
+            <button type="button" id="filtrarBtn" onclick="filtrarActividades()">Filtrar</button>
+        </form>
+
+        <div id="resultados" style="display: none;">
+
+            <div class="botones-container">
+            	<button class="back-btn" onclick="volverAFiltros()">Atrás</button>
+            	<button class="fullscreen-btn" onclick="toggleFullscreen()">Abrir en pantalla completa</button>
+            </div>
+
+            <hr> <!-- Línea divisoria -->
+
+            <h2>Bitácora de Actividades Diarias en Áreas</h2>
+
+            <div class="table-container">
+                <table id="tablaResultados">
+                    <thead>
+                        <tr>
+                            <th>Actividad</th>
+                            <th>Frecuencia</th>
+                            <!-- Los encabezados de los días se generarán dinámicamente -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas se generarán automáticamente aquí -->
+                    </tbody>
+                </table>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor para bloquear la pantalla -->
+    <div id="overlay" style="display: none;">
+        <div id="loadingMessage">
+            <p>Procesando...🥱</p>
+    </div>
+
+
+    <script>
+        // Lista de actividades
+        const actividades = [
+            { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
+            { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
+            { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
+            { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
+            { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+            { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+            { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+            { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+            { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+            { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+            { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
+            { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
+            { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
+            { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
+            { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+        ];
+
+        // Función para generar los encabezados de los días del mes
+function generarEncabezadosDias(mes, anio) {
+    const thead = document.querySelector("#tablaResultados thead tr");
+    thead.innerHTML = `<th>Actividad</th><th>Frecuencia</th>`; // Limpiar y agregar los primeros encabezados
+
+    const diasEnMes = getDiasEnMes(mes, anio);
+    const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+        const fecha = new Date(anio, mes - 1, dia);
+        const diaSemana = diasSemana[fecha.getDay()];
+
+        // Agregar clase "semana-separador" si es lunes (inicio de semana)
+        const esLunes = fecha.getDay() === 1;
+        thead.innerHTML += `<th${esLunes ? ' class="semana-separador"' : ''}>${dia}<br>${diaSemana}</th>`;
+    }
+}
+
+
+
+function getDiasEnMes(mes, anio) {
+    return new Date(anio, mes, 0).getDate();
+}
+
+function esBisiesto(anio) {
+    return (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+}
+
+        // Llamar a la función para generar los encabezados al cargar la página
+        generarEncabezadosDias();
+
+function filtrarActividades() {
+    const mes = $('#mes').val();
+    const anio = $('#anio').val();
+    const area = $('#area').val();
+
+    if (!mes || !anio || !area) {
+        alert('Por favor, completa todos los campos.');
+        return;
+    }
+
+    // Mostrar el overlay de "Procesando..."
+    document.getElementById("overlay").style.display = "flex";
+
+    // Generar los encabezados de los días
+    generarEncabezadosDias(mes, anio);
+
+    $.ajax({
+        url: "https://script.google.com/macros/s/AKfycbw9ijO_8TLQHSlrikwtQJp74S8jqpcig8_gj-p44bbFZkXLClCwpkpicvQyFx8NxSMk/exec",
+        type: "GET",
+        data: {
+            mes: mes,
+            anio: anio,
+            area: area
+        },
+        success: function(response) {
+            console.log("Respuesta del servidor:", response);
+            if (response.length === 0) {
+                // Ocultar el overlay de "Procesando..."
+                document.getElementById("overlay").style.display = "none";
+
+                Swal.fire({
+                    text: "No se encontraron actividades para los filtros seleccionados.",
+                    icon: "info",
+                    showCancelButton: false, // No mostrar el botón de cancelar
+                    confirmButtonText: "Aceptar",
+                    customClass: {
+                        content: "swal-content",
+                        confirmButton: "swal-button",
+                        popup: "swal-popup",
+                    },
+                });
+            } else {
+                mostrarTabla(response);
+                ocultarFiltros();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al filtrar los datos:", xhr.responseText);
+            alert('Hubo un problema al filtrar los datos. Intenta nuevamente.');
+        }
+    });
+}
+
+
+
+
+function mostrarTabla(actividadesFiltradas) {
+    const tbody = document.querySelector("#tablaResultados tbody");
+    tbody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+
+    const mes = $('#mes').val();
+    const anio = $('#anio').val();
+    const diasEnMes = getDiasEnMes(mes, anio);
+
+    actividades.forEach(actividad => {
+        const row = document.createElement('tr');
+
+        // Agregar clase según la frecuencia
+        if (actividad.frecuencia === "Diario") {
+            row.classList.add("fila-diario");
+        } else if (actividad.frecuencia === "Semanal") {
+            row.classList.add("fila-semanal");
+        }
+
+        // Crear celdas para la actividad y la frecuencia
+        row.innerHTML = `
+            <td>${actividad.descripcion}</td>
+            <td>${actividad.frecuencia}</td>
+        `;
+
+        // Crear celdas para los días del mes (1 al 31)
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const fecha = new Date(anio, mes - 1, dia);
+            const actividadRealizada = actividadesFiltradas.some(act => {
+                const fechaAct = new Date(act.fecha);
+                return fechaAct.getDate() === dia && act.actividad === actividad.descripcion;
+            });
+
+            // Agregar clase "semana-separador" si es lunes (inicio de semana)
+            const esLunes = fecha.getDay() === 1;
+            const celda = document.createElement('td');
+            if (esLunes) {
+                celda.classList.add('semana-separador');
+            }
+            if (actividadRealizada) {
+                celda.textContent = 'X';
+                celda.classList.add('bold-x'); // Agregar clase bold-x si contiene "X"
+            }
+            row.appendChild(celda);
+        }
+
+        tbody.appendChild(row);
+    });
+
+    document.getElementById('resultados').style.display = 'block';
+    // Ocultar el overlay de "Procesando..."
+    document.getElementById("overlay").style.display = "none";
+}
+
+
+        function ocultarFiltros() {
+            document.getElementById('mesContainer').style.display = 'none';
+            document.getElementById('anioContainer').style.display = 'none';
+            document.getElementById('areaContainer').style.display = 'none';
+            document.getElementById('filtrarBtn').style.display = 'none';
+        }
+
+        function volverAFiltros() {
+            document.getElementById('mesContainer').style.display = 'block';
+            document.getElementById('anioContainer').style.display = 'block';
+            document.getElementById('areaContainer').style.display = 'block';
+            document.getElementById('filtrarBtn').style.display = 'block';
+            document.getElementById('resultados').style.display = 'none';
+        }
+
+        // Función para alternar el modo de pantalla completa
+        function toggleFullscreen() {
+            const tableContainer = document.querySelector(".table-container");
+            if (!document.fullscreenElement) {
+                if (tableContainer.requestFullscreen) {
+                    tableContainer.requestFullscreen();
+                } else if (tableContainer.mozRequestFullScreen) { // Firefox
+                    tableContainer.mozRequestFullScreen();
+                } else if (tableContainer.webkitRequestFullscreen) { // Chrome, Safari y Opera
+                    tableContainer.webkitRequestFullscreen();
+                } else if (tableContainer.msRequestFullscreen) { // IE/Edge
+                    tableContainer.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari y Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // Escuchar cambios en el modo de pantalla completa
+        document.addEventListener("fullscreenchange", () => {
+            const fullscreenBtn = document.querySelector(".fullscreen-btn");
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = "Salir de pantalla completa";
+            } else {
+                fullscreenBtn.textContent = "Abrir en pantalla completa";
+            }
+        });
+    </script>
+</body>
+</html>
