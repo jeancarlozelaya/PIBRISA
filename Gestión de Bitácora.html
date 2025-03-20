@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bitácora de Actividades Diarias en Áreas</title>
+    <title>Gestión de Bitácoras</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -413,33 +413,20 @@ td.bold-x {
         Pisos Brillantes
     </div>
     <div class="container">
-        <h1>Gestión de Bitácoras de Limpieza</h1>
+        <h1>Gestión de Bitácoras</h1>
         <form id="filterForm">
-            <div class="question-container" id="mesContainer">
-                <label for="mes">Mes:</label>
-                <select id="mes" name="mes" required>
-                    <option value="">Selecciona un mes</option>
-                    <option value="1">Enero</option>
-                    <option value="2">Febrero</option>
-                    <option value="3">Marzo</option>
-
-                    <option value="8">Agosto</option>
-
-                    <!-- Agrega más meses -->
+            <div class="question-container" id="tipox">
+                <label for="tipo">Tipo de Actividad:</label>
+                <select id="tipo" name="tipo" required onchange="mostrarCampos()">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Área">Área</option>
+                    <option value="Baño">Baño</option>
                 </select>
             </div>
 
-            <div class="question-container" id="anioContainer">
-                <label for="anio">Año:</label>
-                <select id="anio" name="anio" required>
-                    <option value="">Selecciona un año</option>
-                    <option value="2025">2025</option>
-                </select>
-            </div>
-
-            <div class="question-container" id="areaContainer">
+            <div class="question-container" id="areaContainer" style="display: none;">
                 <label for="area">Área:</label>
-                <select id="area" name="area" required>
+                <select id="area" name="area">
                     <option value="">Selecciona una opción</option>
                     <option value="Administración">Administración</option>
                     <option value="Almacén General">Almacén General</option>
@@ -460,263 +447,370 @@ td.bold-x {
                 </select>
             </div>
 
-            <button type="button" id="filtrarBtn" onclick="filtrarActividades()">Filtrar</button>
+            <div class="question-container" id="bañoContainer" style="display: none;">
+                <label for="baño">Baños de:</label>
+                <select id="baño" name="baño">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Admin - Gerencia">Admin - Gerencia</option>
+                    <option value="Admin - Hombres">Admin - Hombres</option>
+                    <option value="Admin - Mujeres">Admin - Mujeres</option>
+                    <option value="Admin - Sala de Reuniones">Admin - Sala de Reuniones</option>
+                    <option value="Almacen General">Almacen General</option>
+                    <option value="Camerinos Contratistas">Camerinos Contratistas</option>
+                    <option value="Camerinos Permanentes">Camerinos Permanentes</option>
+                    <option value="Despacho">Despacho</option>
+                    <option value="Enfermería">Enfermería</option>
+                    <option value="Expedición">Expedición</option>
+                    <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
+                    <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+                    <option value="Machaqueo A">Machaqueo A</option>
+                    <option value="Posta Guardias">Posta Guardias</option>
+                    <option value="Posta Recepción">Posta Recepción</option>
+                    <option value="Sala de Control">Sala de Control</option>
+                    <option value="Salón Vial">Salón Vial</option>
+                    <option value="Taller Electrico">Taller Electrico</option>
+                    <option value="Transportistas">Transportistas</option>
+                </select>
+            </div>
+
+            <div class="question-container" id="mesContainer">
+                <label for="mes">Mes:</label>
+                <select id="mes" name="mes" required>
+                    <option value="">Selecciona un mes</option>
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
+
+            <div class="question-container" id="anioContainer">
+                <label for="anio">Año:</label>
+                <select id="anio" name="anio" required>
+                    <option value="">Selecciona un año</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+
+            <button type="button" id="enviarBtn" disabled onclick="filtrarActividades()">Filtrar</button>
         </form>
 
         <div id="resultados" style="display: none;">
-
             <div class="botones-container">
-            	<button class="back-btn" onclick="volverAFiltros()">Atrás</button>
-            	<button class="fullscreen-btn" onclick="toggleFullscreen()">Abrir en pantalla completa</button>
+                <button class="back-btn" onclick="volverAFiltros()">Atrás</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">Abrir en pantalla completa</button>
             </div>
-
-            <hr> <!-- Línea divisoria -->
-
+            <hr>
             <h2>Bitácora de Actividades Diarias en Áreas</h2>
-
             <div class="table-container">
                 <table id="tablaResultados">
                     <thead>
                         <tr>
                             <th>Actividad</th>
                             <th>Frecuencia</th>
-                            <!-- Los encabezados de los días se generarán dinámicamente -->
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Las filas se generarán automáticamente aquí -->
                     </tbody>
                 </table>
-
-
-
-
             </div>
         </div>
     </div>
 
-    <!-- Contenedor para bloquear la pantalla -->
     <div id="overlay" style="display: none;">
         <div id="loadingMessage">
             <p>Procesando...🥱</p>
+        </div>
     </div>
 
+<script>
+    // Arreglo de actividades para Áreas
+    const actividadesArea = [
+        { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
+        { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
+        { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
+        { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
+        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+        { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+        { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
+        { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
+        { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
+        { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
+        { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+    ];
 
-    <script>
-        // Lista de actividades
-        const actividades = [
-            { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
-            { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
-            { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
-            { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
-            { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-            { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-            { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-            { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-            { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-            { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-            { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
-            { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
-            { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
-            { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
-            { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-        ];
+    // Arreglo de actividades para Baños
+    const actividadesBaño = [
+        { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
+        { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
+        { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
+        { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
+        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+        { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
+        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+        { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+    ];
 
-        // Función para generar los encabezados de los días del mes
-function generarEncabezadosDias(mes, anio) {
-    const thead = document.querySelector("#tablaResultados thead tr");
-    thead.innerHTML = `<th>Actividad</th><th>Frecuencia</th>`; // Limpiar y agregar los primeros encabezados
+    // Función para mostrar/ocultar campos de área o baño
+    function mostrarCampos() {
+        const tipo = document.getElementById('tipo').value;
+        const areaContainer = document.getElementById('areaContainer');
+        const bañoContainer = document.getElementById('bañoContainer');
 
-    const diasEnMes = getDiasEnMes(mes, anio);
-    const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
-
-    for (let dia = 1; dia <= diasEnMes; dia++) {
-        const fecha = new Date(anio, mes - 1, dia);
-        const diaSemana = diasSemana[fecha.getDay()];
-
-        // Agregar clase "semana-separador" si es lunes (inicio de semana)
-        const esLunes = fecha.getDay() === 1;
-        thead.innerHTML += `<th${esLunes ? ' class="semana-separador"' : ''}>${dia}<br>${diaSemana}</th>`;
-    }
-}
-
-
-
-function getDiasEnMes(mes, anio) {
-    return new Date(anio, mes, 0).getDate();
-}
-
-function esBisiesto(anio) {
-    return (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
-}
-
-        // Llamar a la función para generar los encabezados al cargar la página
-        generarEncabezadosDias();
-
-function filtrarActividades() {
-    const mes = $('#mes').val();
-    const anio = $('#anio').val();
-    const area = $('#area').val();
-
-    if (!mes || !anio || !area) {
-        alert('Por favor, completa todos los campos.');
-        return;
+        if (tipo === 'Área') {
+            areaContainer.style.display = 'block';
+            bañoContainer.style.display = 'none';
+        } else if (tipo === 'Baño') {
+            areaContainer.style.display = 'none';
+            bañoContainer.style.display = 'block';
+        } else {
+            areaContainer.style.display = 'none';
+            bañoContainer.style.display = 'none';
+        }
+        verificarCampos(); // Verificar si los campos están completos
     }
 
-    // Mostrar el overlay de "Procesando..."
-    document.getElementById("overlay").style.display = "flex";
+    // Función para verificar si todos los campos están completos
+    function verificarCampos() {
+        const mes = $('#mes').val();
+        const anio = $('#anio').val();
+        const tipo = $('#tipo').val();
+        const area = $('#area').val();
+        const baño = $('#baño').val();
 
-    // Generar los encabezados de los días
-    generarEncabezadosDias(mes, anio);
-
-    $.ajax({
-        url: "https://script.google.com/macros/s/AKfycbw9ijO_8TLQHSlrikwtQJp74S8jqpcig8_gj-p44bbFZkXLClCwpkpicvQyFx8NxSMk/exec",
-        type: "GET",
-        data: {
-            mes: mes,
-            anio: anio,
-            area: area
-        },
-        success: function(response) {
-            console.log("Respuesta del servidor:", response);
-            if (response.length === 0) {
-                // Ocultar el overlay de "Procesando..."
-                document.getElementById("overlay").style.display = "none";
-
-                Swal.fire({
-                    text: "No se encontraron actividades para los filtros seleccionados.",
-                    icon: "info",
-                    showCancelButton: false, // No mostrar el botón de cancelar
-                    confirmButtonText: "Aceptar",
-                    customClass: {
-                        content: "swal-content",
-                        confirmButton: "swal-button",
-                        popup: "swal-popup",
-                    },
-                });
-            } else {
-                mostrarTabla(response);
-                ocultarFiltros();
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al filtrar los datos:", xhr.responseText);
-            alert('Hubo un problema al filtrar los datos. Intenta nuevamente.');
+        // Habilitar el botón solo si todos los campos obligatorios están completos
+        if (mes && anio && tipo && (tipo === 'Área' ? area : baño)) {
+            document.getElementById('enviarBtn').disabled = false;
+        } else {
+            document.getElementById('enviarBtn').disabled = true;
         }
-    });
-}
+    }
 
+    // Agregar eventos a los campos para verificar su estado en tiempo real
+    document.getElementById('mes').addEventListener('change', verificarCampos);
+    document.getElementById('anio').addEventListener('change', verificarCampos);
+    document.getElementById('tipo').addEventListener('change', mostrarCampos);
+    document.getElementById('area').addEventListener('change', verificarCampos);
+    document.getElementById('baño').addEventListener('change', verificarCampos);
 
+    // Función para generar los encabezados de los días del mes
+    function generarEncabezadosDias(mes, anio) {
+        const thead = document.querySelector("#tablaResultados thead tr");
+        thead.innerHTML = `<th>Actividad</th><th>Frecuencia</th>`; // Limpiar y agregar los primeros encabezados
 
+        const diasEnMes = getDiasEnMes(mes, anio);
+        const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
 
-function mostrarTabla(actividadesFiltradas) {
-    const tbody = document.querySelector("#tablaResultados tbody");
-    tbody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
-
-    const mes = $('#mes').val();
-    const anio = $('#anio').val();
-    const diasEnMes = getDiasEnMes(mes, anio);
-
-    actividades.forEach(actividad => {
-        const row = document.createElement('tr');
-
-        // Agregar clase según la frecuencia
-        if (actividad.frecuencia === "Diario") {
-            row.classList.add("fila-diario");
-        } else if (actividad.frecuencia === "Semanal") {
-            row.classList.add("fila-semanal");
-        }
-
-        // Crear celdas para la actividad y la frecuencia
-        row.innerHTML = `
-            <td>${actividad.descripcion}</td>
-            <td>${actividad.frecuencia}</td>
-        `;
-
-        // Crear celdas para los días del mes (1 al 31)
         for (let dia = 1; dia <= diasEnMes; dia++) {
             const fecha = new Date(anio, mes - 1, dia);
-            const actividadRealizada = actividadesFiltradas.some(act => {
-                const fechaAct = new Date(act.fecha);
-                return fechaAct.getDate() === dia && act.actividad === actividad.descripcion;
-            });
+            const diaSemana = diasSemana[fecha.getDay()];
 
             // Agregar clase "semana-separador" si es lunes (inicio de semana)
             const esLunes = fecha.getDay() === 1;
-            const celda = document.createElement('td');
-            if (esLunes) {
-                celda.classList.add('semana-separador');
-            }
-            if (actividadRealizada) {
-                celda.textContent = 'X';
-                celda.classList.add('bold-x'); // Agregar clase bold-x si contiene "X"
-            }
-            row.appendChild(celda);
+            thead.innerHTML += `<th${esLunes ? ' class="semana-separador"' : ''}>${dia}<br>${diaSemana}</th>`;
         }
+    }
 
-        tbody.appendChild(row);
-    });
+    // Función para obtener el número de días en un mes
+    function getDiasEnMes(mes, anio) {
+        return new Date(anio, mes, 0).getDate();
+    }
 
-    document.getElementById('resultados').style.display = 'block';
-    // Ocultar el overlay de "Procesando..."
-    document.getElementById("overlay").style.display = "none";
-}
+    // Función para filtrar actividades
+    function filtrarActividades() {
+        const mes = $('#mes').val();
+        const anio = $('#anio').val();
+        const tipo = $('#tipo').val();
+        const area = $('#area').val();
+        const baño = $('#baño').val();
 
+        // Mostrar el overlay de "Procesando..."
+        document.getElementById("overlay").style.display = "flex";
 
-        function ocultarFiltros() {
-            document.getElementById('mesContainer').style.display = 'none';
-            document.getElementById('anioContainer').style.display = 'none';
-            document.getElementById('areaContainer').style.display = 'none';
-            document.getElementById('filtrarBtn').style.display = 'none';
-        }
+        // Generar los encabezados de los días
+        generarEncabezadosDias(mes, anio);
 
-        function volverAFiltros() {
-            document.getElementById('mesContainer').style.display = 'block';
-            document.getElementById('anioContainer').style.display = 'block';
-            document.getElementById('areaContainer').style.display = 'block';
-            document.getElementById('filtrarBtn').style.display = 'block';
-            document.getElementById('resultados').style.display = 'none';
-        }
+        const url = tipo === 'Área' 
+            ? "https://script.google.com/macros/s/AKfycbw9ijO_8TLQHSlrikwtQJp74S8jqpcig8_gj-p44bbFZkXLClCwpkpicvQyFx8NxSMk/exec"
+            : "https://script.google.com/macros/s/AKfycby9y-VLAxaateidyziVU5J64JIhXO1XYpE-_uk4BsTaStuJtveoOCqRzTilTKSuspIr/exec"; // Reemplaza con el ID del script para baños
 
-        // Función para alternar el modo de pantalla completa
-        function toggleFullscreen() {
-            const tableContainer = document.querySelector(".table-container");
-            if (!document.fullscreenElement) {
-                if (tableContainer.requestFullscreen) {
-                    tableContainer.requestFullscreen();
-                } else if (tableContainer.mozRequestFullScreen) { // Firefox
-                    tableContainer.mozRequestFullScreen();
-                } else if (tableContainer.webkitRequestFullscreen) { // Chrome, Safari y Opera
-                    tableContainer.webkitRequestFullscreen();
-                } else if (tableContainer.msRequestFullscreen) { // IE/Edge
-                    tableContainer.msRequestFullscreen();
+        const data = {
+            mes: mes,
+            anio: anio,
+            area: tipo === 'Área' ? area : baño
+        };
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: data,
+            success: function(response) {
+                console.log("Respuesta del servidor:", response);
+                if (response.length === 0) {
+                    // Ocultar el overlay de "Procesando..."
+                    document.getElementById("overlay").style.display = "none";
+
+                    Swal.fire({
+                        text: "No se encontraron actividades para los filtros seleccionados.",
+                        icon: "info",
+                        showCancelButton: false,
+                        confirmButtonText: "Aceptar",
+                        customClass: {
+                            content: "swal-content",
+                            confirmButton: "swal-button",
+                            popup: "swal-popup",
+                        },
+                    });
+                } else {
+                    mostrarTabla(response, tipo);
+                    ocultarFiltros();
                 }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.mozCancelFullScreen) { // Firefox
-                    document.mozCancelFullScreen();
-                } else if (document.webkitExitFullscreen) { // Chrome, Safari y Opera
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { // IE/Edge
-                    document.msExitFullscreen();
-                }
-            }
-        }
-
-        // Escuchar cambios en el modo de pantalla completa
-        document.addEventListener("fullscreenchange", () => {
-            const fullscreenBtn = document.querySelector(".fullscreen-btn");
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = "Salir de pantalla completa";
-            } else {
-                fullscreenBtn.textContent = "Abrir en pantalla completa";
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al filtrar los datos:", xhr.responseText);
+                alert('Hubo un problema al filtrar los datos. Intenta nuevamente.');
             }
         });
-    </script>
+    }
+
+    // Función para mostrar la tabla con los resultados
+    function mostrarTabla(actividadesFiltradas, tipo) {
+        const tbody = document.querySelector("#tablaResultados tbody");
+        tbody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+
+        const mes = $('#mes').val();
+        const anio = $('#anio').val();
+        const diasEnMes = getDiasEnMes(mes, anio);
+
+        const actividades = tipo === 'Área' ? actividadesArea : actividadesBaño;
+
+        actividades.forEach(actividad => {
+            const row = document.createElement('tr');
+
+            // Agregar clase según la frecuencia
+            if (actividad.frecuencia === "Diario") {
+                row.classList.add("fila-diario");
+            } else if (actividad.frecuencia === "Semanal") {
+                row.classList.add("fila-semanal");
+            }
+
+            // Crear celdas para la actividad y la frecuencia
+            row.innerHTML = `
+                <td>${actividad.descripcion}</td>
+                <td>${actividad.frecuencia}</td>
+            `;
+
+            // Crear celdas para los días del mes (1 al 31)
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const fecha = new Date(anio, mes - 1, dia);
+                const actividadRealizada = actividadesFiltradas.some(act => {
+                    const fechaAct = new Date(act.fecha);
+                    return fechaAct.getDate() === dia && act.actividad === actividad.descripcion;
+                });
+
+                // Agregar clase "semana-separador" si es lunes (inicio de semana)
+                const esLunes = fecha.getDay() === 1;
+                const celda = document.createElement('td');
+                if (esLunes) {
+                    celda.classList.add('semana-separador');
+                }
+                if (actividadRealizada) {
+                    celda.textContent = 'X';
+                    celda.classList.add('bold-x'); // Agregar clase bold-x si contiene "X"
+                }
+                row.appendChild(celda);
+            }
+
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('resultados').style.display = 'block';
+        // Ocultar el overlay de "Procesando..."
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    // Función para ocultar los filtros después de mostrar la tabla
+    function ocultarFiltros() {
+        document.getElementById('mesContainer').style.display = 'none';
+        document.getElementById('anioContainer').style.display = 'none';
+        document.getElementById('areaContainer').style.display = 'none';
+        document.getElementById('bañoContainer').style.display = 'none';
+        document.getElementById('enviarBtn').style.display = 'none';
+        document.getElementById('tipox').style.display = 'none';
+
+    }
+
+    // Función para volver a mostrar los filtros
+    function volverAFiltros() {
+        document.getElementById('mesContainer').style.display = 'block';
+        document.getElementById('anioContainer').style.display = 'block';
+        document.getElementById('areaContainer').style.display = 'block';
+        document.getElementById('bañoContainer').style.display = 'block';
+        document.getElementById('enviarBtn').style.display = 'block';
+        document.getElementById('tipox').style.display = 'block';
+        document.getElementById('resultados').style.display = 'none';
+    }
+
+    // Función para alternar el modo de pantalla completa
+    function toggleFullscreen() {
+        const tableContainer = document.querySelector(".table-container");
+        if (!document.fullscreenElement) {
+            if (tableContainer.requestFullscreen) {
+                tableContainer.requestFullscreen();
+            } else if (tableContainer.mozRequestFullScreen) { // Firefox
+                tableContainer.mozRequestFullScreen();
+            } else if (tableContainer.webkitRequestFullscreen) { // Chrome, Safari y Opera
+                tableContainer.webkitRequestFullscreen();
+            } else if (tableContainer.msRequestFullscreen) { // IE/Edge
+                tableContainer.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari y Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+        }
+    }
+
+    // Escuchar cambios en el modo de pantalla completa
+    document.addEventListener("fullscreenchange", () => {
+        const fullscreenBtn = document.querySelector(".fullscreen-btn");
+        if (document.fullscreenElement) {
+            fullscreenBtn.textContent = "Salir de pantalla completa";
+        } else {
+            fullscreenBtn.textContent = "Abrir en pantalla completa";
+        }
+    });
+</script>
 </body>
 </html>
