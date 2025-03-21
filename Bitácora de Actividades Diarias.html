@@ -669,53 +669,183 @@
         }
 
         // Función para enviar datos
-        function enviarDatos(fecha, tipo, area, baño, actividades) {
-            const url = "https://script.google.com/macros/s/AKfycbzO_6_jSkaxiEQDnfntU8EwWYE30DBg7UuOSHFMOEgu1u0ODt7__aD9CPFWiaji1QYj/exec";
+function enviarDatos(fecha, tipo, area, baño, actividades) {
+    let url = "";
 
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: {
-                    fecha: fecha,
-                    tipo: tipo, // Enviamos el tipo de actividad
-                    area: area, // Solo se envía si es Área
-                    baño: baño, // Solo se envía si es Baño
-                    actividades: JSON.stringify(actividades) // Convertimos el arreglo a JSON
-                },
-                success: function(response) {
-                    console.log("Respuesta del servidor:", response);
+    // Verificar el tipo de actividad
+    if (tipo === "Área") {
+        // Asignar la URL según el área seleccionada
+        switch (area) {
+            case "Administración":
+                url = "https://script.google.com/macros/s/AKfycbzjai-ECi9RVhDFcOCc-is414nesxS5qUjXPC4NoThnoY8XhvhVM1D2hQXEOPEyf_PR/exec";
+                break;
+            case "Almacén General":
+                url = "https://script.google.com/macros/s/AKfycbx6_eCKR84HNwj1jiwQm_9FDSIIYQhHYIPHnAeiyTwRU7fsa4yzOclqB9HgiurpA6hp/exec";
+                break;
+            case "Bodega de Limpieza":
+                url = "https://script.google.com/macros/s/AKfycbx69iYA3XmgOz00WHv6f1Forac1zUCytBFFARRLg4l6rhmZ1j60Q4gVKSDPi3mjHxOHeg/exec";
+                break;
+            case "Chiminike":
+                url = "https://script.google.com/macros/s/AKfycbzV9atlrcyNVU0OgHZvA_A-IWYaIs3GOEFZZmvat1orVVaF9yu3rtZDKJNYig5RY6yu/exec";
+                break;
+            case "Despacho":
+                url = "https://script.google.com/macros/s/AKfycbyhUyDTjin_odtgWyASfts4rsArtRxmOaOTBHJs4zRzbZCBu1Hh3xUMiDDhPsqhksqhhw/exec";
+                break;
+            case "Enfermería":
+                url = "URL_DEL_SCRIPT_DE_ENFERMERIA";
+                break;
+            case "Equipo Móvil":
+                url = "URL_DEL_SCRIPT_DE_EQUIPO_MOVIL";
+                break;
+            case "Expedición":
+                url = "URL_DEL_SCRIPT_DE_EXPEDICION";
+                break;
+            case "Laboratorio de Calidad":
+                url = "URL_DEL_SCRIPT_DE_LABORATORIO_CALIDAD";
+                break;
+            case "Laboratorio de Concreto":
+                url = "URL_DEL_SCRIPT_DE_LABORATORIO_CONCRETO";
+                break;
+            case "Machaqueo A":
+                url = "URL_DEL_SCRIPT_DE_MACHAQUEO_A";
+                break;
+            case "Posta Principal":
+                url = "URL_DEL_SCRIPT_DE_POSTA_PRINCIPAL";
+                break;
+            case "Sala de Control":
+                url = "URL_DEL_SCRIPT_DE_SALA_DE_CONTROL";
+                break;
+            case "Sala de Maternidad":
+                url = "URL_DEL_SCRIPT_DE_SALA_DE_MATERNIDAD";
+                break;
+            case "Salón Vial":
+                url = "URL_DEL_SCRIPT_DE_SALON_VIAL";
+                break;
+            case "Taller Eléctrico":
+                url = "URL_DEL_SCRIPT_DE_TALLER_ELECTRICO";
+                break;
+            default:
+                console.error("Área no reconocida:", area);
+                return;
+        }
+    } else if (tipo === "Baño") {
+        // Asignar la URL según el baño seleccionado
+        switch (baño) {
+            case "Admin - Gerencia":
+                url = "URL_DEL_SCRIPT_DE_ADMIN_GERENCIA";
+                break;
+            case "Admin - Hombres":
+                url = "URL_DEL_SCRIPT_DE_ADMIN_HOMBRES";
+                break;
+            case "Admin - Mujeres":
+                url = "URL_DEL_SCRIPT_DE_ADMIN_MUJERES";
+                break;
+            case "Admin - Sala de Reuniones":
+                url = "URL_DEL_SCRIPT_DE_ADMIN_SALA_DE_REUNIONES";
+                break;
+            case "Almacen General":
+                url = "URL_DEL_SCRIPT_DE_ALMACEN_GENERAL";
+                break;
+            case "Camerinos Contratistas":
+                url = "URL_DEL_SCRIPT_DE_CAMERINOS_CONTRATISTAS";
+                break;
+            case "Camerinos Permanentes":
+                url = "URL_DEL_SCRIPT_DE_CAMERINOS_PERMANENTES";
+                break;
+            case "Despacho":
+                url = "URL_DEL_SCRIPT_DE_DESPACHO";
+                break;
+            case "Enfermería":
+                url = "URL_DEL_SCRIPT_DE_ENFERMERIA";
+                break;
+            case "Expedición":
+                url = "URL_DEL_SCRIPT_DE_EXPEDICION";
+                break;
+            case "Laboratorio de Calidad":
+                url = "URL_DEL_SCRIPT_DE_LABORATORIO_CALIDAD";
+                break;
+            case "Laboratorio de Concreto":
+                url = "URL_DEL_SCRIPT_DE_LABORATORIO_CONCRETO";
+                break;
+            case "Machaqueo A":
+                url = "URL_DEL_SCRIPT_DE_MACHAQUEO_A";
+                break;
+            case "Posta Guardias":
+                url = "URL_DEL_SCRIPT_DE_POSTA_GUARDIAS";
+                break;
+            case "Posta Recepción":
+                url = "URL_DEL_SCRIPT_DE_POSTA_RECEPCION";
+                break;
+            case "Sala de Control":
+                url = "URL_DEL_SCRIPT_DE_SALA_DE_CONTROL";
+                break;
+            case "Salón Vial":
+                url = "URL_DEL_SCRIPT_DE_SALON_VIAL";
+                break;
+            case "Taller Electrico":
+                url = "URL_DEL_SCRIPT_DE_TALLER_ELECTRICO";
+                break;
+            case "Transportistas":
+                url = "URL_DEL_SCRIPT_DE_TRANSPORTISTAS";
+                break;
+            default:
+                console.error("Baño no reconocido:", baño);
+                return;
+        }
+    } else {
+        console.error("Tipo de actividad no reconocido:", tipo);
+        return;
+    }
 
-                    // Ocultar el overlay de espera
-                    document.getElementById('overlay').style.display = 'none';
+    // Verificar que se haya asignado una URL válida
+    if (!url) {
+        console.error("No se pudo determinar la URL para enviar los datos.");
+        return;
+    }
 
-                    Swal.fire({
-                        text: '¡Envío exitoso! 🥳🎉',
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar'
-                    }).then(() => {
+    // Enviar los datos usando AJAX
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {
+            fecha: fecha,
+            tipo: tipo,
+            area: area,
+            baño: baño,
+            actividades: JSON.stringify(actividades)
+        },
+        success: function(response) {
+            console.log("Respuesta del servidor:", response);
 
-                        // Limpiar respuestas guardadas
-                        limpiarRespuestasGuardadas();
+            // Ocultar el overlay de espera
+            document.getElementById('overlay').style.display = 'none';
 
-                        // Recargar la página después de la confirmación
-                        location.reload();
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al enviar los datos:", xhr.responseText);
+            Swal.fire({
+                text: '¡Envío exitoso! 🥳🎉',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                // Limpiar respuestas guardadas
+                limpiarRespuestasGuardadas();
 
-                    // Ocultar el overlay de "Procesando..."
-                    document.getElementById("overlay").style.display = "none";
+                // Recargar la página después de la confirmación
+                location.reload();
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al enviar los datos:", xhr.responseText);
 
-                    Swal.fire({
-                        text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
+            // Ocultar el overlay de "Procesando..."
+            document.getElementById("overlay").style.display = "none";
+
+            Swal.fire({
+                text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
             });
         }
-
+    });
+}
 
 
 <!-- Contenedor para Auto Guardado-->
