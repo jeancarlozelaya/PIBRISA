@@ -430,6 +430,7 @@ td.bold-x {
     <div class="header">
         Pisos Brillantes
     </div>
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
     <div class="container">
         <h1>Gestión de Bitácoras</h1>
         <form id="filterForm">
@@ -553,6 +554,19 @@ td.bold-x {
     </div>
 
 <script>
+
+<!-- Contenedor de Volver-->
+
+
+// Función para volver al inicio
+function goBack() {
+    window.history.back();
+}
+
+
+<!-- Contenedor de Volver-->
+
+
     // Arreglo de actividades para Áreas
     const actividadesArea = [
         { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
