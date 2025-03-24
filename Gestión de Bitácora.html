@@ -910,7 +910,7 @@ async function generarPDF() {
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    const infoText = `${tipo}: ${ubicacion} | Mes: ${nombreMes}, Año ${anio}`;
+    const infoText = `Proyecto Argos | ${tipo}: ${ubicacion} | Mes: ${nombreMes} | Año ${anio}`;
     doc.text(infoText, titleX, margin + 18);
     
     // [Resto del código permanece igual...]
@@ -920,7 +920,7 @@ async function generarPDF() {
     const rightHeader = [
         `Versión: 002`,
         `Código: PIB-FLD-00${tipo === 'Área' ? '1' : '2'}`,
-        `Actualizado: ${mesActual} ${anioActual}`,
+        `Actualizado: Marzo 2025`,
         `Elaborado por: Jeancarlo Zelaya`
     ];
     
