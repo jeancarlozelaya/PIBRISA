@@ -406,6 +406,24 @@ td.bold-x {
 }
 
 
+
+/* Estilo para el botón de descarga PDF */
+.download-btn {
+    margin-bottom: 10px;
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.download-btn:hover {
+    background-color: #c82333; /* Rojo más oscuro */
+}
+
+
     </style>
 </head>
 <body>
@@ -497,6 +515,8 @@ td.bold-x {
                 <select id="anio" name="anio" required>
                     <option value="">Selecciona un año</option>
                     <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+
                 </select>
             </div>
 
@@ -506,7 +526,8 @@ td.bold-x {
         <div id="resultados" style="display: none;">
             <div class="botones-container">
                 <button class="back-btn" onclick="volverAFiltros()">Atrás</button>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">Abrir en pantalla completa</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">Ver en pantalla completa</button>
+                <button class="download-btn" onclick="generarPDF()">Descargar PDF</button>
             </div>
             <hr>
             <h2>Bitácora de Actividades Diarias en Áreas</h2>
@@ -655,14 +676,14 @@ td.bold-x {
         // Generar los encabezados de los días
         generarEncabezadosDias(mes, anio);
 
-        const url = tipo === 'Área' 
-            ? "https://script.google.com/macros/s/AKfycbw9ijO_8TLQHSlrikwtQJp74S8jqpcig8_gj-p44bbFZkXLClCwpkpicvQyFx8NxSMk/exec"
-            : "https://script.google.com/macros/s/AKfycby9y-VLAxaateidyziVU5J64JIhXO1XYpE-_uk4BsTaStuJtveoOCqRzTilTKSuspIr/exec"; // Reemplaza con el ID del script para baños
+        // URL única para ambos tipos
+        const url = "https://script.google.com/macros/s/AKfycbw7qhUtNRt6yfXHQnnniAAeXgCf_O59KaGXhwMMfbLXaHmoncS3Afn-wQWaMNUKneiR/exec"; // Reemplaza con tu nuevo ID
 
         const data = {
             mes: mes,
             anio: anio,
-            area: tipo === 'Área' ? area : baño
+            tipo: tipo, // Agregamos el tipo (Área o Baño)
+            ubicacion: tipo === 'Área' ? area : baño // Enviamos el valor correspondiente
         };
 
         $.ajax({
@@ -698,61 +719,63 @@ td.bold-x {
         });
     }
 
-    // Función para mostrar la tabla con los resultados
-    function mostrarTabla(actividadesFiltradas, tipo) {
-        const tbody = document.querySelector("#tablaResultados tbody");
-        tbody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
 
-        const mes = $('#mes').val();
-        const anio = $('#anio').val();
-        const diasEnMes = getDiasEnMes(mes, anio);
+function mostrarTabla(actividadesFiltradas, tipo) {
+    const tbody = document.querySelector("#tablaResultados tbody");
+    tbody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
 
-        const actividades = tipo === 'Área' ? actividadesArea : actividadesBaño;
+    const mes = $('#mes').val();
+    const anio = $('#anio').val();
+    const diasEnMes = getDiasEnMes(mes, anio);
 
-        actividades.forEach(actividad => {
-            const row = document.createElement('tr');
+    const actividades = tipo === 'Área' ? actividadesArea : actividadesBaño;
 
-            // Agregar clase según la frecuencia
-            if (actividad.frecuencia === "Diario") {
-                row.classList.add("fila-diario");
-            } else if (actividad.frecuencia === "Semanal") {
-                row.classList.add("fila-semanal");
+    actividades.forEach(actividad => {
+        const row = document.createElement('tr');
+
+        // Agregar clase según la frecuencia
+        if (actividad.frecuencia === "Diario") {
+            row.classList.add("fila-diario");
+        } else if (actividad.frecuencia === "Semanal") {
+            row.classList.add("fila-semanal");
+        }
+
+        // Crear celdas para la actividad y la frecuencia
+        row.innerHTML = `
+            <td>${actividad.descripcion}</td>
+            <td>${actividad.frecuencia}</td>
+        `;
+
+        // Crear celdas para los días del mes (1 al 31)
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const fecha = new Date(anio, mes - 1, dia);
+            const fechaFormatoISO = `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+            
+            const actividadRealizada = actividadesFiltradas.some(act => {
+                return act.fecha === fechaFormatoISO && act.actividad === actividad.descripcion;
+            });
+
+            // Agregar clase "semana-separador" si es lunes (inicio de semana)
+            const esLunes = fecha.getDay() === 1;
+            const celda = document.createElement('td');
+            if (esLunes) {
+                celda.classList.add('semana-separador');
             }
-
-            // Crear celdas para la actividad y la frecuencia
-            row.innerHTML = `
-                <td>${actividad.descripcion}</td>
-                <td>${actividad.frecuencia}</td>
-            `;
-
-            // Crear celdas para los días del mes (1 al 31)
-            for (let dia = 1; dia <= diasEnMes; dia++) {
-                const fecha = new Date(anio, mes - 1, dia);
-                const actividadRealizada = actividadesFiltradas.some(act => {
-                    const fechaAct = new Date(act.fecha);
-                    return fechaAct.getDate() === dia && act.actividad === actividad.descripcion;
-                });
-
-                // Agregar clase "semana-separador" si es lunes (inicio de semana)
-                const esLunes = fecha.getDay() === 1;
-                const celda = document.createElement('td');
-                if (esLunes) {
-                    celda.classList.add('semana-separador');
-                }
-                if (actividadRealizada) {
-                    celda.textContent = 'X';
-                    celda.classList.add('bold-x'); // Agregar clase bold-x si contiene "X"
-                }
-                row.appendChild(celda);
+            if (actividadRealizada) {
+                celda.textContent = 'X';
+                celda.classList.add('bold-x'); // Agregar clase bold-x si contiene "X"
             }
+            row.appendChild(celda);
+        }
 
-            tbody.appendChild(row);
-        });
+        tbody.appendChild(row);
+    });
 
-        document.getElementById('resultados').style.display = 'block';
-        // Ocultar el overlay de "Procesando..."
-        document.getElementById("overlay").style.display = "none";
-    }
+    document.getElementById('resultados').style.display = 'block';
+    // Ocultar el overlay de "Procesando..."
+    document.getElementById("overlay").style.display = "none";
+}
+
 
     // Función para ocultar los filtros después de mostrar la tabla
     function ocultarFiltros() {
@@ -766,15 +789,35 @@ td.bold-x {
     }
 
     // Función para volver a mostrar los filtros
-    function volverAFiltros() {
-        document.getElementById('mesContainer').style.display = 'block';
-        document.getElementById('anioContainer').style.display = 'block';
+function volverAFiltros() {
+    // Mostrar campos comunes
+    document.getElementById('mesContainer').style.display = 'block';
+    document.getElementById('anioContainer').style.display = 'block';
+    document.getElementById('tipox').style.display = 'block';
+    document.getElementById('enviarBtn').style.display = 'block';
+    
+    // Obtener el tipo seleccionado previamente
+    const tipo = document.getElementById('tipo').value;
+    
+    // Mostrar u ocultar campos según el tipo
+    if (tipo === 'Área') {
         document.getElementById('areaContainer').style.display = 'block';
+        document.getElementById('bañoContainer').style.display = 'none';
+    } else if (tipo === 'Baño') {
+        document.getElementById('areaContainer').style.display = 'none';
         document.getElementById('bañoContainer').style.display = 'block';
-        document.getElementById('enviarBtn').style.display = 'block';
-        document.getElementById('tipox').style.display = 'block';
-        document.getElementById('resultados').style.display = 'none';
+    } else {
+        // Si no hay tipo seleccionado, ocultar ambos
+        document.getElementById('areaContainer').style.display = 'none';
+        document.getElementById('bañoContainer').style.display = 'none';
     }
+    
+    // Ocultar resultados
+    document.getElementById('resultados').style.display = 'none';
+    
+    // Volver a verificar los campos para habilitar/deshabilitar el botón
+    verificarCampos();
+}
 
     // Función para alternar el modo de pantalla completa
     function toggleFullscreen() {
@@ -811,6 +854,155 @@ td.bold-x {
             fullscreenBtn.textContent = "Abrir en pantalla completa";
         }
     });
+
+
+
+
+
+function generarPDF() {
+    // Mostrar overlay de procesamiento
+    document.getElementById("overlay").style.display = "flex";
+    
+    // Obtener datos del formulario
+    const tipo = document.getElementById('tipo').value;
+    const ubicacion = tipo === 'Área' ? document.getElementById('area').value : document.getElementById('baño').value;
+    const mes = document.getElementById('mes').value;
+    const anio = document.getElementById('anio').value;
+    
+    // Nombres de meses y días
+    const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+                         "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const nombreMes = nombresMeses[parseInt(mes) - 1];
+    const mesActual = nombresMeses[new Date().getMonth()];
+    const anioActual = new Date().getFullYear();
+    const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+    
+    // Crear documento PDF en horizontal
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm'
+    });
+    
+    // Configuración
+    const margin = 10;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    
+    // Encabezado izquierdo (información principal)
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Bitácora de Actividades Diarias en ${tipo === 'Área' ? 'Áreas' : 'Baños'}`, margin, margin + 10);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    const infoText = `${tipo}: ${ubicacion} | Mes: ${nombreMes}, Año ${anio}`;
+    doc.text(infoText, margin, margin + 18);
+    
+    // Encabezado derecho (información del reporte)
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    const rightHeader = [
+        `Versión: 002`,
+        `Código: PIB-FLD-00${tipo === 'Área' ? '1' : '2'}`,
+        `Actualizado: ${mesActual} ${anioActual}`,
+        `Elaborado por: Jeancarlo Zelaya`
+    ];
+    
+    let rightY = margin + 6;
+    rightHeader.forEach(line => {
+        const textWidth = doc.getStringUnitWidth(line) * 10 / doc.internal.scaleFactor;
+        doc.text(line, pageWidth - margin - textWidth, rightY);
+        rightY += 4;
+    });
+    
+    // Preparar datos para la tabla
+    const headers = [
+        {content: 'Actividad', styles: {cellWidth: 60, fontStyle: 'bold', halign: 'center'}},
+        {content: 'Frecuencia', styles: {cellWidth: 18, fontStyle: 'bold', halign: 'center'}}
+    ];
+    
+    // Crear encabezados de días con número y letra combinados
+    const diasEnMes = new Date(anio, mes, 0).getDate();
+    const anchoDia = 6;
+    
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+        const fecha = new Date(anio, mes - 1, dia);
+        const diaSemana = diasSemana[fecha.getDay()];
+        
+        headers.push({
+            content: `${dia}\n${diaSemana}`,
+            styles: {
+                cellWidth: anchoDia,
+                fontStyle: 'bold',
+                halign: 'center',
+                valign: 'middle',
+                fontSize: 7
+            }
+        });
+    }
+    
+    // Obtener filas de datos
+    const rows = [];
+    const dataRows = document.querySelectorAll('#tablaResultados tbody tr');
+    
+    dataRows.forEach(row => {
+        const rowData = [
+            {content: row.cells[0].textContent, styles: {fontStyle: 'bold', halign: 'left'}},
+            {content: row.cells[1].textContent, styles: {halign: 'center'}}
+        ];
+        
+        for (let i = 2; i < row.cells.length; i++) {
+            rowData.push({
+                content: row.cells[i].textContent || '',
+                styles: {halign: 'center'}
+            });
+        }
+        
+        rows.push(rowData);
+    });
+    
+    // Calcular margen izquierdo para centrar la tabla
+    const tableWidth = 60 + 18 + (diasEnMes * anchoDia);
+    const leftMargin = (pageWidth - tableWidth) / 2;
+    
+    // Configuración de la tabla
+    const tableConfig = {
+        head: [headers],
+        body: rows,
+        startY: margin + 25, // Ajustado por el encabezado extendido
+        margin: {left: leftMargin},
+        styles: {
+            fontSize: 7,
+            cellPadding: 1.2,
+            overflow: 'linebreak',
+            valign: 'middle',
+            lineWidth: 0.1,
+            halign: 'center'
+        },
+        columnStyles: {
+            0: {cellWidth: 60, halign: 'left'},
+            1: {cellWidth: 18, halign: 'center'}
+        },
+        didDrawPage: function(data) {
+            // Número de página
+            doc.setFontSize(10);
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.text(`Página ${data.pageNumber} de ${pageCount}`, 
+                    pageWidth - margin - 20, pageHeight - margin);
+        }
+    };
+    
+    // Generar la tabla
+    doc.autoTable(tableConfig);
+    
+    // Guardar el PDF
+    const nombreArchivo = `Bitacora_${tipo}_${ubicacion.replace(/ /g, '_')}_${nombreMes}_${anio}.pdf`;
+    doc.save(nombreArchivo);
+    
+    // Ocultar overlay
+    document.getElementById("overlay").style.display = "none";
+}
 </script>
 </body>
 </html>
