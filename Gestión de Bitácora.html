@@ -859,7 +859,7 @@ function volverAFiltros() {
 
 
 
-function generarPDF() {
+async function generarPDF() {
     // Mostrar overlay de procesamiento
     document.getElementById("overlay").style.display = "flex";
     
@@ -889,16 +889,31 @@ function generarPDF() {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Encabezado izquierdo (información principal)
+    // Agregar logo (usando una URL o ruta relativa)
+    try {
+        const logoUrl = 'Imágenes/Icono.png'; // Ajusta esta ruta
+        const logoWidth = 20; // Ancho del logo en mm
+        const logoHeight = 20; // Alto del logo en mm
+        
+        // Agregar imagen (si está disponible)
+        doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight);
+    } catch (error) {
+        console.warn("No se pudo cargar el logo:", error);
+        // Continuar sin logo si hay error
+    }
+    
+    // Encabezado izquierdo (información principal) - Ajustado por el logo
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(`Bitácora de Actividades Diarias en ${tipo === 'Área' ? 'Áreas' : 'Baños'}`, margin, margin + 10);
+    const titleX = margin + 25; // Ajustado para dejar espacio al logo
+    doc.text(`Bitácora de Actividades Diarias en ${tipo === 'Área' ? 'Áreas' : 'Baños'}`, titleX, margin + 10);
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     const infoText = `${tipo}: ${ubicacion} | Mes: ${nombreMes}, Año ${anio}`;
-    doc.text(infoText, margin, margin + 18);
+    doc.text(infoText, titleX, margin + 18);
     
+    // [Resto del código permanece igual...]
     // Encabezado derecho (información del reporte)
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
@@ -925,24 +940,53 @@ function generarPDF() {
     // Crear encabezados de días con número y letra combinados
     const diasEnMes = new Date(anio, mes, 0).getDate();
     const anchoDia = 6;
+    const anchoSeparador = 3; // Ancho de la columna separadora
     
+    let columnasDias = [];
     for (let dia = 1; dia <= diasEnMes; dia++) {
         const fecha = new Date(anio, mes - 1, dia);
         const diaSemana = diasSemana[fecha.getDay()];
+        const esDomingo = fecha.getDay() === 0;
         
-        headers.push({
-            content: `${dia}\n${diaSemana}`,
-            styles: {
-                cellWidth: anchoDia,
-                fontStyle: 'bold',
-                halign: 'center',
-                valign: 'middle',
-                fontSize: 7
-            }
-        });
+        // Agregar separador después de cada domingo (excepto el último día)
+        if (esDomingo && dia !== diasEnMes) {
+            columnasDias.push({
+                content: `${dia}\n${diaSemana}`,
+                styles: {
+                    cellWidth: anchoDia,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    valign: 'middle',
+                    fontSize: 7
+                }
+            });
+            // Agregar columna separadora
+            columnasDias.push({
+                content: '',
+                styles: {
+                    cellWidth: anchoSeparador,
+                    fillColor: [200, 200, 200], // Fondo gris claro
+                    lineWidth: 0 // Sin bordes
+                }
+            });
+        } else {
+            columnasDias.push({
+                content: `${dia}\n${diaSemana}`,
+                styles: {
+                    cellWidth: anchoDia,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    valign: 'middle',
+                    fontSize: 7
+                }
+            });
+        }
     }
     
-    // Obtener filas de datos
+    // Combinar encabezados
+    headers.push(...columnasDias);
+    
+    // Obtener filas de datos con columnas separadoras
     const rows = [];
     const dataRows = document.querySelectorAll('#tablaResultados tbody tr');
     
@@ -952,25 +996,43 @@ function generarPDF() {
             {content: row.cells[1].textContent, styles: {halign: 'center'}}
         ];
         
-        for (let i = 2; i < row.cells.length; i++) {
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const fecha = new Date(anio, mes - 1, dia);
+            const esDomingo = fecha.getDay() === 0;
+            const cellIndex = dia + 1; // +1 porque empieza en columna 2 (0=Actividad, 1=Frecuencia)
+            
+            // Agregar dato del día
             rowData.push({
-                content: row.cells[i].textContent || '',
+                content: row.cells[cellIndex]?.textContent || '',
                 styles: {halign: 'center'}
             });
+            
+            // Agregar separador después de domingos (excepto último día)
+            if (esDomingo && dia !== diasEnMes) {
+                rowData.push({
+                    content: '',
+                    styles: {
+                        fillColor: [240, 240, 240], // Fondo gris más claro
+                        lineWidth: 0 // Sin bordes
+                    }
+                });
+            }
         }
         
         rows.push(rowData);
     });
     
     // Calcular margen izquierdo para centrar la tabla
-    const tableWidth = 60 + 18 + (diasEnMes * anchoDia);
+    const totalDias = diasEnMes;
+    const totalSeparadores = Math.floor((totalDias - 1) / 7); // Un separador por semana completa
+    const tableWidth = 60 + 18 + (totalDias * anchoDia) + (totalSeparadores * anchoSeparador);
     const leftMargin = (pageWidth - tableWidth) / 2;
     
     // Configuración de la tabla
     const tableConfig = {
         head: [headers],
         body: rows,
-        startY: margin + 25, // Ajustado por el encabezado extendido
+        startY: margin + 25,
         margin: {left: leftMargin},
         styles: {
             fontSize: 7,
@@ -984,6 +1046,7 @@ function generarPDF() {
             0: {cellWidth: 60, halign: 'left'},
             1: {cellWidth: 18, halign: 'center'}
         },
+        rowPageBreak: 'avoid',
         didDrawPage: function(data) {
             // Número de página
             doc.setFontSize(10);
@@ -1003,6 +1066,8 @@ function generarPDF() {
     // Ocultar overlay
     document.getElementById("overlay").style.display = "none";
 }
+
+
 </script>
 </body>
 </html>
