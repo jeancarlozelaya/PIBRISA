@@ -910,7 +910,7 @@ async function generarPDF() {
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    const infoText = `Proyecto Argos | ${tipo}: ${ubicacion} | Mes: ${nombreMes} | Año ${anio}`;
+    const infoText = `Proyecto: Argos | ${tipo}: ${ubicacion} | Mes: ${nombreMes} | Año ${anio}`;
     doc.text(infoText, titleX, margin + 18);
     
     // [Resto del código permanece igual...]
