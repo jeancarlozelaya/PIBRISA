@@ -216,6 +216,13 @@
             transition: background-color 0.3s ease; /* Transición suave para el hover */
         }
 
+
+    /* Estilo personalizado para el popup/modal */
+    .swal-popup {
+        width: 300px;  /* Ajusta el ancho máximo del modal */
+        max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+    }
+
         /* Opcional: colores específicos para cada botón */
         .swal-button {
             background-color: #28a745;  /* Verde para el botón de "Sí" */
@@ -1074,7 +1081,7 @@ async function generarPDF() {
     doc.autoTable(tableConfig);
     
     // Guardar el PDF
-    const nombreArchivo = `Bitacora_${tipo}_${ubicacion.replace(/ /g, '_')}_${nombreMes}_${anio}.pdf`;
+    const nombreArchivo = `Bitacora-${tipo}-${ubicacion.replace(/ /g, '_')}-${nombreMes}-${anio}.pdf`;
     doc.save(nombreArchivo);
     
     // Ocultar overlay
