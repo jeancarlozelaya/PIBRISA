@@ -933,10 +933,22 @@
                 // Ocultar el overlay de espera
                 document.getElementById('overlay').style.display = 'none';
 
+
+
+
+
+
+
                 Swal.fire({
-                    text: '¡Envío exitoso! 🥳🎉',
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar'
+            text: "¡Envío exitoso! 🥳🎉",
+            icon: "success",
+            showCancelButton: false, // No mostrar el botón de cancelar
+            confirmButtonText: "Aceptar",
+            customClass: {
+                content: "swal-content",
+                confirmButton: "swal-button",
+                popup: "swal-popup",
+            },
                 }).then(() => {
                     // Limpiar respuestas guardadas
                     limpiarRespuestasGuardadas();
