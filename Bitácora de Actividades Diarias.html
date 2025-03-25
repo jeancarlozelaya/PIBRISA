@@ -216,6 +216,15 @@
             transition: background-color 0.3s ease; /* Transición suave para el hover */
         }
 
+
+
+    /* Estilo personalizado para el popup/modal */
+    .swal-popup {
+        width: 300px;  /* Ajusta el ancho máximo del modal */
+        max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
+    }
+
+
         /* Opcional: colores específicos para cada botón */
         .swal-button {
             background-color: #28a745;  /* Verde para el botón de "Sí" */
@@ -360,6 +369,22 @@
 #tablaActividades th:nth-child(2),
 #tablaActividades td:nth-child(2) {
     display: none;
+}
+
+
+/* Estilo para hacer los checkboxes más grandes */
+#tablaActividades input[type="checkbox"] {
+    width: 20px;       /* Ancho del checkbox */
+    height: 20px;      /* Alto del checkbox */
+    transform: scale(1.5); /* Escala el checkbox para hacerlo más grande */
+    margin: 0 auto;    /* Centra el checkbox en la celda */
+    display: block;    /* Asegura que el margen auto funcione */
+    cursor: pointer;   /* Cambia el cursor al pasar sobre el checkbox */
+}
+
+/* Opcional: estilo para cuando el checkbox está marcado */
+#tablaActividades input[type="checkbox"]:checked {
+    background-color: #007BFF; /* Color de fondo cuando está marcado */
 }
 
     </style>
