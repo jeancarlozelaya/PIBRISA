@@ -435,6 +435,26 @@
                     </select>
                 </div>
 
+<div class="question-container" id="oficinaContainer" style="display: none;">
+    <label for="oficina">Oficina:</label>
+    <select id="oficina" name="oficina">
+        <option value="">Selecciona una opción</option>
+        <option value="Compras">Compras</option>
+        <option value="Contabilidad">Contabilidad</option>
+        <option value="CRO">CRO</option>
+        <option value="Ejecutores de Mantenimiento">Ejecutores de Mantenimiento</option>
+        <option value="Inspectores de Mantenimiento">Inspectores de Mantenimiento</option>
+        <option value="Materias Primas">Materias Primas</option>
+        <option value="Producción">Producción</option>
+        <option value="Proyectos">Proyectos</option>
+        <option value="RRHH">RRHH</option>
+        <option value="Sala de Reuniones">Sala de Reuniones</option>
+        <option value="Sala de Reuniones de Mantenimiento">Sala de Reuniones de Mantenimiento</option>
+        <option value="SISO">SISO</option>
+        <option value="Sub Gerencia">Sub Gerencia</option>
+    </select>
+</div>
+
                 <div class="question-container" id="bañoContainer" style="display: none;">
                     <label for="baño">Baños de:</label>
                     <select id="baño" name="baño">
@@ -491,569 +511,623 @@
         </div>
     </div>
 
-    <script>
-        // Función para volver al inicio
-        function goBack() {
-            window.location.href = "Bitácoras.html";
-        }
+<script>
+    // Función para volver al inicio
+    function goBack() {
+        window.location.href = "Bitácoras.html";
+    }
 
-        // Precargar la fecha actual
-        function prellenarFechaHora() {
-            let today = new Date();
-            let year = today.getFullYear();
-            let month = String(today.getMonth() + 1).padStart(2, "0");
-            let day = String(today.getDate()).padStart(2, "0");
-            document.getElementById("fecha").value = `${year}-${month}-${day}`;
-        }
+    // Precargar la fecha actual
+    function prellenarFechaHora() {
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = String(today.getMonth() + 1).padStart(2, "0");
+        let day = String(today.getDate()).padStart(2, "0");
+        document.getElementById("fecha").value = `${year}-${month}-${day}`;
+    }
 
-        // Llamar a la función para precargar la fecha al cargar la página
-        prellenarFechaHora();
+    // Llamar a la función para precargar la fecha al cargar la página
+    prellenarFechaHora();
 
-        // Arreglo de actividades para Áreas
-        const actividadesArea = [
-            { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
-            { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
-            { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
-            { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
-            { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-            { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-            { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-            { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-            { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-            { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-            { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
-            { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
-            { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
-            { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
-            { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-        ];
+    // Arreglo COMPLETO de actividades para Áreas (sin omitir ninguna)
+    const actividadesArea = [
+        { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
+        { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
+        { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
+        { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
+        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+        { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+        { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
+        { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
+        { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
+        { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
+        { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+    ];
 
-        // Arreglo de actividades para Baños
-        const actividadesBaño = [
-            { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-            { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
-            { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-            { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
-            { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
-            { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
-            { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-            { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
-            { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-            { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-            { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-            { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-        ];
+    // Arreglo COMPLETO de actividades para Baños (sin omitir ninguna)
+    const actividadesBaño = [
+        { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
+        { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+        { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
+        { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
+        { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
+        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+        { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
+        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+        { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+    ];
 
-        // Función para mostrar u ocultar campos según el tipo de actividad
-        function mostrarCampos() {
-            const tipo = document.getElementById("tipo").value;
-            const areaContainer = document.getElementById("areaContainer");
-            const bañoContainer = document.getElementById("bañoContainer");
+    // Función para mostrar u ocultar campos según el tipo de actividad
+    function mostrarCampos() {
+        const tipo = document.getElementById("tipo").value;
+        const areaContainer = document.getElementById("areaContainer");
+        const bañoContainer = document.getElementById("bañoContainer");
+        const oficinaContainer = document.getElementById("oficinaContainer");
 
-            if (tipo === "Área") {
-                areaContainer.style.display = "block";
-                bañoContainer.style.display = "none";
-                generarTablaActividades(actividadesArea);
-            } else if (tipo === "Baño") {
-                areaContainer.style.display = "none";
-                bañoContainer.style.display = "block";
-                generarTablaActividades(actividadesBaño);
-            } else {
-                areaContainer.style.display = "none";
-                bañoContainer.style.display = "none";
-                document.querySelector("#tablaActividades tbody").innerHTML = "";
-            }
-        }
+        // Resetear visibilidad
+        areaContainer.style.display = "none";
+        bañoContainer.style.display = "none";
+        oficinaContainer.style.display = "none";
 
-        // Función para generar las filas de la tabla
-        function generarTablaActividades(actividades) {
-            const tbody = document.querySelector("#tablaActividades tbody");
-            tbody.innerHTML = ""; // Limpiar la tabla antes de generar nuevas filas
-
-            actividades.forEach((actividad) => {
-                const row = document.createElement("tr");
-
-                // Agregar clase según la frecuencia
-                if (actividad.frecuencia === "Diario") {
-                    row.classList.add("fila-diario");
-                } else if (actividad.frecuencia === "Semanal") {
-                    row.classList.add("fila-semanal");
-                }
-
-                row.innerHTML = `
-                    <td>${actividad.descripcion}</td>
-                    <td>${actividad.frecuencia}</td>
-                    <td><input type="checkbox" name="actividad" value="${actividad.descripcion}"></td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Función para verificar si todos los campos están completos
-        function verificarCampos() {
-            const tipo = document.getElementById("tipo").value;
+        if (tipo === "Área") {
+            areaContainer.style.display = "block";
+            generarTablaActividades(actividadesArea);
+            
+            // Verificar si el área seleccionada es "Administración"
             const area = document.getElementById("area").value;
-            const baño = document.getElementById("baño").value;
-            const actividades = document.querySelectorAll('input[name="actividad"]:checked').length;
+            if (area === "Administración") {
+                oficinaContainer.style.display = "block";
+            }
+        } else if (tipo === "Baño") {
+            bañoContainer.style.display = "block";
+            generarTablaActividades(actividadesBaño);
+        }
+    }
 
-            // Verificar el tipo de actividad
-            if (tipo === "") {
-                return false; // No se ha seleccionado un tipo
+    // Función para generar las filas de la tabla
+    function generarTablaActividades(actividades) {
+        const tbody = document.querySelector("#tablaActividades tbody");
+        tbody.innerHTML = ""; // Limpiar la tabla antes de generar nuevas filas
+
+        actividades.forEach((actividad) => {
+            const row = document.createElement("tr");
+
+            // Agregar clase según la frecuencia
+            if (actividad.frecuencia === "Diario") {
+                row.classList.add("fila-diario");
+            } else if (actividad.frecuencia === "Semanal") {
+                row.classList.add("fila-semanal");
             }
 
-            // Verificar si es Área o Baño
-            if (tipo === "Área" && area === "") {
-                return false; // No se ha seleccionado un área
-            } else if (tipo === "Baño" && baño === "") {
-                return false; // No se ha seleccionado un baño
-            }
+            row.innerHTML = `
+                <td>${actividad.descripcion}</td>
+                <td>${actividad.frecuencia}</td>
+                <td><input type="checkbox" name="actividad" value="${actividad.descripcion}"></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
 
-            // Verificar que al menos una actividad esté seleccionada
-            if (actividades === 0) {
-                return false; // No se ha seleccionado ninguna actividad
-            }
+    // Función para verificar si todos los campos están completos
+    function verificarCampos() {
+        const tipo = document.getElementById("tipo").value;
+        const area = document.getElementById("area").value;
+        const baño = document.getElementById("baño").value;
+        const oficina = document.getElementById("oficina").value;
+        const actividades = document.querySelectorAll('input[name="actividad"]:checked').length;
 
-            // Si todo está correcto, habilitar el botón
-            return true;
+        // Verificar el tipo de actividad
+        if (tipo === "") {
+            return false; // No se ha seleccionado un tipo
         }
 
-        // Función para habilitar o deshabilitar el botón de Enviar
-        function actualizarBotonEnviar() {
-            const enviarBtn = document.getElementById("enviarBtn");
-            enviarBtn.disabled = !verificarCampos();
+        // Verificar si es Área o Baño
+        if (tipo === "Área") {
+            if (area === "") return false; // No se ha seleccionado un área
+            if (area === "Administración" && oficina === "") return false; // Para administración, se requiere oficina
+        } else if (tipo === "Baño" && baño === "") {
+            return false; // No se ha seleccionado un baño
         }
 
-        // Escuchar cambios en los campos
-        document.getElementById("tipo").addEventListener("change", function () {
-            mostrarCampos(); // Mostrar u ocultar campos según el tipo
+        // Verificar que al menos una actividad esté seleccionada
+        if (actividades === 0) {
+            return false; // No se ha seleccionado ninguna actividad
+        }
+
+        // Si todo está correcto, habilitar el botón
+        return true;
+    }
+
+    // Función para habilitar o deshabilitar el botón de Enviar
+    function actualizarBotonEnviar() {
+        const enviarBtn = document.getElementById("enviarBtn");
+        enviarBtn.disabled = !verificarCampos();
+    }
+
+    // Escuchar cambios en los campos
+    document.getElementById("tipo").addEventListener("change", function () {
+        mostrarCampos(); // Mostrar u ocultar campos según el tipo
+        actualizarBotonEnviar(); // Actualizar el estado del botón
+    });
+
+    document.getElementById("area").addEventListener("change", function() {
+        const area = this.value;
+        const oficinaContainer = document.getElementById("oficinaContainer");
+        
+        if (area === "Administración") {
+            oficinaContainer.style.display = "block";
+        } else {
+            oficinaContainer.style.display = "none";
+            document.getElementById("oficina").value = ""; // Resetear el valor
+        }
+        
+        actualizarBotonEnviar(); // Actualizar el estado del botón
+    });
+
+    document.getElementById("baño").addEventListener("change", actualizarBotonEnviar);
+    document.getElementById("oficina").addEventListener("change", actualizarBotonEnviar);
+
+    // Escuchar cambios en las actividades
+    document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
+        if (e.target.type === "checkbox") {
             actualizarBotonEnviar(); // Actualizar el estado del botón
-        });
-
-        document.getElementById("area").addEventListener("change", actualizarBotonEnviar);
-        document.getElementById("baño").addEventListener("change", actualizarBotonEnviar);
-
-        // Escuchar cambios en las actividades
-        document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
-            if (e.target.type === "checkbox") {
-                actualizarBotonEnviar(); // Actualizar el estado del botón
-            }
-        });
-
-        // Función para confirmar el envío
-        function confirmarEnvio() {
-            Swal.fire({
-                text: "¿Estás seguro de continuar? 🤔",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonText: "Sí 🫡",
-                cancelButtonText: "No 😬",
-                customClass: {
-                    popup: "swal-popup", // Clase para el modal
-                    confirmButton: "swal-button", // Clase para el botón de confirmación
-                    cancelButton: "swal-button-cancel", // Clase para el botón de cancelación
-                    actions: "swal-actions", // Clase para el contenedor de los botones
-                },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Mostrar el overlay de "Procesando..."
-                    document.getElementById("overlay").style.display = "flex";
-
-                    const fecha = $('#fecha').val();
-                    const tipo = $('#tipo').val();
-                    const area = $('#area').val();
-                    const baño = $('#baño').val();
-                    const actividades = [];
-
-                    // Recolectar las actividades marcadas
-                    $('input[name="actividad"]:checked').each(function() {
-                        actividades.push($(this).val());
-                    });
-
-                    // Verificar que se hayan seleccionado actividades
-                    if (actividades.length === 0) {
-                        Swal.fire({
-                            text: 'Debes seleccionar al menos una actividad.',
-                            icon: 'warning',
-                            confirmButtonText: 'Aceptar'
-                        });
-                        return;
-                    }
-
-                    enviarDatos(fecha, tipo, area, baño, actividades);
-                }
-            });
-        }
-
-        // Función para enviar datos
-function enviarDatos(fecha, tipo, area, baño, actividades) {
-    let url = "";
-
-    // Verificar el tipo de actividad
-    if (tipo === "Área") {
-        // Asignar la URL según el área seleccionada
-        switch (area) {
-            case "Administración":
-                url = "https://script.google.com/macros/s/AKfycbzjai-ECi9RVhDFcOCc-is414nesxS5qUjXPC4NoThnoY8XhvhVM1D2hQXEOPEyf_PR/exec";
-                break;
-            case "Almacén General":
-                url = "https://script.google.com/macros/s/AKfycbx6_eCKR84HNwj1jiwQm_9FDSIIYQhHYIPHnAeiyTwRU7fsa4yzOclqB9HgiurpA6hp/exec";
-                break;
-            case "Bodega de Limpieza":
-                url = "https://script.google.com/macros/s/AKfycbx69iYA3XmgOz00WHv6f1Forac1zUCytBFFARRLg4l6rhmZ1j60Q4gVKSDPi3mjHxOHeg/exec";
-                break;
-            case "Chiminike":
-                url = "https://script.google.com/macros/s/AKfycbzV9atlrcyNVU0OgHZvA_A-IWYaIs3GOEFZZmvat1orVVaF9yu3rtZDKJNYig5RY6yu/exec";
-                break;
-            case "Despacho":
-                url = "https://script.google.com/macros/s/AKfycbyhUyDTjin_odtgWyASfts4rsArtRxmOaOTBHJs4zRzbZCBu1Hh3xUMiDDhPsqhksqhhw/exec";
-                break;
-            case "Enfermería":
-                url = "https://script.google.com/macros/s/AKfycbyg5M6lXIhCdvLDYpby1yUoWs22cujKWAeJf0u3INc8f_bJvE7xj1M8cAxFu14gMWjj/exec";
-                break;
-            case "Equipo Móvil":
-                url = "https://script.google.com/macros/s/AKfycbxC1cMBeLHG-iOdgCyyu5o76Xw1niCbAaNbw-DXuc7T9wOOq8_bI3PF4cJ16xPftmWx1A/exec";
-                break;
-            case "Expedición":
-                url = "https://script.google.com/macros/s/AKfycbwC8utyR7mR7-aQ6G-GaqAOPa16J3Z3A14LtG1rRYOfD8r9Zrt6THYbaHNqYSv-a7zS/exec";
-                break;
-            case "Laboratorio de Calidad":
-                url = "https://script.google.com/macros/s/AKfycbwvageEn09g-wxJGSoRMRITx6jAMlUTVBRQf08_90TOUHanUPYkre2EjuBljRONxnJP/exec";
-                break;
-            case "Laboratorio de Concreto":
-                url = "https://script.google.com/macros/s/AKfycbz-BpBAuXZ4m2Tvofw46ulW-N-9A4GE6rsDJ4IYqyaw9aHsx4fw7gF3b4v2-LxR8kEg/exec";
-                break;
-            case "Machaqueo A":
-                url = "https://script.google.com/macros/s/AKfycbxZjYTHfEaTPNirsOOFGTtWcBL1nIior8hIFd0aXalEcZFUnIPCknTTRJES9ZKHsrnX/exec";
-                break;
-            case "Posta Principal":
-                url = "https://script.google.com/macros/s/AKfycbzrgd4y0fzPbfv6WeuH-R1heSj9eAIwTBpWZeP_mcTWNzT0OD6kLEOxgVz3bbKuWS5P/exec";
-                break;
-            case "Sala de Control":
-                url = "https://script.google.com/macros/s/AKfycbxYvvzdJEOYlesgDZ2GhDiOCNdnVM_cKL3Qrk4eFXCUKWtbPtEhCAyX3B7aEOUsNPOITQ/exec";
-                break;
-            case "Sala de Maternidad":
-                url = "https://script.google.com/macros/s/AKfycby0guTFX5SZH5-AVCKFmnkPDjriiaSVEHhx56GKIQ18s_yzomdYdAsstYT1bc-19KtX/exec";
-                break;
-            case "Salón Vial":
-                url = "https://script.google.com/macros/s/AKfycbzFRJ9i4-D-K6dFuuf4l12GXB6IIq2b2z928F8XNV_E3CO3AWZmvs-aS_vzxwLtR6b-/exec";
-                break;
-            case "Taller Eléctrico":
-                url = "https://script.google.com/macros/s/AKfycby6cfOOVkRLP2DEp6AMTbYvQr5nUuAWs0_2dl4wadCeStQ5dkrxplV3dZgGppiNlRzZ/exec";
-                break;
-            default:
-                console.error("Área no reconocida:", area);
-                return;
-        }
-    } else if (tipo === "Baño") {
-        // Asignar la URL según el baño seleccionado
-        switch (baño) {
-            case "Admin - Gerencia":
-                url = "https://script.google.com/macros/s/AKfycbzdp8-7o8MBv73trut8S4_0NctjdRsRl349KyNtNMxr6Co7Llsadp-Uv2VmoMN2_x6fyg/exec";
-                break;
-            case "Admin - Hombres":
-                url = "https://script.google.com/macros/s/AKfycbx5nzRtHpNtdBCtp-jE1teLKWFDqU_KI-lEygNPeiEDY_GUNZpu9RTgqh9y7Tk5G0id/exec";
-                break;
-            case "Admin - Mujeres":
-                url = "https://script.google.com/macros/s/AKfycbzBiWOek8-Aa4yEOKG-WZDvJcVvB39nQsdLXpZwtSAsqsJ-SiZcRYdCFqYUeavez3_D/exec";
-                break;
-            case "Admin - Sala de Reuniones":
-                url = "https://script.google.com/macros/s/AKfycbyEB9M6kcs_0NiM2jmJrslUJ4e11K5MutIL1DDshH4bUZJ7HEAa_Cf5bh6ozCbRIx10UA/exec";
-                break;
-            case "Almacen General":
-                url = "https://script.google.com/macros/s/AKfycbxGQFphEPeCZQbO7NrX2XLKZ78-o0YAS40cCd3vDzl6ibdqruMdMu3fODDZ4peUsXXTVw/exec";
-                break;
-            case "Camerinos Contratistas":
-                url = "https://script.google.com/macros/s/AKfycbwVyZ9o_pz3NXRaoIFKNoIaVs-Bgg4GMR4KTgJWDvfPhK0nPA0pA-GuskerbduBrUpb/exec";
-                break;
-            case "Camerinos Permanentes":
-                url = "https://script.google.com/macros/s/AKfycbwG0YQqr3hDzVtm3eMauCtf0w_6TWMgTDIwHFwfhgsVKmxS0Nx45VXq5nLHWwzJFeGB/exec";
-                break;
-            case "Despacho":
-                url = "https://script.google.com/macros/s/AKfycbyAJRH4AKz_6DxppZHsheeXY6oFlnZBxvI3PPcxHVB3Ukzu168pmGE3EIqjiD6AH8Is2w/exec";
-                break;
-            case "Enfermería":
-                url = "https://script.google.com/macros/s/AKfycbxnuJ-It7xzGDJXNNxgbz0z_5JXofDhJ4x_Cpd8FyMW9GfQtIpfcamtja4cTGqVhh5b/exec";
-                break;
-            case "Expedición":
-                url = "https://script.google.com/macros/s/AKfycbxE8oNzfJ4y_WKHw3rRfkVzQFjnLCukklYVALZnKijwL63DkAeaZ0e0rXzbj3fBjYen/exec";
-                break;
-            case "Laboratorio de Calidad":
-                url = "https://script.google.com/macros/s/AKfycbw_a1J1x0wGcSxRhDjfeTm_BQNtj2x9zr_UyOQ5DMK7WvF389wAeD49XPiWOOCMOmwu/exec";
-                break;
-            case "Laboratorio de Concreto":
-                url = "https://script.google.com/macros/s/AKfycbwrm7ZHnn3pTcZ7WZQ6JjMPr6e1TIAEIGQTwMzpWdAsL-7TXP-C4Xldzrc-smAPKtCoAw/exec";
-                break;
-            case "Machaqueo A":
-                url = "https://script.google.com/macros/s/AKfycbzPMQ37DnhacGx9faq_iS5I9SM5aepWwF3ydRYSSvM8iOHvkoLV86B0yCvnZcx61Xgc/exec";
-                break;
-            case "Posta Guardias":
-                url = "https://script.google.com/macros/s/AKfycbxvbPDMdk13YhXxbcHB6rCvfz4AFtzK6196ARmkMK2CdpDFoOwBacu0LF6lCAP5Fke2/exec";
-                break;
-            case "Posta Recepción":
-                url = "https://script.google.com/macros/s/AKfycbzj89eoD6IrIkMEz0sNTMz6r3Y99FMs8KaS4xcPZRaXd2kGuFZ0Q3rxLd1hUIYUi1Fy/exec";
-                break;
-            case "Sala de Control":
-                url = "https://script.google.com/macros/s/AKfycbyO4zsHjBr_wXxxFIcRQzirEjqOVJd1TRxlA6GRKtj5gYSscmuXOfdV3bI3DCBl_tDy9g/exec";
-                break;
-            case "Salón Vial":
-                url = "https://script.google.com/macros/s/AKfycbyzpY7co1xqSaOjKumidJ_yilMRswDHxRe-uQkYCu1naOcaXCtrOZv9W65TbEmvWP2AiA/exec";
-                break;
-            case "Taller Electrico":
-                url = "https://script.google.com/macros/s/AKfycbzWNTzYLbBuIQ50rb8OWMjXTQW51zUmfeoUW6CXgDpUWVaWf9V_9oPyaa7v5hn1wkUfTw/exec";
-                break;
-            case "Transportistas":
-                url = "https://script.google.com/macros/s/AKfycbyPQd8EyeP8ir_jE8jwvgn6poYNfK7c1AI4Pstl4GtqVti9Gr1jvx-2L2HNZ6zwLZaL_w/exec";
-                break;
-            default:
-                console.error("Baño no reconocido:", baño);
-                return;
-        }
-    } else {
-        console.error("Tipo de actividad no reconocido:", tipo);
-        return;
-    }
-
-    // Verificar que se haya asignado una URL válida
-    if (!url) {
-        console.error("No se pudo determinar la URL para enviar los datos.");
-        return;
-    }
-
-    // Enviar los datos usando AJAX
-    $.ajax({
-        url: url,
-        type: "POST",
-        data: {
-            fecha: fecha,
-            tipo: tipo,
-            area: area,
-            baño: baño,
-            actividades: JSON.stringify(actividades)
-        },
-        success: function(response) {
-            console.log("Respuesta del servidor:", response);
-
-            // Ocultar el overlay de espera
-            document.getElementById('overlay').style.display = 'none';
-
-            Swal.fire({
-                text: '¡Envío exitoso! 🥳🎉',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            }).then(() => {
-                // Limpiar respuestas guardadas
-                limpiarRespuestasGuardadas();
-
-                // Recargar la página después de la confirmación
-                location.reload();
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al enviar los datos:", xhr.responseText);
-
-            // Ocultar el overlay de "Procesando..."
-            document.getElementById("overlay").style.display = "none";
-
-            Swal.fire({
-                text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
-}
-
-
-<!-- Contenedor para Auto Guardado-->
-
-
-// Función para guardar las respuestas en localStorage
-function guardarRespuestas() {
-    const formData = {};
-
-    // Recopilar todos los campos del formulario
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        if (input.type !== 'file') { // Excluimos los campos de archivo
-            formData[input.id] = input.value;
         }
     });
 
-    // Guardar las actividades seleccionadas
-    const actividades = [];
-    document.querySelectorAll('input[name="actividad"]:checked').forEach(checkbox => {
-        actividades.push(checkbox.value);
-    });
-    formData.actividades = actividades;
-
-    // Guardar en localStorage
-    localStorage.setItem('formData', JSON.stringify(formData));
-}
-
-// Función para cargar las respuestas guardadas
-function cargarRespuestas() {
-    const savedData = localStorage.getItem('formData');
-    if (savedData) {
-        const formData = JSON.parse(savedData);
-
-        // Cargar los valores de los campos
-        Object.keys(formData).forEach(key => {
-            const input = document.getElementById(key);
-            if (input) {
-                input.value = formData[key];
-
-                // Disparar el evento "change" en los selects para que se muestren/oculten las preguntas dinámicas
-                if (input.tagName === 'SELECT') {
-                    input.dispatchEvent(new Event('change'));
-                }
-            }
-        });
-
-        // Cargar las actividades seleccionadas
-        if (formData.actividades) {
-            formData.actividades.forEach(actividad => {
-                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-        }
-
-        // Actualizar el estado del botón de Enviar
-        actualizarBotonEnviar();
-    }
-}
-
-// Función para preguntar al usuario si desea continuar con las respuestas guardadas
-function preguntarContinuar() {
-    const savedData = localStorage.getItem('formData');
-    if (savedData) {
+    // Función para confirmar el envío
+    function confirmarEnvio() {
         Swal.fire({
-            text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
-            iconHtml: "🫵🏻",
+            text: "¿Estás seguro de continuar? 🤔",
+            icon: "question",
             showCancelButton: true,
-            confirmButtonText: "Sí, continuar 😎",
-            cancelButtonText: "No, reiniciar 🤓",
-            allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
+            confirmButtonText: "Sí 🫡",
+            cancelButtonText: "No 😬",
             customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                cancelButton: "swal-button-cancel",
-                actions: "swal-actions",
-                icon: "no-border-icon", // Clase personalizada para el ícono
+                popup: "swal-popup", // Clase para el modal
+                confirmButton: "swal-button", // Clase para el botón de confirmación
+                cancelButton: "swal-button-cancel", // Clase para el botón de cancelación
+                actions: "swal-actions", // Clase para el contenedor de los botones
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                cargarRespuestas(); // Continuar con el progreso guardado
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Mostrar segundo mensaje de confirmación
-                Swal.fire({
-                    text: "¿Estás seguro de que deseas perder todo tu progreso?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Sí, reiniciar",
-                    cancelButtonText: "No, recuperar progreso",
-                    allowOutsideClick: false,
-                    customClass: {
-                        popup: "swal-popup",
-                        confirmButton: "swal-button",
-                        cancelButton: "swal-button-cancel",
-                        actions: "swal-actions",
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.removeItem('formData'); // Eliminar respuestas guardadas
-                        location.reload(); // Recargar la página para reiniciar el formulario
-                    } else {
-                        cargarRespuestas(); // Recuperar el progreso guardado
+                // Mostrar el overlay de "Procesando..."
+                document.getElementById("overlay").style.display = "flex";
+
+                const fecha = $('#fecha').val();
+                const tipo = $('#tipo').val();
+                const area = $('#area').val();
+                const baño = $('#baño').val();
+                const oficina = $('#oficina').val();
+                const actividades = [];
+
+                // Recolectar las actividades marcadas
+                $('input[name="actividad"]:checked').each(function() {
+                    actividades.push($(this).val());
+                });
+
+                // Verificar que se hayan seleccionado actividades
+                if (actividades.length === 0) {
+                    Swal.fire({
+                        text: 'Debes seleccionar al menos una actividad.',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                enviarDatos(fecha, tipo, area, baño, oficina, actividades);
+            }
+        });
+    }
+
+    // Función para enviar datos
+    function enviarDatos(fecha, tipo, area, baño, oficina, actividades) {
+        let url = "";
+
+        // Verificar el tipo de actividad
+        if (tipo === "Área") {
+            // Asignar la URL según el área seleccionada
+            switch (area) {
+                case "Administración":
+                    // Ahora depende de la oficina seleccionada
+                    switch (oficina) {
+                        case "Compras":
+                            url = "https://script.google.com/macros/s/AKfycbz0oUpJvwoEkCmM0ablvRyaaGFp-A063EIVIHJusfGTn44gCLihoLOVibwHrINuSYyaHg/exec";
+                            break;
+                        case "Contabilidad":
+                            url = "URL_DEL_SCRIPT_DE_CONTABILIDAD";
+                            break;
+                        case "CRO":
+                            url = "URL_DEL_SCRIPT_DE_CRO";
+                            break;
+                        case "Ejecutores de Mantenimiento":
+                            url = "URL_DEL_SCRIPT_DE_EJECUTORES";
+                            break;
+                        case "Inspectores de Mantenimiento":
+                            url = "URL_DEL_SCRIPT_DE_INSPECTORES";
+                            break;
+                        case "Materias Primas":
+                            url = "URL_DEL_SCRIPT_DE_MATERIAS_PRIMAS";
+                            break;
+                        case "Producción":
+                            url = "URL_DEL_SCRIPT_DE_PRODUCCION";
+                            break;
+                        case "Proyectos":
+                            url = "URL_DEL_SCRIPT_DE_PROYECTOS";
+                            break;
+                        case "RRHH":
+                            url = "URL_DEL_SCRIPT_DE_RRHH";
+                            break;
+                        case "Sala de Reuniones":
+                            url = "URL_DEL_SCRIPT_DE_SALA_REUNIONES";
+                            break;
+                        case "Sala de Reuniones de Mantenimiento":
+                            url = "URL_DEL_SCRIPT_DE_SALA_MANTENIMIENTO";
+                            break;
+                        case "SISO":
+                            url = "URL_DEL_SCRIPT_DE_SISO";
+                            break;
+                        case "Sub Gerencia":
+                            url = "URL_DEL_SCRIPT_DE_SUB_GERENCIA";
+                            break;
+                        default:
+                            console.error("Oficina no reconocida:", oficina);
+                            return;
                     }
+                    break;
+                case "Almacén General":
+                    url = "https://script.google.com/macros/s/AKfycbx6_eCKR84HNwj1jiwQm_9FDSIIYQhHYIPHnAeiyTwRU7fsa4yzOclqB9HgiurpA6hp/exec";
+                    break;
+                case "Bodega de Limpieza":
+                    url = "https://script.google.com/macros/s/AKfycbx69iYA3XmgOz00WHv6f1Forac1zUCytBFFARRLg4l6rhmZ1j60Q4gVKSDPi3mjHxOHeg/exec";
+                    break;
+                case "Chiminike":
+                    url = "https://script.google.com/macros/s/AKfycbzV9atlrcyNVU0OgHZvA_A-IWYaIs3GOEFZZmvat1orVVaF9yu3rtZDKJNYig5RY6yu/exec";
+                    break;
+                case "Despacho":
+                    url = "https://script.google.com/macros/s/AKfycbyhUyDTjin_odtgWyASfts4rsArtRxmOaOTBHJs4zRzbZCBu1Hh3xUMiDDhPsqhksqhhw/exec";
+                    break;
+                case "Enfermería":
+                    url = "https://script.google.com/macros/s/AKfycbyg5M6lXIhCdvLDYpby1yUoWs22cujKWAeJf0u3INc8f_bJvE7xj1M8cAxFu14gMWjj/exec";
+                    break;
+                case "Equipo Móvil":
+                    url = "https://script.google.com/macros/s/AKfycbxC1cMBeLHG-iOdgCyyu5o76Xw1niCbAaNbw-DXuc7T9wOOq8_bI3PF4cJ16xPftmWx1A/exec";
+                    break;
+                case "Expedición":
+                    url = "https://script.google.com/macros/s/AKfycbwC8utyR7mR7-aQ6G-GaqAOPa16J3Z3A14LtG1rRYOfD8r9Zrt6THYbaHNqYSv-a7zS/exec";
+                    break;
+                case "Laboratorio de Calidad":
+                    url = "https://script.google.com/macros/s/AKfycbwvageEn09g-wxJGSoRMRITx6jAMlUTVBRQf08_90TOUHanUPYkre2EjuBljRONxnJP/exec";
+                    break;
+                case "Laboratorio de Concreto":
+                    url = "https://script.google.com/macros/s/AKfycbz-BpBAuXZ4m2Tvofw46ulW-N-9A4GE6rsDJ4IYqyaw9aHsx4fw7gF3b4v2-LxR8kEg/exec";
+                    break;
+                case "Machaqueo A":
+                    url = "https://script.google.com/macros/s/AKfycbxZjYTHfEaTPNirsOOFGTtWcBL1nIior8hIFd0aXalEcZFUnIPCknTTRJES9ZKHsrnX/exec";
+                    break;
+                case "Posta Principal":
+                    url = "https://script.google.com/macros/s/AKfycbzrgd4y0fzPbfv6WeuH-R1heSj9eAIwTBpWZeP_mcTWNzT0OD6kLEOxgVz3bbKuWS5P/exec";
+                    break;
+                case "Sala de Control":
+                    url = "https://script.google.com/macros/s/AKfycbxYvvzdJEOYlesgDZ2GhDiOCNdnVM_cKL3Qrk4eFXCUKWtbPtEhCAyX3B7aEOUsNPOITQ/exec";
+                    break;
+                case "Sala de Maternidad":
+                    url = "https://script.google.com/macros/s/AKfycby0guTFX5SZH5-AVCKFmnkPDjriiaSVEHhx56GKIQ18s_yzomdYdAsstYT1bc-19KtX/exec";
+                    break;
+                case "Salón Vial":
+                    url = "https://script.google.com/macros/s/AKfycbzFRJ9i4-D-K6dFuuf4l12GXB6IIq2b2z928F8XNV_E3CO3AWZmvs-aS_vzxwLtR6b-/exec";
+                    break;
+                case "Taller Eléctrico":
+                    url = "https://script.google.com/macros/s/AKfycby6cfOOVkRLP2DEp6AMTbYvQr5nUuAWs0_2dl4wadCeStQ5dkrxplV3dZgGppiNlRzZ/exec";
+                    break;
+                default:
+                    console.error("Área no reconocida:", area);
+                    return;
+            }
+        } else if (tipo === "Baño") {
+            // Asignar la URL según el baño seleccionado
+            switch (baño) {
+                case "Admin - Gerencia":
+                    url = "https://script.google.com/macros/s/AKfycbzdp8-7o8MBv73trut8S4_0NctjdRsRl349KyNtNMxr6Co7Llsadp-Uv2VmoMN2_x6fyg/exec";
+                    break;
+                case "Admin - Hombres":
+                    url = "https://script.google.com/macros/s/AKfycbx5nzRtHpNtdBCtp-jE1teLKWFDqU_KI-lEygNPeiEDY_GUNZpu9RTgqh9y7Tk5G0id/exec";
+                    break;
+                case "Admin - Mujeres":
+                    url = "https://script.google.com/macros/s/AKfycbzBiWOek8-Aa4yEOKG-WZDvJcVvB39nQsdLXpZwtSAsqsJ-SiZcRYdCFqYUeavez3_D/exec";
+                    break;
+                case "Admin - Sala de Reuniones":
+                    url = "https://script.google.com/macros/s/AKfycbyEB9M6kcs_0NiM2jmJrslUJ4e11K5MutIL1DDshH4bUZJ7HEAa_Cf5bh6ozCbRIx10UA/exec";
+                    break;
+                case "Almacen General":
+                    url = "https://script.google.com/macros/s/AKfycbxGQFphEPeCZQbO7NrX2XLKZ78-o0YAS40cCd3vDzl6ibdqruMdMu3fODDZ4peUsXXTVw/exec";
+                    break;
+                case "Camerinos Contratistas":
+                    url = "https://script.google.com/macros/s/AKfycbwVyZ9o_pz3NXRaoIFKNoIaVs-Bgg4GMR4KTgJWDvfPhK0nPA0pA-GuskerbduBrUpb/exec";
+                    break;
+                case "Camerinos Permanentes":
+                    url = "https://script.google.com/macros/s/AKfycbwG0YQqr3hDzVtm3eMauCtf0w_6TWMgTDIwHFwfhgsVKmxS0Nx45VXq5nLHWwzJFeGB/exec";
+                    break;
+                case "Despacho":
+                    url = "https://script.google.com/macros/s/AKfycbyAJRH4AKz_6DxppZHsheeXY6oFlnZBxvI3PPcxHVB3Ukzu168pmGE3EIqjiD6AH8Is2w/exec";
+                    break;
+                case "Enfermería":
+                    url = "https://script.google.com/macros/s/AKfycbxnuJ-It7xzGDJXNNxgbz0z_5JXofDhJ4x_Cpd8FyMW9GfQtIpfcamtja4cTGqVhh5b/exec";
+                    break;
+                case "Expedición":
+                    url = "https://script.google.com/macros/s/AKfycbxE8oNzfJ4y_WKHw3rRfkVzQFjnLCukklYVALZnKijwL63DkAeaZ0e0rXzbj3fBjYen/exec";
+                    break;
+                case "Laboratorio de Calidad":
+                    url = "https://script.google.com/macros/s/AKfycbw_a1J1x0wGcSxRhDjfeTm_BQNtj2x9zr_UyOQ5DMK7WvF389wAeD49XPiWOOCMOmwu/exec";
+                    break;
+                case "Laboratorio de Concreto":
+                    url = "https://script.google.com/macros/s/AKfycbwrm7ZHnn3pTcZ7WZQ6JjMPr6e1TIAEIGQTwMzpWdAsL-7TXP-C4Xldzrc-smAPKtCoAw/exec";
+                    break;
+                case "Machaqueo A":
+                    url = "https://script.google.com/macros/s/AKfycbzPMQ37DnhacGx9faq_iS5I9SM5aepWwF3ydRYSSvM8iOHvkoLV86B0yCvnZcx61Xgc/exec";
+                    break;
+                case "Posta Guardias":
+                    url = "https://script.google.com/macros/s/AKfycbxvbPDMdk13YhXxbcHB6rCvfz4AFtzK6196ARmkMK2CdpDFoOwBacu0LF6lCAP5Fke2/exec";
+                    break;
+                case "Posta Recepción":
+                    url = "https://script.google.com/macros/s/AKfycbzj89eoD6IrIkMEz0sNTMz6r3Y99FMs8KaS4xcPZRaXd2kGuFZ0Q3rxLd1hUIYUi1Fy/exec";
+                    break;
+                case "Sala de Control":
+                    url = "https://script.google.com/macros/s/AKfycbyO4zsHjBr_wXxxFIcRQzirEjqOVJd1TRxlA6GRKtj5gYSscmuXOfdV3bI3DCBl_tDy9g/exec";
+                    break;
+                case "Salón Vial":
+                    url = "https://script.google.com/macros/s/AKfycbyzpY7co1xqSaOjKumidJ_yilMRswDHxRe-uQkYCu1naOcaXCtrOZv9W65TbEmvWP2AiA/exec";
+                    break;
+                case "Taller Electrico":
+                    url = "https://script.google.com/macros/s/AKfycbzWNTzYLbBuIQ50rb8OWMjXTQW51zUmfeoUW6CXgDpUWVaWf9V_9oPyaa7v5hn1wkUfTw/exec";
+                    break;
+                case "Transportistas":
+                    url = "https://script.google.com/macros/s/AKfycbyPQd8EyeP8ir_jE8jwvgn6poYNfK7c1AI4Pstl4GtqVti9Gr1jvx-2L2HNZ6zwLZaL_w/exec";
+                    break;
+                default:
+                    console.error("Baño no reconocido:", baño);
+                    return;
+            }
+        } else {
+            console.error("Tipo de actividad no reconocido:", tipo);
+            return;
+        }
+
+        // Verificar que se haya asignado una URL válida
+        if (!url) {
+            console.error("No se pudo determinar la URL para enviar los datos.");
+            return;
+        }
+
+        // Enviar los datos usando AJAX
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {
+                fecha: fecha,
+                tipo: tipo,
+                area: area,
+                baño: baño,
+                oficina: oficina,
+                actividades: JSON.stringify(actividades)
+            },
+            success: function(response) {
+                console.log("Respuesta del servidor:", response);
+
+                // Ocultar el overlay de espera
+                document.getElementById('overlay').style.display = 'none';
+
+                Swal.fire({
+                    text: '¡Envío exitoso! 🥳🎉',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Limpiar respuestas guardadas
+                    limpiarRespuestasGuardadas();
+
+                    // Recargar la página después de la confirmación
+                    location.reload();
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al enviar los datos:", xhr.responseText);
+
+                // Ocultar el overlay de "Procesando..."
+                document.getElementById("overlay").style.display = "none";
+
+                Swal.fire({
+                    text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
                 });
             }
         });
     }
-}
 
-// Limpiar respuestas guardadas al enviar el formulario
-function limpiarRespuestasGuardadas() {
-    localStorage.removeItem('formData');
-}
+    // Función para guardar las respuestas en localStorage
+    function guardarRespuestas() {
+        const formData = {};
 
-// Escuchar cambios en los campos del formulario
-document.querySelectorAll('input, select, textarea').forEach(input => {
-    input.addEventListener('input', guardarRespuestas);
-    input.addEventListener('change', guardarRespuestas);
-});
-
-// Escuchar cambios en las actividades
-document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
-    if (e.target.type === "checkbox") {
-        guardarRespuestas(); // Guardar respuestas al cambiar las actividades
-        actualizarBotonEnviar(); // Actualizar el estado del botón
-    }
-});
-
-// Llamar a la función al cargar la página
-window.onload = function() {
-    preguntarContinuar();
-    prellenarFechaHora(); // Precargar la fecha actual
-};
-
-
-<!-- Contenedor para Auto Guardado-->
-
-
-<!-- Contenedor para Evitar Botón Atrás del Móvil-->
-
-
-let backPressCount = 0; // Contador para rastrear el número de veces que se presiona el botón atrás
-
-// Bloquear el historial al cargar la página
-history.pushState(null, null, document.URL);
-
-// Escuchar el evento "popstate" (cuando se presiona el botón atrás)
-window.addEventListener("popstate", function (event) {
-    if (backPressCount === 0) {
-        // Mostrar el mensaje de advertencia cuando se presiona el botón atrás por primera vez
-        Swal.fire({
-            text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
-            icon: "warning",
-            showCancelButton: false, // Eliminamos el botón de cancelar
-            confirmButtonText: "Quedarme", // Cambiamos el texto del botón de confirmar
-            allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
-            customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                actions: "swal-actions",
-                icon: "swal-icon-circle", // Clase personalizada para el ícono
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Si el usuario hace clic en "Quedarme", reiniciamos el contador y bloqueamos el historial nuevamente
-                history.pushState(null, null, document.URL);
-                backPressCount = 0; // Reiniciamos el contador
+        // Recopilar todos los campos del formulario
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            if (input.type !== 'file') { // Excluimos los campos de archivo
+                formData[input.id] = input.value;
             }
         });
 
-        backPressCount++; // Aumentamos el contador para la siguiente vez
-    } else {
-        // Si el contador ya es mayor a 0, dejamos que el usuario salga del formulario
-        backPressCount = 0; // Reiniciamos el contador
-        history.back(); // Dejamos que el usuario salga
+        // Guardar las actividades seleccionadas
+        const actividades = [];
+        document.querySelectorAll('input[name="actividad"]:checked').forEach(checkbox => {
+            actividades.push(checkbox.value);
+        });
+        formData.actividades = actividades;
+
+        // Guardar en localStorage
+        localStorage.setItem('formData', JSON.stringify(formData));
     }
-});
 
+    // Función para cargar las respuestas guardadas
+    function cargarRespuestas() {
+        const savedData = localStorage.getItem('formData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
 
-<!-- Contenedor para Evitar Botón Atrás del Móvil-->
+            // Cargar los valores de los campos
+            Object.keys(formData).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    input.value = formData[key];
 
-    </script>
+                    // Disparar el evento "change" en los selects para que se muestren/oculten las preguntas dinámicas
+                    if (input.tagName === 'SELECT') {
+                        input.dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+
+            // Cargar las actividades seleccionadas
+            if (formData.actividades) {
+                formData.actividades.forEach(actividad => {
+                    const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+
+            // Actualizar el estado del botón de Enviar
+            actualizarBotonEnviar();
+        }
+    }
+
+    // Función para preguntar al usuario si desea continuar con las respuestas guardadas
+    function preguntarContinuar() {
+        const savedData = localStorage.getItem('formData');
+        if (savedData) {
+            Swal.fire({
+                text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
+                iconHtml: "🫵🏻",
+                showCancelButton: true,
+                confirmButtonText: "Sí, continuar 😎",
+                cancelButtonText: "No, reiniciar 🤓",
+                allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
+                customClass: {
+                    popup: "swal-popup",
+                    confirmButton: "swal-button",
+                    cancelButton: "swal-button-cancel",
+                    actions: "swal-actions",
+                    icon: "no-border-icon", // Clase personalizada para el ícono
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    cargarRespuestas(); // Continuar con el progreso guardado
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Mostrar segundo mensaje de confirmación
+                    Swal.fire({
+                        text: "¿Estás seguro de que deseas perder todo tu progreso?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Sí, reiniciar",
+                        cancelButtonText: "No, recuperar progreso",
+                        allowOutsideClick: false,
+                        customClass: {
+                            popup: "swal-popup",
+                            confirmButton: "swal-button",
+                            cancelButton: "swal-button-cancel",
+                            actions: "swal-actions",
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            localStorage.removeItem('formData'); // Eliminar respuestas guardadas
+                            location.reload(); // Recargar la página para reiniciar el formulario
+                        } else {
+                            cargarRespuestas(); // Recuperar el progreso guardado
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    // Limpiar respuestas guardadas al enviar el formulario
+    function limpiarRespuestasGuardadas() {
+        localStorage.removeItem('formData');
+    }
+
+    // Escuchar cambios en los campos del formulario
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', guardarRespuestas);
+        input.addEventListener('change', guardarRespuestas);
+    });
+
+    // Escuchar cambios en las actividades
+    document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
+        if (e.target.type === "checkbox") {
+            guardarRespuestas(); // Guardar respuestas al cambiar las actividades
+            actualizarBotonEnviar(); // Actualizar el estado del botón
+        }
+    });
+
+    // Llamar a la función al cargar la página
+    window.onload = function() {
+        preguntarContinuar();
+        prellenarFechaHora(); // Precargar la fecha actual
+    };
+
+    let backPressCount = 0; // Contador para rastrear el número de veces que se presiona el botón atrás
+
+    // Bloquear el historial al cargar la página
+    history.pushState(null, null, document.URL);
+
+    // Escuchar el evento "popstate" (cuando se presiona el botón atrás)
+    window.addEventListener("popstate", function (event) {
+        if (backPressCount === 0) {
+            // Mostrar el mensaje de advertencia cuando se presiona el botón atrás por primera vez
+            Swal.fire({
+                text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
+                icon: "warning",
+                showCancelButton: false, // Eliminamos el botón de cancelar
+                confirmButtonText: "Quedarme", // Cambiamos el texto del botón de confirmar
+                allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
+                customClass: {
+                    popup: "swal-popup",
+                    confirmButton: "swal-button",
+                    actions: "swal-actions",
+                    icon: "swal-icon-circle", // Clase personalizada para el ícono
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si el usuario hace clic en "Quedarme", reiniciamos el contador y bloqueamos el historial nuevamente
+                    history.pushState(null, null, document.URL);
+                    backPressCount = 0; // Reiniciamos el contador
+                }
+            });
+
+            backPressCount++; // Aumentamos el contador para la siguiente vez
+        } else {
+            // Si el contador ya es mayor a 0, dejamos que el usuario salga del formulario
+            backPressCount = 0; // Reiniciamos el contador
+            history.back(); // Dejamos que el usuario salga
+        }
+    });
+</script>
+
 </body>
 </html>
