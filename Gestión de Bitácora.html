@@ -473,6 +473,28 @@ td.bold-x {
                 </select>
             </div>
 
+<div class="question-container" id="oficinaContainer" style="display: none;">
+    <label for="oficina">Oficina:</label>
+    <select id="oficina" name="oficina">
+        <option value="">Selecciona una opción</option>
+        <option value="Compras">Compras</option>
+        <option value="Contabilidad">Contabilidad</option>
+        <option value="CRO">CRO</option>
+        <option value="Ejecutores de Mantenimiento">Ejecutores de Mantenimiento</option>
+        <option value="Inspectores de Mantenimiento">Inspectores de Mantenimiento</option>
+        <option value="Materias Primas">Materias Primas</option>
+        <option value="Producción">Producción</option>
+        <option value="Proyectos">Proyectos</option>
+        <option value="RRHH">RRHH</option>
+        <option value="Sala de Reuniones">Sala de Reuniones</option>
+        <option value="Sala de Reuniones de Mantenimiento">Sala de Reuniones de Mantenimiento</option>
+        <option value="SISO">SISO</option>
+        <option value="Sub Gerencia">Sub Gerencia</option>
+    </select>
+</div>
+
+
+
             <div class="question-container" id="bañoContainer" style="display: none;">
                 <label for="baño">Baños de:</label>
                 <select id="baño" name="baño">
@@ -559,233 +581,221 @@ td.bold-x {
             <p>Procesando...🥱</p>
         </div>
     </div>
+</body>
+
 
 <script>
-
-<!-- Contenedor de Volver-->
-
-
 // Función para volver al inicio
 function goBack() {
     window.history.back();
 }
 
+// Arreglo de actividades para Áreas
+const actividadesArea = [
+    { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
+    { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
+    { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
+    { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
+    { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+    { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+    { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+    { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+    { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+    { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+    { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
+    { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
+    { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
+    { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
+    { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+];
 
-<!-- Contenedor de Volver-->
+// Arreglo de actividades para Baños
+const actividadesBaño = [
+    { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+    { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
+    { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+    { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
+    { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
+    { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
+    { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+    { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
+    { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+    { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+    { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+    { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+];
 
+// Función para verificar campos y habilitar/deshabilitar botón
+function verificarCampos() {
+    const campos = {
+        mes: document.getElementById('mes').value,
+        anio: document.getElementById('anio').value,
+        tipo: document.getElementById('tipo').value,
+        area: document.getElementById('area').value,
+        baño: document.getElementById('baño').value,
+        oficina: document.getElementById('oficina').value
+    };
 
-    // Arreglo de actividades para Áreas
-    const actividadesArea = [
-        { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
-        { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
-        { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
-        { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
-        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-        { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-        { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
-        { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
-        { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
-        { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
-        { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-    ];
+    const camposCompletos = campos.mes && campos.anio && campos.tipo && 
+        (campos.tipo === 'Área' ? 
+            (campos.area === 'Administración' ? campos.oficina : campos.area) : 
+            campos.baño);
 
-    // Arreglo de actividades para Baños
-    const actividadesBaño = [
-        { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
-        { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
-        { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
-        { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
-        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-        { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
-        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-        { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-    ];
+    document.getElementById('enviarBtn').disabled = !camposCompletos;
+}
 
-    // Función para mostrar/ocultar campos de área o baño
-    function mostrarCampos() {
-        const tipo = document.getElementById('tipo').value;
-        const areaContainer = document.getElementById('areaContainer');
-        const bañoContainer = document.getElementById('bañoContainer');
+// Configuración de event listeners
+document.getElementById('mes').addEventListener('change', verificarCampos);
+document.getElementById('anio').addEventListener('change', verificarCampos);
+document.getElementById('tipo').addEventListener('change', mostrarCampos);
+document.getElementById('area').addEventListener('change', function() {
+    mostrarCampos();
+    verificarCampos();
+});
+document.getElementById('baño').addEventListener('change', verificarCampos);
+document.getElementById('oficina').addEventListener('change', verificarCampos);
 
-        if (tipo === 'Área') {
-            areaContainer.style.display = 'block';
-            bañoContainer.style.display = 'none';
-        } else if (tipo === 'Baño') {
-            areaContainer.style.display = 'none';
-            bañoContainer.style.display = 'block';
-        } else {
-            areaContainer.style.display = 'none';
-            bañoContainer.style.display = 'none';
-        }
-        verificarCampos(); // Verificar si los campos están completos
+// Función para mostrar/ocultar campos según selección
+function mostrarCampos() {
+    const tipo = document.getElementById('tipo').value;
+    const areaContainer = document.getElementById('areaContainer');
+    const bañoContainer = document.getElementById('bañoContainer');
+    const oficinaContainer = document.getElementById('oficinaContainer');
+
+    if (tipo === 'Área') {
+        areaContainer.style.display = 'block';
+        bañoContainer.style.display = 'none';
+        const areaSeleccionada = document.getElementById('area').value;
+        oficinaContainer.style.display = areaSeleccionada === 'Administración' ? 'block' : 'none';
+    } else if (tipo === 'Baño') {
+        areaContainer.style.display = 'none';
+        bañoContainer.style.display = 'block';
+        oficinaContainer.style.display = 'none';
+    } else {
+        areaContainer.style.display = 'none';
+        bañoContainer.style.display = 'none';
+        oficinaContainer.style.display = 'none';
     }
+    verificarCampos();
+}
 
-    // Función para verificar si todos los campos están completos
-    function verificarCampos() {
-        const mes = $('#mes').val();
-        const anio = $('#anio').val();
-        const tipo = $('#tipo').val();
-        const area = $('#area').val();
-        const baño = $('#baño').val();
+// Función para generar encabezados de días
+function generarEncabezadosDias(mes, anio) {
+    const thead = document.querySelector("#tablaResultados thead tr");
+    thead.innerHTML = `<th>Actividad</th><th>Frecuencia</th>`;
+    const diasEnMes = getDiasEnMes(mes, anio);
+    const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
 
-        // Habilitar el botón solo si todos los campos obligatorios están completos
-        if (mes && anio && tipo && (tipo === 'Área' ? area : baño)) {
-            document.getElementById('enviarBtn').disabled = false;
-        } else {
-            document.getElementById('enviarBtn').disabled = true;
-        }
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+        const fecha = new Date(anio, mes - 1, dia);
+        const diaSemana = diasSemana[fecha.getDay()];
+        const esLunes = fecha.getDay() === 1;
+        thead.innerHTML += `<th${esLunes ? ' class="semana-separador"' : ''}>${dia}<br>${diaSemana}</th>`;
     }
+}
 
-    // Agregar eventos a los campos para verificar su estado en tiempo real
-    document.getElementById('mes').addEventListener('change', verificarCampos);
-    document.getElementById('anio').addEventListener('change', verificarCampos);
-    document.getElementById('tipo').addEventListener('change', mostrarCampos);
-    document.getElementById('area').addEventListener('change', verificarCampos);
-    document.getElementById('baño').addEventListener('change', verificarCampos);
+// Función auxiliar para obtener días en mes
+function getDiasEnMes(mes, anio) {
+    return new Date(anio, mes, 0).getDate();
+}
 
-    // Función para generar los encabezados de los días del mes
-    function generarEncabezadosDias(mes, anio) {
-        const thead = document.querySelector("#tablaResultados thead tr");
-        thead.innerHTML = `<th>Actividad</th><th>Frecuencia</th>`; // Limpiar y agregar los primeros encabezados
+// Función principal para filtrar actividades
+function filtrarActividades() {
+    const mes = $('#mes').val();
+    const anio = $('#anio').val();
+    const tipo = $('#tipo').val();
+    const area = $('#area').val();
+    const baño = $('#baño').val();
+    const oficina = $('#oficina').val();
 
-        const diasEnMes = getDiasEnMes(mes, anio);
-        const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+    document.getElementById("overlay").style.display = "flex";
+    generarEncabezadosDias(mes, anio);
 
-        for (let dia = 1; dia <= diasEnMes; dia++) {
-            const fecha = new Date(anio, mes - 1, dia);
-            const diaSemana = diasSemana[fecha.getDay()];
+    const url = "https://script.google.com/macros/s/AKfycbw7qhUtNRt6yfXHQnnniAAeXgCf_O59KaGXhwMMfbLXaHmoncS3Afn-wQWaMNUKneiR/exec";
 
-            // Agregar clase "semana-separador" si es lunes (inicio de semana)
-            const esLunes = fecha.getDay() === 1;
-            thead.innerHTML += `<th${esLunes ? ' class="semana-separador"' : ''}>${dia}<br>${diaSemana}</th>`;
-        }
-    }
+    const data = {
+        mes: mes,
+        anio: anio,
+        tipo: tipo,
+        ubicacion: tipo === 'Área' ? area : baño,
+        oficina: tipo === 'Área' && area === 'Administración' ? oficina : null
+    };
 
-    // Función para obtener el número de días en un mes
-    function getDiasEnMes(mes, anio) {
-        return new Date(anio, mes, 0).getDate();
-    }
-
-    // Función para filtrar actividades
-    function filtrarActividades() {
-        const mes = $('#mes').val();
-        const anio = $('#anio').val();
-        const tipo = $('#tipo').val();
-        const area = $('#area').val();
-        const baño = $('#baño').val();
-
-        // Mostrar el overlay de "Procesando..."
-        document.getElementById("overlay").style.display = "flex";
-
-        // Generar los encabezados de los días
-        generarEncabezadosDias(mes, anio);
-
-        // URL única para ambos tipos
-        const url = "https://script.google.com/macros/s/AKfycbw7qhUtNRt6yfXHQnnniAAeXgCf_O59KaGXhwMMfbLXaHmoncS3Afn-wQWaMNUKneiR/exec"; // Reemplaza con tu nuevo ID
-
-        const data = {
-            mes: mes,
-            anio: anio,
-            tipo: tipo, // Agregamos el tipo (Área o Baño)
-            ubicacion: tipo === 'Área' ? area : baño // Enviamos el valor correspondiente
-        };
-
-        $.ajax({
-            url: url,
-            type: "GET",
-            data: data,
-            success: function(response) {
-                console.log("Respuesta del servidor:", response);
-                if (response.length === 0) {
-                    // Ocultar el overlay de "Procesando..."
-                    document.getElementById("overlay").style.display = "none";
-
-                    Swal.fire({
-                        text: "No se encontraron actividades para los filtros seleccionados.",
-                        icon: "info",
-                        showCancelButton: false,
-                        confirmButtonText: "Aceptar",
-                        customClass: {
-                            content: "swal-content",
-                            confirmButton: "swal-button",
-                            popup: "swal-popup",
-                        },
-                    });
-                } else {
-                    mostrarTabla(response, tipo);
-                    ocultarFiltros();
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al filtrar los datos:", xhr.responseText);
-                alert('Hubo un problema al filtrar los datos. Intenta nuevamente.');
+    $.ajax({
+        url: url,
+        type: "GET",
+        data: data,
+        success: function(response) {
+            console.log("Respuesta del servidor:", response);
+            if (response.length === 0) {
+                document.getElementById("overlay").style.display = "none";
+                Swal.fire({
+                    text: "No se encontraron actividades para los filtros seleccionados.",
+                    icon: "info",
+                    showCancelButton: false,
+                    confirmButtonText: "Aceptar",
+                    customClass: {
+                        content: "swal-content",
+                        confirmButton: "swal-button",
+                        popup: "swal-popup",
+                    },
+                });
+            } else {
+                mostrarTabla(response, tipo);
+                ocultarFiltros();
             }
-        });
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al filtrar los datos:", xhr.responseText);
+            document.getElementById("overlay").style.display = "none";
+            alert('Hubo un problema al filtrar los datos. Intenta nuevamente.');
+        }
+    });
+}
 
-
+// Función para mostrar tabla con resultados
 function mostrarTabla(actividadesFiltradas, tipo) {
     const tbody = document.querySelector("#tablaResultados tbody");
-    tbody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
-
+    tbody.innerHTML = '';
     const mes = $('#mes').val();
     const anio = $('#anio').val();
     const diasEnMes = getDiasEnMes(mes, anio);
-
     const actividades = tipo === 'Área' ? actividadesArea : actividadesBaño;
+
+    const actividadesRealizadas = {};
+    actividadesFiltradas.forEach(act => {
+        actividadesRealizadas[act.actividad] = actividadesRealizadas[act.actividad] || new Set();
+        actividadesRealizadas[act.actividad].add(act.fecha);
+    });
 
     actividades.forEach(actividad => {
         const row = document.createElement('tr');
+        row.classList.add(actividad.frecuencia === "Diario" ? "fila-diario" : "fila-semanal");
+        
+        row.innerHTML = `<td>${actividad.descripcion}</td><td>${actividad.frecuencia}</td>`;
 
-        // Agregar clase según la frecuencia
-        if (actividad.frecuencia === "Diario") {
-            row.classList.add("fila-diario");
-        } else if (actividad.frecuencia === "Semanal") {
-            row.classList.add("fila-semanal");
-        }
-
-        // Crear celdas para la actividad y la frecuencia
-        row.innerHTML = `
-            <td>${actividad.descripcion}</td>
-            <td>${actividad.frecuencia}</td>
-        `;
-
-        // Crear celdas para los días del mes (1 al 31)
         for (let dia = 1; dia <= diasEnMes; dia++) {
-            const fecha = new Date(anio, mes - 1, dia);
-            const fechaFormatoISO = `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-            
-            const actividadRealizada = actividadesFiltradas.some(act => {
-                return act.fecha === fechaFormatoISO && act.actividad === actividad.descripcion;
-            });
-
-            // Agregar clase "semana-separador" si es lunes (inicio de semana)
-            const esLunes = fecha.getDay() === 1;
+            const fecha = `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
             const celda = document.createElement('td');
-            if (esLunes) {
+            
+            if (new Date(anio, mes - 1, dia).getDay() === 1) {
                 celda.classList.add('semana-separador');
             }
-            if (actividadRealizada) {
+            
+            if (actividadesRealizadas[actividad.descripcion]?.has(fecha)) {
                 celda.textContent = 'X';
-                celda.classList.add('bold-x'); // Agregar clase bold-x si contiene "X"
+                celda.classList.add('bold-x');
             }
+            
             row.appendChild(celda);
         }
 
@@ -793,149 +803,137 @@ function mostrarTabla(actividadesFiltradas, tipo) {
     });
 
     document.getElementById('resultados').style.display = 'block';
-    // Ocultar el overlay de "Procesando..."
     document.getElementById("overlay").style.display = "none";
 }
 
+// Función para ocultar filtros
+function ocultarFiltros() {
+    document.getElementById('mesContainer').style.display = 'none';
+    document.getElementById('anioContainer').style.display = 'none';
+    document.getElementById('areaContainer').style.display = 'none';
+    document.getElementById('bañoContainer').style.display = 'none';
+    document.getElementById('oficinaContainer').style.display = 'none';
+    document.getElementById('enviarBtn').style.display = 'none';
+    document.getElementById('tipox').style.display = 'none';
+}
 
-    // Función para ocultar los filtros después de mostrar la tabla
-    function ocultarFiltros() {
-        document.getElementById('mesContainer').style.display = 'none';
-        document.getElementById('anioContainer').style.display = 'none';
-        document.getElementById('areaContainer').style.display = 'none';
-        document.getElementById('bañoContainer').style.display = 'none';
-        document.getElementById('enviarBtn').style.display = 'none';
-        document.getElementById('tipox').style.display = 'none';
-
-    }
-
-    // Función para volver a mostrar los filtros
+// Función para volver a mostrar filtros
 function volverAFiltros() {
-    // Mostrar campos comunes
+    document.querySelector("#tablaResultados thead tr").innerHTML = '<th>Actividad</th><th>Frecuencia</th>';
+    document.querySelector("#tablaResultados tbody").innerHTML = '';
+    
     document.getElementById('mesContainer').style.display = 'block';
     document.getElementById('anioContainer').style.display = 'block';
     document.getElementById('tipox').style.display = 'block';
     document.getElementById('enviarBtn').style.display = 'block';
     
-    // Obtener el tipo seleccionado previamente
     const tipo = document.getElementById('tipo').value;
+    const area = document.getElementById('area').value;
     
-    // Mostrar u ocultar campos según el tipo
     if (tipo === 'Área') {
         document.getElementById('areaContainer').style.display = 'block';
         document.getElementById('bañoContainer').style.display = 'none';
+        document.getElementById('oficinaContainer').style.display = area === 'Administración' ? 'block' : 'none';
     } else if (tipo === 'Baño') {
         document.getElementById('areaContainer').style.display = 'none';
         document.getElementById('bañoContainer').style.display = 'block';
+        document.getElementById('oficinaContainer').style.display = 'none';
     } else {
-        // Si no hay tipo seleccionado, ocultar ambos
         document.getElementById('areaContainer').style.display = 'none';
         document.getElementById('bañoContainer').style.display = 'none';
+        document.getElementById('oficinaContainer').style.display = 'none';
     }
     
-    // Ocultar resultados
     document.getElementById('resultados').style.display = 'none';
-    
-    // Volver a verificar los campos para habilitar/deshabilitar el botón
     verificarCampos();
 }
 
-    // Función para alternar el modo de pantalla completa
-    function toggleFullscreen() {
-        const tableContainer = document.querySelector(".table-container");
-        if (!document.fullscreenElement) {
-            if (tableContainer.requestFullscreen) {
-                tableContainer.requestFullscreen();
-            } else if (tableContainer.mozRequestFullScreen) { // Firefox
-                tableContainer.mozRequestFullScreen();
-            } else if (tableContainer.webkitRequestFullscreen) { // Chrome, Safari y Opera
-                tableContainer.webkitRequestFullscreen();
-            } else if (tableContainer.msRequestFullscreen) { // IE/Edge
-                tableContainer.msRequestFullscreen();
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) { // Firefox
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) { // Chrome, Safari y Opera
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) { // IE/Edge
-                document.msExitFullscreen();
-            }
+// Función para pantalla completa
+function toggleFullscreen() {
+    const tableContainer = document.querySelector(".table-container");
+    if (!document.fullscreenElement) {
+        if (tableContainer.requestFullscreen) {
+            tableContainer.requestFullscreen();
+        } else if (tableContainer.mozRequestFullScreen) {
+            tableContainer.mozRequestFullScreen();
+        } else if (tableContainer.webkitRequestFullscreen) {
+            tableContainer.webkitRequestFullscreen();
+        } else if (tableContainer.msRequestFullscreen) {
+            tableContainer.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
         }
     }
+}
 
-    // Escuchar cambios en el modo de pantalla completa
-    document.addEventListener("fullscreenchange", () => {
-        const fullscreenBtn = document.querySelector(".fullscreen-btn");
-        if (document.fullscreenElement) {
-            fullscreenBtn.textContent = "Salir de pantalla completa";
-        } else {
-            fullscreenBtn.textContent = "Abrir en pantalla completa";
-        }
-    });
+// Listener para cambio de pantalla completa
+document.addEventListener("fullscreenchange", () => {
+    const fullscreenBtn = document.querySelector(".fullscreen-btn");
+    if (document.fullscreenElement) {
+        fullscreenBtn.textContent = "Salir de pantalla completa";
+    } else {
+        fullscreenBtn.textContent = "Abrir en pantalla completa";
+    }
+});
 
-
-
-
-
+// Función para generar PDF
 async function generarPDF() {
-    // Mostrar overlay de procesamiento
     document.getElementById("overlay").style.display = "flex";
     
-    // Obtener datos del formulario
     const tipo = document.getElementById('tipo').value;
     const ubicacion = tipo === 'Área' ? document.getElementById('area').value : document.getElementById('baño').value;
+    const oficina = tipo === 'Área' && ubicacion === 'Administración' ? document.getElementById('oficina').value : null;
     const mes = document.getElementById('mes').value;
     const anio = document.getElementById('anio').value;
     
-    // Nombres de meses y días
+    const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
     const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
                          "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const nombreMes = nombresMeses[parseInt(mes) - 1];
-    const mesActual = nombresMeses[new Date().getMonth()];
-    const anioActual = new Date().getFullYear();
-    const diasSemana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+    const diasEnMes = new Date(anio, mes, 0).getDate();
     
-    // Crear documento PDF en horizontal
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm'
     });
     
-    // Configuración
     const margin = 10;
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Agregar logo (usando una URL o ruta relativa)
     try {
-        const logoUrl = 'Imágenes/Icono.png'; // Ajusta esta ruta
-        const logoWidth = 20; // Ancho del logo en mm
-        const logoHeight = 20; // Alto del logo en mm
-        
-        // Agregar imagen (si está disponible)
+        const logoUrl = 'Imágenes/Icono.png';
+        const logoWidth = 20;
+        const logoHeight = 20;
         doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight);
     } catch (error) {
         console.warn("No se pudo cargar el logo:", error);
-        // Continuar sin logo si hay error
     }
     
-    // Encabezado izquierdo (información principal) - Ajustado por el logo
+    const tituloPrincipal = `Bitácora de Actividades Diarias en ${tipo === 'Área' ? 'Áreas' : 'Baños'}`;
+    const detalleUbicacion = tipo === 'Área' && ubicacion === 'Administración' 
+        ? `${ubicacion} - ${oficina}` 
+        : ubicacion;
+    
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    const titleX = margin + 25; // Ajustado para dejar espacio al logo
-    doc.text(`Bitácora de Actividades Diarias en ${tipo === 'Área' ? 'Áreas' : 'Baños'}`, titleX, margin + 10);
+    const titleX = margin + 25;
+    doc.text(tituloPrincipal, titleX, margin + 10);
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    const infoText = `Proyecto: Argos | ${tipo}: ${ubicacion} | Mes: ${nombreMes} | Año ${anio}`;
+    const infoText = `Proyecto: Argos | ${tipo}: ${detalleUbicacion} | Mes: ${nombreMes} | Año ${anio}`;
     doc.text(infoText, titleX, margin + 18);
     
-    // [Resto del código permanece igual...]
-    // Encabezado derecho (información del reporte)
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     const rightHeader = [
@@ -952,16 +950,13 @@ async function generarPDF() {
         rightY += 4;
     });
     
-    // Preparar datos para la tabla
     const headers = [
         {content: 'Actividad', styles: {cellWidth: 60, fontStyle: 'bold', halign: 'center'}},
         {content: 'Frecuencia', styles: {cellWidth: 18, fontStyle: 'bold', halign: 'center'}}
     ];
     
-    // Crear encabezados de días con número y letra combinados
-    const diasEnMes = new Date(anio, mes, 0).getDate();
     const anchoDia = 6;
-    const anchoSeparador = 3; // Ancho de la columna separadora
+    const anchoSeparador = 3;
     
     let columnasDias = [];
     for (let dia = 1; dia <= diasEnMes; dia++) {
@@ -969,7 +964,6 @@ async function generarPDF() {
         const diaSemana = diasSemana[fecha.getDay()];
         const esDomingo = fecha.getDay() === 0;
         
-        // Agregar separador después de cada domingo (excepto el último día)
         if (esDomingo && dia !== diasEnMes) {
             columnasDias.push({
                 content: `${dia}\n${diaSemana}`,
@@ -981,13 +975,12 @@ async function generarPDF() {
                     fontSize: 7
                 }
             });
-            // Agregar columna separadora
             columnasDias.push({
                 content: '',
                 styles: {
                     cellWidth: anchoSeparador,
-                    fillColor: [200, 200, 200], // Fondo gris claro
-                    lineWidth: 0 // Sin bordes
+                    fillColor: [200, 200, 200],
+                    lineWidth: 0
                 }
             });
         } else {
@@ -1004,10 +997,8 @@ async function generarPDF() {
         }
     }
     
-    // Combinar encabezados
     headers.push(...columnasDias);
     
-    // Obtener filas de datos con columnas separadoras
     const rows = [];
     const dataRows = document.querySelectorAll('#tablaResultados tbody tr');
     
@@ -1020,21 +1011,19 @@ async function generarPDF() {
         for (let dia = 1; dia <= diasEnMes; dia++) {
             const fecha = new Date(anio, mes - 1, dia);
             const esDomingo = fecha.getDay() === 0;
-            const cellIndex = dia + 1; // +1 porque empieza en columna 2 (0=Actividad, 1=Frecuencia)
+            const cellIndex = dia + 1;
             
-            // Agregar dato del día
             rowData.push({
                 content: row.cells[cellIndex]?.textContent || '',
                 styles: {halign: 'center'}
             });
             
-            // Agregar separador después de domingos (excepto último día)
             if (esDomingo && dia !== diasEnMes) {
                 rowData.push({
                     content: '',
                     styles: {
-                        fillColor: [240, 240, 240], // Fondo gris más claro
-                        lineWidth: 0 // Sin bordes
+                        fillColor: [240, 240, 240],
+                        lineWidth: 0
                     }
                 });
             }
@@ -1043,13 +1032,11 @@ async function generarPDF() {
         rows.push(rowData);
     });
     
-    // Calcular margen izquierdo para centrar la tabla
     const totalDias = diasEnMes;
-    const totalSeparadores = Math.floor((totalDias - 1) / 7); // Un separador por semana completa
+    const totalSeparadores = Math.floor((totalDias - 1) / 7);
     const tableWidth = 60 + 18 + (totalDias * anchoDia) + (totalSeparadores * anchoSeparador);
     const leftMargin = (pageWidth - tableWidth) / 2;
     
-    // Configuración de la tabla
     const tableConfig = {
         head: [headers],
         body: rows,
@@ -1069,7 +1056,6 @@ async function generarPDF() {
         },
         rowPageBreak: 'avoid',
         didDrawPage: function(data) {
-            // Número de página
             doc.setFontSize(10);
             const pageCount = doc.internal.getNumberOfPages();
             doc.text(`Página ${data.pageNumber} de ${pageCount}`, 
@@ -1077,17 +1063,17 @@ async function generarPDF() {
         }
     };
     
-    // Generar la tabla
     doc.autoTable(tableConfig);
     
-    // Guardar el PDF
-    const nombreArchivo = `Bitacora-${tipo}-${ubicacion.replace(/ /g, '_')}-${nombreMes}-${anio}.pdf`;
+    const nombreUbicacion = tipo === 'Área' && ubicacion === 'Administración'
+        ? `${ubicacion.replace(/ /g, '_')}_${oficina.replace(/ /g, '_')}`
+        : ubicacion.replace(/ /g, '_');
+    
+    const nombreArchivo = `Bitacora-${tipo}-${nombreUbicacion}-${nombreMes}-${anio}.pdf`;
     doc.save(nombreArchivo);
     
-    // Ocultar overlay
     document.getElementById("overlay").style.display = "none";
 }
-
 
 </script>
 </body>
