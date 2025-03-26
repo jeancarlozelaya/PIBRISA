@@ -10,8 +10,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 <style>
-
-
     /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
     body, html {
         font-family: Arial, sans-serif;
@@ -28,16 +26,12 @@
         overflow-x: hidden; /* Oculta el desplazamiento horizontal */
     }
 
-
-
 .header-image {
     max-width: 100%; /* La imagen no excederá el ancho del contenedor */
     height: auto; /* Mantiene la proporción de la imagen */
     max-height: 100px; /* Ajusta la altura máxima de la imagen */
     margin-top: 50px; /* Mueve la imagen hacia abajo */
 }
-
-
 
     /* Contenedor del formulario */
     .container {
@@ -94,7 +88,6 @@
         background-color: #0056b3;
     }
 
-
     /* Estilo para los contenedores de preguntas */
     .question-container {
         margin-bottom: 20px;
@@ -137,10 +130,7 @@
         outline: none;
     }
 
-
     /* Estilo del overlay (pantalla bloqueada */
-
-
     #overlay {
         position: fixed;
         top: 0;
@@ -162,13 +152,7 @@
         padding: 20px;
     }
 
-
-    /* Estilo del overlay (pantalla bloqueada */
-
-
     /* Estilo para Mensajes */
-
-
     .swal-actions {
         display: flex; /* Coloca los botones en una fila */
         justify-content: center; /* Centra los botones horizontalmente */
@@ -226,19 +210,12 @@
         flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
     }
 
-
     /* Eliminar el borde negro del ícono personalizado */
     .swal2-icon.swal2-icon-show {
         background-color: transparent !important; /* Fondo transparente */
     }
 
-
-    /* Estilo para Mensajes */
-
-
     /* Estilo para Datos Adjuntos */
-
-
     .image-preview {
         width: 100%;
         max-height: 200px;
@@ -329,9 +306,6 @@
         cursor: pointer;
     }
 
-
-    /* Estilo para Datos Adjuntos */
-
 /* Estilo para el botón deshabilitado */
 button:disabled {
     background-color: #cccccc; /* Color de fondo gris */
@@ -347,9 +321,7 @@ button:not(:disabled) {
     cursor: pointer; /* Cambia el cursor a "puntero" */
     opacity: 1; /* Opacidad completa */
 }
-
-
-    </style>
+</style>
 </head>
 <body>
 <div class="header">
@@ -384,32 +356,53 @@ button:not(:disabled) {
                 </select>
             </div>
 
-            <div class="question-container" id="oficina-bano-container" style="display: none;">
-                <label for="administracion">Oficina / Baño:</label>
-                <select id="administracion" name="administracion">
-                    <option value="">Selecciona una opción</option>
-<option value="Baño de Gerencia">Baño de Gerencia</option>
-<option value="Baño de Mujeres">Baño de Mujeres</option>
-<option value="Baño de Sala de Reuniones">Baño de Sala de Reuniones</option>
-<option value="Baño de Varones">Baño de Varones</option>
-<option value="Compras">Compras</option>
-<option value="Contabilidad">Contabilidad</option>
-<option value="CRO">CRO</option>
-<option value="Ejecutores de Mantenimiento">Ejecutores de Mantenimiento</option>
-<option value="Gestión Humana">Gestión Humana</option>
-<option value="Inspectores de Mantenimiento">Inspectores de Mantenimiento</option>
-<option value="Lobby">Lobby</option>
-<option value="Materias Primas">Materias Primas</option>
-<option value="Procesos">Procesos</option>
-<option value="Producción">Producción</option>
-<option value="Profesionales Eléctricos">Profesionales Eléctricos</option>
-<option value="Proyectos">Proyectos</option>
-<option value="Sala de Espera de Gerencia">Sala de Espera de Gerencia</option>
-<option value="Sala de Reuniones">Sala de Reuniones</option>
-<option value="Sala de Reuniones de Mantenimiento">Sala de Reuniones de Mantenimiento</option>
-<option value="SISO">SISO</option>
-<option value="Sub Gerencia">Sub Gerencia</option>
+<div class="question-container" id="oficina-bano-container" style="display: none;">
+    <label for="administracion">Oficina / Baño:</label>
+    <select id="administracion" name="administracion">
+        <option value="">Selecciona una opción</option>
+        <option value="Baño de Gerencia">Baño de Gerencia</option>
+        <option value="Baño de Mujeres">Baño de Mujeres</option>
+        <option value="Baño de Sala de Reuniones">Baño de Sala de Reuniones</option>
+        <option value="Baño de Varones">Baño de Varones</option>
+        <option value="Compras">Compras</option>
+        <option value="Contabilidad">Contabilidad</option>
+        <option value="CRO">CRO</option>
+        <option value="Educa">Educa</option>
+        <option value="Ejecutores de Mantenimiento">Ejecutores de Mantenimiento</option>
+        <option value="Gerencia de Calidad">Gerencia de Calidad</option>
+        <option value="Gerencia de Procesos">Gerencia de Procesos</option>
+        <option value="Gestión Humana">Gestión Humana</option>
+        <option value="Inspectores de Mantenimiento">Inspectores de Mantenimiento</option>
+        <option value="Lobby">Lobby</option>
+        <option value="Materias Primas">Materias Primas</option>
+        <option value="Oficina de Supervisión">Oficina de Supervisión</option>
+        <option value="Oficina de Visitas">Oficina de Visitas</option>
+        <option value="Procesos">Procesos</option> <!-- Repetido (ya existía) -->
+        <option value="Producción">Producción</option>
+        <option value="Profesionales Eléctricos">Profesionales Eléctricos</option> <!-- Repetido (ya existía) -->
+        <option value="Proyectos">Proyectos</option>
+        <option value="Sala de Espera de Gerencia">Sala de Espera de Gerencia</option>
+        <option value="Sala de Reuniones">Sala de Reuniones</option>
+        <option value="Sala de Reuniones de Mantenimiento">Sala de Reuniones de Mantenimiento</option>
+        <option value="SISO">SISO</option>
+        <option value="Sub Gerencia">Sub Gerencia</option>
+    </select>
+</div>
 
+            <div class="question-container" id="laboratorio-calidad-container" style="display: none;">
+                <label for="laboratorio-calidad">Sección del Laboratorio:</label>
+                <select id="laboratorio-calidad" name="laboratorio-calidad">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Baño de Varones">Baño de Varones</option>
+                    <option value="Baño de Mujeres">Baño de Mujeres</option>
+                    <option value="Combustibles">Combustibles</option>
+                    <option value="Comedor / Sala de Reuniones">Comedor / Sala de Reuniones</option>
+                    <option value="Digestión">Digestión</option>
+                    <option value="Ensayo Físico">Ensayo Físico</option>
+                    <option value="Ensayo Químico">Ensayo Químico</option>
+                    <option value="Microscopía">Microscopía</option>
+                    <option value="Profesionales">Profesionales</option>
+                    <option value="Rayos X">Rayos X</option>
                 </select>
             </div>
 
@@ -432,17 +425,14 @@ button:not(:disabled) {
                 </div>
             </div>
 
-
-                <div class="question-container">
-                    <label for="adjunto1">Evidencia (Opcional):</label>
-                    <div class="file-upload" id="drag-area1" onclick="document.getElementById('adjunto1').click()">
-                        <input type="file" id="adjunto1" name="adjunto1" accept="image/*" multiple>
-                        <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
-                    </div>
-                    <div id="preview1" class="image-preview"></div>
+            <div class="question-container">
+                <label for="adjunto1">Evidencia (Opcional):</label>
+                <div class="file-upload" id="drag-area1" onclick="document.getElementById('adjunto1').click()">
+                    <input type="file" id="adjunto1" name="adjunto1" accept="image/*" multiple>
+                    <span class="file-upload-text">Haz clic o arrastra imágenes para adjuntarlas</span>
                 </div>
-
-
+                <div id="preview1" class="image-preview"></div>
+            </div>
 
             <div class="botones-container">
                 <button type="submit" id="submit-button" disabled>Enviar</button>
@@ -454,23 +444,25 @@ button:not(:disabled) {
                     <p>Procesando...🥱</p>
                 </div>
             </div>
-
         </form>
     </div>
 
     <script>
         const areaSelect = document.getElementById("area");
         const oficinaBanoContainer = document.getElementById("oficina-bano-container");
+        const laboratorioCalidadContainer = document.getElementById("laboratorio-calidad-container");
         const administracionSelect = document.getElementById("administracion");
+        const laboratorioCalidadSelect = document.getElementById("laboratorio-calidad");
         const insumosCheckboxes = document.querySelectorAll('input[name="insumo"]');
         const submitButton = document.getElementById("submit-button");
 
         function checkForm() {
             const areaSelected = areaSelect.value !== "";
             const administracionSelected = areaSelect.value === "Administración" ? administracionSelect.value !== "" : true;
+            const laboratorioSelected = areaSelect.value === "Laboratorio de Calidad" ? laboratorioCalidadSelect.value !== "" : true;
             const atLeastOneInsumoChecked = Array.from(insumosCheckboxes).some(checkbox => checkbox.checked);
 
-            if (areaSelected && administracionSelected && atLeastOneInsumoChecked) {
+            if (areaSelected && administracionSelected && laboratorioSelected && atLeastOneInsumoChecked) {
                 submitButton.disabled = false;
             } else {
                 submitButton.disabled = true;
@@ -480,293 +472,292 @@ button:not(:disabled) {
         areaSelect.addEventListener("change", function() {
             if (this.value === "Administración") {
                 oficinaBanoContainer.style.display = "block";
+                laboratorioCalidadContainer.style.display = "none";
+            } else if (this.value === "Laboratorio de Calidad") {
+                oficinaBanoContainer.style.display = "none";
+                laboratorioCalidadContainer.style.display = "block";
             } else {
                 oficinaBanoContainer.style.display = "none";
+                laboratorioCalidadContainer.style.display = "none";
             }
             checkForm();
         });
 
         administracionSelect.addEventListener("change", checkForm);
+        laboratorioCalidadSelect.addEventListener("change", checkForm);
 
         insumosCheckboxes.forEach(checkbox => {
             checkbox.addEventListener("change", checkForm);
         });
 
-// Función para enviar los datos
-async function enviarDatos() {
-    // Verificar si hay imágenes adjuntas
-    const hasImages = selectedFiles.preview1.length > 0;
+        // Función para enviar los datos
+        async function enviarDatos() {
+            // Verificar si hay imágenes adjuntas
+            const hasImages = selectedFiles.preview1.length > 0;
 
-    // Crear el PDF solo si hay imágenes
-    let pdfBase64 = null;
-    if (hasImages) {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ format: "letter" });
+            // Crear el PDF solo si hay imágenes
+            let pdfBase64 = null;
+            if (hasImages) {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ format: "letter" });
 
-        // Manejar datos adjuntos (imágenes)
-        for (let i = 1; i <= 1; i++) {
-            if (selectedFiles[`preview${i}`].length > 0) {
-                const files = selectedFiles[`preview${i}`];
-                let imgCount = 0;
+                // Manejar datos adjuntos (imágenes)
+                for (let i = 1; i <= 1; i++) {
+                    if (selectedFiles[`preview${i}`].length > 0) {
+                        const files = selectedFiles[`preview${i}`];
+                        let imgCount = 0;
 
-                // Establecer el título según el grupo de imágenes
-                pdf.setFont("times", "bold");
-                let sectionTitle = "Evidencia:";
-                pdf.text(sectionTitle, 10, 15);
+                        // Establecer el título según el grupo de imágenes
+                        pdf.setFont("times", "bold");
+                        let sectionTitle = "Evidencia:";
+                        pdf.text(sectionTitle, 10, 15);
 
-                const imgWidth = 60; // Ancho de imagen ajustado
-                const imgHeight = 40; // Alto de imagen ajustado
-                const marginX = 15; // Margen izquierdo
-                const marginY = 20; // Margen superior
-                const spacingX = 65; // Espacio entre columnas
-                const spacingY = 45; // Espacio entre filas
-                const pageHeight = pdf.internal.pageSize.height; // Altura de la página
+                        const imgWidth = 60; // Ancho de imagen ajustado
+                        const imgHeight = 40; // Alto de imagen ajustado
+                        const marginX = 15; // Margen izquierdo
+                        const marginY = 20; // Margen superior
+                        const spacingX = 65; // Espacio entre columnas
+                        const spacingY = 45; // Espacio entre filas
+                        const pageHeight = pdf.internal.pageSize.height; // Altura de la página
 
-                // Iterar a través de las imágenes
-                for (let j = 0; j < files.length; j++) {
-                    const file = files[j];
-                    const imgData = await compressImage(file, 0.5); // Comprimir imagen
+                        // Iterar a través de las imágenes
+                        for (let j = 0; j < files.length; j++) {
+                            const file = files[j];
+                            const imgData = await compressImage(file, 0.5); // Comprimir imagen
 
-                    // Calcular la posición X y Y para la imagen
-                    const x = (imgCount % 3) * spacingX + marginX; // Posición X
-                    const y = Math.floor(imgCount / 3) * spacingY + marginY; // Posición Y
+                            // Calcular la posición X y Y para la imagen
+                            const x = (imgCount % 3) * spacingX + marginX; // Posición X
+                            const y = Math.floor(imgCount / 3) * spacingY + marginY; // Posición Y
 
-                    // Verificar si la imagen se sale de los márgenes de la página
-                    if (y + imgHeight > pageHeight - marginY) {
-                        // Añadir nueva página si se excede el espacio
-                        pdf.addPage();
-                        pdf.text(`Continuación datos adjuntos #${i}:`, 10, 10);
-                        imgCount = 0; // Reiniciar el conteo para la nueva página
-                    }
+                            // Verificar si la imagen se sale de los márgenes de la página
+                            if (y + imgHeight > pageHeight - marginY) {
+                                // Añadir nueva página si se excede el espacio
+                                pdf.addPage();
+                                pdf.text(`Continuación datos adjuntos #${i}:`, 10, 10);
+                                imgCount = 0; // Reiniciar el conteo para la nueva página
+                            }
 
-                    // Añadir la imagen a la página
-                    pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
-                    imgCount++;
+                            // Añadir la imagen a la página
+                            pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
+                            imgCount++;
 
-                    // Si imgCount llega a 15, reiniciar
-                    if (imgCount === 15) {
-                        imgCount = 0; // Reiniciar el conteo de imágenes para la siguiente página
+                            // Si imgCount llega a 15, reiniciar
+                            if (imgCount === 15) {
+                                imgCount = 0; // Reiniciar el conteo de imágenes para la siguiente página
 
-                        // Solo añadir una nueva página si hay más de 15 imágenes
-                        if (files.length % 15 !== 0 && files.length > 0) {
-                            pdf.addPage(); // Añadir nueva página
-                            pdf.text(sectionTitle, 10, 15);
+                                // Solo añadir una nueva página si hay más de 15 imágenes
+                                if (files.length % 15 !== 0 && files.length > 0) {
+                                    pdf.addPage(); // Añadir nueva página
+                                    pdf.text(sectionTitle, 10, 15);
+                                }
+                            }
                         }
                     }
                 }
+
+                // Convertir el PDF a base64
+                pdfBase64 = pdf.output('datauristring').split(',')[1];
             }
-        }
 
-        // Convertir el PDF a base64
-        pdfBase64 = pdf.output('datauristring').split(',')[1];
-    }
+            // Captura los valores del formulario
+            const area = areaSelect.value;
+            const insumos = Array.from(insumosCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value)
+                .join(", ");
+            const administracion = areaSelect.value === "Administración" ? administracionSelect.value : "";
+            const laboratorioCalidad = areaSelect.value === "Laboratorio de Calidad" ? laboratorioCalidadSelect.value : "";
 
-    // Captura los valores del formulario
-    const area = areaSelect.value;
-    const insumos = Array.from(insumosCheckboxes)
-        .filter(checkbox => checkbox.checked)
-        .map(checkbox => checkbox.value)
-        .join(", ");
-    const administracion = areaSelect.value === "Administración" ? administracionSelect.value : "";
-
-    // Prepara los datos para enviar
-    const datos = {
-        area: area,
-        insumos: insumos,
-        administracion: administracion,
-        pdf: pdfBase64 || "" // Enviar el PDF solo si existe
-    };
-
-    // Envía los datos al servidor
-    fetch("https://script.google.com/macros/s/AKfycbx9lQ4ke6B1Y-O4gHBaZZ5WOj2Nq3YbM2tGr1tuqHJUaChl-xSSEtxKWCH81kCT2Ch8/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(datos)
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Oculta el overlay
-        document.getElementById("overlay").style.display = "none";
-
-        // Muestra un mensaje de éxito con SweetAlert2
-        Swal.fire({
-            text: 'Hemos recibido tu solicitud. Pronto atenderemos tu requerimiento.',
-            icon: 'success',
-            confirmButtonText: 'Aceptar',
-            allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
-            customClass: {
-                content: 'swal-content',
-                confirmButton: 'swal-button',
-                popup: 'swal-popup'
-            }
-        }).then(() => {
-            // Recargar la página después de hacer clic en "Aceptar"
-            window.location.reload();
-        });
-    })
-    .catch(error => {
-        // Oculta el overlay
-        document.getElementById("overlay").style.display = "none";
-
-        // Muestra un mensaje de error con SweetAlert2
-        Swal.fire({
-            text: 'Ups, algo salió mal. Intenta nuevamente.',
-            icon: 'error',
-            confirmButtonText: 'Aceptar',
-            customClass: {
-                content: 'swal-content',
-                confirmButton: 'swal-button',
-                popup: 'swal-popup'
-            }
-        });
-    });
-}
-
-
-// Manejar el envío del formulario
-document.getElementById("form-container").addEventListener("submit", function(event) {
-    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
-
-    // Mostrar el mensaje de confirmación
-    Swal.fire({
-        text: "¿Seguro de continuar? 🤔\n\n Esperamos que tu solicitud sea legítima, ya que una mala información puede causar retrasos.",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Sí 🫡",
-        cancelButtonText: "No 😬",
-        allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
-        customClass: {
-            popup: "swal-popup", // Clase para el modal
-            confirmButton: "swal-button", // Clase para el botón de confirmación
-            cancelButton: "swal-button-cancel", // Clase para el botón de cancelación
-            actions: "swal-actions", // Clase para el contenedor de los botones
-        },
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Mostrar el overlay de "Procesando..."
-            document.getElementById("overlay").style.display = "flex";
-            enviarDatos(); // Llamar a la función para enviar los datos
-        }
-    });
-});
-
-
-
-
-<!-- Contenedor para Datos Adjuntos -->
-
-// Objetos para almacenar las imágenes seleccionadas por vista previa
-const selectedFiles = {
-    preview1: [],
-};
-
-function handleFileInput(event, previewId) {
-    const files = event.target.files;
-    const previewContainer = document.getElementById(previewId);
-
-    Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const div = document.createElement("div");
-            div.classList.add("image-preview-item");
-            div.innerHTML = `
-	                    <img src="${e.target.result}" alt="Preview">
-	                    <div class="delete-icon" onclick="deleteImage('${previewId}', ${selectedFiles[previewId].length})">×</div>
-	                `;
-            previewContainer.appendChild(div);
-
-            // Almacena el archivo en la lista correspondiente
-            selectedFiles[previewId].push(file);
-
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // Resetea el input para permitir seleccionar los mismos archivos nuevamente si es necesario
-    event.target.value = "";
-}
-
-function deleteImage(previewId, index) {
-    const previewContainer = document.getElementById(previewId);
-
-    // Elimina la imagen de la vista previa
-    previewContainer.removeChild(previewContainer.children[index]);
-
-    // Elimina el archivo correspondiente del arreglo
-    selectedFiles[previewId].splice(index, 1);
-
-    // Actualiza los índices de las imágenes restantes en la vista previa
-    Array.from(previewContainer.children).forEach((child, newIndex) => {
-        const deleteIcon = child.querySelector(".delete-icon");
-        deleteIcon.setAttribute(
-            "onclick",
-            `deleteImage('${previewId}', ${newIndex})`
-        );
-    });
-}
-
-// Eventos para manejar las entradas de archivos
-document
-    .getElementById("adjunto1")
-    .addEventListener("change", (e) => handleFileInput(e, "preview1"));
-
-// Funciones para manejar arrastre de archivos
-const dragAreas = ["drag-area1"];
-dragAreas.forEach((area) => {
-    const dragArea = document.getElementById(area);
-    dragArea.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        dragArea.style.backgroundColor = "#e0f7ff"; // Resaltar el área
-    });
-
-    dragArea.addEventListener("dragleave", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        dragArea.style.backgroundColor = "#f0f8ff"; // Restaurar color de fondo
-    });
-
-    dragArea.addEventListener("drop", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const files = event.dataTransfer.files;
-        const previewId = area.replace("drag-area", "preview");
-        handleFileInput({ target: { files } }, previewId);
-    });
-});
-
-// Definir la función compressImage en el ámbito global
-function compressImage(file, quality) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
-
-                // Redimensionar imagen
-                const maxWidth = 600;
-                const scale = maxWidth / img.width;
-                canvas.width = maxWidth;
-                canvas.height = img.height * scale;
-
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const dataUrl = canvas.toDataURL("image/jpeg", quality);
-                resolve(dataUrl);
+            // Prepara los datos para enviar
+            const datos = {
+                area: area,
+                insumos: insumos,
+                administracion: administracion,
+                laboratorioCalidad: laboratorioCalidad,
+                pdf: pdfBase64 || "" // Enviar el PDF solo si existe
             };
-            img.src = event.target.result;
+
+            // Envía los datos al servidor
+
+
+
+            fetch("https://script.google.com/macros/s/AKfycbx9lQ4ke6B1Y-O4gHBaZZ5WOj2Nq3YbM2tGr1tuqHJUaChl-xSSEtxKWCH81kCT2Ch8/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(datos)
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Oculta el overlay
+                document.getElementById("overlay").style.display = "none";
+
+                // Muestra un mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    text: 'Hemos recibido tu solicitud. Pronto atenderemos tu requerimiento.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
+                    customClass: {
+                        content: 'swal-content',
+                        confirmButton: 'swal-button',
+                        popup: 'swal-popup'
+                    }
+                }).then(() => {
+                    // Recargar la página después de hacer clic en "Aceptar"
+                    window.location.reload();
+                });
+            })
+            .catch(error => {
+                // Oculta el overlay
+                document.getElementById("overlay").style.display = "none";
+
+                // Muestra un mensaje de error con SweetAlert2
+                Swal.fire({
+                    text: 'Ups, algo salió mal. Intenta nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        content: 'swal-content',
+                        confirmButton: 'swal-button',
+                        popup: 'swal-popup'
+                    }
+                });
+            });
+        }
+
+        // Manejar el envío del formulario
+        document.getElementById("form-container").addEventListener("submit", function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+
+            // Mostrar el mensaje de confirmación
+            Swal.fire({
+                text: "¿Seguro de continuar? 🤔\n\n Esperamos que tu solicitud sea legítima, ya que una mala información puede causar retrasos.",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí 🫡",
+                cancelButtonText: "No 😬",
+                allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
+                customClass: {
+                    popup: "swal-popup", // Clase para el modal
+                    confirmButton: "swal-button", // Clase para el botón de confirmación
+                    cancelButton: "swal-button-cancel", // Clase para el botón de cancelación
+                    actions: "swal-actions", // Clase para el contenedor de los botones
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Mostrar el overlay de "Procesando..."
+                    document.getElementById("overlay").style.display = "flex";
+                    enviarDatos(); // Llamar a la función para enviar los datos
+                }
+            });
+        });
+
+        // Objetos para almacenar las imágenes seleccionadas por vista previa
+        const selectedFiles = {
+            preview1: [],
         };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
 
+        function handleFileInput(event, previewId) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById(previewId);
 
-<!-- Contenedor para Datos Adjuntos -->
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const div = document.createElement("div");
+                    div.classList.add("image-preview-item");
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <div class="delete-icon" onclick="deleteImage('${previewId}', ${selectedFiles[previewId].length})">×</div>
+                    `;
+                    previewContainer.appendChild(div);
 
+                    // Almacena el archivo en la lista correspondiente
+                    selectedFiles[previewId].push(file);
 
+                };
+                reader.readAsDataURL(file);
+            });
 
+            // Resetea el input para permitir seleccionar los mismos archivos nuevamente si es necesario
+            event.target.value = "";
+        }
+
+        function deleteImage(previewId, index) {
+            const previewContainer = document.getElementById(previewId);
+
+            // Elimina la imagen de la vista previa
+            previewContainer.removeChild(previewContainer.children[index]);
+
+            // Elimina el archivo correspondiente del arreglo
+            selectedFiles[previewId].splice(index, 1);
+
+            // Actualiza los índices de las imágenes restantes en la vista previa
+            Array.from(previewContainer.children).forEach((child, newIndex) => {
+                const deleteIcon = child.querySelector(".delete-icon");
+                deleteIcon.setAttribute(
+                    "onclick",
+                    `deleteImage('${previewId}', ${newIndex})`
+                );
+            });
+        }
+
+        // Eventos para manejar las entradas de archivos
+        document
+            .getElementById("adjunto1")
+            .addEventListener("change", (e) => handleFileInput(e, "preview1"));
+
+        // Funciones para manejar arrastre de archivos
+        const dragAreas = ["drag-area1"];
+        dragAreas.forEach((area) => {
+            const dragArea = document.getElementById(area);
+            dragArea.addEventListener("dragover", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                dragArea.style.backgroundColor = "#e0f7ff"; // Resaltar el área
+            });
+
+            dragArea.addEventListener("dragleave", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                dragArea.style.backgroundColor = "#f0f8ff"; // Restaurar color de fondo
+            });
+
+            dragArea.addEventListener("drop", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const files = event.dataTransfer.files;
+                const previewId = area.replace("drag-area", "preview");
+                handleFileInput({ target: { files } }, previewId);
+            });
+        });
+
+        // Definir la función compressImage en el ámbito global
+        function compressImage(file, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement("canvas");
+                        const ctx = canvas.getContext("2d");
+
+                        // Redimensionar imagen
+                        const maxWidth = 600;
+                        const scale = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scale;
+
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+                        resolve(dataUrl);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
     </script>
 </body>
 </html>
