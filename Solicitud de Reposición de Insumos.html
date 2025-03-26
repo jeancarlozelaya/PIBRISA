@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="preload" href="https://github.com/jeancarlozelaya/PIBRISA/blob/main/Im%C3%A1genes/Icono.png?raw=true" as="image">
 <style>
     /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
     body, html {
@@ -26,11 +27,19 @@
         overflow-x: hidden; /* Oculta el desplazamiento horizontal */
     }
 
+.header {
+    height: 150px; /* Altura suficiente para la imagen */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .header-image {
-    max-width: 100%; /* La imagen no excederá el ancho del contenedor */
-    height: auto; /* Mantiene la proporción de la imagen */
-    max-height: 100px; /* Ajusta la altura máxima de la imagen */
-    margin-top: 50px; /* Mueve la imagen hacia abajo */
+    max-width: 100%;
+    height: auto;
+    max-height: 100px;
+    /* margin-top: 50px; Elimina este margen y usa el contenedor para el espaciado */
 }
 
     /* Contenedor del formulario */
