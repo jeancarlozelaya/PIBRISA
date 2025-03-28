@@ -757,6 +757,8 @@
     // Función para enviar datos
     function enviarDatos(fecha, tipo, area, baño, oficina, actividades) {
         let url = "";
+        let alertaUrl = "https://script.google.com/macros/s/AKfycbyD1cxV7dX7yHG0zUH7ISLexvTFpyFA4xFmmcgD5nk9vQino7EqIlXXOUYRq6Cb-Zhv9A/exec"; // REEMPLAZA ESTO CON TU URL
+
 
         // Verificar el tipo de actividad
         if (tipo === "Área") {
@@ -996,44 +998,56 @@ case "Administración":
                 // Ocultar el overlay de espera
                 document.getElementById('overlay').style.display = 'none';
 
-
-
-
-
-
-
+            /***** NUEVO MÉTODO PARA ENVIAR ALERTAS *****/
+            // Solución definitiva usando imagen invisible (no CORS)
+            const img = new Image();
+            const params = new URLSearchParams();
+            params.append('tipo', tipo);
+            
+            if (tipo === "Área") {
+                params.append('area', area);
+                if (area === "Administración" && oficina) {
+                    params.append('oficina', oficina);
+                }
+            } else if (tipo === "Baño") {
+                params.append('baño', baño);
+            }
+            
+            img.src = `${alertaUrl}?${params.toString()}`;
+            
+            // Mostrar éxito después de un breve retraso
+            setTimeout(function() {
                 Swal.fire({
-            text: "¡Envío exitoso! 🥳🎉",
-            icon: "success",
-            showCancelButton: false, // No mostrar el botón de cancelar
-            confirmButtonText: "Aceptar",
-            customClass: {
-                content: "swal-content",
-                confirmButton: "swal-button",
-                popup: "swal-popup",
-            },
+                    text: "¡Envío exitoso! 🥳🎉",
+                    icon: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Aceptar",
+                    customClass: {
+                        content: "swal-content",
+                        confirmButton: "swal-button",
+                        popup: "swal-popup",
+                    },
                 }).then(() => {
-                    // Limpiar respuestas guardadas
-                    limpiarRespuestasGuardadas();
-
-                    // Recargar la página después de la confirmación
+                    if (typeof limpiarRespuestasGuardadas === 'function') {
+                        limpiarRespuestasGuardadas();
+                    }
                     location.reload();
                 });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al enviar los datos:", xhr.responseText);
+            }, 500);
+            /***** FIN DEL NUEVO MÉTODO *****/
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al enviar los datos:", xhr.responseText);
+            document.getElementById("overlay").style.display = "none";
+            Swal.fire({
+                text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
 
-                // Ocultar el overlay de "Procesando..."
-                document.getElementById("overlay").style.display = "none";
-
-                Swal.fire({
-                    text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
-    }
 
     // Función para guardar las respuestas en localStorage
     function guardarRespuestas() {
