@@ -495,87 +495,71 @@
         }
 
         // Función para mostrar notificaciones en la ventana emergente
-        async function mostrarNotificaciones() {
-            const notificationIcon = document.getElementById("notification-icon");
-            notificationIcon.style.pointerEvents = "none"; // Desactivar clics mientras se cargan las notificaciones
+async function mostrarNotificaciones() {
+    const notificationIcon = document.getElementById("notification-icon");
+    notificationIcon.style.pointerEvents = "none"; // Desactivar clics durante la carga
 
-            const notificaciones = await obtenerNotificaciones();
-            const notificationList = document.getElementById("notification-list");
-            notificationList.innerHTML = ""; // Limpiar lista anterior
+    const notificaciones = await obtenerNotificaciones();
+    const notificationList = document.getElementById("notification-list");
+    notificationList.innerHTML = ""; // Limpiar lista
 
-            // Obtener notificaciones vistas del localStorage
-            const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+    // Obtener notificaciones vistas
+    const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
 
-            // Contador de notificaciones no vistas
-            let contadorNoVistas = 0;
+    // --- CAMBIO CLAVE 1: Ocultar badge inmediatamente ---
+    const badge = document.getElementById("notification-badge");
+    badge.style.display = "none";
 
-            // Mostrar todas las notificaciones
-            if (notificaciones.length === 0) {
-                // Si no hay notificaciones, mostrar un mensaje
+    // Mostrar contenido
+    if (notificaciones.length === 0) {
+        const li = document.createElement("li");
+        li.className = "notification-item";
+        li.textContent = "No hay requisiciones";
+        notificationList.appendChild(li);
+    } else {
+        notificaciones.forEach((notificacion) => {
+            const [fecha, hora, mensaje] = notificacion;
+
+            // Verificar si fue vista (comparación normalizada)
+            const notifNormalizada = JSON.stringify({
+                fecha: fecha?.trim(),
+                hora: hora?.trim(),
+                mensaje: mensaje?.trim()
+            });
+            const esVista = notificacionesVistas.includes(notifNormalizada);
+
+            // Mostrar todas las notificaciones (leídas o no)
+            if (fecha && hora && mensaje) {
+                const horaFormateada = formatearHora(hora);
+                const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
+
                 const li = document.createElement("li");
                 li.className = "notification-item";
-                li.textContent = "No hay requisiciones";
+                li.innerHTML = `
+                    <strong>${fecha} ${horaFormateada}</strong>
+                    <p>${mensajeFormateado}</p>
+                `;
                 notificationList.appendChild(li);
-            } else {
-                notificaciones.forEach((notificacion) => {
-                    const [fecha, hora, mensaje] = notificacion;
-
-                    // Verificar si la notificación ya fue vista
-                    const notificacionString = JSON.stringify(notificacion);
-                    const esVista = notificacionesVistas.includes(notificacionString);
-
-                    // Incrementar el contador si la notificación no ha sido vista
-                    if (!esVista) {
-                        contadorNoVistas++;
-                    }
-
-                    // Solo mostrar fecha y hora si están definidas
-                    if (fecha && hora && mensaje) {
-                        // Formatear la hora de 24 horas a 12 horas
-                        const horaFormateada = formatearHora(hora);
-
-                        // Reemplazar saltos de línea (\n) con <br> para que se muestren en HTML
-                        const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
-
-                        const li = document.createElement("li");
-                        li.className = "notification-item";
-                        li.innerHTML = `
-                            <strong>${fecha} ${horaFormateada}</strong>
-                            <p>${mensajeFormateado}</p>
-                        `;
-                        notificationList.appendChild(li);
-                    }
-                });
             }
+        });
+    }
 
-// Por esto:
-const nuevasNotificacionesVistas = notificaciones.map(notificacion => 
-    JSON.stringify({
-        fecha: notificacion[0]?.trim(),
-        hora: notificacion[1]?.trim(),
-        mensaje: notificacion[2]?.trim()
-    })
-);
+    // --- CAMBIO CLAVE 2: Marcar como vistas después de mostrarlas ---
+    const nuevasNotificacionesVistas = notificaciones.map(notificacion => 
+        JSON.stringify({
+            fecha: notificacion[0]?.trim(),
+            hora: notificacion[1]?.trim(),
+            mensaje: notificacion[2]?.trim()
+        })
+    );
+    localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasNotificacionesVistas));
+
+    // Mostrar modal y reactivar clics
+    document.getElementById("notification-modal").classList.add("active");
+    notificationIcon.style.pointerEvents = "auto";
+}
 
 
-
-            localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasNotificacionesVistas));
-
-            // Mostrar la ventana emergente
-            const modal = document.getElementById("notification-modal");
-            modal.classList.add("active");
-
-            // Actualizar el badge de notificaciones
-            const badge = document.getElementById("notification-badge");
-            if (contadorNoVistas > 0) {
-                badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
-                badge.style.display = "block"; // Mostrar el badge
-            } else {
-                badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
-            }
-
-            notificationIcon.style.pointerEvents = "auto"; // Reactivar clics
-        }
 
         // Función para forzar la actualización de notificaciones
         async function actualizarNotificaciones() {
