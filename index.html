@@ -886,6 +886,9 @@ verificarCumpleaños();
         // URL de tu script de Google Apps Script
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXmiIPYUskMzx8jPYFoZKOpvcVL_PD7oI8qzmHuyjaDHLiLLhkOejXUzOTVmRMmt9u/exec";
 
+        // Clave única para las notificaciones vistas en esta página
+        const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
+
         // Cache para notificaciones
         let notificacionesCache = null;
         let ultimaActualizacion = null;
@@ -928,7 +931,7 @@ verificarCumpleaños();
             notificationList.innerHTML = ""; // Limpiar lista anterior
 
             // Obtener notificaciones vistas del localStorage
-            const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
+            const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
 
             // Contador de notificaciones no vistas
             let contadorNoVistas = 0;
@@ -972,9 +975,19 @@ verificarCumpleaños();
                 });
             }
 
-            // Marcar todas las notificaciones como vistas cuando el usuario abre la ventana
-            const nuevasNotificacionesVistas = notificaciones.map(notificacion => JSON.stringify(notificacion));
-            localStorage.setItem('notificacionesVistas', JSON.stringify(nuevasNotificacionesVistas));
+
+// Por esto:
+const nuevasNotificacionesVistas = notificaciones.map(notificacion => 
+    JSON.stringify({
+        fecha: notificacion[0]?.trim(),
+        hora: notificacion[1]?.trim(),
+        mensaje: notificacion[2]?.trim()
+    })
+);
+
+
+
+            localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasNotificacionesVistas));
 
             // Mostrar la ventana emergente
             const modal = document.getElementById("notification-modal");
@@ -1021,31 +1034,40 @@ verificarCumpleaños();
         window.addEventListener("load", verificarNotificaciones);
 
         // Función para verificar notificaciones
-        async function verificarNotificaciones() {
-            const notificaciones = await obtenerNotificaciones();
-            const notificacionesVistas = JSON.parse(localStorage.getItem('notificacionesVistas')) || [];
+// Reemplaza la función verificarNotificaciones() completa por esta versión mejorada:
+async function verificarNotificaciones() {
+    const notificaciones = await obtenerNotificaciones();
+    const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+    
+    let contadorNoVistas = 0;
+    let hayNuevasNotificaciones = false;
 
-            // Contar las notificaciones no vistas
-            let contadorNoVistas = 0;
-            notificaciones.forEach(notificacion => {
-                const notificacionString = JSON.stringify(notificacion);
-                if (!notificacionesVistas.includes(notificacionString)) {
-                    contadorNoVistas++;
-                }
-            });
+    notificaciones.forEach(notificacion => {
+        // Crear versión normalizada para comparación
+        const notifNormalizada = JSON.stringify({
+            fecha: notificacion[0]?.trim(),
+            hora: notificacion[1]?.trim(),
+            mensaje: notificacion[2]?.trim()
+        });
 
-            const badge = document.getElementById("notification-badge");
-            if (contadorNoVistas > 0) {
-                badge.textContent = contadorNoVistas; // Mostrar el número de notificaciones no vistas
-                badge.style.display = "block"; // Mostrar el badge
-
-                // Reproducir el sonido de notificación
-                const notificationSound = document.getElementById("notification-sound");
-                notificationSound.play().catch(error => console.error("Error al reproducir el sonido:", error));
-            } else {
-                badge.style.display = "none"; // Ocultar el badge si no hay notificaciones no vistas
-            }
+        if (!notificacionesVistas.includes(notifNormalizada)) {
+            contadorNoVistas++;
+            hayNuevasNotificaciones = true;
         }
+    });
+
+    const badge = document.getElementById("notification-badge");
+    badge.textContent = contadorNoVistas;
+    badge.style.display = contadorNoVistas > 0 ? "block" : "none";
+
+    // Reproducir sonido solo si hay nuevas notificaciones
+    if (hayNuevasNotificaciones) {
+        const notificationSound = document.getElementById("notification-sound");
+        notificationSound.play().catch(error => console.error("Error al reproducir sonido:", error));
+    }
+}
+
+
 
 <!-- Contenedor para Notificaciones-->
 
