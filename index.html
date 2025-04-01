@@ -941,7 +941,7 @@ async function mostrarNotificaciones() {
     if (notificaciones.length === 0) {
         const li = document.createElement("li");
         li.className = "notification-item";
-        li.textContent = "No hay requisiciones";
+        li.textContent = "Sin notificaciones";
         notificationList.appendChild(li);
     } else {
         notificaciones.forEach((notificacion) => {
