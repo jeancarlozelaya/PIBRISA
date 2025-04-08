@@ -216,14 +216,11 @@
             transition: background-color 0.3s ease; /* Transición suave para el hover */
         }
 
-
-
     /* Estilo personalizado para el popup/modal */
     .swal-popup {
         width: 300px;  /* Ajusta el ancho máximo del modal */
         max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
     }
-
 
         /* Opcional: colores específicos para cada botón */
         .swal-button {
@@ -296,6 +293,23 @@
             margin: 0; /* Elimina el margen predeterminado */
         }
 
+        /* Estilo para el botón Reiniciar */
+        #reiniciarBtn {
+            background-color: #6c757d; /* Color gris */
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: none; /* Oculto por defecto */
+        }
+
+        #reiniciarBtn:hover {
+            background-color: #5a6268; /* Color gris más oscuro al pasar el mouse */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -362,15 +376,11 @@
     background-color: #FFC0CB; /* Lila pastel */
 }
 
-
-
-
 /* Ocultar la columna de Frecuencia */
 #tablaActividades th:nth-child(2),
 #tablaActividades td:nth-child(2) {
     display: none;
 }
-
 
 /* Estilo para hacer los checkboxes más grandes */
 #tablaActividades input[type="checkbox"] {
@@ -514,7 +524,10 @@
                     </tbody>
                 </table>
 
-                <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
+                <div class="botones-container">
+                    <button type="button" id="reiniciarBtn" onclick="reiniciarFormulario()">Reiniciar</button>
+                    <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
+                </div>
             </form>
 
             <!-- Contenedor para bloquear la pantalla -->
@@ -615,6 +628,47 @@
         });
     }
 
+    // Función para bloquear los campos del formulario
+    function bloquearCampos() {
+        const campos = [
+            'fecha', 'tipo', 'area', 'baño', 'oficina'
+        ];
+        
+        campos.forEach(id => {
+            const campo = document.getElementById(id);
+            if (campo) {
+                campo.disabled = true;
+            }
+        });
+        
+        // Mostrar botón Reiniciar
+        document.getElementById('reiniciarBtn').style.display = 'block';
+    }
+
+    // Función para reiniciar el formulario (simplificada)
+    function reiniciarFormulario() {
+        Swal.fire({
+            text: "¿Estás seguro de que deseas reiniciar el formulario?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, reiniciar",
+            cancelButtonText: "Cancelar",
+            customClass: {
+                popup: "swal-popup",
+                confirmButton: "swal-button",
+                cancelButton: "swal-button-cancel",
+                actions: "swal-actions",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Limpiar el localStorage
+                localStorage.removeItem('formData');
+                
+                // Recargar la página
+                location.reload();
+            }
+        });
+    }
 
     // Función para habilitar o deshabilitar el botón de Enviar
     function actualizarBotonEnviar() {
@@ -697,105 +751,108 @@
         return true;
     }
 
-// Función para consultar actividades existentes (actualizada)
-async function consultarActividadesExistentes(fecha, tipo, area, baño, oficina) {
-    const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
-    
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-                fecha: fecha,
-                tipo: tipo,
-                area: area,
-                baño: baño,
-                oficina: oficina,
-                accion: "consultar"
-            })
-        });
+    // Función para consultar actividades existentes (actualizada)
+    async function consultarActividadesExistentes(fecha, tipo, area, baño, oficina) {
+        const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
         
-        if (!response.ok) {
-            throw new Error("Error en la consulta");
-        }
-        
-        const data = await response.json();
-        
-        // Verificar si hay error en la respuesta
-        if (data.error) {
-            console.error("Error del servidor:", data.message);
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    fecha: fecha,
+                    tipo: tipo,
+                    area: area,
+                    baño: baño,
+                    oficina: oficina,
+                    accion: "consultar"
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error("Error en la consulta");
+            }
+            
+            const data = await response.json();
+            
+            // Verificar si hay error en la respuesta
+            if (data.error) {
+                console.error("Error del servidor:", data.message);
+                return [];
+            }
+            
+            return data.actividades || [];
+        } catch (error) {
+            console.error("Error al consultar actividades:", error);
             return [];
         }
-        
-        return data.actividades || [];
-    } catch (error) {
-        console.error("Error al consultar actividades:", error);
-        return [];
     }
-}
 
-// Función cargarActividades (mejorada con manejo de errores)
-async function cargarActividades() {
-    if (!verificarCampos()) return;
+    // Función cargarActividades (mejorada con manejo de errores)
+    async function cargarActividades() {
+        if (!verificarCampos()) return;
 
-    const tipo = document.getElementById("tipo").value;
-    const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
-    
-    // Mostrar overlay de carga
-    document.getElementById("overlay").style.display = "flex";
-
-    try {
-        // Generar tabla con actividades básicas
-        generarTablaActividades(actividades);
-        
-        // Obtener datos para la consulta
-        const fecha = document.getElementById("fecha").value;
         const tipo = document.getElementById("tipo").value;
-        const area = document.getElementById("area").value;
-        const baño = document.getElementById("baño").value;
-        const oficina = document.getElementById("oficina").value;
+        const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
         
-        // Consultar actividades existentes
-        const actividadesExistentes = await consultarActividadesExistentes(fecha, tipo, area, baño, oficina);
-        
-        // Mostrar mensaje si hay error en la consulta
-        if (actividadesExistentes === null) {
+        // Mostrar overlay de carga
+        document.getElementById("overlay").style.display = "flex";
+
+        try {
+            // Generar tabla con actividades básicas
+            generarTablaActividades(actividades);
+            
+            // Obtener datos para la consulta
+            const fecha = document.getElementById("fecha").value;
+            const tipo = document.getElementById("tipo").value;
+            const area = document.getElementById("area").value;
+            const baño = document.getElementById("baño").value;
+            const oficina = document.getElementById("oficina").value;
+            
+            // Consultar actividades existentes
+            const actividadesExistentes = await consultarActividadesExistentes(fecha, tipo, area, baño, oficina);
+            
+            // Mostrar mensaje si hay error en la consulta
+            if (actividadesExistentes === null) {
+                Swal.fire({
+                    text: "Error al consultar actividades existentes",
+                    icon: "error",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+            
+            // Marcar checkboxes si hay actividades existentes
+            if (actividadesExistentes.length > 0) {
+                actividadesExistentes.forEach(actividad => {
+                    const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+                
+                // Bloquear campos después de cargar los datos
+                bloquearCampos();
+            }
+            
+            // Mostrar tabla
+            document.getElementById("tablaActividades").style.display = "table";
+            
+        } catch (error) {
+            console.error("Error al cargar actividades:", error);
             Swal.fire({
-                text: "Error al consultar actividades existentes",
+                text: "Error al cargar actividades existentes",
                 icon: "error",
                 confirmButtonText: "Aceptar"
             });
-            return;
+        } finally {
+            // Ocultar overlay
+            document.getElementById("overlay").style.display = "none";
+            actualizarBotonEnviar();
         }
-        
-        // Marcar checkboxes si hay actividades existentes
-        if (actividadesExistentes.length > 0) {
-            actividadesExistentes.forEach(actividad => {
-                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-        }
-        
-        // Mostrar tabla
-        document.getElementById("tablaActividades").style.display = "table";
-        
-    } catch (error) {
-        console.error("Error al cargar actividades:", error);
-        Swal.fire({
-            text: "Error al cargar actividades existentes",
-            icon: "error",
-            confirmButtonText: "Aceptar"
-        });
-    } finally {
-        // Ocultar overlay
-        document.getElementById("overlay").style.display = "none";
-        actualizarBotonEnviar();
     }
-}
 
     // Modificar los event listeners para llamar a cargarActividades cuando los campos estén completos
     document.getElementById("area").addEventListener("change", function() {
@@ -952,7 +1009,6 @@ async function cargarActividades() {
     });
 }
 
-
     // Función para guardar las respuestas en localStorage
     function guardarRespuestas() {
         const formData = {};
@@ -1007,6 +1063,11 @@ async function cargarActividades() {
 
             // Actualizar el estado del botón de Enviar
             actualizarBotonEnviar();
+            
+            // Bloquear campos si hay actividades cargadas
+            if (formData.actividades && formData.actividades.length > 0) {
+                bloquearCampos();
+            }
         }
     }
 
@@ -1082,6 +1143,11 @@ async function cargarActividades() {
     window.onload = function() {
         preguntarContinuar();
         prellenarFechaHora(); // Precargar la fecha actual
+        
+        // Bloquear campos si hay datos en localStorage
+        if (localStorage.getItem('formData')) {
+            bloquearCampos();
+        }
     };
 
     let backPressCount = 0; // Contador para rastrear el número de veces que se presiona el botón atrás
