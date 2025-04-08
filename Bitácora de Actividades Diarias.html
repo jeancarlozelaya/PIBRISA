@@ -590,32 +590,6 @@
         { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
     ];
 
-    // Función para mostrar u ocultar campos según el tipo de actividad
-    function mostrarCampos() {
-        const tipo = document.getElementById("tipo").value;
-        const areaContainer = document.getElementById("areaContainer");
-        const bañoContainer = document.getElementById("bañoContainer");
-        const oficinaContainer = document.getElementById("oficinaContainer");
-
-        // Resetear visibilidad
-        areaContainer.style.display = "none";
-        bañoContainer.style.display = "none";
-        oficinaContainer.style.display = "none";
-
-        if (tipo === "Área") {
-            areaContainer.style.display = "block";
-            generarTablaActividades(actividadesArea);
-            
-            // Verificar si el área seleccionada es "Administración"
-            const area = document.getElementById("area").value;
-            if (area === "Administración") {
-                oficinaContainer.style.display = "block";
-            }
-        } else if (tipo === "Baño") {
-            bañoContainer.style.display = "block";
-            generarTablaActividades(actividadesBaño);
-        }
-    }
 
     // Función para generar las filas de la tabla
     function generarTablaActividades(actividades) {
@@ -641,35 +615,6 @@
         });
     }
 
-    // Función para verificar si todos los campos están completos
-    function verificarCampos() {
-        const tipo = document.getElementById("tipo").value;
-        const area = document.getElementById("area").value;
-        const baño = document.getElementById("baño").value;
-        const oficina = document.getElementById("oficina").value;
-        const actividades = document.querySelectorAll('input[name="actividad"]:checked').length;
-
-        // Verificar el tipo de actividad
-        if (tipo === "") {
-            return false; // No se ha seleccionado un tipo
-        }
-
-        // Verificar si es Área o Baño
-        if (tipo === "Área") {
-            if (area === "") return false; // No se ha seleccionado un área
-            if (area === "Administración" && oficina === "") return false; // Para administración, se requiere oficina
-        } else if (tipo === "Baño" && baño === "") {
-            return false; // No se ha seleccionado un baño
-        }
-
-        // Verificar que al menos una actividad esté seleccionada
-        if (actividades === 0) {
-            return false; // No se ha seleccionado ninguna actividad
-        }
-
-        // Si todo está correcto, habilitar el botón
-        return true;
-    }
 
     // Función para habilitar o deshabilitar el botón de Enviar
     function actualizarBotonEnviar() {
@@ -704,6 +649,186 @@
     document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
         if (e.target.type === "checkbox") {
             actualizarBotonEnviar(); // Actualizar el estado del botón
+        }
+    });
+
+
+    // Función para mostrar u ocultar campos según el tipo de actividad
+    function mostrarCampos() {
+        const tipo = document.getElementById("tipo").value;
+        const areaContainer = document.getElementById("areaContainer");
+        const bañoContainer = document.getElementById("bañoContainer");
+        const oficinaContainer = document.getElementById("oficinaContainer");
+        const tablaContainer = document.getElementById("tablaActividades");
+
+        // Resetear visibilidad
+        areaContainer.style.display = "none";
+        bañoContainer.style.display = "none";
+        oficinaContainer.style.display = "none";
+        tablaContainer.style.display = "none"; // Ocultar tabla inicialmente
+
+        if (tipo === "Área") {
+            areaContainer.style.display = "block";
+        } else if (tipo === "Baño") {
+            bañoContainer.style.display = "block";
+        }
+    }
+
+    // Función para verificar si todos los campos están completos
+    function verificarCampos() {
+        const tipo = document.getElementById("tipo").value;
+        const area = document.getElementById("area").value;
+        const baño = document.getElementById("baño").value;
+        const oficina = document.getElementById("oficina").value;
+
+        // Verificar el tipo de actividad
+        if (tipo === "") {
+            return false; // No se ha seleccionado un tipo
+        }
+
+        // Verificar si es Área o Baño
+        if (tipo === "Área") {
+            if (area === "") return false; // No se ha seleccionado un área
+            if (area === "Administración" && oficina === "") return false; // Para administración, se requiere oficina
+        } else if (tipo === "Baño" && baño === "") {
+            return false; // No se ha seleccionado un baño
+        }
+
+        return true;
+    }
+
+// Función para consultar actividades existentes (actualizada)
+async function consultarActividadesExistentes(fecha, tipo, area, baño, oficina) {
+    const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+    
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                fecha: fecha,
+                tipo: tipo,
+                area: area,
+                baño: baño,
+                oficina: oficina,
+                accion: "consultar"
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error("Error en la consulta");
+        }
+        
+        const data = await response.json();
+        
+        // Verificar si hay error en la respuesta
+        if (data.error) {
+            console.error("Error del servidor:", data.message);
+            return [];
+        }
+        
+        return data.actividades || [];
+    } catch (error) {
+        console.error("Error al consultar actividades:", error);
+        return [];
+    }
+}
+
+// Función cargarActividades (mejorada con manejo de errores)
+async function cargarActividades() {
+    if (!verificarCampos()) return;
+
+    const tipo = document.getElementById("tipo").value;
+    const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
+    
+    // Mostrar overlay de carga
+    document.getElementById("overlay").style.display = "flex";
+
+    try {
+        // Generar tabla con actividades básicas
+        generarTablaActividades(actividades);
+        
+        // Obtener datos para la consulta
+        const fecha = document.getElementById("fecha").value;
+        const tipo = document.getElementById("tipo").value;
+        const area = document.getElementById("area").value;
+        const baño = document.getElementById("baño").value;
+        const oficina = document.getElementById("oficina").value;
+        
+        // Consultar actividades existentes
+        const actividadesExistentes = await consultarActividadesExistentes(fecha, tipo, area, baño, oficina);
+        
+        // Mostrar mensaje si hay error en la consulta
+        if (actividadesExistentes === null) {
+            Swal.fire({
+                text: "Error al consultar actividades existentes",
+                icon: "error",
+                confirmButtonText: "Aceptar"
+            });
+            return;
+        }
+        
+        // Marcar checkboxes si hay actividades existentes
+        if (actividadesExistentes.length > 0) {
+            actividadesExistentes.forEach(actividad => {
+                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+        
+        // Mostrar tabla
+        document.getElementById("tablaActividades").style.display = "table";
+        
+    } catch (error) {
+        console.error("Error al cargar actividades:", error);
+        Swal.fire({
+            text: "Error al cargar actividades existentes",
+            icon: "error",
+            confirmButtonText: "Aceptar"
+        });
+    } finally {
+        // Ocultar overlay
+        document.getElementById("overlay").style.display = "none";
+        actualizarBotonEnviar();
+    }
+}
+
+    // Modificar los event listeners para llamar a cargarActividades cuando los campos estén completos
+    document.getElementById("area").addEventListener("change", function() {
+        const area = this.value;
+        const oficinaContainer = document.getElementById("oficinaContainer");
+        
+        if (area === "Administración") {
+            oficinaContainer.style.display = "block";
+        } else {
+            oficinaContainer.style.display = "none";
+            document.getElementById("oficina").value = "";
+        }
+        
+        if (verificarCampos()) {
+            cargarActividades();
+        } else {
+            document.getElementById("tablaActividades").style.display = "none";
+        }
+    });
+
+    document.getElementById("baño").addEventListener("change", function() {
+        if (verificarCampos()) {
+            cargarActividades();
+        } else {
+            document.getElementById("tablaActividades").style.display = "none";
+        }
+    });
+
+    document.getElementById("oficina").addEventListener("change", function() {
+        if (verificarCampos()) {
+            cargarActividades();
+        } else {
+            document.getElementById("tablaActividades").style.display = "none";
         }
     });
 
@@ -755,229 +880,9 @@
 
     // Función para enviar datos
     function enviarDatos(fecha, tipo, area, baño, oficina, actividades) {
-        let url = "";
-        let alertaUrl = "https://script.google.com/macros/s/AKfycbyD1cxV7dX7yHG0zUH7ISLexvTFpyFA4xFmmcgD5nk9vQino7EqIlXXOUYRq6Cb-Zhv9A/exec"; // REEMPLAZA ESTO CON TU URL
+        let url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec"; // SCRIPT DE ENVIOS
+        let alertaUrl = "https://script.google.com/macros/s/AKfycbyD1cxV7dX7yHG0zUH7ISLexvTFpyFA4xFmmcgD5nk9vQino7EqIlXXOUYRq6Cb-Zhv9A/exec"; // SCRIPT DE ALERTAS
 
-
-        // Verificar el tipo de actividad
-        if (tipo === "Área") {
-            // Asignar la URL según el área seleccionada
-            switch (area) {
-case "Administración":
-    // Ahora depende de la oficina seleccionada
-    switch (oficina) {
-        case "Biblioteca":
-            url = "https://script.google.com/macros/s/AKfycbyazbNcKwMKiFLXB4s28cjD5VixVf1DWnpRr3SIRUA4DYuMvazJH9gptkH17PFVKpzD/exec"; // Reemplazar con URL real
-            break;
-        case "Compras":
-            url = "https://script.google.com/macros/s/AKfycbz0oUpJvwoEkCmM0ablvRyaaGFp-A063EIVIHJusfGTn44gCLihoLOVibwHrINuSYyaHg/exec";
-            break;
-        case "Contabilidad":
-            url = "https://script.google.com/macros/s/AKfycbzFqLtFY3mwjYqr9QWMm6KYwek17qGse1R9xwZYVMj2Xg7Fq6v6B9pFGrvStvNKWfD2/exec";
-            break;
-        case "Coordinación de Ejecución Eléctrica":
-            url = "https://script.google.com/macros/s/AKfycbxm1IK48yKxcdFPQSxOfghMa_hrX9ngm3TdGnZHL5WYbgJ0DXr0lamqd0Uhk6iUbjBacg/exec";
-            break;
-        case "Coordinación de Ejecución Mecánica":
-            url = "https://script.google.com/macros/s/AKfycbx0Mj-t231OKbvAIjfbXwMrSdzsA1Kho1sl44nEGNS7-fvGqzUr2whSHIq_Ibe7_gqsdA/exec";
-            break;
-        case "CRO":
-            url = "https://script.google.com/macros/s/AKfycby1teNgt0YWC962CVZDvLXGxaEbhfe4iI0_I01Tsh2st0exJ75VNWQHKX35zD44_ZhJHA/exec";
-            break;
-        case "Educa":
-            url = "https://script.google.com/macros/s/AKfycbwPUrjBwZDE8YOZLv6H6_dYHyZ6DAfr6xOD7I19xxqVC3Xr5OCtUK1_WxzHblfVp1Tu/exec";
-            break;
-        case "Ejecutores de Mantenimiento":
-            url = "https://script.google.com/macros/s/AKfycbzOoXPH675fY29qlb0i0xMW6si3pPO9UAqkgRrJQpUTNghuAfZClMDnhbOwqBnp0H0BjQ/exec";
-            break;
-        case "Gerencia":
-            url = "https://script.google.com/macros/s/AKfycbzWobnEFQwuhEmTTY2z_gmG3C0IX0xL7gY91SvcFFlw6baUECcj7IreMLPqtFFGCdDu3g/exec";
-            break;
-        case "Gerencia de Calidad":
-            url = "https://script.google.com/macros/s/AKfycbxObK-_HENQKjGU4YF-XkbhzlQNyM4fQpdh4nSly_s9ZEEziJ0faZbSBtl6Drp2dtag/exec";
-            break;
-        case "Gerencia de Mantenimiento":
-            url = "https://script.google.com/macros/s/AKfycbziOihYMTW4HyQcBYCLm3GjDysJZr0yAPCzpFRTEtKT0I2NIiOfMm8ZLWK6hrUo0OKV/exec";
-            break;
-        case "Gerencia de Materias Primas":
-            url = "https://script.google.com/macros/s/AKfycbxcU58hLpszm-hMfFRE7_8yyrOmu2W8POWxHdB-TBS9L7Xnr9-o0gd4rDLoKsGK12IR/exec";
-            break;
-        case "Gerencia de Procesos":
-            url = "https://script.google.com/macros/s/AKfycbw6laHNuXen55FLVk4cVsi6jgQe2QkDNBMDBMTUb07h5U50JNfFpGeGclh6L7Nb3z0b5g/exec";
-            break;
-        case "Informática":
-            url = "https://script.google.com/macros/s/AKfycbyp5G5U6qmUJlZLdat2iiMfltTibc2AZwdPHkjL0rAmdm85M3TiqTVjb-Ohp8Oyp3p5VQ/exec";
-            break;
-        case "Inspectores de Mantenimiento":
-            url = "https://script.google.com/macros/s/AKfycbypi9qmn5fpeWd80OC6evCAb8Ozhk0I_fRecAvw0Yqcw8vH8SWACLNug-63CVfqt3y5/exec";
-            break;
-        case "Materias Primas":
-            url = "https://script.google.com/macros/s/AKfycbwVzFLezm8uMEF5v26UC5xD5KidDPsVLJRfe_M0XLNeb3bt1L2aPSNL_-MV00hUdsvY/exec";
-            break;
-        case "Oficina 121":
-            url = "https://script.google.com/macros/s/AKfycbwB0cJlrCR-7xIROq9YbuvWEqr4KdoSaI7RpwpiIcGszb3kE6Py115XX5ctxhs-Hntx/exec";
-            break;
-        case "Oficina de Supervisión":
-            url = "https://script.google.com/macros/s/AKfycbxjiINRGMpQwLgPrHHJJSYgAqNWmW5uxsjGzVLTsa5G3fF-s7GptQ75YPn0LjxXDeaLBA/exec";
-            break;
-        case "Oficina de Visitas":
-            url = "https://script.google.com/macros/s/AKfycbwF_JoweN8OxykvC5VIklgn7QPt0b4ta9D_NNFcLA6LhWjOrCXw6HU8R_yjKG3A2OQICg/exec";
-            break;
-        case "Procesos":
-            url = "https://script.google.com/macros/s/AKfycbwYwG9fH__L--D-zReXfOO9v5NmXiS--w0WeEuYloZRNTEHiy9tlMQv2n23VMNB8bfSKQ/exec";
-            break;
-        case "Producción":
-            url = "https://script.google.com/macros/s/AKfycbykHkizd5-zStpzJjlZudfLfEulFdFVTZpW6GGHsuTcBHmvLe349kcZJ8aTU5o5TpNt/exec";
-            break;
-        case "Profesionales Eléctricos":
-            url = "https://script.google.com/macros/s/AKfycbx9danmeHEoZM9kr4dq2OIXaLreOuzElRLfkJqKE4X4RJ2pz_CV0kqskfl5bda03zT2UQ/exec";
-            break;
-        case "Proyectos":
-            url = "https://script.google.com/macros/s/AKfycbzCqMlV75Y5rGYa4ppd7kylnHT_81PebAew61XEBnuwGL8Rq_8n0PU3r1zNI1rdZLt4/exec";
-            break;
-        case "Recursos Humanos":
-            url = "https://script.google.com/macros/s/AKfycbys3_ur-iHqq-V5XjlDj3OK0xm29B6gsOeTmZYnjkjQYC-Puqg6oqqNmsrnUMgIKqShXg/exec";
-            break;
-        case "Sala de Reuniones":
-            url = "https://script.google.com/macros/s/AKfycbyAWhbBorceXlY4TsztFRk9r3akvPBKxYk3kCXTx3NxrQK_fxNudPqfaEFd3ucKDbvSGA/exec";
-            break;
-        case "Sala de Reuniones de Mantenimiento":
-            url = "https://script.google.com/macros/s/AKfycbyMdQnfL9Vlu0zGHEqSmB2YbNeIX5GTX4CfOGmRdaXF5g0Doz_BDpYW0QAYEnKCc1Hm/exec";
-            break;
-        case "SISO":
-            url = "https://script.google.com/macros/s/AKfycbzaEPiaTt6Lvt8rxij1JQ0JRxkC3W5wXd1Dxc2PohyYmGiU3JkAjit1_iIA_VkWlyHx/exec";
-            break;
-        case "Sub Gerencia":
-            url = "https://script.google.com/macros/s/AKfycbzH80oDQkmKv8imztY2dacSG_lxNbz5_eLpJ8OEMmbb8DtsCm2NCbFL6l31ffHUbXKF/exec";
-            break;
-        default:
-            console.error("Oficina no reconocida:", oficina);
-            return;
-    }
-                    break;
-                case "Almacén General":
-                    url = "https://script.google.com/macros/s/AKfycbx6_eCKR84HNwj1jiwQm_9FDSIIYQhHYIPHnAeiyTwRU7fsa4yzOclqB9HgiurpA6hp/exec";
-                    break;
-                case "Bodega de Limpieza":
-                    url = "https://script.google.com/macros/s/AKfycbx69iYA3XmgOz00WHv6f1Forac1zUCytBFFARRLg4l6rhmZ1j60Q4gVKSDPi3mjHxOHeg/exec";
-                    break;
-                case "Chiminike":
-                    url = "https://script.google.com/macros/s/AKfycbzV9atlrcyNVU0OgHZvA_A-IWYaIs3GOEFZZmvat1orVVaF9yu3rtZDKJNYig5RY6yu/exec";
-                    break;
-                case "Despacho":
-                    url = "https://script.google.com/macros/s/AKfycbyhUyDTjin_odtgWyASfts4rsArtRxmOaOTBHJs4zRzbZCBu1Hh3xUMiDDhPsqhksqhhw/exec";
-                    break;
-                case "Enfermería":
-                    url = "https://script.google.com/macros/s/AKfycbyg5M6lXIhCdvLDYpby1yUoWs22cujKWAeJf0u3INc8f_bJvE7xj1M8cAxFu14gMWjj/exec";
-                    break;
-                case "Equipo Móvil":
-                    url = "https://script.google.com/macros/s/AKfycbxC1cMBeLHG-iOdgCyyu5o76Xw1niCbAaNbw-DXuc7T9wOOq8_bI3PF4cJ16xPftmWx1A/exec";
-                    break;
-                case "Expedición":
-                    url = "https://script.google.com/macros/s/AKfycbwC8utyR7mR7-aQ6G-GaqAOPa16J3Z3A14LtG1rRYOfD8r9Zrt6THYbaHNqYSv-a7zS/exec";
-                    break;
-                case "Laboratorio de Calidad":
-                    url = "https://script.google.com/macros/s/AKfycbwvageEn09g-wxJGSoRMRITx6jAMlUTVBRQf08_90TOUHanUPYkre2EjuBljRONxnJP/exec";
-                    break;
-                case "Laboratorio de Concreto":
-                    url = "https://script.google.com/macros/s/AKfycbz-BpBAuXZ4m2Tvofw46ulW-N-9A4GE6rsDJ4IYqyaw9aHsx4fw7gF3b4v2-LxR8kEg/exec";
-                    break;
-                case "Machaqueo A":
-                    url = "https://script.google.com/macros/s/AKfycbxZjYTHfEaTPNirsOOFGTtWcBL1nIior8hIFd0aXalEcZFUnIPCknTTRJES9ZKHsrnX/exec";
-                    break;
-                case "Posta Principal":
-                    url = "https://script.google.com/macros/s/AKfycbzrgd4y0fzPbfv6WeuH-R1heSj9eAIwTBpWZeP_mcTWNzT0OD6kLEOxgVz3bbKuWS5P/exec";
-                    break;
-                case "Sala de Control":
-                    url = "https://script.google.com/macros/s/AKfycbxYvvzdJEOYlesgDZ2GhDiOCNdnVM_cKL3Qrk4eFXCUKWtbPtEhCAyX3B7aEOUsNPOITQ/exec";
-                    break;
-                case "Sala de Maternidad":
-                    url = "https://script.google.com/macros/s/AKfycby0guTFX5SZH5-AVCKFmnkPDjriiaSVEHhx56GKIQ18s_yzomdYdAsstYT1bc-19KtX/exec";
-                    break;
-                case "Salón Vial":
-                    url = "https://script.google.com/macros/s/AKfycbzFRJ9i4-D-K6dFuuf4l12GXB6IIq2b2z928F8XNV_E3CO3AWZmvs-aS_vzxwLtR6b-/exec";
-                    break;
-                case "Taller Eléctrico":
-                    url = "https://script.google.com/macros/s/AKfycby6cfOOVkRLP2DEp6AMTbYvQr5nUuAWs0_2dl4wadCeStQ5dkrxplV3dZgGppiNlRzZ/exec";
-                    break;
-                default:
-                    console.error("Área no reconocida:", area);
-                    return;
-            }
-        } else if (tipo === "Baño") {
-            // Asignar la URL según el baño seleccionado
-            switch (baño) {
-                case "Admin - Gerencia":
-                    url = "https://script.google.com/macros/s/AKfycbzdp8-7o8MBv73trut8S4_0NctjdRsRl349KyNtNMxr6Co7Llsadp-Uv2VmoMN2_x6fyg/exec";
-                    break;
-                case "Admin - Hombres":
-                    url = "https://script.google.com/macros/s/AKfycbx5nzRtHpNtdBCtp-jE1teLKWFDqU_KI-lEygNPeiEDY_GUNZpu9RTgqh9y7Tk5G0id/exec";
-                    break;
-                case "Admin - Mujeres":
-                    url = "https://script.google.com/macros/s/AKfycbzBiWOek8-Aa4yEOKG-WZDvJcVvB39nQsdLXpZwtSAsqsJ-SiZcRYdCFqYUeavez3_D/exec";
-                    break;
-                case "Admin - Sala de Reuniones":
-                    url = "https://script.google.com/macros/s/AKfycbyEB9M6kcs_0NiM2jmJrslUJ4e11K5MutIL1DDshH4bUZJ7HEAa_Cf5bh6ozCbRIx10UA/exec";
-                    break;
-                case "Almacen General":
-                    url = "https://script.google.com/macros/s/AKfycbxGQFphEPeCZQbO7NrX2XLKZ78-o0YAS40cCd3vDzl6ibdqruMdMu3fODDZ4peUsXXTVw/exec";
-                    break;
-                case "Camerinos Contratistas":
-                    url = "https://script.google.com/macros/s/AKfycbwVyZ9o_pz3NXRaoIFKNoIaVs-Bgg4GMR4KTgJWDvfPhK0nPA0pA-GuskerbduBrUpb/exec";
-                    break;
-                case "Camerinos Permanentes":
-                    url = "https://script.google.com/macros/s/AKfycbwG0YQqr3hDzVtm3eMauCtf0w_6TWMgTDIwHFwfhgsVKmxS0Nx45VXq5nLHWwzJFeGB/exec";
-                    break;
-                case "Despacho":
-                    url = "https://script.google.com/macros/s/AKfycbyAJRH4AKz_6DxppZHsheeXY6oFlnZBxvI3PPcxHVB3Ukzu168pmGE3EIqjiD6AH8Is2w/exec";
-                    break;
-                case "Enfermería":
-                    url = "https://script.google.com/macros/s/AKfycbxnuJ-It7xzGDJXNNxgbz0z_5JXofDhJ4x_Cpd8FyMW9GfQtIpfcamtja4cTGqVhh5b/exec";
-                    break;
-                case "Expedición":
-                    url = "https://script.google.com/macros/s/AKfycbxE8oNzfJ4y_WKHw3rRfkVzQFjnLCukklYVALZnKijwL63DkAeaZ0e0rXzbj3fBjYen/exec";
-                    break;
-                case "Laboratorio de Calidad":
-                    url = "https://script.google.com/macros/s/AKfycbw_a1J1x0wGcSxRhDjfeTm_BQNtj2x9zr_UyOQ5DMK7WvF389wAeD49XPiWOOCMOmwu/exec";
-                    break;
-                case "Laboratorio de Concreto":
-                    url = "https://script.google.com/macros/s/AKfycbwrm7ZHnn3pTcZ7WZQ6JjMPr6e1TIAEIGQTwMzpWdAsL-7TXP-C4Xldzrc-smAPKtCoAw/exec";
-                    break;
-                case "Machaqueo A":
-                    url = "https://script.google.com/macros/s/AKfycbzPMQ37DnhacGx9faq_iS5I9SM5aepWwF3ydRYSSvM8iOHvkoLV86B0yCvnZcx61Xgc/exec";
-                    break;
-                case "Posta Guardias":
-                    url = "https://script.google.com/macros/s/AKfycbxvbPDMdk13YhXxbcHB6rCvfz4AFtzK6196ARmkMK2CdpDFoOwBacu0LF6lCAP5Fke2/exec";
-                    break;
-                case "Posta Recepción":
-                    url = "https://script.google.com/macros/s/AKfycbzj89eoD6IrIkMEz0sNTMz6r3Y99FMs8KaS4xcPZRaXd2kGuFZ0Q3rxLd1hUIYUi1Fy/exec";
-                    break;
-                case "Sala de Control":
-                    url = "https://script.google.com/macros/s/AKfycbyO4zsHjBr_wXxxFIcRQzirEjqOVJd1TRxlA6GRKtj5gYSscmuXOfdV3bI3DCBl_tDy9g/exec";
-                    break;
-                case "Salón Vial":
-                    url = "https://script.google.com/macros/s/AKfycbyzpY7co1xqSaOjKumidJ_yilMRswDHxRe-uQkYCu1naOcaXCtrOZv9W65TbEmvWP2AiA/exec";
-                    break;
-                case "Taller Electrico":
-                    url = "https://script.google.com/macros/s/AKfycbzWNTzYLbBuIQ50rb8OWMjXTQW51zUmfeoUW6CXgDpUWVaWf9V_9oPyaa7v5hn1wkUfTw/exec";
-                    break;
-                case "Transportistas":
-                    url = "https://script.google.com/macros/s/AKfycbyPQd8EyeP8ir_jE8jwvgn6poYNfK7c1AI4Pstl4GtqVti9Gr1jvx-2L2HNZ6zwLZaL_w/exec";
-                    break;
-                default:
-                    console.error("Baño no reconocido:", baño);
-                    return;
-            }
-        } else {
-            console.error("Tipo de actividad no reconocido:", tipo);
-            return;
-        }
-
-        // Verificar que se haya asignado una URL válida
-        if (!url) {
-            console.error("No se pudo determinar la URL para enviar los datos.");
-            return;
-        }
 
         // Enviar los datos usando AJAX
         $.ajax({
