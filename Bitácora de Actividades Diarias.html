@@ -629,21 +629,21 @@
     }
 
     // Función para bloquear los campos del formulario
-    function bloquearCampos() {
-        const campos = [
-            'fecha', 'tipo', 'area', 'baño', 'oficina'
-        ];
-        
-        campos.forEach(id => {
-            const campo = document.getElementById(id);
-            if (campo) {
-                campo.disabled = true;
-            }
-        });
-        
-        // Mostrar botón Reiniciar
-        document.getElementById('reiniciarBtn').style.display = 'block';
-    }
+function bloquearCampos() {
+    const campos = [
+        'fecha', 'tipo', 'area', 'baño', 'oficina'
+    ];
+    
+    campos.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.disabled = true;
+        }
+    });
+    
+    // Mostrar botón Reiniciar (siempre)
+    document.getElementById('reiniciarBtn').style.display = 'block';
+}
 
     // Función para reiniciar el formulario (simplificada)
     function reiniciarFormulario() {
@@ -791,68 +791,69 @@
     }
 
     // Función cargarActividades (mejorada con manejo de errores)
-    async function cargarActividades() {
-        if (!verificarCampos()) return;
+async function cargarActividades() {
+    if (!verificarCampos()) return;
 
-        const tipo = document.getElementById("tipo").value;
-        const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
+    const tipo = document.getElementById("tipo").value;
+    const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
+    
+    // Mostrar overlay de carga
+    document.getElementById("overlay").style.display = "flex";
+
+    try {
+        // Generar tabla con actividades básicas
+        generarTablaActividades(actividades);
         
-        // Mostrar overlay de carga
-        document.getElementById("overlay").style.display = "flex";
-
-        try {
-            // Generar tabla con actividades básicas
-            generarTablaActividades(actividades);
-            
-            // Obtener datos para la consulta
-            const fecha = document.getElementById("fecha").value;
-            const tipo = document.getElementById("tipo").value;
-            const area = document.getElementById("area").value;
-            const baño = document.getElementById("baño").value;
-            const oficina = document.getElementById("oficina").value;
-            
-            // Consultar actividades existentes
-            const actividadesExistentes = await consultarActividadesExistentes(fecha, tipo, area, baño, oficina);
-            
-            // Mostrar mensaje si hay error en la consulta
-            if (actividadesExistentes === null) {
-                Swal.fire({
-                    text: "Error al consultar actividades existentes",
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                });
-                return;
-            }
-            
-            // Marcar checkboxes si hay actividades existentes
-            if (actividadesExistentes.length > 0) {
-                actividadesExistentes.forEach(actividad => {
-                    const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                    }
-                });
-                
-                // Bloquear campos después de cargar los datos
-                bloquearCampos();
-            }
-            
-            // Mostrar tabla
-            document.getElementById("tablaActividades").style.display = "table";
-            
-        } catch (error) {
-            console.error("Error al cargar actividades:", error);
+        // Obtener datos para la consulta
+        const fecha = document.getElementById("fecha").value;
+        const tipo = document.getElementById("tipo").value;
+        const area = document.getElementById("area").value;
+        const baño = document.getElementById("baño").value;
+        const oficina = document.getElementById("oficina").value;
+        
+        // Consultar actividades existentes
+        const actividadesExistentes = await consultarActividadesExistentes(fecha, tipo, area, baño, oficina);
+        
+        // Mostrar mensaje si hay error en la consulta
+        if (actividadesExistentes === null) {
             Swal.fire({
-                text: "Error al cargar actividades existentes",
+                text: "Error al consultar actividades existentes",
                 icon: "error",
                 confirmButtonText: "Aceptar"
             });
-        } finally {
-            // Ocultar overlay
-            document.getElementById("overlay").style.display = "none";
-            actualizarBotonEnviar();
+            return;
         }
+        
+        // Marcar checkboxes si hay actividades existentes
+        if (actividadesExistentes.length > 0) {
+            actividadesExistentes.forEach(actividad => {
+                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+        
+        // BLOQUEAR CAMPOS SIEMPRE (cambio principal)
+        bloquearCampos();
+        
+        // Mostrar tabla
+        document.getElementById("tablaActividades").style.display = "table";
+        
+    } catch (error) {
+        console.error("Error al cargar actividades:", error);
+        Swal.fire({
+            text: "Error al cargar actividades existentes",
+            icon: "error",
+            confirmButtonText: "Aceptar"
+        });
+    } finally {
+        // Ocultar overlay
+        document.getElementById("overlay").style.display = "none";
+        actualizarBotonEnviar();
     }
+}
+
 
     // Modificar los event listeners para llamar a cargarActividades cuando los campos estén completos
     document.getElementById("area").addEventListener("change", function() {
@@ -1033,43 +1034,41 @@
     }
 
     // Función para cargar las respuestas guardadas
-    function cargarRespuestas() {
-        const savedData = localStorage.getItem('formData');
-        if (savedData) {
-            const formData = JSON.parse(savedData);
+function cargarRespuestas() {
+    const savedData = localStorage.getItem('formData');
+    if (savedData) {
+        const formData = JSON.parse(savedData);
 
-            // Cargar los valores de los campos
-            Object.keys(formData).forEach(key => {
-                const input = document.getElementById(key);
-                if (input) {
-                    input.value = formData[key];
+        // Cargar los valores de los campos
+        Object.keys(formData).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) {
+                input.value = formData[key];
 
-                    // Disparar el evento "change" en los selects para que se muestren/oculten las preguntas dinámicas
-                    if (input.tagName === 'SELECT') {
-                        input.dispatchEvent(new Event('change'));
-                    }
+                // Disparar el evento "change" en los selects para que se muestren/oculten las preguntas dinámicas
+                if (input.tagName === 'SELECT') {
+                    input.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+        // Cargar las actividades seleccionadas
+        if (formData.actividades) {
+            formData.actividades.forEach(actividad => {
+                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
                 }
             });
-
-            // Cargar las actividades seleccionadas
-            if (formData.actividades) {
-                formData.actividades.forEach(actividad => {
-                    const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                    }
-                });
-            }
-
-            // Actualizar el estado del botón de Enviar
-            actualizarBotonEnviar();
-            
-            // Bloquear campos si hay actividades cargadas
-            if (formData.actividades && formData.actividades.length > 0) {
-                bloquearCampos();
-            }
         }
+
+        // Actualizar el estado del botón de Enviar
+        actualizarBotonEnviar();
+        
+        // BLOQUEAR CAMPOS SIEMPRE (cambio principal)
+        bloquearCampos();
     }
+}
 
     // Función para preguntar al usuario si desea continuar con las respuestas guardadas
     function preguntarContinuar() {
@@ -1140,15 +1139,11 @@
     });
 
     // Llamar a la función al cargar la página
-    window.onload = function() {
-        preguntarContinuar();
-        prellenarFechaHora(); // Precargar la fecha actual
-        
-        // Bloquear campos si hay datos en localStorage
-        if (localStorage.getItem('formData')) {
-            bloquearCampos();
-        }
-    };
+window.onload = function() {
+    preguntarContinuar();
+    prellenarFechaHora(); // Precargar la fecha actual
+    // No necesitamos verificar localStorage aquí porque preguntarContinuar ya lo hace
+};
 
     let backPressCount = 0; // Contador para rastrear el número de veces que se presiona el botón atrás
 
