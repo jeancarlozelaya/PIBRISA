@@ -324,6 +324,30 @@
             color: #f44336;
             margin-right: 5px;
         }
+
+        .severity-indicator {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
+            margin-top: 5px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .severity-marker {
+            position: absolute;
+            top: -5px;
+            width: 2px;
+            height: 20px;
+            background: black;
+        }
+
+  .chart-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
+
     </style>
 </head>
 <body>
@@ -390,7 +414,6 @@
                 <div id="severityIndex" class="stat-value">0</div>
                 <div>Días perdidos por mil horas</div>
             </div>
-
             <div class="stat-card">
                 <h3>Tasa de Reincidentes</h3>
                 <div id="repeatOffenders" class="stat-value">0%</div>
@@ -401,24 +424,33 @@
                 <div id="measureEffectiveness" class="stat-value">0%</div>
                 <div>Accidentes post-intervención</div>
             </div>
+        </div>
 
+        <!-- Indicador de Severidad -->
+        <div class="stat-card" style="max-width: 600px; margin: 20px auto;">
+            <h3>Nivel de Severidad</h3>
+            <div id="severityLevel" class="stat-value">Bajo</div>
+            <div class="severity-indicator">
+                <div id="severityMarker" class="severity-marker" style="left: 0%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span>Bajo</span>
+                <span>Medio</span>
+                <span>Alto</span>
+            </div>
         </div>
         
-
-
         <!-- Gráficos -->
-        <div class="chart-container">
-            <canvas id="accidentsByTypeChart"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <canvas id="accidentsByAreaChart"></canvas>
-        </div>
+<div class="chart-container">
+    <canvas id="accidentsByTypeChart"></canvas>
+</div>
 
-
+<div class="chart-container">
+    <canvas id="accidentsByAreaChart"></canvas>
+</div>
         
-        <!-- Alertas para accidentes mortales -->
-        <div class="alert-container">
+        <!-- Alertas para accidentes mortales (oculto por defecto) -->
+        <div id="alertContainer" class="alert-container" style="display: none;">
             <h2 class="alert-title">🔴 Alertas Críticas</h2>
             <div id="mortalAccidentsAlert" class="alert-box mortal">
                 <h3><i class="fas fa-skull-crossbones"></i> Accidentes Mortales</h3>
@@ -436,7 +468,7 @@
                             <th>Fecha</th>
                             <th>Nombre</th>
                             <th>Identidad</th>
-                            <th>Área/Turno</th>
+                            <th>Lugar</th>
                             <th>Tipo</th>
                             <th>Días Perdidos</th>
                             <th>Parte Afectada</th>
@@ -469,7 +501,7 @@
     
     // Función para volver al inicio
     function goBack() {
-        window.location.href = "Supervisión.html";
+        window.location.href = "index.html";
     }
 
     // Función para actualizar controles de período
@@ -547,16 +579,19 @@
     function calculateAdditionalIndicators(filteredAccidents) {
         // 1. Detección de accidentes mortales
         const mortalAccidents = filteredAccidents.filter(acc => acc.tipo === "Mortal");
+        const alertContainer = document.getElementById("alertContainer");
         const mortalAlert = document.getElementById("mortalAccidentsAlert");
         const mortalList = document.getElementById("mortalAccidentsList");
         
         if (mortalAccidents.length > 0) {
+            alertContainer.style.display = "block";
             mortalAlert.style.display = "block";
             mortalList.innerHTML = mortalAccidents.map(acc => `
                 <p><strong>${formatDate(acc.fecha)}</strong>: ${acc.nombre} (${acc.area})<br>
                 <em>Causa</em>: ${acc.causa} | <em>Medida</em>: ${acc.medidas}</p>
             `).join("");
         } else {
+            alertContainer.style.display = "none";
             mortalAlert.style.display = "none";
         }
 
@@ -575,6 +610,48 @@
         ).length;
         const effectiveness = (effectiveMeasures / filteredAccidents.length * 100).toFixed(1);
         document.getElementById("measureEffectiveness").textContent = `${effectiveness}%`;
+
+        // 4. Nivel de severidad
+        updateSeverityIndicator(filteredAccidents);
+    }
+
+    // Función para actualizar el indicador de severidad
+    function updateSeverityIndicator(filteredAccidents) {
+        const totalAccidents = filteredAccidents.length;
+        const mortalCount = filteredAccidents.filter(acc => acc.tipo === "Mortal").length;
+        const graveCount = filteredAccidents.filter(acc => acc.tipo === "Grave").length;
+        
+        // Fórmula ponderada: Mortal (5x), Grave (3x), Leve (1x)
+        const severityScore = (mortalCount * 5) + (graveCount * 3) + (filteredAccidents.length - mortalCount - graveCount);
+        const maxPossibleScore = totalAccidents * 5;
+        const severityPercentage = (severityScore / maxPossibleScore) * 100;
+        
+        // Determinar nivel
+        let severityLevel, markerPosition;
+        if (severityPercentage < 30) {
+            severityLevel = "Bajo";
+            markerPosition = severityPercentage * 0.3;
+        } else if (severityPercentage < 70) {
+            severityLevel = "Medio";
+            markerPosition = 30 + (severityPercentage - 30) * 0.4;
+        } else {
+            severityLevel = "Alto";
+            markerPosition = 70 + (severityPercentage - 70) * 0.3;
+        }
+        
+        // Actualizar UI
+        document.getElementById("severityLevel").textContent = severityLevel;
+        document.getElementById("severityMarker").style.left = `${markerPosition}%`;
+        
+        // Color según nivel
+        const levelElement = document.getElementById("severityLevel");
+        if (severityLevel === "Alto") {
+            levelElement.className = "stat-value danger";
+        } else if (severityLevel === "Medio") {
+            levelElement.className = "stat-value warning";
+        } else {
+            levelElement.className = "stat-value success";
+        }
     }
 
     // Función para calcular indicadores
