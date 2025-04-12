@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Indicador de Rotación de Personal</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body, html {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.5em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: center;
+            margin: 40px auto;
+            grid-row: 2;
+            height: auto;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 20px 0;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            position: fixed;
+            top: 80px;
+            left: 0px;
+            z-index: 1001;
+            box-sizing: border-box;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .scrollable-table {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f4f4f4;
+            position: sticky;
+            top: 0;
+        }
+
+        .toggle-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .toggle-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .indicator-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+
+        .indicator-table th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .indicator-table td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        .indicator-value {
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .warning {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .danger {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #loadingMessage {
+            color: white;
+            font-size: 24px;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .period-selector {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 5px;
+        }
+
+        .period-selector select {
+            padding: 8px;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .back-button {
+                top: 70px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+
+
+        .table-title {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .table-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        Pisos Brillantes
+    </div>
+    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    <div class="container">
+        <h1>Seguimiento del Flujo Laboral</h1>
+        
+        <div class="period-selector">
+            <label for="periodType">Período de análisis:</label>
+            <select id="periodType" onchange="updatePeriodControls()">
+                <option value="12">Últimos 12 meses</option>
+                <option value="6">Últimos 6 meses</option>
+                <option value="3">Últimos 3 meses</option>
+                <option value="custom">Personalizado</option>
+            </select>
+            
+            <div id="customPeriodControls" style="display: none; margin-top: 10px;">
+                <label for="startDate">Desde:</label>
+                <input type="date" id="startDate">
+                
+                <label for="endDate">Hasta:</label>
+                <input type="date" id="endDate">
+            </div>
+            
+            <button onclick="loadData()" style="margin-top: 10px;">
+                <i class="fas fa-sync-alt"></i> Actualizar datos
+            </button>
+        </div>
+        
+        <!-- Tabla de personal actual -->
+        <div class="table-container">
+            <div class="table-title">Personal en Proyecto Actualmente</div>
+            <div class="scrollable-table">
+                <table id="currentEmployeesTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Identidad</th>
+                            <th>Fecha de Ingreso</th>
+                            <th>Antigüedad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4">Cargando datos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <button id="toggleFormerBtn" class="toggle-btn" onclick="toggleFormerEmployees()">
+            <i class="fas fa-eye"></i> Mostrar Personal que ya no labora
+        </button>
+
+        <!-- Tabla de personal que ya no labora -->
+        <div id="formerEmployeesContainer" style="display: none;">
+            <div class="table-container">
+                <div class="table-title">Personal que ya no labora</div>
+                <div class="scrollable-table">
+                    <table id="formerEmployeesTable">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Identidad</th>
+                                <th>Fecha de Ingreso</th>
+                                <th>Fecha de Salida</th>
+                                <th>Antigüedad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5">No hay datos para mostrar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de indicadores (se mantiene igual) -->
+        <div class="table-container">
+            <div class="table-title">Indicadores de Rotación</div>
+            <table class="indicator-table">
+                <tbody>
+                    <tr>
+                        <td>Personal Actual:</td>
+                        <td id="currentCount" class="indicator-value">0</td>
+                    </tr>
+                    <tr>
+                        <td>Personal que ha salido:</td>
+                        <td id="formerCount" class="indicator-value">0</td>
+                    </tr>
+                    <tr>
+                        <td>Tasa de Rotación:</td>
+                        <td id="turnoverRate" class="indicator-value">0%</td>
+                    </tr>
+                    <tr>
+                        <td>Promedio de permanencia:</td>
+                        <td id="avgStay" class="indicator-value">0 días</td>
+                    </tr>
+                    <tr>
+                        <td>Rotación en período seleccionado:</td>
+                        <td id="periodTurnover" class="indicator-value">0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="overlay" style="display: none;">
+            <div id="loadingMessage">
+                <p><i class="fas fa-spinner fa-spin"></i> Cargando datos...</p>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // URL de tu Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAOdoF2NMI7PeJpCFF0y6EHBM9WajBbED7dRbwD9QoSNdkx76zRiY-Jy1f1NLj9QYi/exec";
+    
+    // Variables globales para almacenar datos
+    let allEmployees = [];
+    let currentEmployees = [];
+    let formerEmployees = [];
+    
+    // Función para volver al inicio
+    function goBack() {
+        window.location.href = "index.html";
+    }
+
+    // Función para alternar la visualización de ex-empleados
+    function toggleFormerEmployees() {
+        const container = document.getElementById("formerEmployeesContainer");
+        const btn = document.getElementById("toggleFormerBtn");
+        
+        if (container.style.display === "none") {
+            container.style.display = "block";
+            btn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar Personal que ya no labora';
+        } else {
+            container.style.display = "none";
+            btn.innerHTML = '<i class="fas fa-eye"></i> Mostrar Personal que ya no labora';
+        }
+    }
+
+    // Función para actualizar controles de período
+    function updatePeriodControls() {
+        const periodType = document.getElementById("periodType").value;
+        const customControls = document.getElementById("customPeriodControls");
+        
+        if (periodType === "custom") {
+            customControls.style.display = "block";
+            
+            // Establecer fechas por defecto
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setMonth(endDate.getMonth() - 3);
+            
+            document.getElementById("endDate").value = endDate.toISOString().split('T')[0];
+            document.getElementById("startDate").value = startDate.toISOString().split('T')[0];
+        } else {
+            customControls.style.display = "none";
+        }
+    }
+
+    // Función para formatear fecha (corregido problema de zona horaria)
+    function formatDate(dateString) {
+        if (!dateString) return "";
+        
+        // Ajustar por zona horaria - agregar un día si es necesario
+        const date = new Date(dateString);
+        const timezoneOffset = date.getTimezoneOffset() * 60000;
+        const adjustedDate = new Date(date.getTime() + timezoneOffset);
+        
+        return adjustedDate.toLocaleDateString('es-ES');
+    }
+
+    // Función para calcular años, meses y días entre fechas
+    function calculateDuration(startDate, endDate) {
+        if (!startDate) return "0 días";
+        
+        // Ajustar fechas por zona horaria
+        const adjustForTimezone = (dateStr) => {
+            if (!dateStr) return new Date();
+            const date = new Date(dateStr);
+            const timezoneOffset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() + timezoneOffset);
+        };
+        
+        const start = adjustForTimezone(startDate);
+        const end = endDate ? adjustForTimezone(endDate) : new Date();
+        
+        // Asegurarse de que la fecha de inicio sea anterior a la fecha de fin
+        if (start > end) {
+            return "0 días";
+        }
+        
+        let years = end.getFullYear() - start.getFullYear();
+        let months = end.getMonth() - start.getMonth();
+        let days = end.getDate() - start.getDate();
+        
+        // Ajustar meses y días si es necesario
+        if (days < 0) {
+            months--;
+            // Obtener el último día del mes anterior
+            const tempDate = new Date(end.getFullYear(), end.getMonth(), 0);
+            days += tempDate.getDate();
+        }
+        
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+        
+        // Construir el string de resultado
+        let result = [];
+        if (years > 0) result.push(years + (years === 1 ? " año" : " años"));
+        if (months > 0) result.push(months + (months === 1 ? " mes" : " meses"));
+        if (days > 0 || result.length === 0) result.push(days + (days === 1 ? " día" : " días"));
+        
+        return result.join(", ");
+    }
+
+    // Función para calcular días entre fechas (para indicadores)
+    function calculateDays(startDate, endDate) {
+        if (!startDate) return 0;
+        
+        // Ajustar por zona horaria
+        const adjustForTimezone = (dateStr) => {
+            if (!dateStr) return new Date();
+            const date = new Date(dateStr);
+            const timezoneOffset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() + timezoneOffset);
+        };
+        
+        const start = adjustForTimezone(startDate);
+        const end = endDate ? adjustForTimezone(endDate) : new Date();
+        const diffTime = Math.abs(end - start);
+        return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    // Función para convertir días en formato años, meses y días
+    function daysToYMD(totalDays) {
+        const years = Math.floor(totalDays / 365);
+        const remainingDays = totalDays % 365;
+        const months = Math.floor(remainingDays / 30);
+        const days = remainingDays % 30;
+        
+        let result = [];
+        if (years > 0) result.push(years + (years === 1 ? " año" : " años"));
+        if (months > 0) result.push(months + (months === 1 ? " mes" : " meses"));
+        if (days > 0 || result.length === 0) result.push(days + (days === 1 ? " día" : " días"));
+        
+        return result.join(", ");
+    }
+
+    // Función para calcular indicadores
+    function calculateIndicators() {
+        // Obtener parámetros del período seleccionado
+        const periodType = document.getElementById("periodType").value;
+        let startDate, endDate = new Date();
+        
+        if (periodType === "custom") {
+            startDate = new Date(document.getElementById("startDate").value);
+            endDate = new Date(document.getElementById("endDate").value);
+        } else {
+            startDate = new Date();
+            startDate.setMonth(endDate.getMonth() - parseInt(periodType));
+        }
+        
+        // Filtrar empleados que salieron en el período seleccionado
+        const periodDepartures = formerEmployees.filter(emp => {
+            if (!emp.fechaSalida) return false;
+            const exitDate = new Date(emp.fechaSalida);
+            return exitDate >= startDate && exitDate <= endDate;
+        });
+        
+        // Calcular promedio de empleados en el período
+        const employeesAtStart = allEmployees.filter(emp => {
+            const hireDate = new Date(emp.fechaIngreso);
+            const exitDate = emp.fechaSalida ? new Date(emp.fechaSalida) : null;
+            
+            return hireDate <= startDate && (!exitDate || exitDate >= startDate);
+        }).length;
+        
+        const employeesAtEnd = allEmployees.filter(emp => {
+            const hireDate = new Date(emp.fechaIngreso);
+            const exitDate = emp.fechaSalida ? new Date(emp.fechaSalida) : null;
+            
+            return hireDate <= endDate && (!exitDate || exitDate >= endDate);
+        }).length;
+        
+        const avgEmployees = (employeesAtStart + employeesAtEnd) / 2;
+        
+        // Calcular tasas de rotación
+        const periodTurnoverRate = avgEmployees > 0 ? 
+            (periodDepartures.length / avgEmployees * 100).toFixed(2) : 0;
+        
+        // Tasa de rotación últimos 12 meses (como referencia)
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        
+        const yearlyDepartures = formerEmployees.filter(emp => {
+            if (!emp.fechaSalida) return false;
+            const exitDate = new Date(emp.fechaSalida);
+            return exitDate >= oneYearAgo;
+        }).length;
+        
+        const yearlyAvgEmployees = (currentEmployees.length + (currentEmployees.length + yearlyDepartures)) / 2;
+        const yearlyTurnoverRate = yearlyAvgEmployees > 0 ? 
+            (yearlyDepartures / yearlyAvgEmployees * 100).toFixed(2) : 0;
+        
+        // Promedio de permanencia
+        const totalDays = formerEmployees.reduce((sum, emp) => {
+            return sum + calculateDays(emp.fechaIngreso, emp.fechaSalida);
+        }, 0);
+        
+        const avgStayDays = formerEmployees.length > 0 ? Math.floor(totalDays / formerEmployees.length) : 0;
+        const avgStayFormatted = formerEmployees.length > 0 ? 
+            `${avgStayDays} días (${daysToYMD(avgStayDays)})` : "0 días";
+        
+        // Actualizar UI con los indicadores
+        document.getElementById("currentCount").textContent = currentEmployees.length;
+        document.getElementById("formerCount").textContent = formerEmployees.length;
+        document.getElementById("turnoverRate").textContent = yearlyTurnoverRate + "%";
+        document.getElementById("avgStay").textContent = avgStayFormatted;
+        
+        const periodTurnoverElement = document.getElementById("periodTurnover");
+        periodTurnoverElement.textContent = periodTurnoverRate + "%";
+        
+        // Resaltar si la rotación es alta
+        if (parseFloat(periodTurnoverRate) > 15) {
+            periodTurnoverElement.className = "indicator-value warning";
+        } else if (parseFloat(periodTurnoverRate) > 25) {
+            periodTurnoverElement.className = "indicator-value danger";
+        } else {
+            periodTurnoverElement.className = "indicator-value";
+        }
+    }
+
+    // Función para cargar datos desde Google Sheets
+    async function loadData() {
+        document.getElementById("overlay").style.display = "flex";
+        
+        try {
+            // Realizar la consulta al servidor
+            const response = await fetch(`${SCRIPT_URL}?action=getEmployees`);
+            
+            if (!response.ok) {
+                throw new Error(`Error en la consulta: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.message);
+            }
+            
+            // Procesar datos
+            currentEmployees = [];
+            formerEmployees = [];
+            
+            data.forEach(employee => {
+                const empData = {
+                    nombre: employee[0], // Columna B (Nombre de Colaborador)
+                    identidad: employee[1], // Columna C (Identidad)
+                    fechaIngreso: employee[2], // Columna D (Fecha de Ingreso)
+                    fechaSalida: employee[3] || null // Columna E (Fecha de Salida)
+                };
+                
+                if (!empData.fechaSalida) {
+                    currentEmployees.push(empData);
+                } else {
+                    formerEmployees.push(empData);
+                }
+            });
+            
+            allEmployees = [...currentEmployees, ...formerEmployees];
+            
+            // Mostrar empleados actuales
+            const currentTable = document.getElementById("currentEmployeesTable").getElementsByTagName('tbody')[0];
+            currentTable.innerHTML = "";
+            
+            currentEmployees.forEach(emp => {
+                const row = currentTable.insertRow();
+                row.insertCell(0).textContent = emp.nombre;
+                row.insertCell(1).textContent = emp.identidad;
+                row.insertCell(2).textContent = formatDate(emp.fechaIngreso);
+                row.insertCell(3).textContent = calculateDuration(emp.fechaIngreso);
+            });
+            
+            // Mostrar ex-empleados
+            const formerTable = document.getElementById("formerEmployeesTable").getElementsByTagName('tbody')[0];
+            formerTable.innerHTML = "";
+            
+            formerEmployees.forEach(emp => {
+                const row = formerTable.insertRow();
+                row.insertCell(0).textContent = emp.nombre;
+                row.insertCell(1).textContent = emp.identidad;
+                row.insertCell(2).textContent = formatDate(emp.fechaIngreso);
+                row.insertCell(3).textContent = formatDate(emp.fechaSalida);
+                row.insertCell(4).textContent = calculateDuration(emp.fechaIngreso, emp.fechaSalida);
+            });
+            
+            // Calcular indicadores
+            calculateIndicators();
+            
+        } catch (error) {
+            console.error("Error al cargar datos:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudieron cargar los datos del personal',
+                icon: 'error'
+            });
+        } finally {
+            document.getElementById("overlay").style.display = "none";
+        }
+    }
+
+    // Cargar datos al iniciar
+    window.onload = function() {
+        updatePeriodControls();
+        loadData();
+    };
+</script>
+</body>
+</html>
