@@ -42,11 +42,8 @@
             width: 90%;
             max-width: 1000px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            text-align: center;
             margin: 40px auto;
-            grid-row: 2;
-            height: auto;
+            text-align: center;
             box-sizing: border-box;
         }
 
@@ -81,9 +78,10 @@
         .scrollable-table {
             max-height: 400px;
             overflow-y: auto;
-            margin-top: 20px;
+            margin: 20px auto;
             border: 1px solid #ddd;
             border-radius: 5px;
+            width: 100%;
         }
 
         table {
@@ -107,75 +105,52 @@
             top: 0;
         }
 
-        .toggle-btn {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
+        /* Colores para filas según tipo de accidente */
+        tr.leve {
+            background-color: #e8f5e9; /* Verde claro */
+        }
+        
+        tr.moderado {
+            background-color: #fff8e1; /* Amarillo claro */
+        }
+        
+        tr.grave {
+            background-color: #ffecb3; /* Amarillo oscuro */
+        }
+        
+        tr.mortal {
+            background-color: #ffebee; /* Rojo claro */
         }
 
-        .toggle-btn:hover {
-            background-color: #5a6268;
-        }
-
-        .indicator-table {
-            width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
-        }
-
-        .indicator-table th {
-            background-color: #007BFF;
-            color: white;
-        }
-
-        .indicator-table td {
-            padding: 12px;
-            text-align: left;
-        }
-
-        .indicator-value {
-            font-weight: bold;
-            color: #007BFF;
-        }
-
-        .warning {
-            color: #ff9800;
-            font-weight: bold;
-        }
-
-        .danger {
-            color: #f44336;
-            font-weight: bold;
-        }
-
-        .success {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        #loadingMessage {
-            color: white;
-            font-size: 24px;
-            font-family: 'Times New Roman', Times, serif;
-            text-align: center;
+        .chart-container {
+            position: relative;
+            margin: 30px auto;
+            height: 400px; /* Aumentado para incluir explicación */
+            width: 85%;
+            max-width: 800px;
+            background-color: white;
             padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; /* Distribuye espacio */
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 80% !important; /* Deja espacio para la explicación */
+        }
+
+        .chart-explanation {
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+            border-top: 1px solid #eee;
+            width: 100%;
         }
 
         .period-selector {
@@ -183,6 +158,7 @@
             padding: 15px;
             background-color: #e9f7ef;
             border-radius: 5px;
+            text-align: center;
         }
 
         .period-selector select, .period-selector input {
@@ -192,16 +168,8 @@
             border: 1px solid #ddd;
         }
 
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 300px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-
         .input-group {
-            margin: 10px 0;
+            margin: 15px 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -222,62 +190,6 @@
             font-size: 0.9em;
         }
 
-        /* Nuevos estilos para alertas */
-        .alert-container {
-            margin: 30px 0;
-            border-top: 2px solid #f44336;
-            padding-top: 20px;
-        }
-
-        .alert-title {
-            color: #f44336;
-            text-align: center;
-        }
-
-        .alert-box {
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-            display: none;
-        }
-
-        .alert-box.mortal {
-            background-color: #ffebee;
-            border-left: 5px solid #f44336;
-        }
-
-        .alert-box h3 {
-            margin-top: 0;
-            color: #f44336;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-                padding: 15px;
-            }
-            
-            .back-button {
-                top: 70px;
-                padding: 8px 15px;
-                font-size: 0.9em;
-            }
-            
-            table {
-                font-size: 12px;
-            }
-            
-            th, td {
-                padding: 8px;
-            }
-
-            .input-group label {
-                min-width: 100%;
-                text-align: left;
-                margin-bottom: 5px;
-            }
-        }
-
         .table-title {
             background-color: #007BFF;
             color: white;
@@ -292,6 +204,7 @@
             margin-top: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            width: 100%;
         }
 
         .stats-grid {
@@ -320,15 +233,10 @@
             margin: 10px 0;
         }
 
-        .mortal-icon {
-            color: #f44336;
-            margin-right: 5px;
-        }
-
         .severity-indicator {
             width: 100%;
             height: 10px;
-            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
+            background: linear-gradient(to right, #4CAF50, #FFC107, #FF9800, #F44336);
             margin-top: 5px;
             border-radius: 5px;
             position: relative;
@@ -337,17 +245,80 @@
         .severity-marker {
             position: absolute;
             top: -5px;
-            width: 2px;
+            width: 4px;
             height: 20px;
-            background: black;
+            background: #333;
+            transition: left 0.5s ease, background-color 0.5s ease;
         }
 
-  .chart-container {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-  }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
 
+        #loadingMessage {
+            color: white;
+            font-size: 24px;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #FFC107;
+            font-weight: bold;
+        }
+
+        .danger {
+            color: #555;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .back-button {
+                top: 70px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+
+            .input-group label {
+                min-width: 100%;
+                text-align: left;
+                margin-bottom: 5px;
+            }
+
+            .chart-container {
+                width: 95%;
+                height: 450px; /* Más alto en móviles */
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -395,10 +366,18 @@
         <!-- Tarjetas de estadísticas -->
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>Total Accidentes</h3>
+                <h3>Total Incidentes</h3>
                 <div id="totalAccidents" class="stat-value">0</div>
                 <div>En período seleccionado</div>
             </div>
+
+    <div class="stat-card">
+        <h3>Días sin Incidentes</h3>
+        <div id="daysSinceLastAccident" class="stat-value">0</div>
+        <div>Días desde el último incidente</div>
+    </div>
+
+
             <div class="stat-card">
                 <h3>Días Perdidos</h3>
                 <div id="totalLostDays" class="stat-value">0</div>
@@ -407,7 +386,7 @@
             <div class="stat-card">
                 <h3>Índice Frecuencia</h3>
                 <div id="frequencyIndex" class="stat-value">0</div>
-                <div>Accidentes por millón de horas</div>
+                <div>Incidentes por millón de horas</div>
             </div>
             <div class="stat-card">
                 <h3>Índice Gravedad</h3>
@@ -417,17 +396,17 @@
             <div class="stat-card">
                 <h3>Tasa de Reincidentes</h3>
                 <div id="repeatOffenders" class="stat-value">0%</div>
-                <div>Empleados con >1 accidente</div>
+                <div>Empleados con >1 incidente</div>
             </div>
             <div class="stat-card">
                 <h3>Efectividad Medidas</h3>
                 <div id="measureEffectiveness" class="stat-value">0%</div>
-                <div>Accidentes post-intervención</div>
+                <div>Incidentes post-intervención</div>
             </div>
         </div>
 
         <!-- Indicador de Severidad -->
-        <div class="stat-card" style="max-width: 600px; margin: 20px auto;">
+        <div class="stat-card" style="max-width: 100%; margin: 20px auto;">
             <h3>Nivel de Severidad</h3>
             <div id="severityLevel" class="stat-value">Bajo</div>
             <div class="severity-indicator">
@@ -437,30 +416,43 @@
                 <span>Bajo</span>
                 <span>Medio</span>
                 <span>Alto</span>
+                <span>Crítico</span>
             </div>
-        </div>
-        
-        <!-- Gráficos -->
-<div class="chart-container">
-    <canvas id="accidentsByTypeChart"></canvas>
-</div>
+<div class="chart-explanation">
+        <strong>Indica el nivel general de gravedad de los incidentes, considerando su frecuencia y consecuencias.</strong> 
+    </div>
 
-<div class="chart-container">
-    <canvas id="accidentsByAreaChart"></canvas>
-</div>
+        </div>
         
-        <!-- Alertas para accidentes mortales (oculto por defecto) -->
-        <div id="alertContainer" class="alert-container" style="display: none;">
-            <h2 class="alert-title">🔴 Alertas Críticas</h2>
-            <div id="mortalAccidentsAlert" class="alert-box mortal">
-                <h3><i class="fas fa-skull-crossbones"></i> Accidentes Mortales</h3>
-                <div id="mortalAccidentsList"></div>
+        <!-- Gráficos Centrados con Explicación -->
+        <div class="chart-container">
+            <canvas id="accidentsByTypeChart"></canvas>
+            <div class="chart-explanation">
+                <strong>Muestra la distribución porcentual de incidentes según su gravedad (Leve, Moderado, Grave, Mortal).</strong> 
+            </div>
+        </div>
+
+
+
+        <!-- Pirámide SISO Simplificada -->
+        <div class="chart-container">
+            <canvas id="sisoPyramidChart"></canvas>
+            <div class="chart-explanation">
+                <strong>Representación jerárquica de los tipos de incidentes, desde los más graves, hasta los menos graves.</strong> 
             </div>
         </div>
         
-        <!-- Tabla de accidentes -->
+        <div class="chart-container">
+            <canvas id="accidentsByAreaChart"></canvas>
+            <div class="chart-explanation">
+                <strong>Distribución de incidentes por lugar, permitiendo identificar zonas con mayor frecuencia.</strong> 
+            </div>
+        </div>
+
+
+        <!-- Tabla de incidentes con colores -->
         <div class="table-container">
-            <div class="table-title">Registro de Accidentes</div>
+            <div class="table-title">Registro de Incidentes</div>
             <div class="scrollable-table">
                 <table id="accidentsTable">
                     <thead>
@@ -473,11 +465,12 @@
                             <th>Días Perdidos</th>
                             <th>Parte Afectada</th>
                             <th>Causa</th>
+                            <th>Categoría SISO</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="8">Cargando datos...</td>
+                            <td colspan="9">Cargando datos...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -497,11 +490,11 @@
     
     // Variables globales para almacenar datos y gráficos
     let allAccidents = [];
-    let typeChart, areaChart;
+    let typeChart, areaChart, pyramidChart;
     
     // Función para volver al inicio
     function goBack() {
-        window.location.href = "Supervisión - 3.html";
+        window.location.href = "index.html";
     }
 
     // Función para actualizar controles de período
@@ -575,27 +568,9 @@
         return date.toLocaleDateString('es-ES');
     }
 
-    // Función para calcular nuevos indicadores
+    // Función para calcular indicadores adicionales
     function calculateAdditionalIndicators(filteredAccidents) {
-        // 1. Detección de accidentes mortales
-        const mortalAccidents = filteredAccidents.filter(acc => acc.tipo === "Mortal");
-        const alertContainer = document.getElementById("alertContainer");
-        const mortalAlert = document.getElementById("mortalAccidentsAlert");
-        const mortalList = document.getElementById("mortalAccidentsList");
-        
-        if (mortalAccidents.length > 0) {
-            alertContainer.style.display = "block";
-            mortalAlert.style.display = "block";
-            mortalList.innerHTML = mortalAccidents.map(acc => `
-                <p><strong>${formatDate(acc.fecha)}</strong>: ${acc.nombre} (${acc.area})<br>
-                <em>Causa</em>: ${acc.causa} | <em>Medida</em>: ${acc.medidas}</p>
-            `).join("");
-        } else {
-            alertContainer.style.display = "none";
-            mortalAlert.style.display = "none";
-        }
-
-        // 2. Tasa de reincidentes
+        // 1. Tasa de reincidentes
         const allNames = filteredAccidents.map(acc => acc.nombre);
         const repeatOffenders = [...new Set(
             allNames.filter((name, index) => allNames.indexOf(name) !== index)
@@ -603,7 +578,7 @@
         const repeatRate = (repeatOffenders.length / new Set(allNames).size * 100).toFixed(1);
         document.getElementById("repeatOffenders").textContent = `${repeatRate}%`;
 
-        // 3. Efectividad de medidas (simplificado)
+        // 2. Efectividad de medidas (simplificado)
         const effectiveMeasures = filteredAccidents.filter(acc => 
             acc.medidas.includes("Capacitación") || 
             acc.medidas.includes("Dotación de EPP")
@@ -611,47 +586,63 @@
         const effectiveness = (effectiveMeasures / filteredAccidents.length * 100).toFixed(1);
         document.getElementById("measureEffectiveness").textContent = `${effectiveness}%`;
 
-        // 4. Nivel de severidad
+        // 3. Nivel de severidad
         updateSeverityIndicator(filteredAccidents);
     }
 
     // Función para actualizar el indicador de severidad
     function updateSeverityIndicator(filteredAccidents) {
         const totalAccidents = filteredAccidents.length;
-        const mortalCount = filteredAccidents.filter(acc => acc.tipo === "Mortal").length;
+        const fatalCount = filteredAccidents.filter(acc => 
+            acc.tipo === "Mortal" || 
+            (acc.categoriaSISO && acc.categoriaSISO.includes("FAT"))
+        ).length;
         const graveCount = filteredAccidents.filter(acc => acc.tipo === "Grave").length;
+        const moderateCount = filteredAccidents.filter(acc => acc.tipo === "Moderado").length;
         
-        // Fórmula ponderada: Mortal (5x), Grave (3x), Leve (1x)
-        const severityScore = (mortalCount * 5) + (graveCount * 3) + (filteredAccidents.length - mortalCount - graveCount);
-        const maxPossibleScore = totalAccidents * 5;
+        // Fórmula ponderada: Mortal (10x), Grave (5x), Moderado (3x), Leve (1x)
+        const severityScore = (fatalCount * 10) + (graveCount * 5) + (moderateCount * 3) + 
+                            (filteredAccidents.length - fatalCount - graveCount - moderateCount);
+        const maxPossibleScore = totalAccidents * 10;
         const severityPercentage = (severityScore / maxPossibleScore) * 100;
         
         // Determinar nivel
         let severityLevel, markerPosition;
-        if (severityPercentage < 30) {
+        if (severityPercentage < 20) {
             severityLevel = "Bajo";
-            markerPosition = severityPercentage * 0.3;
-        } else if (severityPercentage < 70) {
+            markerPosition = severityPercentage * 0.2;
+        } else if (severityPercentage < 50) {
             severityLevel = "Medio";
-            markerPosition = 30 + (severityPercentage - 30) * 0.4;
-        } else {
+            markerPosition = 20 + (severityPercentage - 20) * 0.4;
+        } else if (severityPercentage < 80) {
             severityLevel = "Alto";
-            markerPosition = 70 + (severityPercentage - 70) * 0.3;
+            markerPosition = 50 + (severityPercentage - 50) * 0.4;
+        } else {
+            severityLevel = "Crítico";
+            markerPosition = 80 + (severityPercentage - 80) * 0.2;
         }
         
-        // Actualizar UI
-        document.getElementById("severityLevel").textContent = severityLevel;
-        document.getElementById("severityMarker").style.left = `${markerPosition}%`;
+        // Actualizar UI de manera profesional
+        const levelElement = document.getElementById("severityLevel");
+        levelElement.textContent = severityLevel;
+        levelElement.className = "stat-value";
         
         // Color según nivel
-        const levelElement = document.getElementById("severityLevel");
-        if (severityLevel === "Alto") {
-            levelElement.className = "stat-value danger";
+        if (severityLevel === "Crítico") {
+            levelElement.classList.add("danger");
+            document.getElementById("severityMarker").style.backgroundColor = "#f44336";
+        } else if (severityLevel === "Alto") {
+            levelElement.classList.add("warning");
+            document.getElementById("severityMarker").style.backgroundColor = "#FF9800";
         } else if (severityLevel === "Medio") {
-            levelElement.className = "stat-value warning";
+            levelElement.classList.add("warning");
+            document.getElementById("severityMarker").style.backgroundColor = "#FFC107";
         } else {
-            levelElement.className = "stat-value success";
+            levelElement.classList.add("success");
+            document.getElementById("severityMarker").style.backgroundColor = "#4CAF50";
         }
+        
+        document.getElementById("severityMarker").style.left = `${markerPosition}%`;
     }
 
     // Función para calcular indicadores
@@ -671,6 +662,10 @@
         const avgWorkers = parseInt(document.getElementById("totalWorkers").value) || 10;
         
         // Calcular totales
+
+    // Calcular días desde último incidente
+    calculateDaysSinceLastAccident(filteredAccidents);
+
         const totalAccidents = filteredAccidents.length;
         const totalLostDays = filteredAccidents.reduce((sum, acc) => sum + (parseInt(acc.diasPerdidos) || 0), 0);
         
@@ -692,13 +687,15 @@
         
         // Actualizar gráficos
         updateCharts(filteredAccidents);
+        updatePyramidChart(filteredAccidents);
     }
 
     // Función para actualizar gráficos
     function updateCharts(filteredAccidents) {
-        // Datos para gráfico por tipo
+        // Datos para gráfico por tipo (ahora con 4 categorías)
         const typeCounts = {
             Leve: 0,
+            Moderado: 0,
             Grave: 0,
             Mortal: 0
         };
@@ -716,8 +713,10 @@
         
         // Actualizar gráfico por tipo
         if (typeChart) {
+            typeChart.data.labels = ['Leves', 'Moderados', 'Graves', 'Mortales'];
             typeChart.data.datasets[0].data = [
                 typeCounts.Leve,
+                typeCounts.Moderado,
                 typeCounts.Grave,
                 typeCounts.Mortal
             ];
@@ -725,6 +724,7 @@
         } else {
             createTypeChart([
                 typeCounts.Leve,
+                typeCounts.Moderado,
                 typeCounts.Grave,
                 typeCounts.Mortal
             ]);
@@ -749,24 +749,36 @@
         typeChart = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['Leves', 'Graves', 'Mortales'],
+                labels: ['Leves', 'Moderados', 'Graves', 'Mortales'],
                 datasets: [{
                     data: data,
                     backgroundColor: [
-                        '#4CAF50',
-                        '#FFC107',
-                        '#F44336'
-                    ]
+                        '#4CAF50',  // Leve - Verde
+                        '#FFC107',  // Moderado - Amarillo
+                        '#FF9800',  // Grave - Naranja
+                        '#555'      // Mortal - Gris oscuro
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Distribución por Tipo de Accidente',
+                        text: 'Distribución por Tipo de Incidente',
                         font: {
                             size: 16
+                        },
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw} (${context.parsed}%)`;
+                            }
                         }
                     }
                 }
@@ -782,20 +794,24 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Accidentes por Área/Turno',
+                    label: 'Incidentes por Lugar',
                     data: data,
-                    backgroundColor: '#007BFF'
+                    backgroundColor: '#007BFF',
+                    borderColor: '#0056b3',
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Accidentes por Área/Turno',
+                        text: 'Incidentes por Lugar',
                         font: {
                             size: 16
-                        }
+                        },
+                        position: 'top'
                     }
                 },
                 scales: {
@@ -805,6 +821,148 @@
                             stepSize: 1
                         }
                     }
+                }
+            }
+        });
+    }
+
+    // Función para actualizar el gráfico de pirámide SISO
+    function updatePyramidChart(filteredAccidents) {
+        // Definir categorías SISO simplificadas
+        const sisoCategories = {
+            'FAT': ['Fatalidad', 'FAT', 'Fatal', 'Accidente fatal'],
+            'LWC': ['Incidente con pérdida de tiempo', 'LWC', 'Accidente LWC'],
+            'MTC': ['Incidente de tratamiento médico', 'MTC', 'Tratamiento médico'],
+            'FAC': ['Incidente de primeros auxilios', 'FAC', 'Primeros auxilios'],
+            'N-M': ['Casi incidentes', 'N-M', 'Near Miss', 'Casi accidente']
+        };
+
+        // Inicializar contadores
+        const sisoCounts = {};
+        Object.keys(sisoCategories).forEach(key => {
+            sisoCounts[key] = 0;
+        });
+
+        // Contar incidentes por categoría SISO
+        filteredAccidents.forEach(acc => {
+            const categoria = (acc.categoriaSISO || 'No especificado').trim();
+            let categoriaEncontrada = false;
+
+            // Buscar coincidencia en las categorías definidas
+            for (const [key, aliases] of Object.entries(sisoCategories)) {
+                if (aliases.some(alias => categoria.toLowerCase().includes(alias.toLowerCase()))) {
+                    sisoCounts[key]++;
+                    categoriaEncontrada = true;
+                    break;
+                }
+            }
+
+            // Si no encuentra coincidencia, mostrar en consola para depuración
+            if (!categoriaEncontrada && categoria !== 'No especificado') {
+                console.log('Categoría no incluida en pirámide SISO:', categoria);
+            }
+        });
+
+        // Ordenar según la pirámide SISO simplificada
+        const pyramidLabels = [
+            'Fatalidades (FAT)',
+            'Incidentes con pérdida de tiempo (LWC)',
+            'Incidentes de tratamiento médico (MTC)',
+            'Incidentes de primeros auxilios (FAC)',
+            'Casi incidentes (N-M)'
+        ];
+
+        const pyramidData = [
+            sisoCounts['FAT'],
+            sisoCounts['LWC'],
+            sisoCounts['MTC'],
+            sisoCounts['FAC'],
+            sisoCounts['N-M']
+        ];
+
+        // Actualizar o crear el gráfico
+        if (pyramidChart) {
+            pyramidChart.data.labels = pyramidLabels;
+            pyramidChart.data.datasets[0].data = pyramidData;
+            pyramidChart.update();
+        } else {
+            createPyramidChart(pyramidLabels, pyramidData);
+        }
+    }
+
+    // Función para crear el gráfico de pirámide SISO
+    function createPyramidChart(labels, data) {
+        const ctx = document.getElementById('sisoPyramidChart').getContext('2d');
+        pyramidChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Pirámide de Incidentes SISO',
+                    data: data,
+                    backgroundColor: [
+                        '#555',
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0'
+                    ],
+                    borderColor: [
+                        '#333',
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Pirámide de Incidentalidad SISO',
+                        font: {
+                            size: 16
+                        },
+                        position: 'top'
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.parsed.x} incidentes`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        },
+                        title: {
+                            display: true,
+                            text: 'Número de incidentes'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Tipo de incidente'
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuad'
                 }
             }
         });
@@ -830,16 +988,17 @@
             
             // Procesar datos
             allAccidents = data.map(accident => ({
-                fecha: accident[0],
-                nombre: accident[1],
-                identidad: accident[2],
-                area: accident[3],
-                tipo: accident[4],
-                descripcion: accident[5],
-                diasPerdidos: accident[6],
-                parte: accident[7],
-                causa: accident[8],
-                medidas: accident[9]
+                fecha: accident.fecha || accident[0],
+                nombre: accident.nombre || accident[1],
+                identidad: accident.identidad || accident[2],
+                area: accident.area || accident[3],
+                tipo: accident.tipo || accident[4],
+                descripcion: accident.descripcion || accident[5],
+                diasPerdidos: accident.diasPerdidos || accident[6] || 0,
+                parte: accident.parte || accident[7],
+                causa: accident.causa || accident[8],
+                medidas: accident.medidas || accident[9],
+                categoriaSISO: accident.categoriaSISO || accident[10] || 'No especificado'
             }));
             
             // Filtrar por período seleccionado
@@ -864,36 +1023,40 @@
                 return accDate >= startDate && accDate <= endDate;
             });
             
-            // Mostrar datos en tabla
+            // Mostrar datos en tabla con colores según tipo
             const accidentsTable = document.getElementById("accidentsTable").getElementsByTagName('tbody')[0];
             accidentsTable.innerHTML = "";
             
             filteredAccidents.forEach(acc => {
                 const row = accidentsTable.insertRow();
                 
-                // Añadir icono de peligro para accidentes mortales
+                // Añadir clase según el tipo de accidente para el color
+                if (acc.tipo === "Mortal") {
+                    row.className = "mortal";
+                } else if (acc.tipo === "Grave") {
+                    row.className = "grave";
+                } else if (acc.tipo === "Moderado") {
+                    row.className = "moderado";
+                } else {
+                    row.className = "leve";
+                }
+                
+                // Celda de fecha
                 const dateCell = row.insertCell(0);
                 dateCell.textContent = formatDate(acc.fecha);
-                if (acc.tipo === "Mortal") {
-                    dateCell.innerHTML = `<i class="fas fa-skull-crossbones mortal-icon"></i> ${dateCell.textContent}`;
-                }
                 
                 row.insertCell(1).textContent = acc.nombre;
                 row.insertCell(2).textContent = acc.identidad;
                 row.insertCell(3).textContent = acc.area;
                 
-                // Resaltar tipo de accidente
+                // Celda de tipo
                 const typeCell = row.insertCell(4);
                 typeCell.textContent = acc.tipo;
-                if (acc.tipo === "Mortal") {
-                    typeCell.className = "danger";
-                } else if (acc.tipo === "Grave") {
-                    typeCell.className = "warning";
-                }
                 
                 row.insertCell(5).textContent = acc.diasPerdidos || '0';
                 row.insertCell(6).textContent = acc.parte;
                 row.insertCell(7).textContent = acc.causa;
+                row.insertCell(8).textContent = acc.categoriaSISO || 'No especificado';
             });
             
             // Calcular indicadores
@@ -903,7 +1066,7 @@
             console.error("Error al cargar datos:", error);
             Swal.fire({
                 title: 'Error',
-                text: 'No se pudieron cargar los datos de accidentes',
+                text: 'No se pudieron cargar los datos de incidentes',
                 icon: 'error'
             });
         } finally {
@@ -920,6 +1083,43 @@
         updatePeriodControls();
         loadData();
     };
+
+
+
+// Función para calcular días desde el último incidente
+function calculateDaysSinceLastAccident(filteredAccidents) {
+    if (filteredAccidents.length === 0) {
+        document.getElementById("daysSinceLastAccident").textContent = "N/A";
+        return;
+    }
+
+    // Ordenar incidentes por fecha (más reciente primero)
+    const sortedAccidents = [...filteredAccidents].sort((a, b) => {
+        return new Date(b.fecha) - new Date(a.fecha);
+    });
+
+    const lastAccidentDate = new Date(sortedAccidents[0].fecha);
+    const today = new Date();
+    
+    // Calcular diferencia en días
+    const diffTime = today - lastAccidentDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    // Actualizar UI
+    const daysElement = document.getElementById("daysSinceLastAccident");
+    daysElement.textContent = diffDays;
+    
+    // Color según cantidad de días (verde si son muchos, rojo si son pocos)
+    if (diffDays >= 30) {
+        daysElement.className = "stat-value success";
+    } else if (diffDays >= 7) {
+        daysElement.className = "stat-value warning";
+    } else {
+        daysElement.className = "stat-value danger";
+    }
+}
+
+
 </script>
 </body>
 </html>
