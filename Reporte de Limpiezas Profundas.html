@@ -439,176 +439,155 @@
         });
     });
 
-    async function generarPDF() {
-        // Verificar si los campos necesarios están vacíos
-        if (
-            !document.getElementById('fecha').value.trim() || 
-            !document.getElementById('descripcion').value.trim() || 
-            document.getElementById('preview1').children.length === 0
-        ) {
-            return; // Si algún campo está vacío, no continúa la ejecución
+async function generarPDF() {
+    // Verificar si los campos necesarios están vacíos
+    if (
+        !document.getElementById('fecha').value.trim() || 
+        !document.getElementById('descripcion').value.trim() || 
+        document.getElementById('preview1').children.length === 0
+    ) {
+        return; // Si algún campo está vacío, no continúa la ejecución
+    }
+
+    // Mostrar overlay de espera
+    document.getElementById('overlay').style.display = 'flex';
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ format: 'letter' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Obtener datos del formulario
+    const fecha = document.getElementById('fecha').value;
+    const descripcion = document.getElementById('descripcion').value;
+
+    // Portada (idéntica al original)
+    pdf.setFont("times", "bold");
+    pdf.setFontSize(16);
+    pdf.text("Reporte de Supervisión", 10, 20);
+    pdf.setFontSize(16);
+    pdf.text("Proyecto: Cementera Argos", 10, 35);
+    pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", 10, 50);
+    pdf.text("Correo: jromero@grupomacdel.com", 10, 65);
+    pdf.text("Actividad: Limpiezas Profundas", 10, 80);
+
+    // Línea horizontal
+    pdf.line(10, 90, 190, 90);
+
+    // Fecha
+    pdf.text(`Fecha: ${fecha}`, 10, 100);
+
+    // Descripción (idéntica al original)
+    if (descripcion && descripcion.trim() !== "") {
+        const descripcionFiltrada = descripcion.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{200D}\u{FE0F}]/gu, "");
+        
+        if (descripcionFiltrada.trim() !== "") {
+            pdf.text(`Descripción:`, 10, 115);
+            pdf.setFont("Arial", "normal");
+            pdf.text(descripcionFiltrada, 10, 125, { maxWidth: 190 });
         }
+    }
 
-        // Mostrar overlay de espera
-        document.getElementById('overlay').style.display = 'flex';  // Mostrar el bloqueador de pantalla
+    // Manejar datos adjuntos (con ajuste mínimo para mostrar todas las imágenes)
+    for (let i = 1; i <= 3; i++) {
+        if (selectedFiles[`preview${i}`].length > 0) {
+            const files = selectedFiles[`preview${i}`];
+            let imgCount = 0;
+            
+            // Nueva página para cada sección
+            pdf.addPage();
+            pdf.setFont("times", "bold");
+            
+            let sectionTitle = "";
+            if (i === 1) sectionTitle = "Evidencia";
+            else if (i === 2) sectionTitle = "Durante:";
+            else if (i === 3) sectionTitle = "Después:";
+            
+            pdf.text(sectionTitle, 10, 15);
 
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ format: 'letter' });
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+            // Configuración de imágenes con tamaño fijo como en el original
+            const imgWidth = 60;
+            const imgHeight = 40;
+            const marginX = 15;
+            const marginY = 20;
+            const spacingX = 65;
+            const spacingY = 45;
 
-        // Obtener datos del formulario
-        const fecha = document.getElementById('fecha').value;
-        const descripcion = document.getElementById('descripcion').value;
-
-        // Portada
-        pdf.setFont("times", "bold"); // Cambiar a Times y negrita
-        pdf.setFontSize(16);
-        pdf.text("Reporte de Supervisión", 10, 20);
-        pdf.setFontSize(16);
-        pdf.text("Proyecto: Cementera Argos", 10, 35);
-        pdf.text("Nombre del Supervisor: Jeancarlo Zelaya", 10, 50);
-        pdf.text("Correo: jromero@grupomacdel.com", 10, 65);
-        pdf.text("Actividad: Limpiezas Profundas", 10, 80);
-
-        // Línea horizontal
-        pdf.line(10, 90, 190, 90); // Línea desde (x1, y1) hasta (x2, y2)
-
-        // Fecha
-        pdf.text(`Fecha: ${fecha}`, 10, 100);
-
-        // Verificar si la descripción está vacía o no
-        if (descripcion && descripcion.trim() !== "") {
-            // Filtrar emoticones de la descripción
-            const descripcionFiltrada = descripcion.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{200D}\u{FE0F}]/gu, "");
-
-            // Agregar el texto al PDF solo si no está vacío después del filtro
-            if (descripcionFiltrada.trim() !== "") {
-                pdf.text(`Descripción:`, 10, 115);
-                pdf.setFont("Arial", "normal");
-                pdf.text(descripcionFiltrada, 10, 125, { maxWidth: 190 });
-            }
-        }
-
-        // Manejar datos adjuntos
-        for (let i = 1; i <= 3; i++) {
-            const input = document.getElementById(`adjunto${i}`);
-            if (selectedFiles[`preview${i}`].length > 0) {
-                const files = selectedFiles[`preview${i}`];
-                let imgCount = 0;
-
-                // Comenzar una nueva página al principio de cada conjunto de imágenes
-                pdf.addPage();
-                pdf.setFont("times", "bold"); // Cambiar a Times y negrita
-
-                // Establecer el título según el grupo de imágenes (Antes, Durante, Después)
-                let sectionTitle = "";
-                if (i === 1) {
-                    sectionTitle = "Evidencia";
-                } else if (i === 2) {
-                    sectionTitle = "Durante:";
-                } else if (i === 3) {
-                    sectionTitle = "Después:";
-                }
-
-                // Agregar el título correspondiente
-                pdf.text(sectionTitle, 10, 15);
-
-                const imgWidth = 60; // Ancho de imagen ajustado
-                const imgHeight = 40; // Alto de imagen ajustado
-                const marginX = 15; // Margen izquierdo
-                const marginY = 20; // Margen superior
-                const spacingX = 65; // Espacio entre columnas
-                const spacingY = 45; // Espacio entre filas
-                const pageHeight = pdf.internal.pageSize.height; // Altura de la página
-
-                // Iterar a través de las imágenes
-                for (let j = 0; j < files.length; j++) {
+            for (let j = 0; j < files.length; j++) {
+                try {
                     const file = files[j];
-                    const imgData = await compressImage(file, 0.5); // Comprimir imagen
-
-                    // Calcular la posición X y Y para la imagen
-                    const x = (imgCount % 3) * spacingX + marginX; // Posición X
-                    const y = Math.floor(imgCount / 3) * spacingY + marginY; // Posición Y
-
-                    // Verificar si la imagen se sale de los márgenes de la página
-                    if (y + imgHeight > pageHeight - marginY) {
-                        // Añadir nueva página si se excede el espacio
+                    // Usamos tu función original de compresión
+                    const imgData = await compressImage(file, 0.8); // Aumenté ligeramente la calidad a 0.8
+                    
+                    const x = (imgCount % 3) * spacingX + marginX;
+                    const y = Math.floor(imgCount / 3) * spacingY + marginY;
+                    
+                    // Verificar si necesita nueva página (con margen más conservador)
+                    if (y + imgHeight > pageHeight - 30) { // Aumenté el margen inferior a 30
                         pdf.addPage();
-                        pdf.text(`Continuación datos adjuntos #${i}:`, 10, 10);
-                        imgCount = 0; // Reiniciar el conteo para la nueva página
+                        pdf.text(`Continuación ${sectionTitle}`, 10, 15);
+                        imgCount = 0;
+                        j--; // Repetir esta imagen en la nueva página
+                        continue;
                     }
-
-                    // Añadir la imagen a la página
+                    
+                    // Agregar imagen con tamaño fijo
                     pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
                     imgCount++;
-
-                    // Si imgCount llega a 15, reiniciar
+                    
+                    // Manejo de páginas adicionales para muchas imágenes
                     if (imgCount === 15) {
-                        imgCount = 0; // Reiniciar el conteo de imágenes para la siguiente página
-
-                        // Solo añadir una nueva página si hay más de 15 imágenes
-                        if (selectedFiles[`preview${i}`].length % 15 !== 0 && selectedFiles[`preview${i}`].length > 0) {
-                            pdf.addPage(); // Añadir nueva página
-
-                            // Establecer el título de la nueva página según la sección
-                            let sectionTitle = "";
-                            if (i === 1) {
-                                sectionTitle = "";
-                            } else if (i === 2) {
-                                sectionTitle = "Durante:";
-                            } else if (i === 3) {
-                                sectionTitle = "Después:";
-                            }
-
-                            // Añadir un encabezado a la nueva página
+                        imgCount = 0;
+                        if (j < files.length - 1) {
+                            pdf.addPage();
                             pdf.text(sectionTitle, 10, 15);
                         }
                     }
+                    
+                } catch (error) {
+                    console.error(`Error procesando imagen ${j+1}:`, error);
+                    // Continuar con la siguiente imagen
                 }
             }
         }
-
-        // Obtener el valor de la fecha
-
-        // Crear un nombre para el archivo basado en la fecha y el título
-        let nombreArchivo = `${fecha} - Limpiezas Profundas`;
-
-        // Asegurarse de que el nombre del archivo tenga la extensión correcta
-        nombreArchivo += ".pdf";
-
-        // Descargar el PDF con el nombre dinámico
-        pdf.save(nombreArchivo);
-
-        // Ocultar el overlay de espera
-        document.getElementById('overlay').style.display = 'none';
     }
 
-    function compressImage(file, quality) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
+    // Nombre del archivo como en el original
+    const nombreArchivo = `${fecha} - Limpiezas Profundas.pdf`;
+    pdf.save(nombreArchivo);
 
-                    // Redimensionar imagen
-                    const maxWidth = 600;
-                    const scale = maxWidth / img.width;
-                    canvas.width = maxWidth;
-                    canvas.height = img.height * scale;
+    // Ocultar overlay
+    document.getElementById('overlay').style.display = 'none';
+}
 
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                    resolve(dataUrl);
-                };
-                img.src = event.target.result;
+// TU FUNCIÓN ORIGINAL DE COMPRESIÓN (solo cambié el quality a 0.8)
+function compressImage(file, quality) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Redimensionar imagen (igual que tu versión original)
+                const maxWidth = 600;
+                const scale = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scale;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
             };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
+            img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+
 </script>
 
 </body>
