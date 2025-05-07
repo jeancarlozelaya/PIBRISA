@@ -751,44 +751,46 @@ function bloquearCampos() {
         return true;
     }
 
-    // Función para consultar actividades existentes (actualizada)
-    async function consultarActividadesExistentes(fecha, tipo, area, baño, oficina) {
-        const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+
+// Función para consultar actividades existentes (actualizada)
+async function consultarActividadesExistentes(fecha, tipo, area, baño, oficina) {
+    const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+    
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                fecha: fecha,
+                tipo: tipo,
+                area: area,
+                baño: baño,
+                oficina: oficina,
+                accion: "consultar"
+            })
+        });
         
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                    fecha: fecha,
-                    tipo: tipo,
-                    area: area,
-                    baño: baño,
-                    oficina: oficina,
-                    accion: "consultar"
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error("Error en la consulta");
-            }
-            
-            const data = await response.json();
-            
-            // Verificar si hay error en la respuesta
-            if (data.error) {
-                console.error("Error del servidor:", data.message);
-                return [];
-            }
-            
-            return data.actividades || [];
-        } catch (error) {
-            console.error("Error al consultar actividades:", error);
+        if (!response.ok) {
+            throw new Error("Error en la consulta");
+        }
+        
+        const data = await response.json();
+        
+        // Verificar si hay error en la respuesta
+        if (data.error) {
+            console.error("Error del servidor:", data.message);
             return [];
         }
+        
+        // Si hay actividades, significa que ese día ya fue marcado
+        return data.actividades.length > 0 ? data.actividades : [];
+    } catch (error) {
+        console.error("Error al consultar actividades:", error);
+        return [];
     }
+}
 
     // Función cargarActividades (mejorada con manejo de errores)
 async function cargarActividades() {
