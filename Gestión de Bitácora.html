@@ -754,10 +754,12 @@ function filtrarActividades() {
         data: data,
         success: function(response) {
             console.log("Respuesta del servidor:", response);
-            if (response.length === 0) {
+            
+            // Manejar la respuesta del servidor
+            if (response.error) {
                 document.getElementById("overlay").style.display = "none";
                 Swal.fire({
-                    text: "No se encontraron actividades para los filtros seleccionados.",
+                    text: response.message || "No se encontraron actividades para los filtros seleccionados.",
                     icon: "info",
                     showCancelButton: false,
                     confirmButtonText: "Aceptar",
@@ -768,17 +770,46 @@ function filtrarActividades() {
                     },
                 });
             } else {
-                mostrarTabla(response, tipo);
-                ocultarFiltros();
+                // Asegurarse de que siempre tenemos un array para mostrar
+                const actividades = response.actividades || [];
+                if (actividades.length === 0) {
+                    document.getElementById("overlay").style.display = "none";
+                    Swal.fire({
+                        text: "No se encontraron actividades registradas para este mes.",
+                        icon: "info",
+                        showCancelButton: false,
+                        confirmButtonText: "Aceptar",
+                        customClass: {
+                            content: "swal-content",
+                            confirmButton: "swal-button",
+                            popup: "swal-popup",
+                        },
+                    });
+                } else {
+                    mostrarTabla(actividades, tipo);
+                    ocultarFiltros();
+                }
             }
         },
         error: function(xhr, status, error) {
             console.error("Error al filtrar los datos:", xhr.responseText);
             document.getElementById("overlay").style.display = "none";
-            alert('Hubo un problema al filtrar los datos. Intenta nuevamente.');
+            Swal.fire({
+                text: 'Hubo un problema al filtrar los datos. Intenta nuevamente.',
+                icon: "error",
+                showCancelButton: false,
+                confirmButtonText: "Aceptar",
+                customClass: {
+                    content: "swal-content",
+                    confirmButton: "swal-button",
+                    popup: "swal-popup",
+                },
+            });
         }
     });
 }
+
+
 
 // Función para mostrar tabla con resultados
 function mostrarTabla(actividadesFiltradas, tipo) {
@@ -789,10 +820,14 @@ function mostrarTabla(actividadesFiltradas, tipo) {
     const diasEnMes = getDiasEnMes(mes, anio);
     const actividades = tipo === 'Área' ? actividadesArea : actividadesBaño;
 
-    const actividadesRealizadas = {};
+    // Crear un mapa de actividades por fecha para búsqueda rápida
+    const actividadesPorFecha = {};
     actividadesFiltradas.forEach(act => {
-        actividadesRealizadas[act.actividad] = actividadesRealizadas[act.actividad] || new Set();
-        actividadesRealizadas[act.actividad].add(act.fecha);
+        const fecha = act.fecha;
+        if (!actividadesPorFecha[fecha]) {
+            actividadesPorFecha[fecha] = new Set();
+        }
+        actividadesPorFecha[fecha].add(act.actividad);
     });
 
     actividades.forEach(actividad => {
@@ -805,11 +840,13 @@ function mostrarTabla(actividadesFiltradas, tipo) {
             const fecha = `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
             const celda = document.createElement('td');
             
+            // Añadir clase de separador de semana si es lunes
             if (new Date(anio, mes - 1, dia).getDay() === 1) {
                 celda.classList.add('semana-separador');
             }
             
-            if (actividadesRealizadas[actividad.descripcion]?.has(fecha)) {
+            // Verificar si esta actividad fue realizada en esta fecha
+            if (actividadesPorFecha[fecha] && actividadesPorFecha[fecha].has(actividad.descripcion)) {
                 celda.textContent = 'X';
                 celda.classList.add('bold-x');
             }
@@ -823,6 +860,8 @@ function mostrarTabla(actividadesFiltradas, tipo) {
     document.getElementById('resultados').style.display = 'block';
     document.getElementById("overlay").style.display = "none";
 }
+
+
 
 // Función para ocultar filtros
 function ocultarFiltros() {
