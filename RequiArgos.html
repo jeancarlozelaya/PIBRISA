@@ -3,75 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Requisición - Productos de Argos</title>
-
- <!-- Incluir SweetAlert2 -->
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+  <title>Requisición de Productos</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
+    .header {
+      background-color: #007BFF;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 1.5em;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-        .header {
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            font-size: 1.5em;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
+    @media screen and (max-width: 600px) {
+      .back-button {
+        font-size: 0.9em;
+        padding: 12px 18px;
+        top: 57px;
+        left: 0px;
+      }
+    }
 
-
-
-
-
-        /* Cambios para el botón "Volver al Inicio" */
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
-            position: fixed;
-            top: 80px; /* Mueve el botón a la parte superior */
-            left: 0px; /* Colócalo a la izquierda */
-            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
-        }
-
-        .back-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        /* En dispositivos móviles */
-        @media screen and (max-width: 600px) {
-            .back-button {
-                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-                padding: 12px 18px; /* Ajustar el padding */
-
-            top: 57px; /* Mueve el botón a la parte superior */
-            left: 0px; /* Colócalo a la izquierda */
-
-
-            }
-        }
-
-        /* Regla específica para el modo standalone (PWA) */
-        @media screen and (display-mode: standalone) {
-            body {
-                margin: 0; /* Asegura que no haya márgenes extra */
-                padding: 0; /* Asegura que no haya padding extra */
-            }
-        }
-
-
-
-
-
-
+    @media screen and (display-mode: standalone) {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    }
 
     .form-container label {
       display: block;
@@ -79,6 +38,7 @@
       font-size: 14px;
       color: #555;
     }
+    
     .form-container select, .form-container input {
       width: 100%;
       padding: 12px;
@@ -89,16 +49,15 @@
       box-sizing: border-box;
       transition: all 0.3s ease;
     }
+    
     .form-container select:focus, .form-container input:focus {
       border-color: #007bff;
       outline: none;
     }
 
-
     .form-container input[type="date"] {
       padding: 12px;
     }
-
 
     .form-container .select-container {
       display: flex;
@@ -106,13 +65,13 @@
       gap: 20px;
     }
 
-
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
     }
+    
     h1 {
       text-align: center;
       color: #333;
@@ -120,6 +79,7 @@
       font-size: 24px;
       margin-bottom: 30px;
     }
+    
     .form-container {
       width: 80%;
       max-width: 900px;
@@ -130,318 +90,320 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-.producto {
-  margin-bottom: 20px;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  border: 1px solid #ddd; /* Contorno de cada producto */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px; /* Reducir aún más el tamaño del texto */
-  font-weight: bold; /* Texto en negrita */
-}
+    .producto {
+      margin-bottom: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      border: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
 
     .producto:hover {
       background-color: #e0e0e0;
     }
 
-.producto img {
-  width: 40px; /* Tamaño de la imagen */
-  height: 40px;
-  object-fit: contain; /* Ajusta la imagen sin recortarla */
-  //border-radius: 50%; /* Hace que la imagen sea redonda */
-}
+    .producto img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
 
     .producto label {
       display: block;
       color: #333;
       flex-grow: 1;
     }
+    
     .producto .cantidad {
       display: flex;
       justify-content: center;
       gap: 10px;
       align-items: center;
     }
+    
     .cantidad button, .cantidad input {
-      width: 30px; /* Reducir tamaño de los botones */
+      width: 30px;
       height: 30px;
-      font-size: 14px; /* Reducir tamaño del texto en botones */
+      font-size: 14px;
       cursor: pointer;
       border-radius: 4px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-.cantidad input {
-  width: 50%; /* Usamos un porcentaje para que el input sea más flexible */
-  max-width: 200px; /* Añadimos un límite máximo para no exceder el tamaño en pantallas grandes */
-  text-align: center;
-  font-size: 14px; /* Mantén el tamaño del texto pequeño */
-}
+    
+    .cantidad input {
+      width: 50%;
+      max-width: 200px;
+      text-align: center;
+      font-size: 14px;
+    }
 
-@media (min-width: 768px) {
-  .cantidad input {
-    width: 150px; /* Ajustamos el ancho del input en pantallas grandes */
-    font-size: 16px; /* Podemos aumentar el tamaño del texto en pantallas más grandes */
-  }
-}
+    @media (min-width: 768px) {
+      .cantidad input {
+        width: 150px;
+        font-size: 16px;
+      }
+    }
 
-@media (min-width: 1024px) {
-  .cantidad input {
-    width: 180px; /* Ajuste para pantallas aún más grandes */
-  }
-}
+    @media (min-width: 1024px) {
+      .cantidad input {
+        width: 180px;
+      }
+    }
 
     .cantidad button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
+    
     .cantidad input:disabled {
       background-color: #e0e0e0;
       color: #999;
     }
+    
     .agotado {
       color: red;
     }
+    
     .disponible {
       color: green;
     }
+    
     .productos-container {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* Ajustar a 3 productos por fila */
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
       margin-bottom: 20px;
     }
 
-
-
-/* Estilos para el botón "seguir" */
-#seguir {
-  margin-top: 0; /* Elimina cualquier margen superior extra */
-  margin-right: 10px; /* Espacio a la derecha del botón */
-  padding: 10px 20px;
-  width: 100%; /* Abarca todo el ancho del formulario */
-
-  background-color: #28a745; /* Verde */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-block; /* Asegura que el botón siga estando en línea */
-}
+    #seguir {
+      margin-top: 0;
+      margin-right: 10px;
+      padding: 10px 20px;
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    
     #seguir:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
-/* Estilo solo para el contenedor de los dos botones */
-.button-container {
-  display: flex; /* Usa Flexbox para colocar los botones en línea */
-  justify-content: center; /* Centra los botones horizontalmente */
-  align-items: center; /* Alinea los botones verticalmente en el centro */
-  gap: 10px; /* Ajusta el espacio entre los botones */
-  /* No establezcas height o márgenes globales aquí para evitar afectar otros elementos */
-}
-
-/* Estilo solo para los botones dentro de .button-container */
-.button-container button {
-  font-size: 16px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 45%; /* Los botones ocupan el 45% del ancho del contenedor */
-  box-sizing: border-box; /* Asegura que el padding no haga que el botón exceda el 50% del contenedor */
-}
-
+    
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .button-container button {
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 45%;
+      box-sizing: border-box;
+    }
 
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
-    /* Estilo para los botones - y + */
+    
     .cantidad button.minus {
-      background-color: #dc3545; /* Rojo */
+      background-color: #dc3545;
     }
+    
     .cantidad button.plus {
-      background-color: #28a745; /* Verde */
+      background-color: #28a745;
     }
-    /* Estilo para pantallas pequeñas */
-@media (max-width: 768px) {
-  .producto {
-    font-size: 12px; /* Asegurar que el texto sea más pequeño en móviles */
-  }
-  .productos-container {
-    grid-template-columns: repeat(2, 1fr); /* Dos productos por fila en dispositivos pequeños */
-    display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se acomoden en nuevas filas */
-    gap: 15px;
-    background-color: white; /* Asegura que el fondo blanco cubra toda la sección */
-    padding: 15px 0; /* Añadido padding para ajustar el contenido */
-  }
-  .producto {
-    width: calc(50% - 7.5px); /* Ajusta el tamaño de cada producto, con un pequeño margen */
-    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
-  }
-}
-
-    }
-
-
-/* Estilo personalizado para el contenido del mensaje */
-.swal-content {
-    font-size: 0.9em;  /* Reduce el tamaño del texto */
-    line-height: 1.4;  /* Ajusta el espaciado entre líneas */
-}
-
-/* Estilo personalizado para ambos botones */
-.swal-button, .swal-button-cancel {
-    font-size: 0.9em;  /* Ajusta el tamaño del texto del botón */
-    padding: 10px 20px;  /* Espaciado interno */
-    min-width: 100px;  /* Ancho mínimo para igualar botones */
-    text-align: center;  /* Centra el texto dentro del botón */
-}
-
-/* Estilo personalizado para el popup/modal */
-.swal-popup {
-    width: 300px;  /* Ajusta el ancho máximo del modal */
-    max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
-}
-
-/* Opcional: colores específicos para cada botón */
-.swal-button {
-    background-color: #28a745;  /* Verde para el botón de "Sí" */
-    color: white;  /* Texto en blanco */
-    border: none;
-    border-radius: 4px;
-}
-
-.swal-button-cancel {
-    background-color: #f5f5f5;  /* Gris claro para el botón de "No" */
-    color: #333;  /* Texto oscuro */
-    border: none;
-    border-radius: 4px;
-}
-
-
-
-
-
-
-    /* Estilo del overlay (pantalla bloqueada) */
-    #overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);  /* Fondo semitransparente */
+    
+    @media (max-width: 768px) {
+      .producto {
+        font-size: 12px;
+      }
+      
+      .productos-container {
+        grid-template-columns: repeat(2, 1fr);
         display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;  /* Asegúrate de que esté por encima de otros elementos */
-    }
-
-    #loadingMessage {
-        color: white;  /* Texto en blanco */
-        font-size: 24px;  /* Tamaño de fuente para que se vea bien */
-        font-family: 'Times New Roman', Times, serif;  /* Fuente Times New Roman */
-        text-align: center;
-        padding: 20px;  /* Espaciado interno */
-    }
-
-
-    /* Estilo para los contenedores de preguntas */
-    .question-container {
-        margin-bottom: 20px;
-        text-align: left;
-        padding: 10px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        transition: border-color 0.3s;
+        flex-wrap: wrap;
+        gap: 15px;
+        background-color: white;
+        padding: 15px 0;
+      }
+      
+      .producto {
+        width: calc(50% - 7.5px);
         box-sizing: border-box;
+      }
     }
 
-    /* Estilo para el campo de descripción */
+    .swal-content {
+      font-size: 0.9em;
+      line-height: 1.4;
+    }
+    
+    .swal-button, .swal-button-cancel {
+      font-size: 0.9em;
+      padding: 10px 20px;
+      min-width: 100px;
+      text-align: center;
+    }
+    
+    .swal-popup {
+      width: 300px;
+      max-width: 90%;
+    }
+    
+    .swal-button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    
+    .swal-button-cancel {
+      background-color: #f5f5f5;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    #loadingMessage {
+      color: white;
+      font-size: 24px;
+      font-family: 'Times New Roman', Times, serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .question-container {
+      margin-bottom: 20px;
+      text-align: left;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+    
     .question-container textarea {
-    	padding: 15px; /* Aumentar el espacio interno */
-    	border: 2px solid #ccc;
-    	border-radius: 5px;
-    	width: 100%;
-    	font-size: 16px;
-    	background-color: #f9f9f9;
-    	color: #333;
-    	transition: border-color 0.3s;
-    	box-sizing: border-box;
-    	margin-top: 5px;
-    	height: 200px; /* Aumentar la altura para hacerlo más grande */
-    	resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+      padding: 15px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      color: #333;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+      margin-top: 5px;
+      height: 200px;
+      resize: vertical;
     }
-
+    
     .question-container:hover {
-        border-color: #007BFF;
+      border-color: #007BFF;
     }
-
 
     .question-container input[type="date"],
     .question-container textarea,
     .question-container select {
-        padding: 10px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        width: 100%;
-        font-size: 16px;
-        background-color: #f9f9f9;
-        color: #333;
-        transition: border-color 0.3s;
-        box-sizing: border-box;
-        margin-top: 5px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      color: #333;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+      margin-top: 5px;
     }
-
+    
     .question-container input[type="date"]:focus,
     .question-container textarea:focus,
     .question-container select:focus {
-        border-color: #007BFF;
-        outline: none;
+      border-color: #007BFF;
+      outline: none;
     }
-
-    /* Estilos de las etiquetas */
+    
     .question-container label {
-        font-weight: bold;
-        font-size: 16px;
-        margin-bottom: 5px;
-        display: block;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+      display: block;
     }
 
+    .search-container {
+      margin: 20px 0;
+      width: 100%;
+    }
+    
+    #buscador {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+    
+    #buscador:focus {
+      border-color: #007bff;
+      outline: none;
+    }
 
 
   </style>
 </head>
 <body>
-<div class="header">
-    Pisos Brillantes
-</div>
-
-<a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
-
-<div class="form-container">
-    <h1>Requisición - Productos de Argos</h1>
+  <div class="header">Pisos Brillantes</div>
+  
+  <div class="form-container">
+    <h1>Requisición de Productos</h1>
 
     <div class="question-container">
-        <div>
-            <label for="fecha"><strong>Fecha:</strong></label>
-            <input type="date" id="fecha" name="fecha">
-        </div>
+      <div>
+        <label for="fecha"><strong>Fecha:</strong></label>
+        <input type="date" id="fecha" name="fecha">
+      </div>
+
+
 
         <label for="colaborador"><strong>Colaborador:</strong></label>
         <select id="colaborador" name="colaborador">
@@ -459,7 +421,7 @@
             <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
         </select>
 
-        <label for="area"><strong>Área a abastecer:</strong></label>
+        <label for="area"><strong>Destino:</strong></label>
         <select id="area" name="area">
             <option value="">Seleccionar área</option>
             <option value="Administración">Administración</option>
@@ -492,248 +454,299 @@
     <label><strong>Seleccione los productos a requisar:</strong></label>
 
     <form id="formulario">
-        <div class="productos-container" id="productos">
-            <!-- Los productos se cargarán aquí mediante el script -->
-        </div>
-        <br>
+      <div class="search-container">
+        <input type="text" id="buscador" placeholder="Buscar productos...">
+      </div>
 
-        <div class="button-container">
-            <button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
-        </div>
+      <div class="productos-container" id="productos"></div>
+      <br>
+
+      <div class="button-container">
+        <button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
+      </div>
     </form>
-</div>
+  </div>
 
-<!-- Contenedor para bloquear la pantalla -->
-<div id="overlay" style="display: none;">
+  <div id="overlay" style="display: none;">
     <div id="loadingMessage">
-        <p>Procesando...🥱</p>
+      <p>Procesando...🥱</p>
     </div>
-</div>
+  </div>
 
+<script>
+  // Variables globales
+  let productos = [];
 
-
-  <script>
-
-  // Obtener la fecha del sistema
-  var today = new Date();
-
-  // Formatear la fecha en el formato YYYY-MM-DD, que es el formato esperado por el campo input[type="date"]
-  var yyyy = today.getFullYear();
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
-  var dd = String(today.getDate()).padStart(2, '0');
-
-  var formattedDate = yyyy + '-' + mm + '-' + dd;
-
-  // Establecer la fecha actual como valor del campo de fecha
-  document.getElementById("fecha").value = formattedDate;
-
-
-
-
-    let productos = [
-      { nombre: "Toalla para manos (6 unds en caja)", id: "producto1", imagen: "Imágenes/Requisa/Toalla2.png" },
-      { nombre: "Higiénico en bobina (6 unds en caja)", id: "producto2", imagen: "Imágenes/Requisa/Higienico.png" },
-      { nombre: "Vasos cónicos", id: "producto3", imagen: "Imágenes/Requisa/Vaso.png" },
-      { nombre: "Jalim Espuma Fresh (6 unds en caja)", id: "producto4", imagen: "Imágenes/Requisa/Jalimespuma.png" },
-      { nombre: "Bactigel Spray (6 unds en caja)", id: "producto5", imagen: "Imágenes/Requisa/Bactigel.png" },
-      { nombre: "Wiese", id: "producto6", imagen: "Imágenes/Requisa/Wiese.png" },
-      { nombre: "Jalim Gel", id: "producto7", imagen: "Imágenes/Requisa/JalimGel.png" }
-    ];
-
-    // Función para crear los elementos del formulario
-    function cargarProductos() {
-      $.get("https://script.google.com/macros/s/AKfycbyA_1AfUXGy0b-XVq3ZreaDSV2RkaB0OYTKciEvw9-yJ_td-lhiPCNYq5_g9mkZz_QJhw/exec", function(data) {
-        const cantidades = data.cantidades; // Obtenemos las cantidades de la respuesta
-        productos.forEach((producto, index) => {
-          let cantidadRestante = cantidades[index];
-          let productoHtml = `
-            <div class="producto" id="${producto.id}">
-              <img src="${producto.imagen}" alt="${producto.nombre}">
-              <label>${producto.nombre}</label>
-              <span id="cantidadRestante${index}" class="${cantidadRestante === 0 ? 'agotado' : cantidadRestante > 0 ? 'disponible' : ''}">
-                ${cantidadRestante === 0 ? '0 restantes' : `${cantidadRestante} restantes`}
-              </span>
-              <div class="cantidad">
-                <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${cantidadRestante === 0 ? 'disabled' : ''}>-</button>
-                <input type="number" id="cantidad${index}" value="0" min="0" ${cantidadRestante === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
-                <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${cantidadRestante === 0 ? 'disabled' : ''}>+</button>
-              </div>
-            </div>
-          `;
-          $(`#productos`).append(productoHtml);
-        });
-      });
-    }
-
-    // Función para cambiar la cantidad
-    function cambiarCantidad(index, valor) {
-      let cantidadInput = $(`#cantidad${index}`);
-      let cantidadActual = parseInt(cantidadInput.val());
-      let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
-
-      if (cantidadActual + valor >= 0 && cantidadActual + valor <= cantidadRestante) {
-        cantidadInput.val(cantidadActual + valor);
-        verificarProductos();
-      }
-    }
-
-    // Función para validar que el número ingresado no sea mayor que el disponible
-    function validarCantidad(index) {
-      let cantidadInput = $(`#cantidad${index}`);
-      let cantidadActual = parseInt(cantidadInput.val());
-      let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
-
-      if (cantidadActual > cantidadRestante) {
-        cantidadInput.val(cantidadRestante);
-      }
-
-      verificarProductos();
-    }
-
-    // Función para verificar si algún producto tiene cantidad seleccionada
-// Función para verificar si algún producto tiene cantidad seleccionada y si los campos están completos
-function verificarProductos() {
-  let productosSeleccionados = false;
-  
-  // Verificar si algún producto tiene cantidad seleccionada
-  productos.forEach((producto, index) => {
-    let cantidadInput = $(`#cantidad${index}`);
-    if (parseInt(cantidadInput.val()) > 0) {
-      productosSeleccionados = true;
-    }
+  // Configuración inicial al cargar la página
+  document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha actual
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById("fecha").value = yyyy + '-' + mm + '-' + dd;
+   
+    // Cargar productos desde Google Sheets
+    cargarProductos();
+    
+    // Configurar eventos
+    configurarEventos();
   });
 
-  // Verificar si los campos de fecha, colaborador y área están completos
-  let fecha = $("#fecha").val();
-  let colaborador = $("#colaborador").val();
-  let area = $("#area").val();
 
-  // Habilitar o deshabilitar el botón "Seguir"
-  if (productosSeleccionados && fecha.trim() !== "" && colaborador.trim() !== "" && area.trim() !== "") {
-    $("#seguir").prop("disabled", false); // Habilitar el botón si todo está completo
-  } else {
-    $("#seguir").prop("disabled", true); // Deshabilitar el botón si falta algo
+
+  // Función para cargar productos desde Google Sheets
+  function cargarProductos() {
+    $('#overlay').show();
+    
+    $.get("https://script.google.com/macros/s/AKfycbxE5J-WQB6MVqcdDlN3WiwKJptv5rMKCRzeQmeSNbPqLCJ7gimxy02HcFKjNjn_RU_0QQ/exec", function(data) {
+      $('#overlay').hide();
+      
+      if (data.error) {
+        Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
+        return;
+      }
+      
+      productos = data.productos;
+      mostrarProductosEnUI();
+      
+    }).fail(function() {
+      $('#overlay').hide();
+      Swal.fire('Error', 'No se pudo conectar al servidor', 'error');
+    });
   }
-}
 
-// Agregar event listeners para los campos adicionales
-$("#fecha, #colaborador, #area").on("change", verificarProductos);
+  // Función para mostrar productos en la interfaz
+  function mostrarProductosEnUI() {
+    const productosContainer = $('#productos');
+    productosContainer.empty();
+    
+    productos.forEach((producto, index) => {
+let productoHtml = `
+  <div class="producto" id="${producto.id}">
+    <img src="${producto.imagen || ''}" alt="${producto.nombre}" onerror="this.style.display='none'">
+    <label>${producto.nombre}</label>
+    ${producto.devolucion === 'X' ? '<span style="color: green; font-size: 0.8em;">Retornable</span>' : ''}
+    <span id="cantidadRestante${index}" class="${producto.cantidad === 0 ? 'agotado' : producto.cantidad > 0 ? 'disponible' : ''}">
+      ${producto.cantidad === 0 ? '0 restantes' : `${producto.cantidad} restantes`}
+    </span>
+    <div class="cantidad">
+      <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${producto.cantidad === 0 ? 'disabled' : ''}>-</button>
+      <input type="number" id="cantidad${index}" value="0" min="0" ${producto.cantidad === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
+      <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${producto.cantidad === 0 ? 'disabled' : ''}>+</button>
+    </div>
+  </div>
+`;
+      productosContainer.append(productoHtml);
+    });
+  }
 
-// Agregar event listener para las cantidades de productos (suponiendo que los inputs tienen id's como #cantidad0, #cantidad1, ...)
-productos.forEach((producto, index) => {
-  $(`#cantidad${index}`).on("input", verificarProductos);
-});
+  // Función para configurar eventos
+  function configurarEventos() {
+    // Buscador de productos
+    $('#buscador').on('input', filtrarProductos);
+    
+    // Validación de formulario
+    $("#fecha, #colaborador, #area").on("change", verificarProductos);
 
+  }
 
-
-function enviardatos() {
-  let seleccion = [];
-
-  // Recolectar los productos y cantidades seleccionadas
-  productos.forEach((producto, index) => {
-    let cantidadSeleccionada = $(`#cantidad${index}`).val();
-
-    if (cantidadSeleccionada > 0) {
-      seleccion.push({
-        producto: producto.nombre,
-        cantidad: cantidadSeleccionada
-      });
-    }
-  });
-
-  // Recolectar los datos adicionales
-  let fecha = $('#fecha').val();
-  let colaborador = $('#colaborador').val();
-  let area = $('#area').val();
-
-  // Verificar los datos antes de enviarlos
-  if (seleccion.length > 0) {
-    Swal.fire({
-      text: '¿Estás seguro de continuar? 🤔',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Sí 🫡',
-      cancelButtonText: 'No 😬',
-      customClass: {
-        content: 'swal-content',
-        confirmButton: 'swal-button',
-        cancelButton: 'swal-button-cancel',
-        popup: 'swal-popup'
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Usuario confirmó, proceder con el envío
-
-    // Mostrar overlay de espera
-    document.getElementById('overlay').style.display = 'flex'
-
-        $.ajax({
-          url: "https://script.google.com/macros/s/AKfycbw0XEQuw-PUtXBdqFyM6uk5Akpe3zS3lJm0qBTxFAwQxyWlh9SdZEQGkyjeEGjxbidbbg/exec",
-          type: "POST",
-          data: {
-            seleccion: JSON.stringify(seleccion),
-            fecha: fecha,
-            colaborador: colaborador,
-            area: area
-          },
-          success: function(response) {
-            console.log("Respuesta del servidor:", response);
-
-
-    // Ocultar el overlay de espera
-    document.getElementById('overlay').style.display = 'none';
-
-            Swal.fire({
-              text: '¡Envío exitoso! 🥳🎉',
-              icon: 'success',
-              confirmButtonText: 'Aceptar',
-              customClass: {
-                content: 'swal-content',
-                confirmButton: 'swal-button',
-                popup: 'swal-popup'
-              }
-
-
-            }).then(() => {
-              // Recargar la página después de la confirmación
-              location.reload();
-            });
-
-
-
-
-
-
-          },
-          error: function(xhr, status, error) {
-            console.error("Error al enviar los datos:", xhr.responseText);
-
-    // Ocultar el overlay de espera
-    document.getElementById('overlay').style.display = 'none';
-
-            Swal.fire({
-              text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-              icon: 'error',
-              confirmButtonText: 'Aceptar',
-              customClass: {
-                content: 'swal-content',
-                confirmButton: 'swal-button',
-                popup: 'swal-popup'
-              }
-            });
-          }
-        });
+  // Función para filtrar productos
+  function filtrarProductos() {
+    const textoBusqueda = $('#buscador').val().toLowerCase();
+    const $productos = $('.producto');
+    
+    $productos.hide();
+    
+    $productos.each(function() {
+      const nombreProducto = $(this).find('label').text().toLowerCase();
+      if (nombreProducto.includes(textoBusqueda)) {
+        $(this).show();
       }
     });
-  } 
-}
-
-  function goBack() {
-  window.history.back();  // Esto hace que el navegador vuelva a la página anterior
   }
 
-    cargarProductos();
+  // Función para cambiar cantidad
+  function cambiarCantidad(index, valor) {
+    let cantidadInput = $(`#cantidad${index}`);
+    let cantidadActual = parseInt(cantidadInput.val());
+    let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
 
-  </script>
+    if (cantidadActual + valor >= 0 && cantidadActual + valor <= cantidadRestante) {
+      cantidadInput.val(cantidadActual + valor);
+      verificarProductos();
+    }
+  }
+
+  // Función para validar cantidad
+  function validarCantidad(index) {
+    let cantidadInput = $(`#cantidad${index}`);
+    let cantidadActual = parseInt(cantidadInput.val());
+    let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
+
+    if (cantidadActual > cantidadRestante) {
+      cantidadInput.val(cantidadRestante);
+    }
+
+    verificarProductos();
+  }
+
+  // Función para verificar productos seleccionados
+  function verificarProductos() {
+    let productosSeleccionados = false;
+    
+    productos.forEach((producto, index) => {
+      if (parseInt($(`#cantidad${index}`).val()) > 0) {
+        productosSeleccionados = true;
+      }
+    });
+
+    let fecha = $("#fecha").val();
+    let colaborador = $("#colaborador").val();
+    let area = $("#area").val();
+
+    if (productosSeleccionados && fecha.trim() !== "" && colaborador.trim() !== "" && area.trim() !== "") {
+      $("#seguir").prop("disabled", false);
+    } else {
+      $("#seguir").prop("disabled", true);
+    }
+  }
+
+
+
+  // Función para enviar datos
+  function enviardatos() {
+    let seleccion = [];
+    let totalProductos = 0;
+    let productosRetornables = 0;
+
+    productos.forEach((producto, index) => {
+      let cantidadSeleccionada = parseInt($(`#cantidad${index}`).val()) || 0;
+      if (cantidadSeleccionada > 0) {
+        seleccion.push({
+          producto: producto.nombre,
+          cantidad: cantidadSeleccionada,
+          imagen: producto.imagen,
+          retornable: producto.devolucion === 'X'
+        });
+        totalProductos += cantidadSeleccionada;
+        if (producto.devolucion === 'X') {
+          productosRetornables += cantidadSeleccionada;
+        }
+      }
+    });
+
+    let fecha = $('#fecha').val();
+    let colaborador = $('#colaborador').val();
+    let area = $('#area').val();
+
+    if (seleccion.length > 0) {
+    let htmlResumen = `
+      <div style="max-height: 50vh; overflow-y: auto; margin-bottom: 15px; font-size: 0.85em;">
+        <h3 style="margin-bottom: 12px; color: #007BFF; text-align: center; font-size: 1.1em;">Resumen de Requisición</h3>
+        <div style="margin-bottom: 10px; text-align: center;">
+          <strong>Fecha:</strong> ${fecha}<br>
+          <strong>Colaborador:</strong> ${colaborador}<br>
+          <strong>Área:</strong> ${area}<br>
+        </div>
+        <h4 style="margin: 12px 0 8px; color: #28a745; text-align: center; font-size: 1em;">Productos seleccionados (${totalProductos}):</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+          <thead>
+            <tr style="background-color: #f8f9fa;">
+              <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Producto</th>
+              <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Cantidad</th>
+              <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    seleccion.forEach(item => {
+      htmlResumen += `
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+          <td style="padding: 6px; vertical-align: middle;">
+            <div style="display: flex; align-items: center;">
+              ${item.imagen ? `<img src="${item.imagen}" style="width: 25px; height: 25px; object-fit: contain; margin-right: 8px; border-radius: 3px;" onerror="this.style.display='none'">` : ''}
+              <span>${item.producto}</span>
+            </div>
+          </td>
+          <td style="padding: 6px; text-align: center; vertical-align: middle;">
+            <span style="font-weight: bold; color: #dc3545;">${item.cantidad}</span>
+          </td>
+          <td style="padding: 6px; text-align: center; vertical-align: middle;">
+            ${item.retornable ? '<span style="color: green;">Retornable</span>' : 'No retornable'}
+          </td>
+        </tr>
+      `;
+    });
+
+
+      htmlResumen += `
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top: 12px; font-size: 0.8em; color: #6c757d; text-align: center;">¿Confirmas el envío de esta requisición?</p>
+      `;
+
+      Swal.fire({
+        title: 'Confirmar Requisición',
+        html: htmlResumen,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, enviar',
+        cancelButtonText: 'No, revisar',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        width: '600px'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('overlay').style.display = 'flex';
+
+          $.ajax({
+            url: "https://script.google.com/macros/s/AKfycbxqZguZch5HAgA8Uvduk5N8hZEOtdn0x5CuGJ6A0C1Fji7pLGMPJYErh9YP7EGnFf9w/exec",
+            type: "POST",
+            data: {
+              seleccion: JSON.stringify(seleccion),
+              fecha: fecha,
+              colaborador: colaborador,
+              area: area
+            },
+            success: function(response) {
+              document.getElementById('overlay').style.display = 'none';
+              console.log("Respuesta del servidor:", response);
+
+              Swal.fire({
+                title: '¡Éxito!',
+                html: `
+                  <div style="text-align: center;">
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">Requisición enviada correctamente 🎉</p>
+                    <div style="color: #28a745; font-size: 2em;">
+                      <i class="fas fa-check-circle"></i>
+                    </div>
+                  </div>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              }).then(() => {
+                location.reload();
+              });
+            },
+            error: function(xhr, status, error) {
+              document.getElementById('overlay').style.display = 'none';
+              console.error("Error al enviar los datos:", xhr.responseText);
+
+              Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al enviar los datos. Por favor inténtalo nuevamente.',
+                icon: 'error',
+                confirmButtonText: 'Entendido'
+              });
+            }
+          });
+        }
+      });
+    } 
+  }
+</script>
 </body>
 </html>
