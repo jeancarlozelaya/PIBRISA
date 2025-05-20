@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Requisición de Productos</title>
+  <title>Pisos Brillantes</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
@@ -547,29 +547,45 @@
   }
 
   // Función para mostrar productos en la interfaz
-  function mostrarProductosEnUI() {
-    const productosContainer = $('#productos');
-    productosContainer.empty();
+// Función para mostrar productos en la interfaz
+function mostrarProductosEnUI() {
+  const productosContainer = $('#productos');
+  productosContainer.empty();
+  
+  // Variable para controlar si debemos crear un nuevo contenedor
+  let nuevoContenedor = false;
+  
+  productos.forEach((producto, index) => {
+    // Si el producto es "-", marcamos para crear un nuevo contenedor en la siguiente iteración
+    if (producto.nombre.trim() === "-") {
+      nuevoContenedor = true;
+      return; // Saltamos este producto
+    }
     
-    productos.forEach((producto, index) => {
-let productoHtml = `
-  <div class="producto" id="${producto.id}">
-    <img src="${producto.imagen || ''}" alt="${producto.nombre}" onerror="this.style.display='none'">
-    <label>${producto.nombre}</label>
-    ${producto.devolucion === 'X' ? '<span style="color: green; font-size: 0.8em;">Retornable</span>' : ''}
-    <span id="cantidadRestante${index}" class="${producto.cantidad === 0 ? 'agotado' : producto.cantidad > 0 ? 'disponible' : ''}">
-      ${producto.cantidad === 0 ? '0 restantes' : `${producto.cantidad} restantes`}
-    </span>
-    <div class="cantidad">
-      <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${producto.cantidad === 0 ? 'disabled' : ''}>-</button>
-      <input type="number" id="cantidad${index}" value="0" min="0" ${producto.cantidad === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
-      <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${producto.cantidad === 0 ? 'disabled' : ''}>+</button>
-    </div>
-  </div>
-`;
-      productosContainer.append(productoHtml);
-    });
-  }
+    // Si necesitamos un nuevo contenedor, lo creamos
+    if (nuevoContenedor) {
+      productosContainer.append('<div style="flex-basis: 100%; height: 0;"></div>'); // Esto fuerza un salto de línea
+      nuevoContenedor = false;
+    }
+    
+    let productoHtml = `
+      <div class="producto" id="${producto.id}">
+        <img src="${producto.imagen || ''}" alt="${producto.nombre}" onerror="this.style.display='none'">
+        <label>${producto.nombre}</label>
+        ${producto.devolucion === 'X' ? '<span style="color: green; font-size: 0.8em;">Retornable</span>' : ''}
+        <span id="cantidadRestante${index}" class="${producto.cantidad === 0 ? 'agotado' : producto.cantidad > 0 ? 'disponible' : ''}">
+          ${producto.cantidad === 0 ? '0 restantes' : `${producto.cantidad} restantes`}
+        </span>
+        <div class="cantidad">
+          <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${producto.cantidad === 0 ? 'disabled' : ''}>-</button>
+          <input type="number" id="cantidad${index}" value="0" min="0" ${producto.cantidad === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
+          <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${producto.cantidad === 0 ? 'disabled' : ''}>+</button>
+        </div>
+      </div>
+    `;
+    productosContainer.append(productoHtml);
+  });
+}
 
   // Función para configurar eventos
   function configurarEventos() {
