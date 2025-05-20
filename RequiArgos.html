@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Requisición de Productos</title>
+  <title>Requisici贸n de Productos</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
@@ -395,7 +395,7 @@
   <div class="header">Pisos Brillantes</div>
   
   <div class="form-container">
-    <h1>Requisición de Productos</h1>
+    <h1>Requisici贸n de Productos</h1>
 
     <div class="question-container">
       <div>
@@ -414,7 +414,7 @@
             <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
             <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
             <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
-            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+            <option value="Mayra Consuelo Nicol谩s Hernandez">Mayra Consuelo Nicol谩s Hernandez</option>
             <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
             <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
             <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
@@ -423,22 +423,22 @@
 
         <label for="area"><strong>Destino:</strong></label>
         <select id="area" name="area">
-            <option value="">Seleccionar área</option>
-            <option value="Administración">Administración</option>
-            <option value="Almacén General">Almacén General</option>
-            <option value="Baños de Tolderos">Baños de Tolderos</option>
-            <option value="Baños de Transportistas">Baños de Transportistas</option>
+            <option value="">Seleccionar 谩rea</option>
+            <option value="Administraci贸n">Administraci贸n</option>
+            <option value="Almac茅n General">Almac茅n General</option>
+            <option value="Ba帽os de Tolderos">Ba帽os de Tolderos</option>
+            <option value="Ba帽os de Transportistas">Ba帽os de Transportistas</option>
             <option value="Bodega de Limpieza">Bodega de Limpieza</option>
-            <option value="Cafetería">Cafetería</option>
+            <option value="Cafeter铆a">Cafeter铆a</option>
             <option value="Camerinos Contratistas">Camerinos Contratistas</option>
             <option value="Camerinos Permanentes">Camerinos Permanentes</option>
             <option value="Chiminike">Chiminike</option>
             <option value="Club de Argos">Club de Argos</option>
             <option value="Despacho">Despacho</option>
-            <option value="Enfermería">Enfermería</option>
-            <option value="Equipo Móvil">Equipo Móvil</option>
+            <option value="Enfermer铆a">Enfermer铆a</option>
+            <option value="Equipo M贸vil">Equipo M贸vil</option>
             <option value="ERT">ERT</option>
-            <option value="Expedición">Expedición</option>
+            <option value="Expedici贸n">Expedici贸n</option>
             <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
             <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
             <option value="Machaqueo A">Machaqueo A</option>
@@ -446,8 +446,8 @@
             <option value="Postas Externas">Postas Externas</option>
             <option value="Proyecto Pitaya / ICEC">Proyecto Pitaya / ICEC</option>
             <option value="Sala de Control">Sala de Control</option>
-            <option value="Salón Vial">Salón Vial</option>
-            <option value="Taller Eléctrico">Taller Eléctrico</option>
+            <option value="Sal贸n Vial">Sal贸n Vial</option>
+            <option value="Taller El茅ctrico">Taller El茅ctrico</option>
         </select>
     </div>
 
@@ -469,7 +469,7 @@
 
   <div id="overlay" style="display: none;">
     <div id="loadingMessage">
-      <p>Procesando...🥱</p>
+      <p>Procesando...馃ケ</p>
     </div>
   </div>
 
@@ -477,7 +477,7 @@
   // Variables globales
   let productos = [];
 
-  // Configuración inicial al cargar la página
+  // Configuraci贸n inicial al cargar la p谩gina
   document.addEventListener('DOMContentLoaded', function() {
     // Establecer fecha actual
     var today = new Date();
@@ -495,7 +495,7 @@
 
 
 
-  // Función para cargar productos desde Google Sheets
+  // Funci贸n para cargar productos desde Google Sheets
   function cargarProductos() {
     $('#overlay').show();
     
@@ -516,7 +516,7 @@
     });
   }
 
-  // Función para mostrar productos en la interfaz
+  // Funci贸n para mostrar productos en la interfaz
   function mostrarProductosEnUI() {
     const productosContainer = $('#productos');
     productosContainer.empty();
@@ -541,17 +541,17 @@ let productoHtml = `
     });
   }
 
-  // Función para configurar eventos
+  // Funci贸n para configurar eventos
   function configurarEventos() {
     // Buscador de productos
     $('#buscador').on('input', filtrarProductos);
     
-    // Validación de formulario
+    // Validaci贸n de formulario
     $("#fecha, #colaborador, #area").on("change", verificarProductos);
 
   }
 
-  // Función para filtrar productos
+  // Funci贸n para filtrar productos
   function filtrarProductos() {
     const textoBusqueda = $('#buscador').val().toLowerCase();
     const $productos = $('.producto');
@@ -566,7 +566,7 @@ let productoHtml = `
     });
   }
 
-  // Función para cambiar cantidad
+  // Funci贸n para cambiar cantidad
   function cambiarCantidad(index, valor) {
     let cantidadInput = $(`#cantidad${index}`);
     let cantidadActual = parseInt(cantidadInput.val());
@@ -578,7 +578,7 @@ let productoHtml = `
     }
   }
 
-  // Función para validar cantidad
+  // Funci贸n para validar cantidad
   function validarCantidad(index) {
     let cantidadInput = $(`#cantidad${index}`);
     let cantidadActual = parseInt(cantidadInput.val());
@@ -591,7 +591,7 @@ let productoHtml = `
     verificarProductos();
   }
 
-  // Función para verificar productos seleccionados
+  // Funci贸n para verificar productos seleccionados
   function verificarProductos() {
     let productosSeleccionados = false;
     
@@ -614,7 +614,7 @@ let productoHtml = `
 
 
 
-  // Función para enviar datos
+  // Funci贸n para enviar datos
   function enviardatos() {
     let seleccion = [];
     let totalProductos = 0;
@@ -643,19 +643,18 @@ let productoHtml = `
     if (seleccion.length > 0) {
     let htmlResumen = `
       <div style="max-height: 50vh; overflow-y: auto; margin-bottom: 15px; font-size: 0.85em;">
-        <h3 style="margin-bottom: 12px; color: #007BFF; text-align: center; font-size: 1.1em;">Resumen de Requisición</h3>
-        <div style="margin-bottom: 10px; text-align: center;">
+        <h3 style="margin-bottom: 12px; color: #007BFF; text-align: left; font-size: 1.1em;">Resumen de Requisici贸n</h3>
+        <div style="margin-bottom: 10px; text-align: left;">
           <strong>Fecha:</strong> ${fecha}<br>
           <strong>Colaborador:</strong> ${colaborador}<br>
-          <strong>Área:</strong> ${area}<br>
+          <strong>脕rea:</strong> ${area}<br>
         </div>
-        <h4 style="margin: 12px 0 8px; color: #28a745; text-align: center; font-size: 1em;">Productos seleccionados (${totalProductos}):</h4>
+        <h4 style="margin: 12px 0 8px; color: #28a745; text-align: left; font-size: 1em;">Productos seleccionados (${totalProductos}):</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
           <thead>
             <tr style="background-color: #f8f9fa;">
-              <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Producto</th>
+              <th style="padding: 6px; text-align: left; border-bottom: 1px solid #ddd;">Producto</th>
               <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Cantidad</th>
-              <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Tipo</th>
             </tr>
           </thead>
           <tbody>
@@ -673,9 +672,7 @@ let productoHtml = `
           <td style="padding: 6px; text-align: center; vertical-align: middle;">
             <span style="font-weight: bold; color: #dc3545;">${item.cantidad}</span>
           </td>
-          <td style="padding: 6px; text-align: center; vertical-align: middle;">
-            ${item.retornable ? '<span style="color: green;">Retornable</span>' : 'No retornable'}
-          </td>
+
         </tr>
       `;
     });
@@ -685,15 +682,15 @@ let productoHtml = `
             </tbody>
           </table>
         </div>
-        <p style="margin-top: 12px; font-size: 0.8em; color: #6c757d; text-align: center;">¿Confirmas el envío de esta requisición?</p>
+        <p style="margin-top: 12px; font-size: 0.8em; color: #6c757d; text-align: center;">驴Confirmas el env铆o de esta requisici贸n?</p>
       `;
 
       Swal.fire({
-        title: 'Confirmar Requisición',
+        title: 'Confirmar Requisici贸n',
         html: htmlResumen,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Sí, enviar',
+        confirmButtonText: 'S铆, enviar',
         cancelButtonText: 'No, revisar',
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
@@ -716,10 +713,10 @@ let productoHtml = `
               console.log("Respuesta del servidor:", response);
 
               Swal.fire({
-                title: '¡Éxito!',
+                title: '隆脡xito!',
                 html: `
                   <div style="text-align: center;">
-                    <p style="font-size: 1.1em; margin-bottom: 15px;">Requisición enviada correctamente 🎉</p>
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">Requisici贸n enviada correctamente 馃帀</p>
                     <div style="color: #28a745; font-size: 2em;">
                       <i class="fas fa-check-circle"></i>
                     </div>
@@ -737,7 +734,7 @@ let productoHtml = `
 
               Swal.fire({
                 title: 'Error',
-                text: 'Hubo un problema al enviar los datos. Por favor inténtalo nuevamente.',
+                text: 'Hubo un problema al enviar los datos. Por favor int茅ntalo nuevamente.',
                 icon: 'error',
                 confirmButtonText: 'Entendido'
               });
