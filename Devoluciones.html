@@ -7,6 +7,61 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
+    /* Estilos para el bloqueo de contraseña */
+    #password-protection {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      flex-direction: column;
+    }
+    
+    #password-form {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    
+    #password-input {
+      width: 90%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    #password-submit {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+    
+    #password-submit:hover {
+      background-color: #0069d9;
+    }
+    
+    #password-error {
+      color: #dc3545;
+      margin-top: 10px;
+      display: none;
+    }
+
     /* Estilos similares a la página de requisición */
     .header {
       background-color: #007BFF;
@@ -110,8 +165,6 @@
       font-weight: bold;
     }
 
-
-
   /* Añade estos estilos al final de tu sección CSS */
   
   /* Contenedor de la tabla para desplazamiento */
@@ -136,8 +189,6 @@
       padding: 8px 10px;
     }
   }
-
-
 
 #overlay {
   display: none;
@@ -184,164 +235,209 @@
   to { transform: rotate(360deg); }
 }
 
+/* Ocultar contenido principal inicialmente */
+#main-content {
+  display: none;
+}
 
   </style>
 </head>
 <body>
-  <div class="header">Pisos Brillantes</div>
-  
-  <div class="form-container">
-    <h1>Devoluciones de Productos</h1>
-
-    <div id="tabla-devoluciones-container" class="table-container">
-        <table id="tabla-devoluciones">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Colaborador</th>
-            <th>Área</th>
-            <th>Producto</th>
-            <th>Cantidad Original</th>
-            <th>Cantidad Devuelta</th>
-            <th>Cantidad Pendiente</th>
-            <th>Estado</th>
-            <th>Devolver</th>
-          </tr>
-        </thead>
-        <tbody id="devoluciones-body">
-          <!-- Los datos se cargarán aquí -->
-        </tbody>
-      </table>
-    </div>
-
-    <div class="button-container">
-      <button type="button" id="btn-enviar" disabled onclick="enviarDevoluciones()">Enviar Devoluciones</button>
+  <!-- Protección por contraseña -->
+  <div id="password-protection">
+    <div id="password-form">
+      <h2>Acceso Restringido</h2>
+      <input type="password" id="password-input" placeholder="Contraseña">
+      <button id="password-submit">Acceder</button>
+      <div id="password-error">Contraseña incorrecta. Intente nuevamente.</div>
     </div>
   </div>
 
-<div id="overlay">
-  <div class="spinner"></div>
-  <div id="loadingMessage">
-    <h4>Por favor espera un momento...</h4>
-    <p></p>
+  <!-- Contenido principal (oculto inicialmente) -->
+  <div id="main-content">
+    <div class="header">Pisos Brillantes</div>
+    
+    <div class="form-container">
+      <h1>Devoluciones de Productos</h1>
+
+      <div id="tabla-devoluciones-container" class="table-container">
+          <table id="tabla-devoluciones">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Colaborador</th>
+              <th>Área</th>
+              <th>Producto</th>
+              <th>Cantidad Original</th>
+              <th>Cantidad Devuelta</th>
+              <th>Cantidad Pendiente</th>
+              <th>Estado</th>
+              <th>Devolver</th>
+            </tr>
+          </thead>
+          <tbody id="devoluciones-body">
+            <!-- Los datos se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="button-container">
+        <button type="button" id="btn-enviar" disabled onclick="enviarDevoluciones()">Enviar Devoluciones</button>
+      </div>
+    </div>
+
+    <div id="overlay">
+      <div class="spinner"></div>
+      <div id="loadingMessage">
+        <h4>Por favor espera un momento...</h4>
+        <p></p>
+      </div>
+    </div>
   </div>
-</div>
 
 <script>
+  // Protección por contraseña
+  document.addEventListener('DOMContentLoaded', function() {
+    const passwordProtection = document.getElementById('password-protection');
+    const passwordInput = document.getElementById('password-input');
+    const passwordSubmit = document.getElementById('password-submit');
+    const passwordError = document.getElementById('password-error');
+    const mainContent = document.getElementById('main-content');
+    
+    // Contraseña correcta
+    const CORRECT_PASSWORD = "macdel1";
+    
+    // Manejar el envío del formulario de contraseña
+    passwordSubmit.addEventListener('click', function() {
+      if (passwordInput.value === CORRECT_PASSWORD) {
+        // Contraseña correcta - mostrar contenido
+        passwordProtection.style.display = 'none';
+        mainContent.style.display = 'block';
+        
+        // Cargar el contenido de la página
+        cargarDevolucionesPendientes();
+      } else {
+        // Contraseña incorrecta - mostrar error
+        passwordError.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    });
+    
+    // Permitir enviar con Enter
+    passwordInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        passwordSubmit.click();
+      }
+    });
+    
+    // Enfocar el campo de contraseña al cargar
+    passwordInput.focus();
+  });
+
   // Variables globales
   let devoluciones = [];
   let datosEditados = {};
 
-  // Configuración inicial al cargar la página
-  document.addEventListener('DOMContentLoaded', function() {
-    cargarDevolucionesPendientes();
-    
-    // Configurar evento para validar el botón de enviar
-    document.getElementById('btn-enviar').addEventListener('click', enviarDevoluciones);
-  });
-
   // Función para cargar las devoluciones pendientes
-function cargarDevolucionesPendientes() {
-  $('#overlay').show();
-  
-  // Limpiar mensajes previos
-  $('#devoluciones-body').empty().append('<tr><td colspan="10" style="text-align: center;">Cargando datos...</td></tr>');
-  
-  // URL del script de Google Apps (REEMPLAZA CON TU URL REAL)
-  const scriptUrl = "https://script.google.com/macros/s/AKfycbwhkjMEzLiFBUIQpkdImSS5vwF68p7JK410UE8wLbMYoSREz-qusNbqc-MsBPlC_6EisQ/exec?action=obtenerDevoluciones";
-  
-  $.ajax({
-    url: scriptUrl,
-    type: "GET",
-    dataType: "json",
-    success: function(data) {
-      $('#overlay').hide();
-      
-      console.log("Respuesta del servidor:", data); // Depuración
-      
-      if (data.error) {
-        mostrarError(data.mensaje || "Error al cargar devoluciones");
-        return;
+  function cargarDevolucionesPendientes() {
+    $('#overlay').show();
+    
+    // Limpiar mensajes previos
+    $('#devoluciones-body').empty().append('<tr><td colspan="10" style="text-align: center;">Cargando datos...</td></tr>');
+    
+    // URL del script de Google Apps (REEMPLAZA CON TU URL REAL)
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwhkjMEzLiFBUIQpkdImSS5vwF68p7JK410UE8wLbMYoSREz-qusNbqc-MsBPlC_6EisQ/exec?action=obtenerDevoluciones";
+    
+    $.ajax({
+      url: scriptUrl,
+      type: "GET",
+      dataType: "json",
+      success: function(data) {
+        $('#overlay').hide();
+        
+        console.log("Respuesta del servidor:", data); // Depuración
+        
+        if (data.error) {
+          mostrarError(data.mensaje || "Error al cargar devoluciones");
+          return;
+        }
+        
+        if (!data.devoluciones) {
+          mostrarError("Formato de respuesta inválido");
+          return;
+        }
+        
+        devoluciones = data.devoluciones;
+        mostrarDevolucionesEnUI();
+      },
+      error: function(xhr, status, error) {
+        $('#overlay').hide();
+        console.error("Error en la solicitud:", status, error, xhr.responseText);
+        
+        let errorMsg = "Error al conectar con el servidor";
+        try {
+          const response = JSON.parse(xhr.responseText);
+          errorMsg = response.error || response.mensaje || errorMsg;
+        } catch (e) {}
+        
+        mostrarError(errorMsg);
       }
-      
-      if (!data.devoluciones) {
-        mostrarError("Formato de respuesta inválido");
-        return;
-      }
-      
-      devoluciones = data.devoluciones;
-      mostrarDevolucionesEnUI();
-    },
-    error: function(xhr, status, error) {
-      $('#overlay').hide();
-      console.error("Error en la solicitud:", status, error, xhr.responseText);
-      
-      let errorMsg = "Error al conectar con el servidor";
-      try {
-        const response = JSON.parse(xhr.responseText);
-        errorMsg = response.error || response.mensaje || errorMsg;
-      } catch (e) {}
-      
-      mostrarError(errorMsg);
-    }
-  });
-}
+    });
+  }
 
-function mostrarError(mensaje) {
-  $('#devoluciones-body').empty().append(`<tr><td colspan="10" style="text-align: center; color: red;">${mensaje}</td></tr>`);
-  document.getElementById('btn-enviar').disabled = true;
-  
-  Swal.fire({
-    title: 'Error',
-    text: mensaje,
-    icon: 'error',
-    confirmButtonText: 'Entendido'
-  });
-}
-
-
+  function mostrarError(mensaje) {
+    $('#devoluciones-body').empty().append(`<tr><td colspan="10" style="text-align: center; color: red;">${mensaje}</td></tr>`);
+    document.getElementById('btn-enviar').disabled = true;
+    
+    Swal.fire({
+      title: 'Error',
+      text: mensaje,
+      icon: 'error',
+      confirmButtonText: 'Entendido'
+    });
+  }
 
   // Función para mostrar las devoluciones en la interfaz
-function mostrarDevolucionesEnUI() {
-  const tbody = $('#devoluciones-body');
-  tbody.empty();
-  
-  if (devoluciones.length === 0) {
-    tbody.append('<tr><td colspan="10" style="text-align: center;">No hay devoluciones pendientes</td></tr>');
-    return;
+  function mostrarDevolucionesEnUI() {
+    const tbody = $('#devoluciones-body');
+    tbody.empty();
+    
+    if (devoluciones.length === 0) {
+      tbody.append('<tr><td colspan="10" style="text-align: center;">No hay devoluciones pendientes</td></tr>');
+      return;
+    }
+    
+    devoluciones.forEach((devolucion, index) => {
+      const row = `
+        <tr id="row-${index}">
+          <td>${formatearFecha(devolucion.fecha)}</td>
+          <td>${formatearHora(devolucion.hora)}</td>
+          <td>${devolucion.colaborador}</td>
+          <td>${devolucion.area}</td>
+          <td>${devolucion.producto}</td>
+          <td>${devolucion.cantidadSalida}</td>
+          <td>${devolucion.cantidadDevuelta}</td>
+          <td>${devolucion.cantidadPendiente}</td>
+          <td class="${devolucion.estado === 'Pendiente' ? 'estado-pendiente' : 'estado-completo'}">${devolucion.estado}</td>
+          <td>
+            <input type="number" 
+                   class="cantidad-input" 
+                   id="input-${index}" 
+                   min="0" 
+                   max="${devolucion.cantidadPendiente}" 
+                   value="0"
+                   oninput="validarCantidad(${index}, ${devolucion.cantidadPendiente})">
+          </td>
+        </tr>
+      `;
+      tbody.append(row);
+    });
+    
+    // Habilitar el botón de enviar si hay devoluciones
+    document.getElementById('btn-enviar').disabled = devoluciones.length === 0;
   }
-  
-  devoluciones.forEach((devolucion, index) => {
-    const row = `
-      <tr id="row-${index}">
-        <td>${formatearFecha(devolucion.fecha)}</td>
-        <td>${formatearHora(devolucion.hora)}</td>
-        <td>${devolucion.colaborador}</td>
-        <td>${devolucion.area}</td>
-        <td>${devolucion.producto}</td>
-        <td>${devolucion.cantidadSalida}</td>
-        <td>${devolucion.cantidadDevuelta}</td>
-        <td>${devolucion.cantidadPendiente}</td>
-        <td class="${devolucion.estado === 'Pendiente' ? 'estado-pendiente' : 'estado-completo'}">${devolucion.estado}</td>
-        <td>
-          <input type="number" 
-                 class="cantidad-input" 
-                 id="input-${index}" 
-                 min="0" 
-                 max="${devolucion.cantidadPendiente}" 
-                 value="0"
-                 oninput="validarCantidad(${index}, ${devolucion.cantidadPendiente})">
-        </td>
-      </tr>
-    `;
-    tbody.append(row);
-  });
-  
-  // Habilitar el botón de enviar si hay devoluciones
-  document.getElementById('btn-enviar').disabled = devoluciones.length === 0;
-}
-
 
   // Función para validar la cantidad ingresada
   function validarCantidad(index, max) {
@@ -368,120 +464,117 @@ function mostrarDevolucionesEnUI() {
   }
 
   // Función para enviar las devoluciones
-function enviarDevoluciones() {
-    if (Object.keys(datosEditados).length === 0) {
-        Swal.fire('Advertencia', 'No has ingresado cantidades para devolver', 'warning');
-        return;
-    }
+  function enviarDevoluciones() {
+      if (Object.keys(datosEditados).length === 0) {
+          Swal.fire('Advertencia', 'No has ingresado cantidades para devolver', 'warning');
+          return;
+      }
 
-    // Preparar los datos para enviar
-    const datosParaEnviar = [];
+      // Preparar los datos para enviar
+      const datosParaEnviar = [];
+      
+      Object.keys(datosEditados).forEach(key => {
+          const index = parseInt(key);
+          datosParaEnviar.push({
+              rowId: devoluciones[index].rowId,
+              cantidad: datosEditados[key]
+          });
+      });
+
+      // Mostrar confirmación
+      Swal.fire({
+          title: 'Confirmar Devoluciones',
+          html: `¿Estás seguro de enviar las devoluciones seleccionadas?<br><br>
+                 Se actualizarán <strong>${datosParaEnviar.length}</strong> registros.`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, enviar',
+          cancelButtonText: 'No, cancelar',
+          confirmButtonColor: '#28a745',
+          cancelButtonColor: '#dc3545'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              $('#overlay').show();
+              
+              // URL del script de Google Apps
+              const scriptUrl = "https://script.google.com/macros/s/AKfycbwFZJpe2D0ywrxXDR9xHPfqyOOXTftlaq0aIQY8-bFQ5lpeEMS5JPJPI967pu3eRxbj/exec";
+              
+              // Crear iframe oculto para el envío
+              const iframe = document.createElement('iframe');
+              iframe.style.display = 'none';
+              iframe.name = 'hiddenFrame';
+              document.body.appendChild(iframe);
+              
+              // Crear formulario
+              const form = document.createElement('form');
+              form.method = 'POST';
+              form.action = scriptUrl;
+              form.target = 'hiddenFrame';
+              
+              // Agregar campos para los datos
+              const actionInput = document.createElement('input');
+              actionInput.type = 'hidden';
+              actionInput.name = 'action';
+              actionInput.value = 'actualizarDevoluciones';
+              form.appendChild(actionInput);
+              
+              const dataInput = document.createElement('input');
+              dataInput.type = 'hidden';
+              dataInput.name = 'devoluciones';
+              dataInput.value = JSON.stringify(datosParaEnviar);
+              form.appendChild(dataInput);
+              
+              // Agregar formulario al cuerpo y enviar
+              document.body.appendChild(form);
+              form.submit();
+              
+              // Esperar 3 segundos (tiempo suficiente para la actualización)
+              setTimeout(() => {
+                  $('#overlay').hide();
+                  Swal.fire({
+                      title: '¡Éxito!',
+                      html: 'Devoluciones registradas correctamente',
+                      icon: 'success',
+                      confirmButtonText: 'Aceptar'
+                  }).then(() => {
+                      location.reload();
+                  });
+                  
+                  // Limpiar el formulario e iframe
+                  document.body.removeChild(form);
+                  document.body.removeChild(iframe);
+              }, 3000);
+          }
+      });
+  }
+
+  // Función para formatear la fecha (YYYY-MM-DD)
+  function formatearFecha(fechaISO) {
+    if (!fechaISO) return '';
+    const fecha = new Date(fechaISO);
+    // Asegurarnos de que es una fecha válida
+    if (isNaN(fecha.getTime())) return fechaISO;
     
-    Object.keys(datosEditados).forEach(key => {
-        const index = parseInt(key);
-        datosParaEnviar.push({
-            rowId: devoluciones[index].rowId,
-            cantidad: datosEditados[key]
-        });
-    });
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    
+    return `${año}-${mes}-${dia}`;
+  }
 
-    // Mostrar confirmación
-    Swal.fire({
-        title: 'Confirmar Devoluciones',
-        html: `¿Estás seguro de enviar las devoluciones seleccionadas?<br><br>
-               Se actualizarán <strong>${datosParaEnviar.length}</strong> registros.`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, enviar',
-        cancelButtonText: 'No, cancelar',
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#dc3545'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $('#overlay').show();
-            
-            // URL del script de Google Apps
-            const scriptUrl = "https://script.google.com/macros/s/AKfycbwFZJpe2D0ywrxXDR9xHPfqyOOXTftlaq0aIQY8-bFQ5lpeEMS5JPJPI967pu3eRxbj/exec";
-            
-            // Crear iframe oculto para el envío
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.name = 'hiddenFrame';
-            document.body.appendChild(iframe);
-            
-            // Crear formulario
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = scriptUrl;
-            form.target = 'hiddenFrame';
-            
-            // Agregar campos para los datos
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'action';
-            actionInput.value = 'actualizarDevoluciones';
-            form.appendChild(actionInput);
-            
-            const dataInput = document.createElement('input');
-            dataInput.type = 'hidden';
-            dataInput.name = 'devoluciones';
-            dataInput.value = JSON.stringify(datosParaEnviar);
-            form.appendChild(dataInput);
-            
-            // Agregar formulario al cuerpo y enviar
-            document.body.appendChild(form);
-            form.submit();
-            
-            // Esperar 3 segundos (tiempo suficiente para la actualización)
-            setTimeout(() => {
-                $('#overlay').hide();
-                Swal.fire({
-                    title: '¡Éxito!',
-                    html: 'Devoluciones registradas correctamente',
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar'
-                }).then(() => {
-                    location.reload();
-                });
-                
-                // Limpiar el formulario e iframe
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-            }, 3000);
-        }
-    });
-}
-
-
-// Función para formatear la fecha (YYYY-MM-DD)
-function formatearFecha(fechaISO) {
-  if (!fechaISO) return '';
-  const fecha = new Date(fechaISO);
-  // Asegurarnos de que es una fecha válida
-  if (isNaN(fecha.getTime())) return fechaISO;
-  
-  const año = fecha.getFullYear();
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-  const dia = String(fecha.getDate()).padStart(2, '0');
-  
-  return `${año}-${mes}-${dia}`;
-}
-
-// Función para formatear la hora (HH:MM:SS)
-function formatearHora(fechaISO) {
-  if (!fechaISO) return '';
-  const fecha = new Date(fechaISO);
-  // Asegurarnos de que es una fecha válida
-  if (isNaN(fecha.getTime())) return fechaISO;
-  
-  const horas = String(fecha.getHours()).padStart(2, '0');
-  const minutos = String(fecha.getMinutes()).padStart(2, '0');
-  const segundos = String(fecha.getSeconds()).padStart(2, '0');
-  
-  return `${horas}:${minutos}:${segundos}`;
-}
-
-
+  // Función para formatear la hora (HH:MM:SS)
+  function formatearHora(fechaISO) {
+    if (!fechaISO) return '';
+    const fecha = new Date(fechaISO);
+    // Asegurarnos de que es una fecha válida
+    if (isNaN(fecha.getTime())) return fechaISO;
+    
+    const horas = String(fecha.getHours()).padStart(2, '0');
+    const minutos = String(fecha.getMinutes()).padStart(2, '0');
+    const segundos = String(fecha.getSeconds()).padStart(2, '0');
+    
+    return `${horas}:${minutos}:${segundos}`;
+  }
 </script>
 </body>
 </html>
