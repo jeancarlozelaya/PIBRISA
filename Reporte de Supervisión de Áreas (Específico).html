@@ -882,12 +882,12 @@ function validatePage(pageIndex) {
         if (calificarOficinas === "Sí") {
             const preguntasDinamicas = currentPageElement.querySelectorAll(".question-container select");
             preguntasDinamicas.forEach((select) => {
-                if (select.value === "") {
+                if (select.value === "" && select.id !== "oficina") { // Excluimos el select de oficina de la validación general
                     allFieldsValid = false;
                 }
             });
 
-            // Si el área es "Administración", se revisa el campo adicional
+            // Solo validar el campo de oficina si el área es "Administración"
             if (area === "Administración") {
                 const oficina = document.getElementById("oficina").value;
                 if (oficina.trim() === "") {
@@ -900,7 +900,10 @@ function validatePage(pageIndex) {
         const questionContainers = currentPageElement.querySelectorAll('.question-container');
         questionContainers.forEach(container => {
             const input = container.querySelector('input, select, textarea');
-            if (input.value.trim() === "") {
+            // No cambiar color para el contenedor de oficina si no es Administración
+            if (input.id === "oficina" && area !== "Administración") {
+                container.style.borderColor = '#ccc'; // Mantener color neutral
+            } else if (input.value.trim() === "") {
                 container.style.borderColor = 'red';
             } else {
                 container.style.borderColor = 'green';
