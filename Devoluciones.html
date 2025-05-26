@@ -14,8 +14,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #f4f4f4;
-      display: flex;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
       justify-content: center;
       align-items: center;
       z-index: 99999;
@@ -30,6 +30,22 @@
       text-align: center;
       max-width: 400px;
       width: 90%;
+      position: relative;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .close-btn:hover {
+      color: #333;
     }
     
     #password-input {
@@ -235,25 +251,22 @@
   to { transform: rotate(360deg); }
 }
 
-/* Ocultar contenido principal inicialmente */
-#main-content {
-  display: none;
-}
-
   </style>
 </head>
 <body>
-  <!-- Protección por contraseña -->
+  <!-- Protección por contraseña (ahora oculta inicialmente) -->
   <div id="password-protection">
     <div id="password-form">
-      <h2>Acceso Restringido</h2>
+      <button class="close-btn" onclick="cerrarDialogoContrasena()">&times;</button>
+      <h2>Confirmar Acción</h2>
+      <p>Ingrese la contraseña para procesar las devoluciones</p>
       <input type="password" id="password-input" placeholder="Contraseña">
-      <button id="password-submit">Acceder</button>
+      <button id="password-submit">Verificar</button>
       <div id="password-error">Contraseña incorrecta. Intente nuevamente.</div>
     </div>
   </div>
 
-  <!-- Contenido principal (oculto inicialmente) -->
+  <!-- Contenido principal (visible desde el inicio) -->
   <div id="main-content">
     <div class="header">Pisos Brillantes</div>
     
@@ -283,7 +296,7 @@
       </div>
 
       <div class="button-container">
-        <button type="button" id="btn-enviar" disabled onclick="enviarDevoluciones()">Enviar Devoluciones</button>
+        <button type="button" id="btn-enviar" disabled onclick="verificarAutenticacion()">Enviar Devoluciones</button>
       </div>
     </div>
 
@@ -297,48 +310,102 @@
   </div>
 
 <script>
-  // Protección por contraseña
+  // Variables globales
+  let devoluciones = [];
+  let datosEditados = {};
+  const CORRECT_PASSWORD = "macdel1";
+  const AUTH_KEY = "pb_auth";
+  const AUTH_EXPIRATION_HOURS = 24; // La autenticación dura 24 horas
+
+  // Cargar las devoluciones al iniciar la página
   document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar contenido principal directamente
+    document.getElementById('main-content').style.display = 'block';
+    
+    // Cargar el contenido de la página
+    cargarDevolucionesPendientes();
+  });
+
+  // Función para verificar si ya está autenticado para el día
+  function verificarAutenticacion() {
+    if (Object.keys(datosEditados).length === 0) {
+      Swal.fire('Advertencia', 'No has ingresado cantidades para devolver', 'warning');
+      return;
+    }
+    
+    const authData = obtenerAuthData();
+    
+    if (authData && authData.authenticated && !haExpiradoAuth(authData.fecha)) {
+      // Ya está autenticado para el día actual
+      enviarDevoluciones();
+    } else {
+      // No está autenticado o la autenticación expiró
+      solicitarContrasena();
+    }
+  }
+
+  // Función para obtener datos de autenticación del localStorage
+  function obtenerAuthData() {
+    const authData = localStorage.getItem(AUTH_KEY);
+    return authData ? JSON.parse(authData) : null;
+  }
+
+  // Función para verificar si la autenticación ha expirado
+  function haExpiradoAuth(fechaAuth) {
+    const fechaAuthObj = new Date(fechaAuth);
+    const ahora = new Date();
+    const diferenciaHoras = (ahora - fechaAuthObj) / (1000 * 60 * 60);
+    return diferenciaHoras >= AUTH_EXPIRATION_HOURS;
+  }
+
+  // Función para guardar la autenticación exitosa
+  function guardarAuthExitosa() {
+    const authData = {
+      authenticated: true,
+      fecha: new Date().toISOString()
+    };
+    localStorage.setItem(AUTH_KEY, JSON.stringify(authData));
+  }
+
+  // Función para mostrar el diálogo de contraseña
+  function solicitarContrasena() {
+    // Mostrar el formulario de contraseña
     const passwordProtection = document.getElementById('password-protection');
     const passwordInput = document.getElementById('password-input');
-    const passwordSubmit = document.getElementById('password-submit');
     const passwordError = document.getElementById('password-error');
-    const mainContent = document.getElementById('main-content');
     
-    // Contraseña correcta
-    const CORRECT_PASSWORD = "macdel1";
+    passwordProtection.style.display = 'flex';
+    passwordInput.value = '';
+    passwordInput.focus();
+    passwordError.style.display = 'none';
     
-    // Manejar el envío del formulario de contraseña
-    passwordSubmit.addEventListener('click', function() {
+    // Configurar el evento del botón de verificación
+    document.getElementById('password-submit').onclick = function() {
       if (passwordInput.value === CORRECT_PASSWORD) {
-        // Contraseña correcta - mostrar contenido
+        // Contraseña correcta - guardar autenticación y proceder con el envío
+        guardarAuthExitosa();
         passwordProtection.style.display = 'none';
-        mainContent.style.display = 'block';
-        
-        // Cargar el contenido de la página
-        cargarDevolucionesPendientes();
+        enviarDevoluciones();
       } else {
         // Contraseña incorrecta - mostrar error
         passwordError.style.display = 'block';
         passwordInput.value = '';
         passwordInput.focus();
       }
-    });
+    };
     
     // Permitir enviar con Enter
     passwordInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
-        passwordSubmit.click();
+        document.getElementById('password-submit').click();
       }
     });
-    
-    // Enfocar el campo de contraseña al cargar
-    passwordInput.focus();
-  });
+  }
 
-  // Variables globales
-  let devoluciones = [];
-  let datosEditados = {};
+  // Función para cerrar el diálogo de contraseña
+  function cerrarDialogoContrasena() {
+    document.getElementById('password-protection').style.display = 'none';
+  }
 
   // Función para cargar las devoluciones pendientes
   function cargarDevolucionesPendientes() {
@@ -463,13 +530,8 @@
     document.getElementById('btn-enviar').disabled = Object.keys(datosEditados).length === 0;
   }
 
-  // Función para enviar las devoluciones
+  // Función para enviar las devoluciones (ahora se llama después de verificar la contraseña)
   function enviarDevoluciones() {
-      if (Object.keys(datosEditados).length === 0) {
-          Swal.fire('Advertencia', 'No has ingresado cantidades para devolver', 'warning');
-          return;
-      }
-
       // Preparar los datos para enviar
       const datosParaEnviar = [];
       
@@ -481,71 +543,56 @@
           });
       });
 
-      // Mostrar confirmación
-      Swal.fire({
-          title: 'Confirmar Devoluciones',
-          html: `¿Estás seguro de enviar las devoluciones seleccionadas?<br><br>
-                 Se actualizarán <strong>${datosParaEnviar.length}</strong> registros.`,
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Sí, enviar',
-          cancelButtonText: 'No, cancelar',
-          confirmButtonColor: '#28a745',
-          cancelButtonColor: '#dc3545'
-      }).then((result) => {
-          if (result.isConfirmed) {
-              $('#overlay').show();
-              
-              // URL del script de Google Apps
-              const scriptUrl = "https://script.google.com/macros/s/AKfycbwFZJpe2D0ywrxXDR9xHPfqyOOXTftlaq0aIQY8-bFQ5lpeEMS5JPJPI967pu3eRxbj/exec";
-              
-              // Crear iframe oculto para el envío
-              const iframe = document.createElement('iframe');
-              iframe.style.display = 'none';
-              iframe.name = 'hiddenFrame';
-              document.body.appendChild(iframe);
-              
-              // Crear formulario
-              const form = document.createElement('form');
-              form.method = 'POST';
-              form.action = scriptUrl;
-              form.target = 'hiddenFrame';
-              
-              // Agregar campos para los datos
-              const actionInput = document.createElement('input');
-              actionInput.type = 'hidden';
-              actionInput.name = 'action';
-              actionInput.value = 'actualizarDevoluciones';
-              form.appendChild(actionInput);
-              
-              const dataInput = document.createElement('input');
-              dataInput.type = 'hidden';
-              dataInput.name = 'devoluciones';
-              dataInput.value = JSON.stringify(datosParaEnviar);
-              form.appendChild(dataInput);
-              
-              // Agregar formulario al cuerpo y enviar
-              document.body.appendChild(form);
-              form.submit();
-              
-              // Esperar 3 segundos (tiempo suficiente para la actualización)
-              setTimeout(() => {
-                  $('#overlay').hide();
-                  Swal.fire({
-                      title: '¡Éxito!',
-                      html: 'Devoluciones registradas correctamente',
-                      icon: 'success',
-                      confirmButtonText: 'Aceptar'
-                  }).then(() => {
-                      location.reload();
-                  });
-                  
-                  // Limpiar el formulario e iframe
-                  document.body.removeChild(form);
-                  document.body.removeChild(iframe);
-              }, 3000);
-          }
-      });
+      $('#overlay').show();
+      
+      // URL del script de Google Apps
+      const scriptUrl = "https://script.google.com/macros/s/AKfycbwFZJpe2D0ywrxXDR9xHPfqyOOXTftlaq0aIQY8-bFQ5lpeEMS5JPJPI967pu3eRxbj/exec";
+      
+      // Crear iframe oculto para el envío
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.name = 'hiddenFrame';
+      document.body.appendChild(iframe);
+      
+      // Crear formulario
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = scriptUrl;
+      form.target = 'hiddenFrame';
+      
+      // Agregar campos para los datos
+      const actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'actualizarDevoluciones';
+      form.appendChild(actionInput);
+      
+      const dataInput = document.createElement('input');
+      dataInput.type = 'hidden';
+      dataInput.name = 'devoluciones';
+      dataInput.value = JSON.stringify(datosParaEnviar);
+      form.appendChild(dataInput);
+      
+      // Agregar formulario al cuerpo y enviar
+      document.body.appendChild(form);
+      form.submit();
+      
+      // Esperar 3 segundos (tiempo suficiente para la actualización)
+      setTimeout(() => {
+          $('#overlay').hide();
+          Swal.fire({
+              title: '¡Éxito!',
+              html: 'Devoluciones registradas correctamente',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+          }).then(() => {
+              location.reload();
+          });
+          
+          // Limpiar el formulario e iframe
+          document.body.removeChild(form);
+          document.body.removeChild(iframe);
+      }, 3000);
   }
 
   // Función para formatear la fecha (YYYY-MM-DD)
