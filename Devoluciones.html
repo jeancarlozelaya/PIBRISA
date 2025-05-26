@@ -251,6 +251,38 @@
   to { transform: rotate(360deg); }
 }
 
+
+
+
+    .search-container {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    #search-input {
+      width: 70%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    #search-input:focus {
+      outline: none;
+      border-color: #007BFF;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-style: italic;
+    }
+
+
   </style>
 </head>
 <body>
@@ -272,6 +304,10 @@
     
     <div class="form-container">
       <h1>Devoluciones de Productos</h1>
+
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Buscar por Colaborador, Área o Producto..." oninput="filtrarTabla()">
+      </div>
 
       <div id="tabla-devoluciones-container" class="table-container">
           <table id="tabla-devoluciones">
@@ -472,18 +508,18 @@
     tbody.empty();
     
     if (devoluciones.length === 0) {
-      tbody.append('<tr><td colspan="10" style="text-align: center;">No hay devoluciones pendientes</td></tr>');
+      tbody.append('<tr><td colspan="10" class="no-results">No hay devoluciones pendientes</td></tr>');
       return;
     }
     
     devoluciones.forEach((devolucion, index) => {
       const row = `
-        <tr id="row-${index}">
+        <tr id="row-${index}" class="data-row">
           <td>${formatearFecha(devolucion.fecha)}</td>
           <td>${formatearHora(devolucion.hora)}</td>
-          <td>${devolucion.colaborador}</td>
-          <td>${devolucion.area}</td>
-          <td>${devolucion.producto}</td>
+          <td class="colaborador">${devolucion.colaborador}</td>
+          <td class="area">${devolucion.area}</td>
+          <td class="producto">${devolucion.producto}</td>
           <td>${devolucion.cantidadSalida}</td>
           <td>${devolucion.cantidadDevuelta}</td>
           <td>${devolucion.cantidadPendiente}</td>
@@ -505,6 +541,40 @@
     // Habilitar el botón de enviar si hay devoluciones
     document.getElementById('btn-enviar').disabled = devoluciones.length === 0;
   }
+
+
+
+  // Función para filtrar la tabla según el texto de búsqueda
+  function filtrarTabla() {
+    const searchText = document.getElementById('search-input').value.toLowerCase();
+    const rows = document.querySelectorAll('#devoluciones-body .data-row');
+    let hasResults = false;
+    
+    rows.forEach(row => {
+      const colaborador = row.querySelector('.colaborador').textContent.toLowerCase();
+      const area = row.querySelector('.area').textContent.toLowerCase();
+      const producto = row.querySelector('.producto').textContent.toLowerCase();
+      
+      if (colaborador.includes(searchText) || area.includes(searchText) || producto.includes(searchText)) {
+        row.style.display = '';
+        hasResults = true;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    
+    // Mostrar mensaje si no hay resultados
+    const noResultsRow = document.querySelector('#devoluciones-body .no-results');
+    if (!hasResults && rows.length > 0) {
+      if (!noResultsRow) {
+        $('#devoluciones-body').append('<tr><td colspan="10" class="no-results">No se encontraron resultados</td></tr>');
+      }
+    } else if (noResultsRow) {
+      noResultsRow.remove();
+    }
+  }
+
+
 
   // Función para validar la cantidad ingresada
   function validarCantidad(index, max) {
