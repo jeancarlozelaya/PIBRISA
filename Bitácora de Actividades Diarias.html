@@ -397,6 +397,11 @@
     background-color: #007BFF; /* Color de fondo cuando está marcado */
 }
 
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -797,29 +802,32 @@ function mostrarModalSemana(semanaData) {
   modalContent.style.borderRadius = '5px';
   modalContent.style.maxWidth = '90%';
   modalContent.style.maxHeight = '90%';
-  modalContent.style.overflowY = 'auto';
+  modalContent.style.display = 'flex';
+  modalContent.style.flexDirection = 'column';
   
   modalContent.innerHTML = `
     <h2 style="margin-top: 0; text-align: center;">Editar Semana</h2>
-    <div style="margin-bottom: 15px;">
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-          <tr>
-            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4;">Actividad</th>
-            ${semanaData.map(dia => `
-              <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: center;">
-                ${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][semanaData.indexOf(dia)]}<br>
-                ${dia.fecha.split('-')[2]}
-              </th>
-            `).join('')}
-          </tr>
-        </thead>
-        <tbody id="semanaModalBody">
-          <!-- Las filas se generarán dinámicamente -->
-        </tbody>
-      </table>
+    <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+      <div style="overflow: auto; flex: 1;">
+        <table id="semanaModalTable" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4;">Actividad</th>
+              ${semanaData.map(dia => `
+                <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: center;">
+                  ${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][semanaData.indexOf(dia)]}<br>
+                  ${dia.fecha.split('-')[2]}
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody id="semanaModalBody">
+            <!-- Las filas se generarán dinámicamente -->
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div style="display: flex; justify-content: space-between;">
+    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
       <button id="cancelarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Cancelar
       </button>
@@ -832,12 +840,19 @@ function mostrarModalSemana(semanaData) {
   modal.appendChild(modalContent);
   document.body.appendChild(modal);
   
-  // Generar las filas de actividades
-  const tbody = document.getElementById('semanaModalBody');
+  // Generar las filas de actividades con colores
   const actividades = semanaData[0].actividadesLista || [];
+  const tbody = document.getElementById('semanaModalBody');
   
   actividades.forEach((actividad, index) => {
     const row = document.createElement('tr');
+    
+    // Agregar clase según la frecuencia
+    if (actividad.frecuencia === "Diario") {
+      row.style.backgroundColor = '#A6D5FA'; // Azul pastel
+    } else if (actividad.frecuencia === "Semanal") {
+      row.style.backgroundColor = '#FFC0CB'; // Rosa pastel
+    }
     
     // Celda de actividad
     const actividadCell = document.createElement('td');
@@ -858,6 +873,9 @@ function mostrarModalSemana(semanaData) {
       checkbox.dataset.fecha = dia.fecha;
       checkbox.dataset.actividad = actividad.descripcion;
       checkbox.checked = dia.actividades.includes(actividad.descripcion);
+      checkbox.style.width = '20px';
+      checkbox.style.height = '20px';
+      checkbox.style.cursor = 'pointer';
       
       cell.appendChild(checkbox);
       row.appendChild(cell);
@@ -866,7 +884,32 @@ function mostrarModalSemana(semanaData) {
     tbody.appendChild(row);
   });
   
-  // Eventos de los botones - MODIFICACIÓN IMPORTANTE
+  // Hacer los encabezados fijos
+  const table = document.getElementById('semanaModalTable');
+  const thead = table.querySelector('thead');
+  const tbodyContainer = table.parentElement;
+  
+  // Calcular el ancho de las columnas
+  const firstRow = tbody.querySelector('tr');
+  if (firstRow) {
+    const cells = firstRow.querySelectorAll('td');
+    const headers = thead.querySelectorAll('th');
+    
+    cells.forEach((cell, index) => {
+      if (headers[index]) {
+        headers[index].style.width = `${cell.offsetWidth}px`;
+        cell.style.width = `${cell.offsetWidth}px`;
+      }
+    });
+  }
+  
+  // Configurar el scroll con encabezados fijos
+  thead.style.position = 'sticky';
+  thead.style.top = '0';
+  thead.style.zIndex = '10';
+  tbodyContainer.style.overflowY = 'auto';
+  
+  // Eventos de los botones
   document.getElementById('cancelarSemanaBtn').addEventListener('click', function(e) {
     e.preventDefault();
     document.body.removeChild(modal);
@@ -898,65 +941,87 @@ function mostrarModalSemana(semanaData) {
   });
 }
 
-
 // Función para guardar los cambios de la semana
 function guardarCambiosSemana(semanaActualizada) {
-  const fecha = document.getElementById('fecha').value;
-  const tipo = document.getElementById('tipo').value;
-  const area = document.getElementById('area').value;
-  const baño = document.getElementById('baño').value;
-  const oficina = document.getElementById('oficina').value;
-  
-  // Mostrar overlay de carga
-  document.getElementById('overlay').style.display = 'flex';
-  
-  // Enviar los datos al servidor
-  const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
-  
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+  // Mostrar confirmación antes de guardar
+  Swal.fire({
+    text: "¿Estás seguro de guardar los cambios para toda la semana?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, guardar",
+    cancelButtonText: "Cancelar",
+    customClass: {
+      popup: "swal-popup",
+      confirmButton: "swal-button",
+      cancelButton: "swal-button-cancel",
+      actions: "swal-actions",
     },
-    body: new URLSearchParams({
-      fecha: fecha,
-      tipo: tipo,
-      area: area,
-      baño: baño,
-      oficina: oficina,
-      semana: JSON.stringify(semanaActualizada),
-      actividades: JSON.stringify([]), // Vacío porque estamos guardando toda la semana
-      accion: "guardarSemana"
-    })
-  })
-  .then(response => response.text())
-  .then(response => {
-    // Ocultar overlay
-    document.getElementById('overlay').style.display = 'none';
-    
-    if (response === 'Éxito') {
-      Swal.fire({
-        text: '¡Semana actualizada correctamente!',
-        icon: 'success',
-        confirmButtonText: 'Aceptar'
-      }).then(() => {
-        // Recargar los datos
-        cargarActividades();
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const fecha = document.getElementById('fecha').value;
+      const tipo = document.getElementById('tipo').value;
+      const area = document.getElementById('area').value;
+      const baño = document.getElementById('baño').value;
+      const oficina = document.getElementById('oficina').value;
+      
+      // Mostrar overlay de carga
+      document.getElementById('overlay').style.display = 'flex';
+      
+      // Enviar los datos al servidor
+      const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+      
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          fecha: fecha,
+          tipo: tipo,
+          area: area,
+          baño: baño,
+          oficina: oficina,
+          semana: JSON.stringify(semanaActualizada),
+          actividades: JSON.stringify([]),
+          accion: "guardarSemana"
+        })
+      })
+      .then(response => response.text())
+      .then(response => {
+        // Ocultar overlay
+        document.getElementById('overlay').style.display = 'none';
+        
+        if (response === 'Éxito') {
+          Swal.fire({
+            text: '¡Semana actualizada correctamente!',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            customClass: {
+              popup: "swal-popup",
+              confirmButton: "swal-button",
+              actions: "swal-actions",
+            },
+          }).then(() => {
+            // Recargar la página después de aceptar
+            location.reload();
+          });
+        } else {
+          throw new Error(response);
+        }
+      })
+      .catch(error => {
+        console.error('Error al guardar la semana:', error);
+        document.getElementById('overlay').style.display = 'none';
+        Swal.fire({
+          text: 'Error al guardar los cambios de la semana',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       });
-    } else {
-      throw new Error(response);
     }
-  })
-  .catch(error => {
-    console.error('Error al guardar la semana:', error);
-    document.getElementById('overlay').style.display = 'none';
-    Swal.fire({
-      text: 'Error al guardar los cambios de la semana',
-      icon: 'error',
-      confirmButtonText: 'Aceptar'
-    });
   });
 }
+
 
 // Función cargarActividades (mejorada con manejo de errores)
 async function cargarActividades() {
