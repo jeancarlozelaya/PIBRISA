@@ -725,111 +725,333 @@ function bloquearCampos() {
         return true;
     }
 
-
-// Función para consultar actividades existentes (actualizada)
-async function consultarActividadesExistentes(fecha, tipo, area, baño, oficina) {
-    const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
-    
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-                fecha: fecha,
-                tipo: tipo,
-                area: area,
-                baño: baño,
-                oficina: oficina,
-                accion: "consultar"
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error("Error en la consulta");
-        }
-        
-        const data = await response.json();
-        
-        // Verificar si hay error en la respuesta
-        if (data.error) {
-            console.error("Error del servidor:", data.message);
-            return [];
-        }
-        
-        // Si hay actividades, significa que ese día ya fue marcado
-        return data.actividades.length > 0 ? data.actividades : [];
-    } catch (error) {
-        console.error("Error al consultar actividades:", error);
-        return [];
-    }
+// Función para mostrar los controles de la semana
+function mostrarControlesSemana(semanaData) {
+  const semanaContainer = document.createElement('div');
+  semanaContainer.id = 'semanaContainer';
+  semanaContainer.style.margin = '20px 0';
+  semanaContainer.style.padding = '15px';
+  semanaContainer.style.border = '1px solid #ddd';
+  semanaContainer.style.borderRadius = '5px';
+  semanaContainer.style.backgroundColor = '#f9f9f9';
+  
+  semanaContainer.innerHTML = `
+    <h3 style="margin-top: 0; text-align: center;">Semana del ${formatearFecha(semanaData[0].fecha)} al ${formatearFecha(semanaData[semanaData.length - 1].fecha)}</h3>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+      ${semanaData.map((dia, index) => `
+        <div style="text-align: center; flex: 1; padding: 5px; 
+                    ${dia.fecha === document.getElementById('fecha').value ? 'background-color: #e6f7ff; border: 1px solid #007BFF;' : ''}">
+          <div style="font-weight: bold;">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}</div>
+          <div>${dia.fecha.split('-')[2]}</div>
+          <div style="font-size: 0.8em; color: ${dia.actividades.length > 0 ? 'green' : 'gray'}">
+            ${dia.actividades.length > 0 ? '✔' : '✖'}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="text-align: center;">
+      <button id="editarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Editar toda la semana
+      </button>
+    </div>
+  `;
+  
+  // Insertar después de la tabla
+  const tabla = document.getElementById('tablaActividades');
+  tabla.parentNode.insertBefore(semanaContainer, tabla.nextSibling);
+  
+  // Agregar evento al botón - MODIFICACIÓN IMPORTANTE
+  document.getElementById('editarSemanaBtn').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevenir el comportamiento predeterminado
+    mostrarModalSemana(semanaData);
+  });
 }
 
-    // Función cargarActividades (mejorada con manejo de errores)
+
+// Función para formatear fecha (DD/MM/YYYY)
+function formatearFecha(fechaStr) {
+  const [year, month, day] = fechaStr.split('-');
+  return `${day}/${month}/${year}`;
+}
+
+// Función para mostrar el modal de edición semanal
+function mostrarModalSemana(semanaData) {
+  // Crear el modal
+  const modal = document.createElement('div');
+  modal.id = 'semanaModal';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.display = 'flex';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  modal.style.zIndex = '1000';
+  
+  // Crear el contenido del modal
+  const modalContent = document.createElement('div');
+  modalContent.style.backgroundColor = 'white';
+  modalContent.style.padding = '20px';
+  modalContent.style.borderRadius = '5px';
+  modalContent.style.maxWidth = '90%';
+  modalContent.style.maxHeight = '90%';
+  modalContent.style.overflowY = 'auto';
+  
+  modalContent.innerHTML = `
+    <h2 style="margin-top: 0; text-align: center;">Editar Semana</h2>
+    <div style="margin-bottom: 15px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4;">Actividad</th>
+            ${semanaData.map(dia => `
+              <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: center;">
+                ${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][semanaData.indexOf(dia)]}<br>
+                ${dia.fecha.split('-')[2]}
+              </th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody id="semanaModalBody">
+          <!-- Las filas se generarán dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+    <div style="display: flex; justify-content: space-between;">
+      <button id="cancelarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Cancelar
+      </button>
+      <button id="guardarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Guardar Cambios
+      </button>
+    </div>
+  `;
+  
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+  
+  // Generar las filas de actividades
+  const tbody = document.getElementById('semanaModalBody');
+  const actividades = semanaData[0].actividadesLista || [];
+  
+  actividades.forEach((actividad, index) => {
+    const row = document.createElement('tr');
+    
+    // Celda de actividad
+    const actividadCell = document.createElement('td');
+    actividadCell.textContent = actividad.descripcion;
+    actividadCell.style.padding = '8px';
+    actividadCell.style.border = '1px solid #ddd';
+    row.appendChild(actividadCell);
+    
+    // Celdas de checkboxes para cada día
+    semanaData.forEach(dia => {
+      const cell = document.createElement('td');
+      cell.style.padding = '8px';
+      cell.style.border = '1px solid #ddd';
+      cell.style.textAlign = 'center';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.dataset.fecha = dia.fecha;
+      checkbox.dataset.actividad = actividad.descripcion;
+      checkbox.checked = dia.actividades.includes(actividad.descripcion);
+      
+      cell.appendChild(checkbox);
+      row.appendChild(cell);
+    });
+    
+    tbody.appendChild(row);
+  });
+  
+  // Eventos de los botones - MODIFICACIÓN IMPORTANTE
+  document.getElementById('cancelarSemanaBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.body.removeChild(modal);
+  });
+  
+  document.getElementById('guardarSemanaBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Recopilar los cambios
+    const checkboxes = document.querySelectorAll('#semanaModalBody input[type="checkbox"]');
+    const semanaActualizada = JSON.parse(JSON.stringify(semanaData));
+    
+    checkboxes.forEach(checkbox => {
+      const fecha = checkbox.dataset.fecha;
+      const actividad = checkbox.dataset.actividad;
+      const dia = semanaActualizada.find(d => d.fecha === fecha);
+      
+      if (checkbox.checked) {
+        if (!dia.actividades.includes(actividad)) {
+          dia.actividades.push(actividad);
+        }
+      } else {
+        dia.actividades = dia.actividades.filter(a => a !== actividad);
+      }
+    });
+    
+    // Guardar los cambios
+    guardarCambiosSemana(semanaActualizada);
+    document.body.removeChild(modal);
+  });
+}
+
+
+// Función para guardar los cambios de la semana
+function guardarCambiosSemana(semanaActualizada) {
+  const fecha = document.getElementById('fecha').value;
+  const tipo = document.getElementById('tipo').value;
+  const area = document.getElementById('area').value;
+  const baño = document.getElementById('baño').value;
+  const oficina = document.getElementById('oficina').value;
+  
+  // Mostrar overlay de carga
+  document.getElementById('overlay').style.display = 'flex';
+  
+  // Enviar los datos al servidor
+  const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+  
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      fecha: fecha,
+      tipo: tipo,
+      area: area,
+      baño: baño,
+      oficina: oficina,
+      semana: JSON.stringify(semanaActualizada),
+      actividades: JSON.stringify([]), // Vacío porque estamos guardando toda la semana
+      accion: "guardarSemana"
+    })
+  })
+  .then(response => response.text())
+  .then(response => {
+    // Ocultar overlay
+    document.getElementById('overlay').style.display = 'none';
+    
+    if (response === 'Éxito') {
+      Swal.fire({
+        text: '¡Semana actualizada correctamente!',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        // Recargar los datos
+        cargarActividades();
+      });
+    } else {
+      throw new Error(response);
+    }
+  })
+  .catch(error => {
+    console.error('Error al guardar la semana:', error);
+    document.getElementById('overlay').style.display = 'none';
+    Swal.fire({
+      text: 'Error al guardar los cambios de la semana',
+      icon: 'error',
+      confirmButtonText: 'Aceptar'
+    });
+  });
+}
+
+// Función cargarActividades (mejorada con manejo de errores)
 async function cargarActividades() {
-    if (!verificarCampos()) return;
+  if (!verificarCampos()) return;
 
-    const tipo = document.getElementById("tipo").value;
-    const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
+  const tipo = document.getElementById("tipo").value;
+  const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
+  
+  // Mostrar overlay de carga
+  document.getElementById("overlay").style.display = "flex";
+
+  try {
+    // Generar tabla con actividades básicas
+    generarTablaActividades(actividades);
     
-    // Mostrar overlay de carga
-    document.getElementById("overlay").style.display = "flex";
-
-    try {
-        // Generar tabla con actividades básicas
-        generarTablaActividades(actividades);
-        
-        // Obtener datos para la consulta
-        const fecha = document.getElementById("fecha").value;
-        const tipo = document.getElementById("tipo").value;
-        const area = document.getElementById("area").value;
-        const baño = document.getElementById("baño").value;
-        const oficina = document.getElementById("oficina").value;
-        
-        // Consultar actividades existentes
-        const actividadesExistentes = await consultarActividadesExistentes(fecha, tipo, area, baño, oficina);
-        
-        // Mostrar mensaje si hay error en la consulta
-        if (actividadesExistentes === null) {
-            Swal.fire({
-                text: "Error al consultar actividades existentes",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
-            return;
-        }
-        
-        // Marcar checkboxes si hay actividades existentes
-        if (actividadesExistentes.length > 0) {
-            actividadesExistentes.forEach(actividad => {
-                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-        }
-        
-        // BLOQUEAR CAMPOS SIEMPRE (cambio principal)
-        bloquearCampos();
-        
-        // Mostrar tabla
-        document.getElementById("tablaActividades").style.display = "table";
-        
-    } catch (error) {
-        console.error("Error al cargar actividades:", error);
-        Swal.fire({
-            text: "Error al cargar actividades existentes",
-            icon: "error",
-            confirmButtonText: "Aceptar"
-        });
-    } finally {
-        // Ocultar overlay
-        document.getElementById("overlay").style.display = "none";
-        actualizarBotonEnviar();
+    // Obtener datos para la consulta
+    const fecha = document.getElementById("fecha").value;
+    const tipo = document.getElementById("tipo").value;
+    const area = document.getElementById("area").value;
+    const baño = document.getElementById("baño").value;
+    const oficina = document.getElementById("oficina").value;
+    
+    // Consultar actividades existentes (ahora con datos semanales)
+    const response = await fetch("https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        fecha: fecha,
+        tipo: tipo,
+        area: area,
+        baño: baño,
+        oficina: oficina,
+        accion: "consultarSemana"
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error("Error en la consulta");
     }
+    
+    const data = await response.json();
+    
+    // Verificar si hay error en la respuesta
+    if (data.error) {
+      console.error("Error del servidor:", data.message);
+      return;
+    }
+    
+    // Marcar checkboxes para el día seleccionado
+    if (data.actividades && data.actividades.length > 0) {
+      data.actividades.forEach(actividad => {
+        const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+        }
+      });
+    }
+    
+    // Mostrar controles de la semana si hay datos
+    if (data.semana && data.semana.length > 0) {
+      // Agregar la lista completa de actividades a cada día para el modal de edición
+      data.semana.forEach(dia => {
+        dia.actividadesLista = actividades;
+      });
+      
+      // Eliminar el contenedor de semana si ya existe
+      const existingContainer = document.getElementById('semanaContainer');
+      if (existingContainer) {
+        existingContainer.remove();
+      }
+      
+      mostrarControlesSemana(data.semana);
+    }
+    
+    // BLOQUEAR CAMPOS SIEMPRE
+    bloquearCampos();
+    
+    // Mostrar tabla
+    document.getElementById("tablaActividades").style.display = "table";
+    
+  } catch (error) {
+    console.error("Error al cargar actividades:", error);
+    Swal.fire({
+      text: "Error al cargar actividades existentes",
+      icon: "error",
+      confirmButtonText: "Aceptar"
+    });
+  } finally {
+    // Ocultar overlay
+    document.getElementById("overlay").style.display = "none";
+    actualizarBotonEnviar();
+  }
 }
-
 
     // Modificar los event listeners para llamar a cargarActividades cuando los campos estén completos
     document.getElementById("area").addEventListener("change", function() {
