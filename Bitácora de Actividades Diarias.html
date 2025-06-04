@@ -740,37 +740,53 @@ function mostrarControlesSemana(semanaData) {
   semanaContainer.style.borderRadius = '5px';
   semanaContainer.style.backgroundColor = '#f9f9f9';
   
+  // Obtener mes de la fecha seleccionada
+  const fechaSeleccionada = document.getElementById('fecha').value;
+  const mesSeleccionado = fechaSeleccionada.split('-')[1];
+  
+  // Contar cuántos días no son del mismo mes
+  const diasOtroMes = semanaData.filter(dia => !dia.mismoMes).length;
+  
   semanaContainer.innerHTML = `
     <h3 style="margin-top: 0; text-align: center;">Semana del ${formatearFecha(semanaData[0].fecha)} al ${formatearFecha(semanaData[semanaData.length - 1].fecha)}</h3>
     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
       ${semanaData.map((dia, index) => `
         <div style="text-align: center; flex: 1; padding: 5px; 
-                    ${dia.fecha === document.getElementById('fecha').value ? 'background-color: #e6f7ff; border: 1px solid #007BFF;' : ''}">
+                    ${!dia.mismoMes ? 'opacity: 0.5; background-color: #f0f0f0;' : ''}
+                    ${dia.fecha === fechaSeleccionada ? 'background-color: #e6f7ff; border: 1px solid #007BFF;' : ''}">
           <div style="font-weight: bold;">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}</div>
-          <div>${dia.fecha.split('-')[2]}</div>
+          <div>${dia.fecha.split('-')[2]}/${dia.fecha.split('-')[1]}</div>
           <div style="font-size: 0.8em; color: ${dia.actividades.length > 0 ? 'green' : 'gray'}">
-            ${dia.actividades.length > 0 ? '✔' : '✖'}
+            ${dia.mismoMes ? (dia.actividades.length > 0 ? '✔' : '✖') : '—'}
           </div>
         </div>
       `).join('')}
     </div>
     <div style="text-align: center;">
       <button id="editarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Editar toda la semana
+        Editar semana actual (${7 - diasOtroMes} días)
       </button>
     </div>
+    ${diasOtroMes > 0 ? `
+      <div style="text-align: center; margin-top: 10px; font-size: 0.8em; color: #666;">
+        ${diasOtroMes} día(s) sombreado(s) pertenece(n) a otro mes
+      </div>
+    ` : ''}
   `;
   
   // Insertar después de la tabla
   const tabla = document.getElementById('tablaActividades');
   tabla.parentNode.insertBefore(semanaContainer, tabla.nextSibling);
   
-  // Agregar evento al botón - MODIFICACIÓN IMPORTANTE
+  // Agregar evento al botón - solo editar días del mismo mes
   document.getElementById('editarSemanaBtn').addEventListener('click', function(e) {
-    e.preventDefault(); // Prevenir el comportamiento predeterminado
-    mostrarModalSemana(semanaData);
+    e.preventDefault();
+    mostrarModalSemana(semanaData.filter(dia => dia.mismoMes));
   });
 }
+
+
+
 
 
 // Función para formatear fecha (DD/MM/YYYY)
@@ -781,6 +797,12 @@ function formatearFecha(fechaStr) {
 
 // Función para mostrar el modal de edición semanal
 function mostrarModalSemana(semanaData) {
+
+  // Filtrar solo los días del mismo mes
+  const mesSeleccionado = document.getElementById('fecha').value.split('-')[1];
+  const diasMismoMes = semanaData.filter(dia => dia.fecha.split('-')[1] === mesSeleccionado);
+
+
   // Crear el modal
   const modal = document.createElement('div');
   modal.id = 'semanaModal';
@@ -992,6 +1014,9 @@ function guardarCambiosSemana(semanaActualizada) {
         document.getElementById('overlay').style.display = 'none';
         
         if (response === 'Éxito') {
+          // LIMPIAR LOCALSTORAGE ANTES DE MOSTRAR EL MENSAJE DE ÉXITO
+          localStorage.removeItem('formData');
+          
           Swal.fire({
             text: '¡Semana actualizada correctamente!',
             icon: 'success',
@@ -1200,31 +1225,32 @@ async function cargarActividades() {
     }
 
     // Función para enviar datos
-    function enviarDatos(fecha, tipo, area, baño, oficina, actividades) {
-        let url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec"; // SCRIPT DE ENVIOS
-        let alertaUrl = "https://script.google.com/macros/s/AKfycbyD1cxV7dX7yHG0zUH7ISLexvTFpyFA4xFmmcgD5nk9vQino7EqIlXXOUYRq6Cb-Zhv9A/exec"; // SCRIPT DE ALERTAS
+function enviarDatos(fecha, tipo, area, baño, oficina, actividades) {
+    let url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+    let alertaUrl = "https://script.google.com/macros/s/AKfycbyD1cxV7dX7yHG0zUH7ISLexvTFpyFA4xFmmcgD5nk9vQino7EqIlXXOUYRq6Cb-Zhv9A/exec";
 
+    // Enviar los datos usando AJAX
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {
+            fecha: fecha,
+            tipo: tipo,
+            area: area,
+            baño: baño,
+            oficina: oficina,
+            actividades: JSON.stringify(actividades)
+        },
+        success: function(response) {
+            console.log("Respuesta del servidor:", response);
 
-        // Enviar los datos usando AJAX
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {
-                fecha: fecha,
-                tipo: tipo,
-                area: area,
-                baño: baño,
-                oficina: oficina,
-                actividades: JSON.stringify(actividades)
-            },
-            success: function(response) {
-                console.log("Respuesta del servidor:", response);
+            // Ocultar el overlay de espera
+            document.getElementById('overlay').style.display = 'none';
 
-                // Ocultar el overlay de espera
-                document.getElementById('overlay').style.display = 'none';
+            // Limpiar localStorage después de enviar
+            localStorage.removeItem('formData');
 
             /***** NUEVO MÉTODO PARA ENVIAR ALERTAS *****/
-            // Solución definitiva usando imagen invisible (no CORS)
             const img = new Image();
             const params = new URLSearchParams();
             params.append('tipo', tipo);
@@ -1253,13 +1279,9 @@ async function cargarActividades() {
                         popup: "swal-popup",
                     },
                 }).then(() => {
-                    if (typeof limpiarRespuestasGuardadas === 'function') {
-                        limpiarRespuestasGuardadas();
-                    }
                     location.reload();
                 });
             }, 500);
-            /***** FIN DEL NUEVO MÉTODO *****/
         },
         error: function(xhr, status, error) {
             console.error("Error al enviar los datos:", xhr.responseText);
@@ -1272,6 +1294,7 @@ async function cargarActividades() {
         }
     });
 }
+
 
     // Función para guardar las respuestas en localStorage
     function guardarRespuestas() {
