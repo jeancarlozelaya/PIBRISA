@@ -417,6 +417,54 @@
 }
 
 
+
+
+
+
+/* Estilo para el separador de categoría */
+.category-separator {
+  width: 100%;
+  clear: both;
+  text-align: center;
+  margin: 15px 0 5px 0;
+  padding: 8px 0;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  font-size: 1.1em;
+  grid-column: 1 / -1; /* Para grid */
+  flex-basis: 100%; /* Para flexbox en móvil */
+}
+
+/* Mantenemos todos tus estilos originales para los productos */
+.productos-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Estilos para móvil - igual que antes */
+@media (max-width: 768px) {
+  .productos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .producto {
+    width: calc(50% - 8px); /* 2 productos por fila */
+    box-sizing: border-box;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .producto {
+    width: 100%; /* 1 producto por fila */
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -509,6 +557,24 @@
 </div>
 
 <script>
+
+
+// Extender jQuery con método firstUntil
+jQuery.fn.firstUntil = function(selector) {
+  const result = $();
+  this.each(function() {
+    let next = $(this).next();
+    while (next.length && !next.is(selector)) {
+      result.add(next);
+      next = next.next();
+    }
+  });
+  return result;
+};
+
+
+
+
   // Variables globales
   let productos = [];
 
@@ -551,28 +617,27 @@
     });
   }
 
-  // Función para mostrar productos en la interfaz
-// Función para mostrar productos en la interfaz
+// Función para mostrar productos en la interfaz con categorías
 function mostrarProductosEnUI() {
   const productosContainer = $('#productos');
   productosContainer.empty();
   
-  // Variable para controlar si debemos crear un nuevo contenedor
-  let nuevoContenedor = false;
+  let currentCategory = null;
   
   productos.forEach((producto, index) => {
-    // Si el producto es "-", marcamos para crear un nuevo contenedor en la siguiente iteración
-    if (producto.nombre.trim() === "-") {
-      nuevoContenedor = true;
-      return; // Saltamos este producto
+    // Verificar si es un encabezado de categoría (comienza con "-")
+    if (producto.nombre.startsWith("-")) {
+      // Crear un separador de categoría que ocupe toda la línea
+      currentCategory = producto.nombre.substring(1).trim();
+      productosContainer.append(`
+        <div class="category-separator" style="width: 100%; clear: both;">
+          <strong>${currentCategory}</strong>
+        </div>
+      `);
+      return; // Saltar a la siguiente iteración
     }
     
-    // Si necesitamos un nuevo contenedor, lo creamos
-    if (nuevoContenedor) {
-      productosContainer.append('<div style="flex-basis: 100%; height: 0;"></div>'); // Esto fuerza un salto de línea
-      nuevoContenedor = false;
-    }
-    
+    // Crear el elemento del producto (igual que antes)
     let productoHtml = `
       <div class="producto" id="${producto.id}">
         <img src="${producto.imagen || ''}" alt="${producto.nombre}" onerror="this.style.display='none'">
@@ -588,9 +653,13 @@ function mostrarProductosEnUI() {
         </div>
       </div>
     `;
+    
     productosContainer.append(productoHtml);
   });
 }
+
+
+
 
   // Función para configurar eventos
   function configurarEventos() {
@@ -603,19 +672,57 @@ function mostrarProductosEnUI() {
   }
 
   // Función para filtrar productos
-  function filtrarProductos() {
-    const textoBusqueda = $('#buscador').val().toLowerCase();
-    const $productos = $('.producto');
-    
-    $productos.hide();
-    
-    $productos.each(function() {
-      const nombreProducto = $(this).find('label').text().toLowerCase();
-      if (nombreProducto.includes(textoBusqueda)) {
-        $(this).show();
-      }
-    });
+function filtrarProductos() {
+  const textoBusqueda = $('#buscador').val().toLowerCase();
+  
+  if (textoBusqueda === '') {
+    // Mostrar todo si no hay búsqueda
+    $('.producto, .category-separator').show();
+    return;
   }
+  
+  // Ocultar todos los productos primero
+  $('.producto').hide();
+  
+  // Mostrar solo productos que coincidan
+  $('.producto').each(function() {
+    const nombreProducto = $(this).find('label').text().toLowerCase();
+    if (nombreProducto.includes(textoBusqueda)) {
+      $(this).show();
+    }
+  });
+  
+  // Ocultar/mostrar encabezados de categoría según si tienen productos visibles
+  $('.category-separator').each(function() {
+    const $separator = $(this);
+    const $nextElements = $separator.nextUntil('.category-separator');
+    const hasVisibleProducts = $nextElements.filter('.producto:visible').length > 0;
+    
+    if (hasVisibleProducts) {
+      $separator.show();
+      
+      // Asegurar que los productos ocultos entre separadores permanezcan ocultos
+      $nextElements.filter('.producto').each(function() {
+        const nombre = $(this).find('label').text().toLowerCase();
+        if (!nombre.includes(textoBusqueda)) {
+          $(this).hide();
+        }
+      });
+    } else {
+      $separator.hide();
+    }
+  });
+  
+  // Caso especial: mostrar productos antes del primer separador si coinciden
+  const $firstElements = $('#productos').children().firstUntil('.category-separator');
+  const hasVisibleBeforeFirstSeparator = $firstElements.filter('.producto:visible').length > 0;
+  
+  if (!hasVisibleBeforeFirstSeparator) {
+    $firstElements.filter('.producto').hide();
+  }
+}
+
+
 
   // Función para cambiar cantidad
   function cambiarCantidad(index, valor) {
