@@ -1,902 +1,958 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pisos Brillantes</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-    .header {
-      background-color: #007BFF;
-      color: white;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 1.5em;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pisos Brillantes</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
 
-    @media screen and (max-width: 600px) {
-      .back-button {
-        font-size: 0.9em;
-        padding: 12px 18px;
-        top: 57px;
-        left: 0px;
-      }
-    }
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    @media screen and (display-mode: standalone) {
-      body {
-        margin: 0;
-        padding: 0;
-      }
-    }
+        @media screen and (max-width: 600px) {
+            .back-button {
+                font-size: 0.9em;
+                padding: 12px 18px;
+                top: 57px;
+                left: 0px;
+            }
+        }
 
-    .form-container label {
-      display: block;
-      margin: 10px 0 5px;
-      font-size: 14px;
-      color: #555;
-    }
-    
-    .form-container select, .form-container input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      font-size: 14px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
-    }
-    
-    .form-container select:focus, .form-container input:focus {
-      border-color: #007bff;
-      outline: none;
-    }
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
 
-    .form-container input[type="date"] {
-      padding: 12px;
-    }
+        .form-container label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .form-container select, .form-container input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        .form-container select:focus, .form-container input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
 
-    .form-container .select-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+        .form-container input[type="date"] {
+            padding: 12px;
+        }
 
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    
-    h1 {
-      text-align: center;
-      color: #333;
-      margin-top: 20px;
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-    
-    .form-container {
-      width: 80%;
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        .form-container .select-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    .producto {
-      margin-bottom: 20px;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      background-color: #f9f9f9;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      border: 1px solid #ddd;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      font-size: 12px;
-      font-weight: bold;
-    }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .form-container {
+            width: 80%;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-    .producto:hover {
-      background-color: #e0e0e0;
-    }
+        .producto {
+            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
 
-    .producto img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-    }
+        .producto:hover {
+            background-color: #e0e0e0;
+        }
 
-    .producto label {
-      display: block;
-      color: #333;
-      flex-grow: 1;
-    }
-    
-    .producto .cantidad {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      align-items: center;
-    }
-    
-    .cantidad button, .cantidad input {
-      width: 30px;
-      height: 30px;
-      font-size: 14px;
-      cursor: pointer;
-      border-radius: 4px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .cantidad input {
-      width: 50%;
-      max-width: 200px;
-      text-align: center;
-      font-size: 14px;
-    }
+        .producto img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
 
-    @media (min-width: 768px) {
-      .cantidad input {
-        width: 150px;
-        font-size: 16px;
-      }
-    }
+        .producto label {
+            display: block;
+            color: #333;
+            flex-grow: 1;
+        }
+        
+        .producto .cantidad {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .cantidad button, .cantidad input {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .cantidad input {
+            width: 50%;
+            max-width: 200px;
+            text-align: center;
+            font-size: 14px;
+        }
 
-    @media (min-width: 1024px) {
-      .cantidad input {
-        width: 180px;
-      }
-    }
+        @media (min-width: 768px) {
+            .cantidad input {
+                width: 150px;
+                font-size: 16px;
+            }
+        }
 
-    .cantidad button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    
-    .cantidad input:disabled {
-      background-color: #e0e0e0;
-      color: #999;
-    }
-    
-    .agotado {
-      color: red;
-    }
-    
-    .disponible {
-      color: green;
-    }
-    
-    .productos-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+        @media (min-width: 1024px) {
+            .cantidad input {
+                width: 180px;
+            }
+        }
 
-    #seguir {
-      margin-top: 0;
-      margin-right: 10px;
-      padding: 10px 20px;
-      width: 100%;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      display: inline-block;
-    }
-    
-    #seguir:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    
-    .button-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .button-container button {
-      font-size: 16px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 45%;
-      box-sizing: border-box;
-    }
+        .cantidad button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .cantidad input:disabled {
+            background-color: #e0e0e0;
+            color: #999;
+        }
+        
+        .agotado {
+            color: red;
+        }
+        
+        .disponible {
+            color: green;
+        }
+        
+        .productos-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    
-    .cantidad button.minus {
-      background-color: #dc3545;
-    }
-    
-    .cantidad button.plus {
-      background-color: #28a745;
-    }
-    
-    @media (max-width: 768px) {
-      .producto {
-        font-size: 12px;
-      }
-      
-      .productos-container {
-        grid-template-columns: repeat(2, 1fr);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        background-color: white;
-        padding: 15px 0;
-      }
-      
-      .producto {
-        width: calc(50% - 7.5px);
-        box-sizing: border-box;
-      }
-    }
+        #seguir {
+            margin-top: 0;
+            margin-right: 10px;
+            padding: 10px 20px;
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        #seguir:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .button-container button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 45%;
+            box-sizing: border-box;
+        }
 
-    .swal-content {
-      font-size: 0.9em;
-      line-height: 1.4;
-    }
-    
-    .swal-button, .swal-button-cancel {
-      font-size: 0.9em;
-      padding: 10px 20px;
-      min-width: 100px;
-      text-align: center;
-    }
-    
-    .swal-popup {
-      width: 300px;
-      max-width: 90%;
-    }
-    
-    .swal-button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-    }
-    
-    .swal-button-cancel {
-      background-color: #f5f5f5;
-      color: #333;
-      border: none;
-      border-radius: 4px;
-    }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .cantidad button.minus {
+            background-color: #dc3545;
+        }
+        
+        .cantidad button.plus {
+            background-color: #28a745;
+        }
+        
+        @media (max-width: 768px) {
+            .producto {
+                font-size: 12px;
+            }
+            
+            .productos-container {
+                grid-template-columns: repeat(2, 1fr);
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                background-color: white;
+                padding: 15px 0;
+            }
+            
+            .producto {
+                width: calc(50% - 7.5px);
+                box-sizing: border-box;
+            }
+        }
 
+        .swal-content {
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .swal-button, .swal-button-cancel {
+            font-size: 0.9em;
+            padding: 10px 20px;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .swal-popup {
+            width: 300px;
+            max-width: 90%;
+        }
+        
+        .swal-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .swal-button-cancel {
+            background-color: #f5f5f5;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+        }
 
-    .question-container {
-      margin-bottom: 20px;
-      text-align: left;
-      padding: 10px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      background-color: #f9f9f9;
-      transition: border-color 0.3s;
-      box-sizing: border-box;
-    }
-    
-    .question-container textarea {
-      padding: 15px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      width: 100%;
-      font-size: 16px;
-      background-color: #f9f9f9;
-      color: #333;
-      transition: border-color 0.3s;
-      box-sizing: border-box;
-      margin-top: 5px;
-      height: 200px;
-      resize: vertical;
-    }
-    
-    .question-container:hover {
-      border-color: #007BFF;
-    }
+        .question-container {
+            margin-bottom: 20px;
+            text-align: left;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .question-container textarea {
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+            margin-top: 5px;
+            height: 200px;
+            resize: vertical;
+        }
+        
+        .question-container:hover {
+            border-color: #007BFF;
+        }
 
-    .question-container input[type="date"],
-    .question-container textarea,
-    .question-container select {
-      padding: 10px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      width: 100%;
-      font-size: 16px;
-      background-color: #f9f9f9;
-      color: #333;
-      transition: border-color 0.3s;
-      box-sizing: border-box;
-      margin-top: 5px;
-    }
-    
-    .question-container input[type="date"]:focus,
-    .question-container textarea:focus,
-    .question-container select:focus {
-      border-color: #007BFF;
-      outline: none;
-    }
-    
-    .question-container label {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 5px;
-      display: block;
-    }
+        .question-container input[type="date"],
+        .question-container textarea,
+        .question-container select {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        
+        .question-container input[type="date"]:focus,
+        .question-container textarea:focus,
+        .question-container select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        
+        .question-container label {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: block;
+        }
 
-    .search-container {
-      margin: 20px 0;
-      width: 100%;
-    }
-    
-    #buscador {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      box-sizing: border-box;
-      margin-bottom: 15px;
-    }
-    
-    #buscador:focus {
-      border-color: #007bff;
-      outline: none;
-    }
+        .search-container {
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        #buscador {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        
+        #buscador:focus {
+            border-color: #007bff;
+            outline: none;
+        }
 
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
 
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 123, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: #007BFF;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
 
+        #loadingMessage {
+            text-align: center;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
 
-#overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  flex-direction: column;
-}
+        #loadingMessage h3 {
+            margin: 0 0 10px;
+            font-size: 1.2em;
+        }
 
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid rgba(0, 123, 255, 0.2);
-  border-radius: 50%;
-  border-top-color: #007BFF;
-  animation: spin 1s ease-in-out infinite;
-  margin-bottom: 20px;
-}
+        #loadingMessage p {
+            margin: 0;
+            color: #666;
+        }
 
-#loadingMessage {
-  text-align: center;
-  color: #333;
-  font-family: Arial, sans-serif;
-}
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-#loadingMessage h3 {
-  margin: 0 0 10px;
-  font-size: 1.2em;
-}
+        /* Estilo para el separador de categoría */
+        .category-separator {
+            width: 100%;
+            clear: both;
+            text-align: left; /* Alineado a la izquierda */
+            margin: 15px 0 5px 0;
+            padding: 8px 15px; /* Más padding para el icono */
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-size: 1.1em;
+            grid-column: 1 / -1; /* Para grid */
+            flex-basis: 100%; /* Para flexbox en móvil */
+            cursor: pointer; /* Para indicar que es clicable */
+            display: flex; /* Para alinear el texto y el icono */
+            justify-content: space-between; /* Para separar el texto y el icono */
+            align-items: center;
+        }
 
-#loadingMessage p {
-  margin: 0;
-  color: #666;
-}
+        .category-separator strong {
+            flex-grow: 1; /* Permite que el texto ocupe el espacio disponible */
+        }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+        .category-separator .toggle-icon {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
 
+        .category-separator.collapsed .toggle-icon {
+            transform: rotate(-90deg); /* Gira la flecha cuando está colapsado */
+        }
 
+        /* Mantenemos todos tus estilos originales para los productos */
+        .productos-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
+        /* Estilos para móvil - igual que antes */
+        @media (max-width: 768px) {
+            .productos-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                background-color: white;
+                padding: 15px 0;
+            }
+            
+            .producto {
+                width: calc(50% - 8px); /* 2 productos por fila */
+                box-sizing: border-box;
+            }
+        }
 
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            .producto {
+                width: 100%; /* 1 producto por fila */
+            }
+        }
 
+        /* Estilos para los botones flotantes */
+        .scroll-buttons-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-/* Estilo para el separador de categoría */
-.category-separator {
-  width: 100%;
-  clear: both;
-  text-align: center;
-  margin: 15px 0 5px 0;
-  padding: 8px 0;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  font-size: 1.1em;
-  grid-column: 1 / -1; /* Para grid */
-  flex-basis: 100%; /* Para flexbox en móvil */
-}
+        .scroll-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%; /* Hace que el botón sea redondo */
+            width: 45px; /* Tamaño del botón */
+            height: 45px; /* Tamaño del botón */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em; /* Tamaño del icono */
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
 
-/* Mantenemos todos tus estilos originales para los productos */
-.productos-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
-}
+        .scroll-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1); /* Ligero agrandamiento al pasar el mouse */
+        }
 
-/* Estilos para móvil - igual que antes */
-@media (max-width: 768px) {
-  .productos-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-  
-  .producto {
-    width: calc(50% - 8px); /* 2 productos por fila */
-    box-sizing: border-box;
-  }
-}
-
-
-
-
-  </style>
+        /* Media query para pantallas más pequeñas */
+        @media (max-width: 600px) {
+            .scroll-buttons-container {
+                bottom: 15px;
+                right: 15px;
+                gap: 8px;
+            }
+            .scroll-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="header">Pisos Brillantes</div>
-  
-  <div class="form-container">
-    <h1>Requisición de Productos</h1>
+    <div class="header">Pisos Brillantes</div>
+    
+    <div class="form-container">
+        <h1>Requisición de Productos</h1>
 
-    <div class="question-container">
-      <div>
-        <label for="fecha"><strong>Fecha:</strong></label>
-        <input type="date" id="fecha" name="fecha">
-      </div>
+        <div class="question-container">
+            <div>
+                <label for="fecha"><strong>Fecha:</strong></label>
+                <input type="date" id="fecha" name="fecha">
+            </div>
 
+            <label for="colaborador"><strong>Colaborador:</strong></label>
+            <select id="colaborador" name="colaborador">
+                <option value="">Seleccionar colaborador</option>
+                <option value="Colaborador Externo">Colaborador Externo</option>
+                <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
+                <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
+                <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
+                <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
+                <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
+                <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+                <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
+                <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
+                <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
+                <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
+            </select>
 
+            <label for="area"><strong>Destino:</strong></label>
+            <select id="area" name="area">
+                <option value="">Seleccionar área</option>
+                <option value="USO PROPIO">USO PROPIO</option>
+                <option value="Administración">Administración</option>
+                <option value="Admin - Baño de Gerencia">Admin - Baño de Gerencia</option>
+                <option value="Admin - Baño de Sala de Reuniones">Admin - Baño de Sala de Reuniones</option>
+                <option value="Admin - Baños de Hombres">Admin - Baños de Hombres</option>
+                <option value="Admin - Baños de Mujeres">Admin - Baños de Mujeres</option>   
+                <option value="Almacén General">Almacén General</option>
+                <option value="Baños de Tolderos">Baños de Tolderos</option>
+                <option value="Baños de Transportistas">Baños de Transportistas</option>
+                <option value="Bodega de Limpieza">Bodega de Limpieza</option>
+                <option value="Cafetería">Cafetería</option>
+                <option value="Camerinos Contratistas">Camerinos Contratistas</option>
+                <option value="Camerinos Permanentes">Camerinos Permanentes</                option>
+                <option value="Chiminike">Chiminike</option>
+                <option value="Club de Argos">Club de Argos</option>
+                <option value="Despacho">Despacho</option>
+                <option value="Enfermería">Enfermería</option>
+                <option value="Equipo Móvil">Equipo Móvil</option>
+                <option value="ERT">ERT</option>
+                <option value="Expedición">Expedición</option>
+                <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
+                <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
+                <option value="Machaqueo A">Machaqueo A</option>
+                <option value="Posta Principal">Posta Principal</option>
+                <option value="Postas Externas">Postas Externas</option>
+                <option value="Proyecto Pitaya / ICEC">Proyecto Pitaya / ICEC</option>
+                <option value="Sala de Control">Sala de Control</option>
+                <option value="Salón Vial">Salón Vial</option>
+                <option value="Taller Eléctrico">Taller Eléctrico</option>
+            </select>
+        </div>
 
-        <label for="colaborador"><strong>Colaborador:</strong></label>
-        <select id="colaborador" name="colaborador">
-            <option value="">Seleccionar colaborador</option>
-            <option value="Colaborador Externo">Colaborador Externo</option>
-            <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
-            <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-            <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-            <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
-            <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
-            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-            <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
-            <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
-            <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
-            <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
-        </select>
+        <label><strong>Seleccione los productos a requisar:</strong></label>
 
-        <label for="area"><strong>Destino:</strong></label>
-        <select id="area" name="area">
-            <option value="">Seleccionar área</option>
-            <option value="USO PROPIO">USO PROPIO</option>
-            <option value="Administración">Administración</option>
-            <option value="Admin - Baño de Gerencia">Admin - Baño de Gerencia</option>
-            <option value="Admin - Baño de Sala de Reuniones">Admin - Baño de Sala de Reuniones</option>
-            <option value="Admin - Baños de Hombres">Admin - Baños de Hombres</option>
-            <option value="Admin - Baños de Mujeres">Admin - Baños de Mujeres</option>   
-            <option value="Almacén General">Almacén General</option>
-            <option value="Baños de Tolderos">Baños de Tolderos</option>
-            <option value="Baños de Transportistas">Baños de Transportistas</option>
-            <option value="Bodega de Limpieza">Bodega de Limpieza</option>
-            <option value="Cafetería">Cafetería</option>
-            <option value="Camerinos Contratistas">Camerinos Contratistas</option>
-            <option value="Camerinos Permanentes">Camerinos Permanentes</option>
-            <option value="Chiminike">Chiminike</option>
-            <option value="Club de Argos">Club de Argos</option>
-            <option value="Despacho">Despacho</option>
-            <option value="Enfermería">Enfermería</option>
-            <option value="Equipo Móvil">Equipo Móvil</option>
-            <option value="ERT">ERT</option>
-            <option value="Expedición">Expedición</option>
-            <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
-            <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
-            <option value="Machaqueo A">Machaqueo A</option>
-            <option value="Posta Principal">Posta Principal</option>
-            <option value="Postas Externas">Postas Externas</option>
-            <option value="Proyecto Pitaya / ICEC">Proyecto Pitaya / ICEC</option>
-            <option value="Sala de Control">Sala de Control</option>
-            <option value="Salón Vial">Salón Vial</option>
-            <option value="Taller Eléctrico">Taller Eléctrico</option>
-        </select>
+        <form id="formulario">
+            <div class="search-container">
+                <input type="text" id="buscador" placeholder="Buscar productos...">
+            </div>
+
+            <div class="productos-container" id="productos"></div>
+            <br>
+
+            <div class="button-container">
+                <button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
+            </div>
+        </form>
     </div>
 
-    <label><strong>Seleccione los productos a requisar:</strong></label>
-
-    <form id="formulario">
-      <div class="search-container">
-        <input type="text" id="buscador" placeholder="Buscar productos...">
-      </div>
-
-      <div class="productos-container" id="productos"></div>
-      <br>
-
-      <div class="button-container">
-        <button type="button" id="seguir" disabled onclick="enviardatos()">Enviar</button>
-      </div>
-    </form>
-  </div>
-
 <div id="overlay">
-  <div class="spinner"></div>
-  <div id="loadingMessage">
-    <h4>Por favor espera un momento...</h4>
-    <p></p>
-  </div>
+    <div class="spinner"></div>
+    <div id="loadingMessage">
+        <h4>Por favor espera un momento...</h4>
+        <p></p>
+    </div>
 </div>
 
+<div class="scroll-buttons-container">
+    <button class="scroll-button" onclick="scrollToTop()" title="Ir al inicio">&#9650;</button> <button class="scroll-button" onclick="scrollToBottom()" title="Ir al final">&#9660;</button> </div>
+
 <script>
-
-
-// Extender jQuery con método firstUntil
-jQuery.fn.firstUntil = function(selector) {
-  const result = $();
-  this.each(function() {
-    let next = $(this).next();
-    while (next.length && !next.is(selector)) {
-      result.add(next);
-      next = next.next();
-    }
-  });
-  return result;
-};
-
-
-
-
-  // Variables globales
-  let productos = [];
-
-  // Configuración inicial al cargar la página
-  document.addEventListener('DOMContentLoaded', function() {
-    // Establecer fecha actual
-    var today = new Date();
-    var yyyy = today.getFullYear();
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var dd = String(today.getDate()).padStart(2, '0');
-    document.getElementById("fecha").value = yyyy + '-' + mm + '-' + dd;
-   
-    // Cargar productos desde Google Sheets
-    cargarProductos();
-    
-    // Configurar eventos
-    configurarEventos();
-  });
-
-
-
-  // Función para cargar productos desde Google Sheets
-  function cargarProductos() {
-    $('#overlay').show();
-    
-    $.get("https://script.google.com/macros/s/AKfycbxE5J-WQB6MVqcdDlN3WiwKJptv5rMKCRzeQmeSNbPqLCJ7gimxy02HcFKjNjn_RU_0QQ/exec", function(data) {
-      $('#overlay').hide();
-      
-      if (data.error) {
-        Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
-        return;
-      }
-      
-      productos = data.productos;
-      mostrarProductosEnUI();
-      
-    }).fail(function() {
-      $('#overlay').hide();
-      Swal.fire('Error', 'No se pudo conectar al servidor', 'error');
-    });
-  }
-
-// Función para mostrar productos en la interfaz con categorías
-function mostrarProductosEnUI() {
-  const productosContainer = $('#productos');
-  productosContainer.empty();
-  
-  let currentCategory = null;
-  
-  productos.forEach((producto, index) => {
-    // Verificar si es un encabezado de categoría (comienza con "-")
-    if (producto.nombre.startsWith("-")) {
-      // Crear un separador de categoría que ocupe toda la línea
-      currentCategory = producto.nombre.substring(1).trim();
-      productosContainer.append(`
-        <div class="category-separator" style="width: 100%; clear: both;">
-          <strong>${currentCategory}</strong>
-        </div>
-      `);
-      return; // Saltar a la siguiente iteración
-    }
-    
-    // Crear el elemento del producto (igual que antes)
-    let productoHtml = `
-      <div class="producto" id="${producto.id}">
-        <img src="${producto.imagen || ''}" alt="${producto.nombre}" onerror="this.style.display='none'">
-        <label>${producto.nombre}</label>
-        ${producto.devolucion === 'X' ? '<span style="color: green; font-size: 0.8em;">Retornable</span>' : ''}
-        <span id="cantidadRestante${index}" class="${producto.cantidad === 0 ? 'agotado' : producto.cantidad > 0 ? 'disponible' : ''}">
-          ${producto.cantidad === 0 ? '0 restantes' : `${producto.cantidad} restantes`}
-        </span>
-        <div class="cantidad">
-          <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${producto.cantidad === 0 ? 'disabled' : ''}>-</button>
-          <input type="number" id="cantidad${index}" value="0" min="0" ${producto.cantidad === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
-          <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${producto.cantidad === 0 ? 'disabled' : ''}>+</button>
-        </div>
-      </div>
-    `;
-    
-    productosContainer.append(productoHtml);
-  });
-}
-
-
-
-
-  // Función para configurar eventos
-  function configurarEventos() {
-    // Buscador de productos
-    $('#buscador').on('input', filtrarProductos);
-    
-    // Validación de formulario
-    $("#fecha, #colaborador, #area").on("change", verificarProductos);
-
-  }
-
-  // Función para filtrar productos
-function filtrarProductos() {
-  const textoBusqueda = $('#buscador').val().toLowerCase();
-  
-  if (textoBusqueda === '') {
-    // Mostrar todo si no hay búsqueda
-    $('.producto, .category-separator').show();
-    return;
-  }
-  
-  // Ocultar todos los productos primero
-  $('.producto').hide();
-  
-  // Mostrar solo productos que coincidan
-  $('.producto').each(function() {
-    const nombreProducto = $(this).find('label').text().toLowerCase();
-    if (nombreProducto.includes(textoBusqueda)) {
-      $(this).show();
-    }
-  });
-  
-  // Ocultar/mostrar encabezados de categoría según si tienen productos visibles
-  $('.category-separator').each(function() {
-    const $separator = $(this);
-    const $nextElements = $separator.nextUntil('.category-separator');
-    const hasVisibleProducts = $nextElements.filter('.producto:visible').length > 0;
-    
-    if (hasVisibleProducts) {
-      $separator.show();
-      
-      // Asegurar que los productos ocultos entre separadores permanezcan ocultos
-      $nextElements.filter('.producto').each(function() {
-        const nombre = $(this).find('label').text().toLowerCase();
-        if (!nombre.includes(textoBusqueda)) {
-          $(this).hide();
-        }
-      });
-    } else {
-      $separator.hide();
-    }
-  });
-  
-  // Caso especial: mostrar productos antes del primer separador si coinciden
-  const $firstElements = $('#productos').children().firstUntil('.category-separator');
-  const hasVisibleBeforeFirstSeparator = $firstElements.filter('.producto:visible').length > 0;
-  
-  if (!hasVisibleBeforeFirstSeparator) {
-    $firstElements.filter('.producto').hide();
-  }
-}
-
-
-
-  // Función para cambiar cantidad
-  function cambiarCantidad(index, valor) {
-    let cantidadInput = $(`#cantidad${index}`);
-    let cantidadActual = parseInt(cantidadInput.val());
-    let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
-
-    if (cantidadActual + valor >= 0 && cantidadActual + valor <= cantidadRestante) {
-      cantidadInput.val(cantidadActual + valor);
-      verificarProductos();
-    }
-  }
-
-  // Función para validar cantidad
-  function validarCantidad(index) {
-    let cantidadInput = $(`#cantidad${index}`);
-    let cantidadActual = parseInt(cantidadInput.val());
-    let cantidadRestante = parseInt($(`#cantidadRestante${index}`).text());
-
-    if (cantidadActual > cantidadRestante) {
-      cantidadInput.val(cantidadRestante);
-    }
-
-    verificarProductos();
-  }
-
-  // Función para verificar productos seleccionados
-  function verificarProductos() {
-    let productosSeleccionados = false;
-    
-    productos.forEach((producto, index) => {
-      if (parseInt($(`#cantidad${index}`).val()) > 0) {
-        productosSeleccionados = true;
-      }
-    });
-
-    let fecha = $("#fecha").val();
-    let colaborador = $("#colaborador").val();
-    let area = $("#area").val();
-
-    if (productosSeleccionados && fecha.trim() !== "" && colaborador.trim() !== "" && area.trim() !== "") {
-      $("#seguir").prop("disabled", false);
-    } else {
-      $("#seguir").prop("disabled", true);
-    }
-  }
-
-
-
-  // Función para enviar datos
-  function enviardatos() {
-    let seleccion = [];
-    let totalProductos = 0;
-    let productosRetornables = 0;
-
-    productos.forEach((producto, index) => {
-      let cantidadSeleccionada = parseInt($(`#cantidad${index}`).val()) || 0;
-      if (cantidadSeleccionada > 0) {
-        seleccion.push({
-          producto: producto.nombre,
-          cantidad: cantidadSeleccionada,
-          imagen: producto.imagen,
-          retornable: producto.devolucion === 'X'
-        });
-        totalProductos += cantidadSeleccionada;
-        if (producto.devolucion === 'X') {
-          productosRetornables += cantidadSeleccionada;
-        }
-      }
-    });
-
-    let fecha = $('#fecha').val();
-    let colaborador = $('#colaborador').val();
-    let area = $('#area').val();
-
-    if (seleccion.length > 0) {
-    let htmlResumen = `
-      <div style="max-height: 50vh; overflow-y: auto; margin-bottom: 15px; font-size: 0.85em;">
-        <h3 style="margin-bottom: 12px; color: #007BFF; text-align: left; font-size: 1.1em;">Resumen de Requisición</h3>
-        <div style="margin-bottom: 10px; text-align: left;">
-          <strong>Fecha:</strong> ${fecha}<br>
-          <strong>Colaborador:</strong> ${colaborador}<br>
-          <strong>Área:</strong> ${area}<br>
-        </div>
-        <h4 style="margin: 12px 0 8px; color: #28a745; text-align: left; font-size: 1em;">Productos seleccionados (${totalProductos}):</h4>
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
-          <thead>
-            <tr style="background-color: #f8f9fa;">
-              <th style="padding: 6px; text-align: left; border-bottom: 1px solid #ddd;">Producto</th>
-              <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-
-    seleccion.forEach(item => {
-      htmlResumen += `
-        <tr style="border-bottom: 1px solid #f0f0f0;">
-          <td style="padding: 6px; vertical-align: middle;">
-            <div style="display: flex; align-items: center;">
-              ${item.imagen ? `<img src="${item.imagen}" style="width: 25px; height: 25px; object-fit: contain; margin-right: 8px; border-radius: 3px;" onerror="this.style.display='none'">` : ''}
-              <span>${item.producto}</span>
-            </div>
-          </td>
-          <td style="padding: 6px; text-align: center; vertical-align: middle;">
-            <span style="font-weight: bold; color: #dc3545;">${item.cantidad}</span>
-          </td>
-
-        </tr>
-      `;
-    });
-
-
-      htmlResumen += `
-            </tbody>
-          </table>
-        </div>
-        <p style="margin-top: 12px; font-size: 0.8em; color: #6c757d; text-align: center;">¿Confirmas el envío de esta requisición?</p>
-      `;
-
-      Swal.fire({
-        title: 'Confirmar Requisición',
-        html: htmlResumen,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, enviar',
-        cancelButtonText: 'No, revisar',
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#6c757d',
-        width: '600px'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          document.getElementById('overlay').style.display = 'flex';
-
-          $.ajax({
-            url: "https://script.google.com/macros/s/AKfycbxqZguZch5HAgA8Uvduk5N8hZEOtdn0x5CuGJ6A0C1Fji7pLGMPJYErh9YP7EGnFf9w/exec",
-            type: "POST",
-            data: {
-              seleccion: JSON.stringify(seleccion),
-              fecha: fecha,
-              colaborador: colaborador,
-              area: area
-            },
-            success: function(response) {
-              document.getElementById('overlay').style.display = 'none';
-              console.log("Respuesta del servidor:", response);
-
-              Swal.fire({
-                title: '¡Éxito!',
-                html: `
-                  <div style="text-align: center;">
-                    <p style="font-size: 1.1em; margin-bottom: 15px;">Requisición enviada correctamente 🎉</p>
-                    <div style="color: #28a745; font-size: 2em;">
-                      <i class="fas fa-check-circle"></i>
-                    </div>
-                  </div>
-                `,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              }).then(() => {
-                location.reload();
-              });
-            },
-            error: function(xhr, status, error) {
-              document.getElementById('overlay').style.display = 'none';
-              console.error("Error al enviar los datos:", xhr.responseText);
-
-              Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al enviar los datos. Por favor inténtalo nuevamente.',
-                icon: 'error',
-                confirmButtonText: 'Entendido'
-              });
+    // Extender jQuery con método firstUntil
+    jQuery.fn.firstUntil = function(selector) {
+        const result = $();
+        this.each(function() {
+            let next = $(this).next();
+            while (next.length && !next.is(selector)) {
+                result.add(next);
+                next = next.next();
             }
-          });
+        });
+        return result;
+    };
+
+    // Variables globales
+    let productos = [];
+
+    // Configuración inicial al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Establecer fecha actual
+        var today = new Date();
+        var yyyy = today.getFullYear();
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById("fecha").value = yyyy + '-' + mm + '-' + dd;
+        
+        // Cargar productos desde Google Sheets
+        cargarProductos();
+        
+        // Configurar eventos
+        configurarEventos();
+    });
+
+    // Función para cargar productos desde Google Sheets
+    function cargarProductos() {
+        $('#overlay').show();
+        
+        $.get("https://script.google.com/macros/s/AKfycbxE5J-WQB6MVqcdDlN3WiwKJptv5rMKCRzeQmeSNbPqLCJ7gimxy02HcFKjNjn_RU_0QQ/exec", function(data) {
+            $('#overlay').hide();
+            
+            if (data.error) {
+                Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
+                return;
+            }
+            
+            productos = data.productos;
+            mostrarProductosEnUI();
+            
+        }).fail(function() {
+            $('#overlay').hide();
+            Swal.fire('Error', 'No se pudo conectar al servidor', 'error');
+        });
+    }
+
+    // Función para mostrar productos en la interfaz con categorías
+    function mostrarProductosEnUI() {
+        const productosContainer = $('#productos');
+        productosContainer.empty();
+        
+        productos.forEach((producto, index) => {
+            // Verificar si es un encabezado de categoría (comienza con "-")
+            if (producto.nombre.startsWith("-")) {
+                let categoryName = producto.nombre.substring(1).trim();
+                productosContainer.append(`
+                    <div class="category-separator">
+                        <strong>${categoryName}</strong> <span class="toggle-icon">&#9660;</span>
+                    </div>
+                `);
+                return; // Saltar a la siguiente iteración
+            }
+            
+            // Crear el elemento del producto (igual que antes)
+            let productoHtml = `
+                <div class="producto" id="${producto.id}">
+                    <img src="${producto.imagen || ''}" alt="${producto.nombre}" onerror="this.style.display='none'">
+                    <label>${producto.nombre}</label>
+                    ${producto.devolucion === 'X' ? '<span style="color: green; font-size: 0.8em;">Retornable</span>' : ''}
+                    <span id="cantidadRestante${index}" class="${producto.cantidad === 0 ? 'agotado' : producto.cantidad > 0 ? 'disponible' : ''}">
+                        ${producto.cantidad === 0 ? '0 restantes' : `${producto.cantidad} restantes`}
+                    </span>
+                    <div class="cantidad">
+                        <button type="button" class="minus" onclick="cambiarCantidad(${index}, -1)" ${producto.cantidad === 0 ? 'disabled' : ''}>-</button>
+                        <input type="number" id="cantidad${index}" value="0" min="0" ${producto.cantidad === 0 ? 'disabled' : ''} oninput="validarCantidad(${index})">
+                        <button type="button" class="plus" onclick="cambiarCantidad(${index}, 1)" ${producto.cantidad === 0 ? 'disabled' : ''}>+</button>
+                    </div>
+                </div>
+            `;
+            
+            productosContainer.append(productoHtml);
+        });
+
+        // Configurar el evento de clic para los separadores de categoría
+        $('.category-separator').on('click', function() {
+            const $separator = $(this);
+            const $toggleIcon = $separator.find('.toggle-icon');
+            
+            // Encuentra todos los productos que están después de este separador y antes del próximo separador
+            const $productsToToggle = $separator.nextUntil('.category-separator');
+            
+            $productsToToggle.slideToggle(300, function() {
+                // Alternar la clase 'collapsed' después de que la animación termine
+                $separator.toggleClass('collapsed');
+                // Cambiar el icono de la flecha
+                if ($separator.hasClass('collapsed')) {
+                    $toggleIcon.html('&#9658;'); // Flecha hacia la derecha (colapsado)
+                } else {
+                    $toggleIcon.html('&#9660;'); // Flecha hacia abajo (expandido)
+                }
+            });
+        });
+    }
+
+    // Función para configurar eventos
+    function configurarEventos() {
+        // Buscador de productos
+        $('#buscador').on('input', filtrarProductos);
+        
+        // Validación de formulario
+        $("#fecha, #colaborador, #area").on("change", verificarProductos);
+    }
+
+    // Función para filtrar productos
+    function filtrarProductos() {
+        const textoBusqueda = $('#buscador').val().toLowerCase();
+        
+        if (textoBusqueda === '') {
+            // Mostrar todo si no hay búsqueda
+            $('.producto').show();
+            // Asegúrate de que los encabezados de categoría estén visibles y expandidos
+            $('.category-separator').show().removeClass('collapsed').find('.toggle-icon').html('&#9660;');
+            return;
         }
-      });
-    } 
-  }
+        
+        // Ocultar todos los productos y encabezados de categoría primero
+        $('.producto').hide();
+        $('.category-separator').hide();
+        
+        // Mostrar solo productos que coincidan y sus respectivos encabezados de categoría
+        $('.producto').each(function() {
+            const nombreProducto = $(this).find('label').text().toLowerCase();
+            if (nombreProducto.includes(textoBusqueda)) {
+                $(this).show(); // Muestra el producto
+                // Busca el encabezado de categoría anterior a este producto y lo muestra
+                $(this).prevAll('.category-separator:first').show().removeClass('collapsed').find('.toggle-icon').html('&#9660;');
+            }
+        });
+    }
+
+    // Función para cambiar cantidad
+    function cambiarCantidad(index, valor) {
+        let cantidadInput = $(`#cantidad${index}`);
+        let cantidadActual = parseInt(cantidadInput.val());
+        let cantidadRestanteSpan = $(`#cantidadRestante${index}`);
+        let cantidadRestanteTexto = cantidadRestanteSpan.text();
+        let cantidadRestanteMatch = cantidadRestanteTexto.match(/\d+/);
+        let cantidadRestante = cantidadRestanteMatch ? parseInt(cantidadRestanteMatch[0]) : 0;
+
+        if (cantidadActual + valor >= 0 && cantidadActual + valor <= cantidadRestante) {
+            cantidadInput.val(cantidadActual + valor);
+            verificarProductos();
+        } else if (cantidadActual + valor < 0) {
+            cantidadInput.val(0); // Asegura que no baje de 0
+            verificarProductos();
+        }
+    }
+
+    // Función para validar cantidad
+    function validarCantidad(index) {
+        let cantidadInput = $(`#cantidad${index}`);
+        let cantidadActual = parseInt(cantidadInput.val());
+        let cantidadRestanteSpan = $(`#cantidadRestante${index}`);
+        let cantidadRestanteTexto = cantidadRestanteSpan.text();
+        let cantidadRestanteMatch = cantidadRestanteTexto.match(/\d+/);
+        let cantidadRestante = cantidadRestanteMatch ? parseInt(cantidadRestanteMatch[0]) : 0;
+
+        if (isNaN(cantidadActual) || cantidadActual < 0) {
+            cantidadInput.val(0);
+        } else if (cantidadActual > cantidadRestante) {
+            cantidadInput.val(cantidadRestante);
+        }
+
+        verificarProductos();
+    }
+
+    // Función para verificar productos seleccionados
+    function verificarProductos() {
+        let productosSeleccionados = false;
+        
+        productos.forEach((producto, index) => {
+            if (parseInt($(`#cantidad${index}`).val()) > 0) {
+                productosSeleccionados = true;
+            }
+        });
+
+        let fecha = $("#fecha").val();
+        let colaborador = $("#colaborador").val();
+        let area = $("#area").val();
+
+        if (productosSeleccionados && fecha.trim() !== "" && colaborador.trim() !== "" && area.trim() !== "") {
+            $("#seguir").prop("disabled", false);
+        } else {
+            $("#seguir").prop("disabled", true);
+        }
+    }
+
+    // Función para enviar datos
+    function enviardatos() {
+        let seleccion = [];
+        let totalProductos = 0;
+        let productosRetornables = 0;
+
+        productos.forEach((producto, index) => {
+            let cantidadSeleccionada = parseInt($(`#cantidad${index}`).val()) || 0;
+            if (cantidadSeleccionada > 0) {
+                seleccion.push({
+                    producto: producto.nombre,
+                    cantidad: cantidadSeleccionada,
+                    imagen: producto.imagen,
+                    retornable: producto.devolucion === 'X'
+                });
+                totalProductos += cantidadSeleccionada;
+                if (producto.devolucion === 'X') {
+                    productosRetornables += cantidadSeleccionada;
+                }
+            }
+        });
+
+        let fecha = $('#fecha').val();
+        let colaborador = $('#colaborador').val();
+        let area = $('#area').val();
+
+        if (seleccion.length > 0) {
+            let htmlResumen = `
+                <div style="max-height: 50vh; overflow-y: auto; margin-bottom: 15px; font-size: 0.85em;">
+                    <h3 style="margin-bottom: 12px; color: #007BFF; text-align: left; font-size: 1.1em;">Resumen de Requisición</h3>
+                    <div style="margin-bottom: 10px; text-align: left;">
+                        <strong>Fecha:</strong> ${fecha}<br>
+                        <strong>Colaborador:</strong> ${colaborador}<br>
+                        <strong>Área:</strong> ${area}<br>
+                    </div>
+                    <h4 style="margin: 12px 0 8px; color: #28a745; text-align: left; font-size: 1em;">Productos seleccionados (${totalProductos}):</h4>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                        <thead>
+                            <tr style="background-color: #f8f9fa;">
+                                <th style="padding: 6px; text-align: left; border-bottom: 1px solid #ddd;">Producto</th>
+                                <th style="padding: 6px; text-align: center; border-bottom: 1px solid #ddd;">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            seleccion.forEach(item => {
+                htmlResumen += `
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 6px; vertical-align: middle;">
+                            <div style="display: flex; align-items: center;">
+                                ${item.imagen ? `<img src="${item.imagen}" style="width: 25px; height: 25px; object-fit: contain; margin-right: 8px; border-radius: 3px;" onerror="this.style.display='none'">` : ''}
+                                <span>${item.producto}</span>
+                            </div>
+                        </td>
+                        <td style="padding: 6px; text-align: center; vertical-align: middle;">
+                            <span style="font-weight: bold; color: #dc3545;">${item.cantidad}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            htmlResumen += `
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 12px; font-size: 0.8em; color: #6c757d; text-align: center;">¿Confirmas el envío de esta requisición?</p>
+            `;
+
+            Swal.fire({
+                title: 'Confirmar Requisición',
+                html: htmlResumen,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, enviar',
+                cancelButtonText: 'No, revisar',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                width: '600px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('overlay').style.display = 'flex';
+
+                    $.ajax({
+                        url: "https://script.google.com/macros/s/AKfycbxqZguZch5HAgA8Uvduk5N8hZEOtdn0x5CuGJ6A0C1Fji7pLGMPJYErh9YP7EGnFf9w/exec",
+                        type: "POST",
+                        data: {
+                            seleccion: JSON.stringify(seleccion),
+                            fecha: fecha,
+                            colaborador: colaborador,
+                            area: area
+                        },
+                        success: function(response) {
+                            document.getElementById('overlay').style.display = 'none';
+                            console.log("Respuesta del servidor:", response);
+
+                            Swal.fire({
+                                title: '¡Éxito!',
+                                html: `
+                                    <div style="text-align: center;">
+                                        <p style="font-size: 1.1em; margin-bottom: 15px;">Requisición enviada correctamente 🎉</p>
+                                        <div style="color: #28a745; font-size: 2em;">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                    </div>
+                                `,
+                                icon: 'success',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            document.getElementById('overlay').style.display = 'none';
+                            console.error("Error al enviar los datos:", xhr.responseText);
+
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Hubo un problema al enviar los datos. Por favor inténtalo nuevamente.',
+                                icon: 'error',
+                                confirmButtonText: 'Entendido'
+                            });
+                        }
+                    });
+                }
+            });
+        }   
+    }
+
+    // Funciones para scroll
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToBottom() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
 </script>
 </body>
 </html>
