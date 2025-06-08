@@ -416,33 +416,41 @@
         .category-separator {
             width: 100%;
             clear: both;
-            text-align: left; /* Alineado a la izquierda */
+            text-align: left;
             margin: 15px 0 5px 0;
-            padding: 8px 15px; /* Más padding para el icono */
+            padding: 8px 15px;
             background-color: #f0f0f0;
             border-radius: 5px;
             font-size: 1.1em;
-            grid-column: 1 / -1; /* Para grid */
-            flex-basis: 100%; /* Para flexbox en móvil */
-            cursor: pointer; /* Para indicar que es clicable */
-            display: flex; /* Para alinear el texto y el icono */
-            justify-content: space-between; /* Para separar el texto y el icono */
+            grid-column: 1 / -1;
+            flex-basis: 100%;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
         .category-separator strong {
-            flex-grow: 1; /* Permite que el texto ocupe el espacio disponible */
+            flex-grow: 1;
         }
 
         .category-separator .toggle-icon {
             margin-left: 10px;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease; /* Transición para la rotación del icono */
         }
 
+        /* Clase para el estado colapsado del separador */
         .category-separator.collapsed .toggle-icon {
             transform: rotate(-90deg); /* Gira la flecha cuando está colapsado */
         }
 
+        /* Oculta los productos instantáneamente cuando la categoría está colapsada */
+        .category-separator.collapsed + .producto, 
+        .category-separator.collapsed + .producto + .producto, /* Para el caso de 3 columnas, solo un ejemplo, el JS se encarga */
+        .category-separator.collapsed ~ .producto:not(.category-separator ~ .category-separator ~ .producto) {
+            display: none;
+        }
+        
         /* Mantenemos todos tus estilos originales para los productos */
         .productos-container {
             display: grid;
@@ -475,16 +483,6 @@
         }
 
         /* Estilos para los botones flotantes */
-        .scroll-buttons-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         .scroll-button {
             background-color: #007BFF;
             color: white;
@@ -499,6 +497,9 @@
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s ease, transform 0.3s ease;
+            position: fixed; /* Posición fija */
+            right: 20px; /* Distancia del borde derecho */
+            z-index: 1000;
         }
 
         .scroll-button:hover {
@@ -506,17 +507,27 @@
             transform: scale(1.1); /* Ligero agrandamiento al pasar el mouse */
         }
 
+        #scroll-top-button {
+            top: 20px; /* Posición superior */
+        }
+
+        #scroll-bottom-button {
+            bottom: 20px; /* Posición inferior */
+        }
+
         /* Media query para pantallas más pequeñas */
         @media (max-width: 600px) {
-            .scroll-buttons-container {
-                bottom: 15px;
-                right: 15px;
-                gap: 8px;
-            }
             .scroll-button {
                 width: 40px;
                 height: 40px;
                 font-size: 1.3em;
+                right: 15px;
+            }
+            #scroll-top-button {
+                top: 15px;
+            }
+            #scroll-bottom-button {
+                bottom: 15px;
             }
         }
     </style>
@@ -564,7 +575,7 @@
                 <option value="Bodega de Limpieza">Bodega de Limpieza</option>
                 <option value="Cafetería">Cafetería</option>
                 <option value="Camerinos Contratistas">Camerinos Contratistas</option>
-                <option value="Camerinos Permanentes">Camerinos Permanentes</                option>
+                <option value="Camerinos Permanentes">Camerinos Permanentes</option>
                 <option value="Chiminike">Chiminike</option>
                 <option value="Club de Argos">Club de Argos</option>
                 <option value="Despacho">Despacho</option>
@@ -608,10 +619,7 @@
     </div>
 </div>
 
-<div class="scroll-buttons-container">
-    <button class="scroll-button" onclick="scrollToTop()" title="Ir al inicio">&#9650;</button> <button class="scroll-button" onclick="scrollToBottom()" title="Ir al final">&#9660;</button> </div>
-
-<script>
+<button class="scroll-button" id="scroll-top-button" onclick="scrollToTop()" title="Ir al inicio">&#9650;</button> <button class="scroll-button" id="scroll-bottom-button" onclick="scrollToBottom()" title="Ir al final">&#9660;</button> <script>
     // Extender jQuery con método firstUntil
     jQuery.fn.firstUntil = function(selector) {
         const result = $();
@@ -710,16 +718,17 @@
             // Encuentra todos los productos que están después de este separador y antes del próximo separador
             const $productsToToggle = $separator.nextUntil('.category-separator');
             
-            $productsToToggle.slideToggle(300, function() {
-                // Alternar la clase 'collapsed' después de que la animación termine
-                $separator.toggleClass('collapsed');
-                // Cambiar el icono de la flecha
-                if ($separator.hasClass('collapsed')) {
-                    $toggleIcon.html('&#9658;'); // Flecha hacia la derecha (colapsado)
-                } else {
-                    $toggleIcon.html('&#9660;'); // Flecha hacia abajo (expandido)
-                }
-            });
+            $productsToToggle.toggle(); // Alternar la visibilidad de forma instantánea
+            
+            // Alternar la clase 'collapsed'
+            $separator.toggleClass('collapsed');
+            
+            // Cambiar el icono de la flecha
+            if ($separator.hasClass('collapsed')) {
+                $toggleIcon.html('&#9658;'); // Flecha hacia la derecha (colapsado)
+            } else {
+                $toggleIcon.html('&#9660;'); // Flecha hacia abajo (expandido)
+            }
         });
     }
 
