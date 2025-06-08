@@ -445,11 +445,9 @@
         }
 
         /* Oculta los productos instantáneamente cuando la categoría está colapsada */
-        .category-separator.collapsed + .producto, 
-        .category-separator.collapsed + .producto + .producto, /* Para el caso de 3 columnas, solo un ejemplo, el JS se encarga */
-        .category-separator.collapsed ~ .producto:not(.category-separator ~ .category-separator ~ .producto) {
-            display: none;
-        }
+        /* Importante: para que esto funcione sin la animación, el JavaScript usará .toggle() */
+        /* y no es necesario CSS adicional para ocultar los productos cuando se colapsa la categoría */
+        /* El JavaScript se encargará de añadir/quitar display: none */
         
         /* Mantenemos todos tus estilos originales para los productos */
         .productos-container {
@@ -540,52 +538,12 @@
             <label for="colaborador"><strong>Colaborador:</strong></label>
             <select id="colaborador" name="colaborador">
                 <option value="">Seleccionar colaborador</option>
-                <option value="Colaborador Externo">Colaborador Externo</option>
-                <option value="Ariel Antonio Machado Guzman">Ariel Antonio Machado Guzman</option>
-                <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                <option value="Maria Abel Portillo Lagos">Maria Abel Portillo Lagos</option>
-                <option value="Maria Esther Donaire Vasquez">Maria Esther Donaire Vasquez</option>
-                <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                <option value="Olban Omar Acosta Bustillo">Olban Omar Acosta Bustillo</option>
-                <option value="Yarahi Arleny Lopez Lara">Yarahi Arleny Lopez Lara</option>
-                <option value="Yosselin Iveth Velasquez Sanchez">Yosselin Iveth Velasquez Sanchez</option>
-                <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
-            </select>
+                </select>
 
             <label for="area"><strong>Destino:</strong></label>
             <select id="area" name="area">
                 <option value="">Seleccionar área</option>
-                <option value="USO PROPIO">USO PROPIO</option>
-                <option value="Administración">Administración</option>
-                <option value="Admin - Baño de Gerencia">Admin - Baño de Gerencia</option>
-                <option value="Admin - Baño de Sala de Reuniones">Admin - Baño de Sala de Reuniones</option>
-                <option value="Admin - Baños de Hombres">Admin - Baños de Hombres</option>
-                <option value="Admin - Baños de Mujeres">Admin - Baños de Mujeres</option>   
-                <option value="Almacén General">Almacén General</option>
-                <option value="Baños de Tolderos">Baños de Tolderos</option>
-                <option value="Baños de Transportistas">Baños de Transportistas</option>
-                <option value="Bodega de Limpieza">Bodega de Limpieza</option>
-                <option value="Cafetería">Cafetería</option>
-                <option value="Camerinos Contratistas">Camerinos Contratistas</option>
-                <option value="Camerinos Permanentes">Camerinos Permanentes</option>
-                <option value="Chiminike">Chiminike</option>
-                <option value="Club de Argos">Club de Argos</option>
-                <option value="Despacho">Despacho</option>
-                <option value="Enfermería">Enfermería</option>
-                <option value="Equipo Móvil">Equipo Móvil</option>
-                <option value="ERT">ERT</option>
-                <option value="Expedición">Expedición</option>
-                <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
-                <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
-                <option value="Machaqueo A">Machaqueo A</option>
-                <option value="Posta Principal">Posta Principal</option>
-                <option value="Postas Externas">Postas Externas</option>
-                <option value="Proyecto Pitaya / ICEC">Proyecto Pitaya / ICEC</option>
-                <option value="Sala de Control">Sala de Control</option>
-                <option value="Salón Vial">Salón Vial</option>
-                <option value="Taller Eléctrico">Taller Eléctrico</option>
-            </select>
+                </select>
         </div>
 
         <label><strong>Seleccione los productos a requisar:</strong></label>
@@ -628,6 +586,8 @@
 
     // Variables globales
     let productos = [];
+    let colaboradores = [];
+    let destinos = [];
 
     // Configuración inicial al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
@@ -638,31 +598,59 @@
         var dd = String(today.getDate()).padStart(2, '0');
         document.getElementById("fecha").value = yyyy + '-' + mm + '-' + dd;
         
-        // Cargar productos desde Google Sheets
-        cargarProductos();
+        // Cargar todos los datos desde Google Sheets
+        cargarTodosLosDatos();
         
         // Configurar eventos
         configurarEventos();
     });
 
-    // Función para cargar productos desde Google Sheets
-    function cargarProductos() {
+    // Función para cargar todos los datos (productos, colaboradores, destinos) desde Google Sheets
+    function cargarTodosLosDatos() {
         $('#overlay').show();
         
-        $.get("https://script.google.com/macros/s/AKfycbxE5J-WQB6MVqcdDlN3WiwKJptv5rMKCRzeQmeSNbPqLCJ7gimxy02HcFKjNjn_RU_0QQ/exec", function(data) {
+        // **IMPORTANTE**: Reemplaza esta URL con la URL de despliegue de tu Google Apps Script
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxE5J-WQB6MVqcdDlN3WiwKJptv5rMKCRzeQmeSNbPqLCJ7gimxy02HcFKjNjn_RU_0QQ/exec"; 
+        
+        $.get(scriptURL, function(data) {
             $('#overlay').hide();
             
             if (data.error) {
-                Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
+                Swal.fire('Error', 'No se pudieron cargar los datos: ' + data.mensaje, 'error');
                 return;
             }
             
             productos = data.productos;
+            colaboradores = data.colaboradores;
+            destinos = data.destinos;
+
             mostrarProductosEnUI();
+            llenarSelects(); // Nueva función para llenar los select de colaborador y destino
             
-        }).fail(function() {
+        }).fail(function(jqXHR, textStatus, errorThrown) {
             $('#overlay').hide();
-            Swal.fire('Error', 'No se pudo conectar al servidor', 'error');
+            Swal.fire('Error', 'No se pudo conectar al servidor o hubo un error de red. ' + textStatus + ': ' + errorThrown, 'error');
+            console.error("Error en la solicitud AJAX:", jqXHR, textStatus, errorThrown);
+        });
+    }
+
+    // Nueva función para llenar los select de colaborador y destino
+    function llenarSelects() {
+        const colaboradorSelect = $('#colaborador');
+        const areaSelect = $('#area');
+
+        // Limpiar opciones existentes (excepto la primera "Seleccionar...")
+        colaboradorSelect.find('option:not(:first)').remove();
+        areaSelect.find('option:not(:first)').remove();
+
+        // Llenar select de colaboradores
+        colaboradores.forEach(col => {
+            colaboradorSelect.append(`<option value="${col}">${col}</option>`);
+        });
+
+        // Llenar select de destinos
+        destinos.forEach(dest => {
+            areaSelect.append(`<option value="${dest}">${dest}</option>`);
         });
     }
 
@@ -711,7 +699,7 @@
             // Encuentra todos los productos que están después de este separador y antes del próximo separador
             const $productsToToggle = $separator.nextUntil('.category-separator');
             
-            $productsToToggle.toggle(); // Alternar la visibilidad de forma instantánea
+            $productsToToggle.toggle(); // Alternar la visibilidad de forma instantánea (sin animación)
             
             // Alternar la clase 'collapsed'
             $separator.toggleClass('collapsed');
@@ -756,6 +744,7 @@
             if (nombreProducto.includes(textoBusqueda)) {
                 $(this).show(); // Muestra el producto
                 // Busca el encabezado de categoría anterior a este producto y lo muestra
+                // Y asegura que la categoría se muestre como expandida
                 $(this).prevAll('.category-separator:first').show().removeClass('collapsed').find('.toggle-icon').html('&#9660;');
             }
         });
