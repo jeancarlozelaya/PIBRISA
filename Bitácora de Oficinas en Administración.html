@@ -509,39 +509,45 @@
     ];
 
     // Función para generar las filas de la tabla con los nuevos botones de estado
-    function generarTablaActividades(actividades) {
-        const tbody = document.querySelector("#tablaActividades tbody");
-        tbody.innerHTML = "";
+function generarTablaActividades(actividades) {
+    const tbody = document.querySelector("#tablaActividades tbody");
+    tbody.innerHTML = "";
 
-        actividades.forEach((actividad) => {
-            const row = document.createElement("tr");
+    actividades.forEach((actividad) => {
+        const row = document.createElement("tr");
 
-            if (actividad.frecuencia === "Diario") {
-                row.classList.add("fila-diario");
-            } else if (actividad.frecuencia === "Semanal") {
-                row.classList.add("fila-semanal");
-            }
+        if (actividad.frecuencia === "Diario") {
+            row.classList.add("fila-diario");
+        } else if (actividad.frecuencia === "Semanal") {
+            row.classList.add("fila-semanal");
+        }
 
-            row.innerHTML = `
-                <td>${actividad.descripcion}</td>
-                <td>${actividad.frecuencia}</td>
-                <td>
-                    <div class="estado-container">
-                        <button type="button" class="btn-estado btn-bueno" data-actividad="${actividad.descripcion}" data-estado="✓">✓</button>
-                        <button type="button" class="btn-estado btn-malo" data-actividad="${actividad.descripcion}" data-estado="C">C</button>
-                        <input type="hidden" name="actividad_estado" value="" data-actividad="${actividad.descripcion}">
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
+        row.innerHTML = `
+            <td>${actividad.descripcion}</td>
+            <td>${actividad.frecuencia}</td>
+            <td>
+                <div class="estado-container">
+                    <button type="button" class="btn-estado btn-bueno" data-actividad="${actividad.descripcion}" data-estado="✓">✓</button>
+                    <button type="button" class="btn-estado btn-malo" data-actividad="${actividad.descripcion}" data-estado="C">C</button>
+                    <input type="hidden" name="actividad_estado" value="" data-actividad="${actividad.descripcion}">
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
 
-        // Agregar event listeners a los botones de estado
-        document.querySelectorAll('.btn-estado').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const actividad = this.getAttribute('data-actividad');
-                const estado = this.getAttribute('data-estado');
-                
+    // Agregar event listeners a los botones de estado
+    document.querySelectorAll('.btn-estado').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const actividad = this.getAttribute('data-actividad');
+            const estado = this.getAttribute('data-estado');
+            const inputHidden = document.querySelector(`input[name="actividad_estado"][data-actividad="${actividad}"]`);
+            
+            // Si el botón ya está seleccionado, desmarcarlo
+            if (this.classList.contains('seleccionado')) {
+                this.classList.remove('seleccionado');
+                inputHidden.value = "";
+            } else {
                 // Resetear todos los botones para esta actividad
                 document.querySelectorAll(`.btn-estado[data-actividad="${actividad}"]`).forEach(b => {
                     b.classList.remove('seleccionado');
@@ -549,16 +555,16 @@
                 
                 // Marcar el botón seleccionado
                 this.classList.add('seleccionado');
-                
-                // Actualizar el input hidden
-                document.querySelector(`input[name="actividad_estado"][data-actividad="${actividad}"]`).value = estado;
-                
-                // Actualizar el botón de enviar y guardar respuestas
-                actualizarBotonEnviar();
-                guardarRespuestas();
-            });
+                inputHidden.value = estado;
+            }
+            
+            // Actualizar el botón de enviar y guardar respuestas
+            actualizarBotonEnviar();
+            guardarRespuestas();
         });
-    }
+    });
+}
+
 
     // Función para bloquear los campos del formulario
     function bloquearCampos() {
@@ -740,58 +746,65 @@
                 estadoContainer.className = 'estado-container';
                 estadoContainer.style.justifyContent = 'center';
                 
-                ['✓', 'C'].forEach(estado => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = `btn-estado ${estado === '✓' ? 'btn-bueno' : 'btn-malo'}`;
-                    btn.setAttribute('data-fecha', dia.fecha);
-                    btn.setAttribute('data-actividad', actividad.descripcion);
-                    btn.setAttribute('data-estado', estado);
-                    btn.textContent = estado;
-                    
-                    // Verificar si este estado está seleccionado
-                    const estaSeleccionado = dia.actividades.some(a => 
-                        a.actividad === actividad.descripcion && a.estado === estado
-                    );
-                    
-                    if (estaSeleccionado) {
-                        btn.classList.add('seleccionado');
-                        // Asegurar que las clases de color estén presentes
-                        if (estado === 'C') {
-                            btn.classList.add('btn-malo');
-                        } else {
-                            btn.classList.add('btn-bueno');
-                        }
+            ['✓', 'C'].forEach(estado => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `btn-estado ${estado === '✓' ? 'btn-bueno' : 'btn-malo'}`;
+                btn.setAttribute('data-fecha', dia.fecha);
+                btn.setAttribute('data-actividad', actividad.descripcion);
+                btn.setAttribute('data-estado', estado);
+                btn.textContent = estado;
+                
+                // Verificar si este estado está seleccionado
+                const estaSeleccionado = dia.actividades.some(a => 
+                    a.actividad === actividad.descripcion && a.estado === estado
+                );
+                
+                if (estaSeleccionado) {
+                    btn.classList.add('seleccionado');
+                    // Asegurar que las clases de color estén presentes
+                    if (estado === 'C') {
+                        btn.classList.add('btn-malo');
+                    } else {
+                        btn.classList.add('btn-bueno');
                     }
+                }
+                
+                btn.addEventListener('click', function() {
+                    const fecha = this.getAttribute('data-fecha');
+                    const actividad = this.getAttribute('data-actividad');
+                    const estado = this.getAttribute('data-estado');
                     
-                    btn.addEventListener('click', function() {
-                        const fecha = this.getAttribute('data-fecha');
-                        const actividad = this.getAttribute('data-actividad');
-                        const estado = this.getAttribute('data-estado');
-                        
+                    // Si el botón ya está seleccionado, desmarcarlo
+                    if (this.classList.contains('seleccionado')) {
+                        this.classList.remove('seleccionado');
+                    } else {
                         // Resetear todos los botones para esta actividad y fecha
                         document.querySelectorAll(`.btn-estado[data-fecha="${fecha}"][data-actividad="${actividad}"]`).forEach(b => {
                             b.classList.remove('seleccionado');
                         });
                         
-                        // Marcar el botón seleccionado con las clases correctas
+                        // Marcar el botón seleccionado
                         this.classList.add('seleccionado');
-                        if (estado === 'C') {
-                            this.classList.add('btn-malo');
-                        } else {
-                            this.classList.add('btn-bueno');
-                        }
-                    });
+                    }
                     
-                    estadoContainer.appendChild(btn);
+                    // Asegurar que las clases de color estén presentes
+                    if (estado === 'C') {
+                        this.classList.add('btn-malo');
+                    } else {
+                        this.classList.add('btn-bueno');
+                    }
                 });
                 
-                cell.appendChild(estadoContainer);
-                row.appendChild(cell);
+                estadoContainer.appendChild(btn);
             });
             
-            tbody.appendChild(row);
+            cell.appendChild(estadoContainer);
+            row.appendChild(cell);
         });
+        
+        tbody.appendChild(row);
+    });
         
         document.getElementById('cancelarSemanaBtn').addEventListener('click', function(e) {
             e.preventDefault();
