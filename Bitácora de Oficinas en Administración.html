@@ -381,8 +381,8 @@
         }
 
         .btn-bueno.seleccionado {
-            background-color: #28a745;
-            color: white;
+            background-color: #28a745 !important;
+            color: white !important;
         }
 
         .btn-malo {
@@ -391,8 +391,8 @@
         }
 
         .btn-malo.seleccionado {
-            background-color: #dc3545;
-            color: white;
+            background-color: #dc3545 !important;
+            color: white !important;
         }
 
         #tablaActividades td {
@@ -590,13 +590,12 @@
     }
 
     // Función para habilitar o deshabilitar el botón de Enviar
-function actualizarBotonEnviar() {
-    const enviarBtn = document.getElementById("enviarBtn");
-    // Cambiar este selector
-    const actividadesConEstado = Array.from(document.querySelectorAll('input[name="actividad_estado"]'))
-        .some(input => input.value !== "");
-    enviarBtn.disabled = !actividadesConEstado;
-}
+    function actualizarBotonEnviar() {
+        const enviarBtn = document.getElementById("enviarBtn");
+        const actividadesConEstado = Array.from(document.querySelectorAll('input[name="actividad_estado"]'))
+            .some(input => input.value !== "");
+        enviarBtn.disabled = !actividadesConEstado;
+    }
 
     // Función para mostrar los controles de la semana
     function mostrarControlesSemana(semanaData) {
@@ -750,8 +749,19 @@ function actualizarBotonEnviar() {
                     btn.setAttribute('data-estado', estado);
                     btn.textContent = estado;
                     
-                    if (dia.actividades.some(a => a.actividad === actividad.descripcion && a.estado === estado)) {
+                    // Verificar si este estado está seleccionado
+                    const estaSeleccionado = dia.actividades.some(a => 
+                        a.actividad === actividad.descripcion && a.estado === estado
+                    );
+                    
+                    if (estaSeleccionado) {
                         btn.classList.add('seleccionado');
+                        // Asegurar que las clases de color estén presentes
+                        if (estado === 'C') {
+                            btn.classList.add('btn-malo');
+                        } else {
+                            btn.classList.add('btn-bueno');
+                        }
                     }
                     
                     btn.addEventListener('click', function() {
@@ -764,8 +774,13 @@ function actualizarBotonEnviar() {
                             b.classList.remove('seleccionado');
                         });
                         
-                        // Marcar el botón seleccionado
+                        // Marcar el botón seleccionado con las clases correctas
                         this.classList.add('seleccionado');
+                        if (estado === 'C') {
+                            this.classList.add('btn-malo');
+                        } else {
+                            this.classList.add('btn-bueno');
+                        }
                     });
                     
                     estadoContainer.appendChild(btn);
@@ -925,10 +940,22 @@ function actualizarBotonEnviar() {
             
             if (data.actividades && data.actividades.length > 0) {
                 data.actividades.forEach(item => {
-                    const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${item.estado}"]`);
+                    // Mapear estados antiguos a los nuevos
+                    let estadoFrontend = item.estado;
+                    if (item.estado === "○" || item.estado === "✗") {
+                        estadoFrontend = "C";
+                    }
+                    
+                    const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${estadoFrontend}"]`);
                     if (btn) {
                         btn.classList.add('seleccionado');
-                        document.querySelector(`input[name="actividad_estado"][data-actividad="${item.actividad}"]`).value = item.estado;
+                        // Asegurarse de que se aplique el color correcto
+                        if (estadoFrontend === 'C') {
+                            btn.classList.add('btn-malo');
+                        } else {
+                            btn.classList.add('btn-bueno');
+                        }
+                        document.querySelector(`input[name="actividad_estado"][data-actividad="${item.actividad}"]`).value = estadoFrontend;
                     }
                 });
             }
@@ -936,6 +963,13 @@ function actualizarBotonEnviar() {
             if (data.semana && data.semana.length > 0) {
                 data.semana.forEach(dia => {
                     dia.actividadesLista = actividadesArea;
+                    // Mapear estados antiguos a nuevos para la semana
+                    dia.actividades = dia.actividades.map(act => {
+                        if (act.estado === "○" || act.estado === "✗") {
+                            return {...act, estado: "C"};
+                        }
+                        return act;
+                    });
                 });
                 
                 const existingContainer = document.getElementById('semanaContainer');
@@ -959,6 +993,7 @@ function actualizarBotonEnviar() {
             document.getElementById("overlay").style.display = "none";
         }
     }
+
 
     // Función para confirmar el envío
     function confirmarEnvio() {
@@ -984,187 +1019,188 @@ function actualizarBotonEnviar() {
     }
 
     // Función para enviar datos
-function enviarDatos(fecha) {
-    let url = "https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec";
+    function enviarDatos(fecha) {
+        let url = "https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec";
 
-    const actividades = [];
-    document.querySelectorAll('input[name="actividad_estado"]').forEach(input => {
-        if (input.value) {
-            actividades.push({
-                actividad: input.getAttribute('data-actividad'),
-                estado: input.value
-            });
-        }
-    });
-
-    if (actividades.length === 0) {
-        Swal.fire({
-            text: 'Debes seleccionar al menos una actividad.',
-            icon: 'warning',
-            confirmButtonText: 'Aceptar'
-        });
-        return;
-    }
-
-    $.ajax({
-        url: url,
-        type: "POST",
-        data: {
-            fecha: fecha,
-            tipo: "Área",
-            area: "Administración",
-            oficina: "Sección #1",
-            actividades: JSON.stringify(actividades)
-        },
-        success: function(response) {
-            console.log("Respuesta del servidor:", response);
-            document.getElementById('overlay').style.display = 'none';
-            localStorage.removeItem('formData');
-
-            setTimeout(function() {
-                Swal.fire({
-                    text: "¡Envío exitoso! 🥳🎉",
-                    icon: "success",
-                    showCancelButton: false,
-                    confirmButtonText: "Aceptar",
-                    customClass: {
-                        content: "swal-content",
-                        confirmButton: "swal-button",
-                        popup: "swal-popup",
-                    },
-                }).then(() => {
-                    location.reload();
+        const actividades = [];
+        document.querySelectorAll('input[name="actividad_estado"]').forEach(input => {
+            if (input.value) {
+                actividades.push({
+                    actividad: input.getAttribute('data-actividad'),
+                    estado: input.value
                 });
-            }, 500);
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al enviar los datos:", xhr.responseText);
-            document.getElementById("overlay").style.display = "none";
-            Swal.fire({
-                text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
-}
-
-    // Función para guardar las respuestas en localStorage
-function guardarRespuestas() {
-    const formData = {
-        fecha: document.getElementById('fecha').value,
-        actividades: []
-    };
-
-    // Guardar los estados de las actividades
-    document.querySelectorAll('input[name="actividad_estado"]').forEach(input => {
-        if (input.value) {
-            formData.actividades.push({
-                actividad: input.getAttribute('data-actividad'),
-                estado: input.value
-            });
-        }
-    });
-
-    // Guardar en localStorage
-    localStorage.setItem('formData', JSON.stringify(formData));
-}
-
-
-
-    // Función para cargar las respuestas guardadas
-function cargarRespuestas() {
-    const savedData = localStorage.getItem('formData');
-    if (savedData) {
-        const formData = JSON.parse(savedData);
-
-        // Primero generar la tabla si no existe
-        if (!document.querySelector("#tablaActividades tbody").innerHTML) {
-            generarTablaActividades(actividadesArea);
-            document.getElementById("tablaActividades").style.display = "table";
-        }
-
-        // Cargar los valores de los campos
-        Object.keys(formData).forEach(key => {
-            const input = document.getElementById(key);
-            if (input && key !== 'actividades') {
-                input.value = formData[key];
             }
         });
 
-        // Cargar los estados de las actividades
-        if (formData.actividades && formData.actividades.length > 0) {
-            formData.actividades.forEach(item => {
-                const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${item.estado}"]`);
-                if (btn) {
-                    btn.classList.add('seleccionado');
-                    const input = document.querySelector(`input[name="actividad_estado"][data-actividad="${item.actividad}"]`);
-                    if (input) {
-                        input.value = item.estado;
+        if (actividades.length === 0) {
+            Swal.fire({
+                text: 'Debes seleccionar al menos una actividad.',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {
+                fecha: fecha,
+                tipo: "Área",
+                area: "Administración",
+                oficina: "Sección #1",
+                actividades: JSON.stringify(actividades)
+            },
+            success: function(response) {
+                console.log("Respuesta del servidor:", response);
+                document.getElementById('overlay').style.display = 'none';
+                localStorage.removeItem('formData');
+
+                setTimeout(function() {
+                    Swal.fire({
+                        text: "¡Envío exitoso! 🥳🎉",
+                        icon: "success",
+                        showCancelButton: false,
+                        confirmButtonText: "Aceptar",
+                        customClass: {
+                            content: "swal-content",
+                            confirmButton: "swal-button",
+                            popup: "swal-popup",
+                        },
+                    }).then(() => {
+                        location.reload();
+                    });
+                }, 500);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al enviar los datos:", xhr.responseText);
+                document.getElementById("overlay").style.display = "none";
+                Swal.fire({
+                    text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    // Función para guardar las respuestas en localStorage
+    function guardarRespuestas() {
+        const formData = {
+            fecha: document.getElementById('fecha').value,
+            actividades: []
+        };
+
+        // Guardar los estados de las actividades
+        document.querySelectorAll('input[name="actividad_estado"]').forEach(input => {
+            if (input.value) {
+                formData.actividades.push({
+                    actividad: input.getAttribute('data-actividad'),
+                    estado: input.value
+                });
+            }
+        });
+
+        // Guardar en localStorage
+        localStorage.setItem('formData', JSON.stringify(formData));
+    }
+
+    // Función para cargar las respuestas guardadas
+    function cargarRespuestas() {
+        const savedData = localStorage.getItem('formData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+
+            // Primero generar la tabla si no existe
+            if (!document.querySelector("#tablaActividades tbody").innerHTML) {
+                generarTablaActividades(actividadesArea);
+                document.getElementById("tablaActividades").style.display = "table";
+            }
+
+            // Cargar los valores de los campos
+            Object.keys(formData).forEach(key => {
+                const input = document.getElementById(key);
+                if (input && key !== 'actividades') {
+                    input.value = formData[key];
+                }
+            });
+
+            // Cargar los estados de las actividades
+            if (formData.actividades && formData.actividades.length > 0) {
+                formData.actividades.forEach(item => {
+                    const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${item.estado}"]`);
+                    if (btn) {
+                        btn.classList.add('seleccionado');
+                        // Asegurar que se aplique el color correcto
+                        if (item.estado === 'C') {
+                            btn.classList.add('btn-malo');
+                        } else {
+                            btn.classList.add('btn-bueno');
+                        }
+                        const input = document.querySelector(`input[name="actividad_estado"][data-actividad="${item.actividad}"]`);
+                        if (input) {
+                            input.value = item.estado;
+                        }
                     }
+                });
+            }
+
+            actualizarBotonEnviar();
+            bloquearCampos();
+        }
+    }
+
+    // Función para preguntar al usuario si desea continuar con las respuestas guardadas
+    function preguntarContinuar() {
+        const savedData = localStorage.getItem('formData');
+        if (savedData) {
+            // Generar la tabla primero
+            generarTablaActividades(actividadesArea);
+            document.getElementById("tablaActividades").style.display = "table";
+            
+            Swal.fire({
+                text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
+                iconHtml: "🫵🏻",
+                showCancelButton: true,
+                confirmButtonText: "Sí, continuar 😎",
+                cancelButtonText: "No, reiniciar 🤓",
+                allowOutsideClick: false,
+                customClass: {
+                    popup: "swal-popup",
+                    confirmButton: "swal-button",
+                    cancelButton: "swal-button-cancel",
+                    actions: "swal-actions",
+                    icon: "no-border-icon",
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    cargarRespuestas();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        text: "¿Estás seguro de que deseas perder todo tu progreso?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Sí, reiniciar",
+                        cancelButtonText: "No, recuperar progreso",
+                        allowOutsideClick: false,
+                        customClass: {
+                            popup: "swal-popup",
+                            confirmButton: "swal-button",
+                            cancelButton: "swal-button-cancel",
+                            actions: "swal-actions",
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            localStorage.removeItem('formData');
+                            location.reload();
+                        } else {
+                            cargarRespuestas();
+                        }
+                    });
                 }
             });
         }
-
-        actualizarBotonEnviar();
-        bloquearCampos();
     }
-}
-
-
-    // Función para preguntar al usuario si desea continuar con las respuestas guardadas
-function preguntarContinuar() {
-    const savedData = localStorage.getItem('formData');
-    if (savedData) {
-        // Generar la tabla primero
-        generarTablaActividades(actividadesArea);
-        document.getElementById("tablaActividades").style.display = "table";
-        
-        Swal.fire({
-            text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
-            iconHtml: "🫵🏻",
-            showCancelButton: true,
-            confirmButtonText: "Sí, continuar 😎",
-            cancelButtonText: "No, reiniciar 🤓",
-            allowOutsideClick: false,
-            customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                cancelButton: "swal-button-cancel",
-                actions: "swal-actions",
-                icon: "no-border-icon",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                cargarRespuestas();
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire({
-                    text: "¿Estás seguro de que deseas perder todo tu progreso?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Sí, reiniciar",
-                    cancelButtonText: "No, recuperar progreso",
-                    allowOutsideClick: false,
-                    customClass: {
-                        popup: "swal-popup",
-                        confirmButton: "swal-button",
-                        cancelButton: "swal-button-cancel",
-                        actions: "swal-actions",
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.removeItem('formData');
-                        location.reload();
-                    } else {
-                        cargarRespuestas();
-                    }
-                });
-            }
-        });
-    }
-}
-
-
 
     // Limpiar respuestas guardadas al enviar el formulario
     function limpiarRespuestasGuardadas() {
@@ -1178,10 +1214,10 @@ function preguntarContinuar() {
     });
 
     // Llamar a la función al cargar la página
-window.onload = function() {
-    prellenarFechaHora(); // Primero precargar fecha
-    preguntarContinuar(); // Luego preguntar por continuar
-};
+    window.onload = function() {
+        prellenarFechaHora(); // Primero precargar fecha
+        preguntarContinuar(); // Luego preguntar por continuar
+    };
 
     let backPressCount = 0;
     history.pushState(null, null, document.URL);
