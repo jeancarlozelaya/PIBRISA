@@ -2,121 +2,178 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pisos Brillantes</title>
-    <!-- FontAwesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
     <link rel="manifest" href="/PIBRISA/manifest.json">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
-
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --primary: #2C73D2;
+            --primary-dark: #1A56B2;
+            --secondary: #FF6B6B;
+            --accent: #4ECDC4;
+            --light: #F8F9FA;
+            --dark: #343A40;
+            --success: #28A745;
+            --warning: #FFC107;
+            --gray-100: #F8F9FA;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --gray-600: #6C757D;
+            --gray-800: #343A40;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 80px; /* Espacio para el footer */
+            user-select: none; /* Estándar */
+        }
+
         #install-button {
             display: none;
             padding: 12px 24px;
-            background-color: #007BFF; /* Color principal */
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1.2em;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 1000;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
         }
 
         #install-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(44, 115, 210, 0.25);
         }
 
         #install-button:active {
-            transform: scale(0.98);
-        }
-
-        #install-button:focus {
-            outline: none;
-        }
-
-        #install-button span {
-            margin-left: 8px;
-        }
-
-        /* Estilo adicional si deseas que el texto del botón tenga icono */
-        #install-button i {
-            margin-right: 8px;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
+            transform: translateY(0);
         }
 
         .header {
-            background-color: #007BFF;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             text-align: center;
-            padding: 15px 0;
+            padding: 20px 0;
             font-size: 1.5em;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .menu-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            padding: 20px;
+            margin-bottom: 30px;
         }
 
         .menu-item {
-            background-color: #fff;
-            border: 2px solid #007BFF;
-            border-radius: 10px;
-            padding: 15px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px 15px;
             text-align: center;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            user-select: none;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            min-height: 120px;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
         }
 
         .menu-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .menu-item:hover::before {
+            transform: scaleX(1);
         }
 
         .menu-item span {
-            font-size: 2em;
-            display: block;
+            font-size: 2.2em;
             margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover span {
+            transform: scale(1.1);
         }
 
         .menu-item p {
             margin: 0;
             font-size: 1em;
-            font-weight: bold;
-            color: #007BFF;
-        }
-
-        .full-width {
-            grid-column: span 2;
+            font-weight: 500;
+            color: var(--dark);
         }
 
         .separator {
-            grid-column: span 2;
-            border-top: 1px solid #ddd;
+            grid-column: 1 / -1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
             margin: 10px 0;
         }
 
@@ -124,134 +181,49 @@
             width: 100%;
             height: 93vh;
             border: none;
-            margin-top: 0px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
         }
 
-        /* Cambios para el botón "Volver al Inicio" */
         .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            background: var(--primary);
             color: white;
-            border-radius: 5px;
+            border-radius: 30px;
             text-decoration: none;
-            text-align: center;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: var(--transition);
             position: fixed;
-            top: 80px; /* Mueve el botón a la parte superior */
-            left: 0px; /* Colócalo a la izquierda */
-            z-index: 1001; /* Asegúrate de que el botón esté encima de otros elementos */
+            top: 90px;
+            left: 20px;
+            z-index: 1001;
+            box-shadow: var(--shadow-md);
         }
 
         .back-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+            background: var(--primary-dark);
+            transform: translateX(-3px);
         }
 
-        /* En dispositivos móviles */
-        @media screen and (max-width: 600px) {
-            .back-button {
-                font-size: 0.9em; /* Reducir un poco el tamaño del texto */
-                padding: 12px 18px; /* Ajustar el padding */
-
-            top: 57px; /* Mueve el botón a la parte superior */
-            left: 0px; /* Colócalo a la izquierda */
-
-
-            }
+        .back-button i {
+            margin-right: 8px;
         }
 
-        /* Regla específica para el modo standalone (PWA) */
-        @media screen and (display-mode: standalone) {
-            body {
-                margin: 0; /* Asegura que no haya márgenes extra */
-                padding: 0; /* Asegura que no haya padding extra */
-            }
+        #iframe-container {
+            display: none;
+            padding: 20px;
         }
 
-
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s, visibility 0.5s;
-}
-
-.modal-content {
-    background: transparent;
-    padding: 20px;
-    text-align: center;
-    max-width: 400px;
-    width: 100%;
-    position: relative;
-}
-
-.cerrar-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: white;
-    cursor: pointer;
-}
-
-.modal img {
-    max-width: 150px;
-    border-radius: 50%;
-    margin: 10px auto;
-    display: block;
-    border: 3px solid white;
-}
-
-.modal h2 {
-    font-size: 2rem;
-    color: white;
-    margin-bottom: 10px;
-}
-
-#mensajeCumple {
-    font-size: 1.2rem;
-    color: white;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* Contenedor para animaciones dentro del modal */
-#animaciones {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1100; /* Se asegura de que esté sobre el modal */
-    pointer-events: none; /* Para que no interfiera con la interacción */
-}
-
-
-
-
-        /* Estilo del ícono flotante */
         #qr-icon {
             position: fixed;
-            bottom: 20px;
+            bottom: 90px;
             right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #007BFF;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border-radius: 50%;
             display: flex;
@@ -259,66 +231,60 @@
             align-items: center;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
             z-index: 1000;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: var(--transition);
         }
 
         #qr-icon:hover {
-            background-color: #0056b3;
-            transform: scale(1.1);
+            transform: translateY(-3px) rotate(5deg);
+            box-shadow: 0 6px 12px rgba(44, 115, 210, 0.3);
         }
 
-        #qr-icon:active {
-            transform: scale(0.9);
-        }
-
-
-
-
-        /* Estilo del ícono flotante de notificaciones */
         #notification-icon {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #007BFF;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
             z-index: 1000;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: var(--transition);
         }
 
         #notification-icon:hover {
-            background-color: #0056b3;
-            transform: scale(1.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(44, 115, 210, 0.3);
         }
 
-        #notification-icon:active {
-            transform: scale(0.9);
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            display: none;
+            animation: pulse 1.5s infinite;
         }
 
-        /* Badge de notificaciones */
-.notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 5px 8px;
-    font-size: 12px;
-    display: none; /* Ocultar inicialmente */
-}
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
-        /* Ventana emergente de notificaciones */
         .notification-modal {
             position: fixed;
             top: 0;
@@ -342,41 +308,66 @@
 
         .notification-modal-content {
             background: white;
-            width: 70%;
+            width: 85%;
             max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
             position: relative;
-            transform: scale(0.9);
+            transform: translateY(20px);
             transition: transform 0.3s ease-in-out;
         }
 
         .notification-modal.active .notification-modal-content {
-            transform: scale(1);
+            transform: translateY(0);
         }
 
         .notification-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .notification-header h2 {
             margin: 0;
             font-size: 1.5em;
-            color: #007BFF;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ESTILO CORREGIDO PARA EL BOTÓN DE ACTUALIZAR */
+        .refresh-button {
+            background-color: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            transform: rotate(360deg);
         }
 
         .close-modal {
             background: none;
             border: none;
-            color: #007BFF;
+            color: var(--gray-600);
             font-size: 1.5em;
             cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--secondary);
+            transform: rotate(90deg);
         }
 
         .notification-list {
@@ -386,212 +377,936 @@
         }
 
         .notification-item {
-            background: #f9f9f9;
-            border-radius: 8px;
+            background: var(--gray-100);
+            border-radius: 10px;
             padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-left: 3px solid var(--primary);
         }
 
         .notification-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateX(3px);
+            box-shadow: var(--shadow-md);
         }
 
         .notification-item strong {
             display: block;
             font-size: 0.9em;
-            color: #007BFF;
+            color: var(--primary);
             margin-bottom: 5px;
         }
 
         .notification-item p {
             margin: 0;
             font-size: 0.9em;
-            color: #333;
+            color: var(--gray-800);
         }
 
-.refresh-button {
-    background: none;
-    border: none;
-    color: #007BFF; /* Color del ícono */
-    font-size: 0.8em; /* Tamaño más pequeño */
-    cursor: pointer;
-    margin-left: 10px; /* Espacio entre el texto y el ícono */
-    padding: 5px; /* Espaciado interno */
-    border-radius: 50%; /* Forma circular */
-    transition: background-color 0.3s, transform 0.3s;
-}
+        /* Modal de información (Acerca de) */
+        .info-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
 
-.refresh-button:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* Fondo sutil al pasar el mouse */
-    transform: scale(1.1); /* Efecto de escala al pasar el mouse */
-}
+        .info-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
 
-.refresh-button:active {
-    transform: scale(0.9); /* Efecto de escala al hacer clic */
-}
+        .info-modal-content {
+            background: white;
+            width: 85%;
+            max-width: 500px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+        }
 
+        .info-modal.active .info-modal-content {
+            transform: translateY(0);
+        }
 
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .info-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+
+        .creator-info {
+            text-align: center;
+        }
+
+        .creator-info img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary);
+        }
+
+        .creator-info h3 {
+            margin: 0 0 5px 0;
+            color: var(--primary);
+        }
+
+        .creator-info p {
+            margin: 5px 0;
+            color: var(--gray-800);
+        }
+
+        .creator-info a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .creator-info a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Estilos para el modal de cumpleaños */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: transparent;
+            padding: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            z-index: 2001;
+        }
+
+        .cerrar-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            z-index: 2002;
+        }
+
+        .modal img {
+            max-width: 150px;
+            border-radius: 50%;
+            margin: 10px auto;
+            display: block;
+            border: 3px solid white;
+            z-index: 2001;
+            position: relative;
+        }
+
+        #mensajeCumple {
+            font-size: 1.2rem;
+            color: white;
+            font-weight: bold;
+            margin-top: 10px;
+            z-index: 2001;
+            position: relative;
+        }
+
+        /* Modal de próximos cumpleaños */
+        .birthdays-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .birthdays-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .birthdays-modal-content {
+            background: white;
+            width: 85%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .birthdays-modal.active .birthdays-modal-content {
+            transform: translateY(0);
+        }
+
+        .birthdays-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .birthdays-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+
+        .birthdays-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .birthday-item {
+            background: var(--gray-100);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-left: 3px solid var(--accent);
+            display: flex;
+            align-items: center;
+        }
+
+        .birthday-item:hover {
+            transform: translateX(3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .birthday-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid var(--accent);
+        }
+
+        .birthday-info {
+            flex: 1;
+        }
+
+        .birthday-info strong {
+            display: block;
+            font-size: 1em;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .birthday-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: var(--gray-800);
+        }
+
+        /* Contenedor para animaciones dentro del modal */
+        #animaciones {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        /* Botón flotante de cumpleaños */
+        #botonCumple {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--secondary), #ff5252);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: var(--transition);
+            border: none;
+        }
+
+        #botonCumple:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Pantalla de regalo */
+        #pantallaRegalo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        @keyframes latir {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-600);
+            font-size: 0.9em;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .menu-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .menu-item {
+                padding: 15px 10px;
+                min-height: 100px;
+            }
+            
+            .menu-item span {
+                font-size: 1.8em;
+            }
+            
+            .menu-item p {
+                font-size: 0.9em;
+            }
+            
+            .back-button {
+                top: 80px;
+                left: 10px;
+                padding: 10px 15px;
+                font-size: 0.8em;
+            }
+            
+            .header {
+                font-size: 1.2em;
+                padding: 15px 0;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .menu-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .app-container {
+                padding: 15px;
+            }
+            
+            #botonCumple {
+                bottom: 90px;
+                right: 20px;
+            }
+        }
+
+        @media screen and (display-mode: standalone) {
+            body {
+                margin: 0;
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            }
+            
+            .header {
+                padding-top: calc(20px + env(safe-area-inset-top));
+            }
+            
+            footer {
+                padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Nuevos estilos para el modal de contactos de emergencia */
+        .emergency-contacts-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .emergency-contacts-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .emergency-contacts-modal-content {
+            background: white;
+            width: 85%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .emergency-contacts-modal.active .emergency-contacts-modal-content {
+            transform: translateY(0);
+        }
+
+        .emergency-contacts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .emergency-contacts-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+
+        .contacts-container {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .contact-item {
+            background-color: var(--gray-100);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-left: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .contact-item:hover {
+            transform: translateX(3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .contact-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-info h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: var(--primary-dark);
+        }
+
+        .contact-info p {
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+            color: var(--gray-600);
+        }
+
+        .contact-info p.sub-text {
+            color: var(--accent);
+            font-size: 0.8em;
+            margin-top: 2px;
+        }
+
+        .contact-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .contact-action:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Estilos para el contacto de emergencia destacado */
+        .emergency-highlight {
+            background-color: #ffe6e6; /* Un color más llamativo */
+            border: 2px solid var(--secondary);
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        .emergency-highlight .contact-info h3 {
+            color: var(--secondary);
+        }
+
+        .emergency-highlight .contact-action {
+            background-color: var(--secondary);
+        }
+
+        .emergency-highlight .contact-action:hover {
+            background-color: #e55252;
+        }
+
+        .emergency-icon-container {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--secondary);
+            color: white;
+            font-size: 24px;
+            border: 2px solid var(--secondary);
+            margin-right: 15px;
+        }
+
+        /* Estilo especial para elementos que son carpetas */
+        .folder-item span {
+            background: linear-gradient(135deg, var(--warning), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .folder-item::before {
+            background: linear-gradient(90deg, var(--warning), var(--secondary));
+        }
 
 
     </style>
 </head>
 
-<button id="install-button" style="display:none;">
+<button id="install-button">
   <i class="fas fa-download"></i> Instalar App
 </button>
 
 <body>
-
-<div id="birthdayModal" class="modal">
-    <div id="animaciones"></div> <!-- Animaciones dentro del modal -->
-    <div class="modal-content">
-        <button class="cerrar-modal" onclick="cerrarModal()">✖</button>
-        <img id="fotoCumpleañero" src="" alt="Foto del cumpleañero">
-        <p id="mensajeCumple"></p>
+    <div id="birthdayModal" class="modal">
+        <div id="animaciones"></div> <div class="modal-content">
+            <button class="cerrar-modal" onclick="cerrarModal()">✖</button>
+            <img id="fotoCumpleañero" src="" alt="Foto del cumpleañero">
+            <p id="mensajeCumple"></p>
+        </div>
     </div>
-</div>
 
+    <div id="birthdays-modal" class="birthdays-modal">
+        <div class="birthdays-modal-content">
+            <div class="birthdays-header">
+                <h2>Próximos Cumpleaños</h2>
+                <button class="close-modal" onclick="cerrarProximosCumpleanos()">&times;</button>
+            </div>
+            <ul class="birthdays-list" id="birthdays-list"></ul>
+        </div>
+    </div>
 
-
-
+    <div id="emergency-contacts-modal" class="emergency-contacts-modal">
+        <div class="emergency-contacts-modal-content">
+            <div class="emergency-contacts-header">
+                <h2>Contactos de Emergencia</h2>
+                <button class="close-modal" onclick="cerrarContactosEmergencia()">&times;</button>
+            </div>
+            <div class="contacts-container" id="contacts-list">
+                <div class="contact-item emergency-highlight" onclick="window.open('tel:+50494457053');">
+                    <div class="emergency-icon-container">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Sala de Control (Argos)</h3>
+                        <p>+504 9445-7053</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50489894286');">
+                    <img src="Imágenes\Colaboradores\ArielMachado.webp" alt="Ariel Machado">
+                    <div class="contact-info">
+                        <h3>Ariel Machado</h3>
+                        <p>+504 8989-4286</p>
+                        <p class="sub-text">📞 Llamar a Rosa María</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50499489871');">
+                    <img src="Imágenes\Colaboradores\Cintia Machado.jpg" alt="Cintia Dubon">
+                    <div class="contact-info">
+                        <h3>Cintia Dubon</h3>
+                        <p>+504 9948-9871</p>
+                        <p class="sub-text">📞 Llamar a Erundina Machado</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50431886744');">
+                    <img src="Imágenes\Colaboradores\Gertrudis.png" alt="Gertrudis Acosta">
+                    <div class="contact-info">
+                        <h3>Gertrudis Acosta</h3>
+                        <p>+504 3188-6744</p>
+                        <p class="sub-text">📞 Llamar a Geovanny Cardenas</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50497389450');">
+                    <img src="Imágenes\Colaboradores\HeydiVargas.jpg" alt="Heydi Vargas">
+                    <div class="contact-info">
+                        <h3>Heydi Vargas</h3>
+                        <p>+504 9738-9450</p>
+                        <p class="sub-text">📞 Llamar a Osiris Ramos</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50487809733');">
+                    <img src="Imágenes\Colaboradores\María Portillo.jpg" alt="María Portillo">
+                    <div class="contact-info">
+                        <h3>María Portillo</h3>
+                        <p>+504 8780-9733</p>
+                        <p class="sub-text">📞 Llamar a Oscar Maradiaga</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50497780133');">
+                    <img src="Imágenes\Colaboradores\MayraNicolás.webp" alt="Mayra Nicolás">
+                    <div class="contact-info">
+                        <h3>Mayra Nicolás</h3>
+                        <p>+504 9778-0133</p>
+                        <p class="sub-text">📞 Llamar a Adalid Hernandez</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50497319241');">
+                    <img src="https://raw.githubusercontent.com/jeancarlozelaya/PIBRISA/refs/heads/main/Im%C3%A1genes/Colaboradores/MelvinLopez.jpg" alt="Melvin Lopez">
+                    <div class="contact-info">
+                        <h3>Melvin Lopez</h3>
+                        <p>+504 9731-9241</p>
+                        <p class="sub-text">📞 Llamar a Raul Lopez</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50496857431');">
+                    <img src="Imágenes\Colaboradores\Olban.jpg" alt="Olban Acosta">
+                    <div class="contact-info">
+                        <h3>Olban Acosta</h3>
+                        <p>+504 9685-7431</p>
+                        <p class="sub-text">📞 Llamar a Leyla Velis</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50499079180');">
+                    <img src="Imágenes\Colaboradores\YarahiLópez.webp" alt="Yarahi López">
+                    <div class="contact-info">
+                        <h3>Yarahi López</h3>
+                        <p>+504 9907-9180</p>
+                        <p class="sub-text">📞 Llamar a Héctor Flores</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+50433891762');">
+                    <img src="Imágenes\Colaboradores\Yosselin.jpg" alt="Yosselin Velasquez">
+                    <div class="contact-info">
+                        <h3>Yosselin Velasquez</h3>
+                        <p>+504 3389-1762</p>
+                        <p class="sub-text">📞 Llamar a Yesenia Velasquez</p>
+                    </div>
+                    <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="header">
-        Pisos Brillantes
+        Menú Principal
     </div>
-
-
-
     
-    <div class="menu-container">
+    <div class="app-container">
+        <div class="menu-container">
+            <div class="menu-item" onclick="window.location.href='Registro de Asistencia Diaria.html';">
+                <span><i class="fas fa-file-alt"></i></span>
+                <p>Registro de Asistencia Diaria</p>
+            </div>
 
-        
-        <div class="menu-item" onclick="window.location.href='Registro de Asistencia Diaria.html';">
-            <span>📝</span>
-            <p>Registro de Asistencia Diaria</p>
-        </div>
-
-        <div class="menu-item" onclick="window.open('https://docs.google.com/spreadsheets/d/17c4q0B8vrjYLqqHipSzcm2O2x2zlOYqJRDHjnlzHiF8/edit?gid=881819110#gid=881819110');">            <span>📈</span>
-            <p>Historial de Asistencia Diaria</p>
-        </div>
-        <div class="separator"></div>
-
-        <div class="menu-item" onclick="window.location.href='Registro de Participación.html';">
-            <span>📝</span>
-            <p>Registro de Participación (Momento de Valor)</p>
-        </div>
-        <div class="menu-item" onclick="window.location.href='Reporte de Seguimiento de Oasis.html';">
-            <span>📝</span>
-            <p>Reporte de Seguimiento de Oasis</p>
-        </div>
-        
-        <div class="separator"></div>
+            <div class="menu-item" onclick="window.open('https://docs.google.com/spreadsheets/d/17c4q0B8vrjYLqqHipSzcm2O2x2zlOYqJRDHjnlzHiF8/edit?gid=881819110#gid=881819110');">
+                <span><i class="fas fa-history"></i></span>
+                <p>Historial de Asistencia Diaria</p>
+            </div>
             
-        <div class="menu-item" onclick="window.location.href='Requisiciones.html';">
-            <span>📁</span>
-            <p>Requisiciones</p>
-        </div>
-        
-        <div class="menu-item" onclick="window.location.href='Bitácoras.html';">
-            <span>📁</span>
-            <p>Bitácoras</p>
-        </div>
+            <div class="separator"></div>
 
-        <div class="separator"></div>
+            <div class="menu-item" onclick="window.location.href='Registro de Participación.html';">
+                <span><i class="fas fa-file-alt"></i></span>
+                <p>Registro de Participación (Momento de Valor)</p>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='Reporte de Seguimiento de Oasis.html';">
+                <span><i class="fas fa-file-alt"></i></span>
+                <p>Reporte de Seguimiento de Oasis</p>
+            </div>
+            
+            <div class="separator"></div>
+                
+            <div class="menu-item folder-item" onclick="window.location.href='Requisiciones.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>Requisiciones</p>
+            </div>
+            
+            <div class="menu-item folder-item" onclick="window.location.href='Bitácoras.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>Bitácoras</p>
+            </div>
 
-        <div class="menu-item" onclick="window.open('https://docs.google.com/spreadsheets/d/1RxL37ZJsI36iz54tTK_juDqG9ARMGOzE/edit?usp=drive_link&ouid=115326674435059696286&rtpof=true&sd=true');">
-            <span>🌟</span>
-            <p>Actividades en Bodega de Limpieza</p>
-        </div>
-        <div class="menu-item" onclick="window.location.href='Contactos-Emergencia.html';">
-            <span>🚨</span>
-            <p>Contactos en Caso de Emergencia</p>
-        </div>
-        <div class="separator"></div>
+            <div class="separator"></div>
 
-        <div class="menu-item full-width" onclick="window.open('https://docs.google.com/spreadsheets/d/1O8_xOof4Zht9q6016GGMdoo2xA2rNr5GrLIetmjltds/edit?usp=drive_link');">
-            <span>👮🏻👷🏻‍♀️</span>
-            <p>Antecedentes / Formaciones SISO</p>
-        </div>
-        <div class="separator"></div>
+            <div class="menu-item" onclick="window.open('https://docs.google.com/spreadsheets/d/1RxL37ZJsI36iz54tTK_juDqG9ARMGOzE/edit?usp=drive_link&ouid=115326674435059696286&rtpof=true&sd=true');">
+                <span><i class="fa-solid fa-star"></i></span>
+                <p>Actividades en Bodega de Limpieza</p>
+            </div>
+            
+            <div class="menu-item" onclick="mostrarContactosEmergencia()">
+                <span><i class="fas fa-phone-alt"></i></span>
+                <p>Contactos en Caso de Emergencia</p>
+            </div>
+            
+            <div class="separator"></div>
 
-        <div class="menu-item" onclick="window.location.href='MSDS.html';">
-            <span>📁</span>
-            <p>MSDS - Productos Químicos</p>
-        </div>
-        <div class="menu-item" onclick="window.location.href='Procedimientos de Limpieza.html';">
-            <span>📁</span>
-            <p>Procedimientos de Limpieza</p>
-        </div>
-        <div class="separator"></div>
+            <div class="menu-item" style="grid-column: 1 / -1;" onclick="window.open('https://docs.google.com/spreadsheets/d/1O8_xOof4Zht9q6016GGMdoo2xA2rNr5GrLIetmjltds/edit?usp=drive_link');">
+                <span><i class="fas fa-user-shield"></i></span>
+                <p>Antecedentes / Formaciones SISO</p>
+            </div>
+            
+            <div class="separator"></div>
 
-        <div class="menu-item" onclick="window.location.href='Formaciones.html';">
-            <span>📁</span>
-            <p>Formaciones SISO (Argos)</p>
-        </div>
-        <div class="menu-item" onclick="window.location.href='Supervisión.html';">
-            <span>📁</span>
-            <p>Supervisión</p>
-        </div>
-        <div class="separator"></div>
+            <div class="menu-item folder-item" onclick="window.location.href='MSDS.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>MSDS - Productos Químicos</p>
+            </div>
+            
+            <div class="menu-item folder-item" onclick="window.location.href='Procedimientos de Limpieza.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>Procedimientos de Limpieza</p>
+            </div>
+            
+            <div class="separator"></div>
 
-        <div class="menu-item full-width" onclick="window.location.href='Descargas.html';">
-            <span>📥</span>
-            <p>Descargas</p>
+            <div class="menu-item folder-item" onclick="window.location.href='Formaciones.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>Formaciones SISO (Argos)</p>
+            </div>
+            
+            <div class="menu-item folder-item" onclick="window.location.href='Supervisión.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>Supervisión</p>
+            </div>
+            
+            <div class="separator"></div>
+
+            <div class="menu-item" style="grid-column: 1 / -1;" onclick="window.location.href='Descargas.html';">
+                <span><i class="fas fa-download"></i></span>
+                <p>Descargas</p>
+            </div>
+            
+            <div class="separator"></div>
+            
+            <div class="menu-item" onclick="mostrarProximosCumpleanos()">
+                <span><i class="fas fa-birthday-cake"></i></span>
+                <p>Próximos Cumpleaños</p>
+            </div>
+            
+            <div class="menu-item" onclick="mostrarInfo()">
+                <span><i class="fas fa-info-circle"></i></span>
+                <p>Acerca de</p>
+            </div>
         </div>
     </div>
 
-    <!-- Contenedor del iframe -->
-    <div id="iframe-container" style="display:none;">
+    <div id="iframe-container">
         <iframe id="iframe" src=""></iframe>
-        <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+        <a href="javascript:void(0);" class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
     </div>
 
-
-    <!-- Ícono flotante para el QR -->
     <div id="qr-icon" onclick="window.location.href='QR.html';">
         <i class="fas fa-qrcode"></i>
     </div>
 
-
-    <!-- Ícono flotante para notificaciones -->
     <div id="notification-icon" onclick="mostrarNotificaciones()">
         <i class="fas fa-bell"></i>
         <span id="notification-badge" class="notification-badge"></span>
     </div>
 
-    <!-- Ventana emergente de notificaciones -->
     <div id="notification-modal" class="notification-modal">
         <div class="notification-modal-content">
-<div class="notification-header">
-    <h2>Notificaciones <button class="refresh-button" onclick="actualizarNotificaciones()">
-        <i class="fas fa-sync-alt"></i> <!-- Ícono de FontAwesome -->
-    </button></h2>
-    <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
-</div>
+            <div class="notification-header">
+                <h2>Notificaciones
+                    <button class="refresh-button" onclick="actualizarNotificaciones()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </h2>
+                <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
+            </div>
             <ul class="notification-list" id="notification-list"></ul>
         </div>
     </div>
 
-<!-- Elemento de audio para el sonido de notificación -->
-<audio id="notification-sound" src="sounds/notification2.mp3"></audio>
+    <div id="info-modal" class="info-modal">
+        <div class="info-modal-content">
+            <div class="info-header">
+                <h2>Información de la Aplicación</h2>
+                <button class="close-modal" onclick="cerrarInfo()">&times;</button>
+            </div>
+            <div class="creator-info">
+                <div style="background-color: #2C73D2; color: white; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; font-size: 2.5em;">
+                    JZ
+                </div>
+                <h3>Jeancarlo Zelaya</h3>
+                <p>Ingeniero Industrial</p>
+                <p><a>Jz.92@live.com</a></p>
+                <p>Desarrollador de la APP</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="notification-sound" src="sounds/notification2.mp3"></audio>
+
+    <footer>
+        JZ © <span id="current-year"></span> - Sistema de Gestión
+    </footer>
 
     <script>
+        // Establecer el año actual en el footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
         function openInIframe(url) {
             document.getElementById('iframe').src = url;
             document.getElementById('iframe-container').style.display = 'block';
-            document.querySelector('.menu-container').style.display = 'none'; // Ocultar menú
+            document.querySelector('.app-container').style.display = 'none';
+            document.querySelector('footer').style.display = 'none';
         }
 
         function goBack() {
             document.getElementById('iframe-container').style.display = 'none';
-            document.querySelector('.menu-container').style.display = 'grid'; // Mostrar menú
+            document.querySelector('.app-container').style.display = 'block';
+            document.querySelector('footer').style.display = 'block';
         }
 
-        // Código para la instalación de la app (si es necesario)
+        function mostrarInfo() {
+            document.getElementById('info-modal').classList.add('active');
+        }
+
+        function cerrarInfo() {
+            document.getElementById('info-modal').classList.remove('active');
+        }
+
+        function mostrarProximosCumpleanos() {
+            document.getElementById('birthdays-modal').classList.add('active');
+            cargarProximosCumpleanos();
+        }
+
+        function cerrarProximosCumpleanos() {
+            document.getElementById('birthdays-modal').classList.remove('active');
+        }
+
+        // Nueva función para mostrar contactos de emergencia
+        function mostrarContactosEmergencia() {
+            document.getElementById('emergency-contacts-modal').classList.add('active');
+        }
+        
+        // Nueva función para cerrar contactos de emergencia
+        function cerrarContactosEmergencia() {
+            document.getElementById('emergency-contacts-modal').classList.remove('active');
+        }
+
+        // Código para la instalación de la app
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
@@ -620,285 +1335,270 @@
             });
         });
 
+        // Sistema de cumpleaños
+        const cumpleañeros = [
+            { nombre: "Ariel", fecha: "21/11", foto: "Imágenes/Colaboradores/ArielMachado.webp" },
+            { nombre: "Cintia", fecha: "21/07", foto: "Imágenes/Colaboradores/Cintia Machado.jpg" },
+            { nombre: "Gertrudis", fecha: "15/04", foto: "Imágenes/Colaboradores/Gertrudis.png" },
+            { nombre: "Melvin", fecha: "18/06", foto: "https://raw.githubusercontent.com/jeancarlozelaya/PIBRISA/refs/heads/main/Im%C3%A1genes/Colaboradores/MelvinLopez.jpg" },
+            { nombre: "Heydi", fecha: "08/03", foto: "https://raw.githubusercontent.com/jeancarlozelaya/PIBRISA/refs/heads/main/Im%C3%A1genes/Colaboradores/HeydiVargas.jpg" },
+            { nombre: "Mari", fecha: "24/01", foto: "Imágenes/Colaboradores/María Portillo.jpg" },
+            { nombre: "Mayra", fecha: "17/02", foto: "Imágenes/Colaboradores/MayraNicolás.webp" },
+            { nombre: "Omar", fecha: "10/04", foto: "Imágenes/Colaboradores/Olban.jpg" },
+            { nombre: "Yarahi", fecha: "21/08", foto: "Imágenes/Colaboradores/YarahiLópez.webp" },
+            { nombre: "Yosselin", fecha: "06/04", foto: "Imágenes/Colaboradores/Yosselin.jpg" },
+            { nombre: "Jeancarlo", fecha: "09/11", foto: "Imágenes/Colaboradores/Jzelaya.png" }
+        ];
 
+        let confettiInterval;
+        let fuegosArtificialesInterval;
+        let audio = new Audio('cumpleaños.mp3');
+        let audioPermitido = false;
 
+        // Detectar la primera interacción del usuario para habilitar el audio
+        document.addEventListener("click", function habilitarAudio() {
+            audioPermitido = true;
+            document.removeEventListener("click", habilitarAudio);
+        });
 
-const cumpleañeros = [
-    { nombre: "Ariel", fecha: "21/11", foto: "Imágenes/Colaboradores/ArielMachado.webp" },
-    { nombre: "Cintia", fecha: "21/07", foto: "Imágenes/Colaboradores/Cintia Machado.jpg" },
-    { nombre: "Gertrudis", fecha: "15/04", foto: "Imágenes/Colaboradores/Gertrudis.png" },
-    { nombre: "Melvin", fecha: "18/06", foto: "Imágenes/Colaboradores/MelvinLopez.png" },
-    { nombre: "Heydi", fecha: "08/03", foto: "Imágenes/Colaboradores/HeydiVargas.png" },
-    { nombre: "Mari", fecha: "24/01", foto: "Imágenes/Colaboradores/María Portillo.jpg" },
-    { nombre: "Mayra", fecha: "17/02", foto: "Imágenes/Colaboradores/MayraNicolás.webp" },
-    { nombre: "Omar", fecha: "10/04", foto: "Imágenes/Colaboradores/Olban.jpg" },
-    { nombre: "Yarahi", fecha: "21/08", foto: "Imágenes/Colaboradores/YarahiLópez.webp" },
-    { nombre: "Yosselin", fecha: "06/04", foto: "Imágenes/Colaboradores/Yosselin.jpg" },
-    { nombre: "Jeancarlo", fecha: "09/11", foto: "Imágenes/Colaboradores/Jzelaya.png" }
-];
+        function verificarCumpleaños() {
+            const fechaHoy = new Date();
+            const diaHoy = String(fechaHoy.getDate()).padStart(2, '0');
+            const mesHoy = String(fechaHoy.getMonth() + 1).padStart(2, '0');
+            const fechaHoyFormateada = `${diaHoy}/${mesHoy}`;
 
-let confettiInterval;
-let fuegosArtificialesInterval;
-let audio = new Audio('cumpleaños.mp3');  // Reemplaza con la URL de tu audio
-let audioPermitido = false;  // Variable para verificar si el audio puede reproducirse
+            const ultimaFechaMostrada = localStorage.getItem('ultimaFechaCumple');
 
-// Detectar la primera interacción del usuario para habilitar el audio
-document.addEventListener("click", function habilitarAudio() {
-    audioPermitido = true;
-    document.removeEventListener("click", habilitarAudio); // Se ejecuta solo una vez
-});
+            if (ultimaFechaMostrada !== fechaHoyFormateada) {
+                localStorage.removeItem('cumpleañosHoy'); 
+                localStorage.setItem('ultimaFechaCumple', fechaHoyFormateada);
+            }
 
-function verificarCumpleaños() {
-    const fechaHoy = new Date();
-    const diaHoy = String(fechaHoy.getDate()).padStart(2, '0');
-    const mesHoy = String(fechaHoy.getMonth() + 1).padStart(2, '0');
-    const fechaHoyFormateada = `${diaHoy}/${mesHoy}`;
+            const cumpleañero = cumpleañeros.find(c => c.fecha === fechaHoyFormateada);
 
-    const ultimaFechaMostrada = localStorage.getItem('ultimaFechaCumple');
+            if (cumpleañero) {
+                document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
 
-    if (ultimaFechaMostrada !== fechaHoyFormateada) {
-        localStorage.removeItem('cumpleañosHoy'); 
-        localStorage.setItem('ultimaFechaCumple', fechaHoyFormateada);
-    }
+                const mensajes = [
+                    `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este nuevo año de vida te acerque a cumplir todos tus sueños. Sigue adelante con valentía y determinación. ¡El futuro es tuyo! 🚀✨`,
+                    `🎂 ¡Muchas felicidades, ${cumpleañero.nombre}! 🥳 Que este día sea el comienzo de un año lleno de oportunidades, crecimiento y éxito. ¡Disfruta tu día y sigue brillando! 🌟🎊`,
+                    `🎈 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎉 Que la felicidad, la salud y el amor te acompañen siempre. Nunca dejes de soñar en grande y luchar por lo que quieres. 🚀🥂`,
+                    `🎁 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Hoy celebramos tu vida y todo lo increíble que eres. Que sigas conquistando metas y viviendo momentos inolvidables. 🎊🥳`,
+                    `🎊 ¡Que viva el cumpleañero, ${cumpleañero.nombre}! 🥳 Que este año traiga nuevas aventuras, aprendizajes y muchas victorias. Confía en ti mismo y sigue adelante. 🎂🔥`
+                ];
 
-    const cumpleañero = cumpleañeros.find(c => c.fecha === fechaHoyFormateada);
+                const mensajeAleatorio = mensajes[Math.floor(Math.random() * mensajes.length)];
+                document.getElementById("mensajeCumple").textContent = mensajeAleatorio;
+                
+                if (!localStorage.getItem('cumpleañosHoy')) {
+                    mostrarRegalo();
+                } else {
+                    mostrarBotonFlotante();
+                }
+            }
+        }
 
-    if (cumpleañero) {
-        document.getElementById("fotoCumpleañero").src = cumpleañero.foto;
+        function cargarProximosCumpleanos() {
+            const hoy = new Date();
+            const lista = document.getElementById("birthdays-list");
+            lista.innerHTML = '';
+            
+            // Ordenar cumpleaños por proximidad
+            const cumpleañosProximos = [...cumpleañeros]
+                .map(persona => {
+                    const [dia, mes] = persona.fecha.split('/').map(Number);
+                    const fechaCumple = new Date(hoy.getFullYear(), mes - 1, dia);
+                    
+                    // Si el cumpleaños ya pasó este año, calcular para el próximo año
+                    if (fechaCumple < hoy) {
+                        fechaCumple.setFullYear(hoy.getFullYear() + 1);
+                    }
+                    
+                    const diasRestantes = Math.floor((fechaCumple - hoy) / (1000 * 60 * 60 * 24));
+                    
+                    return {
+                        ...persona,
+                        diasRestantes,
+                        fechaCumple
+                    };
+                })
+                .sort((a, b) => a.diasRestantes - b.diasRestantes)
+                .slice(0, 11); // Mostrar solo los 5 próximos
+            
+            if (cumpleañosProximos.length === 0) {
+                const li = document.createElement("li");
+                li.className = "birthday-item";
+                li.textContent = "No hay cumpleaños próximos";
+                lista.appendChild(li);
+            } else {
+                cumpleañosProximos.forEach(persona => {
+                    const li = document.createElement("li");
+                    li.className = "birthday-item";
+                    
+                    li.innerHTML = `
+                        <img src="${persona.foto}" alt="${persona.nombre}">
+                        <div class="birthday-info">
+                            <strong>${persona.nombre}</strong>
+                            <p>Cumple el ${persona.fecha} (en ${persona.diasRestantes} días)</p>
+                        </div>
+                    `;
+                    
+                    lista.appendChild(li);
+                });
+            }
+        }
 
-const mensajes = [
-  `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este nuevo año de vida te acerque a cumplir todos tus sueños. Sigue adelante con valentía y determinación. ¡El futuro es tuyo! 🚀✨`,
-  `🎂 ¡Muchas felicidades, ${cumpleañero.nombre}! 🥳 Que este día sea el comienzo de un año lleno de oportunidades, crecimiento y éxito. ¡Disfruta tu día y sigue brillando! 🌟🎊`,
-  `🎈 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎉 Que la felicidad, la salud y el amor te acompañen siempre. Nunca dejes de soñar en grande y luchar por lo que quieres. 🚀🥂`,
-  `🎁 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Hoy celebramos tu vida y todo lo increíble que eres. Que sigas conquistando metas y viviendo momentos inolvidables. 🎊🥳`,
-  `🎊 ¡Que viva el cumpleañero, ${cumpleañero.nombre}! 🥳 Que este año traiga nuevas aventuras, aprendizajes y muchas victorias. Confía en ti mismo y sigue adelante. 🎂🔥`,
-  `🥳 ¡Hoy es tu día, ${cumpleañero.nombre}! 🎈 Que cada día sea una nueva oportunidad para crecer, aprender y disfrutar la vida al máximo. ¡Eres capaz de lograrlo todo! 🌟🎁`,
-  `🎉 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Que este nuevo ciclo te llene de energía, motivación y grandes logros. Cree en ti mismo y el éxito vendrá. 💪🚀`,
-  `🎊 ¡Un año más de vida, ${cumpleañero.nombre}! 🎂 Que cada paso que des te acerque más a tus sueños. Tienes el poder de hacer cosas extraordinarias, ¡no lo olvides! ✨🥳`,
-  `🎈 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que la felicidad y la abundancia sean parte de tu camino. Sigue construyendo la vida que deseas con pasión y determinación. 🔥🎉`,
-  `🎁 ¡Muchas felicidades, ${cumpleañero.nombre}! 🎂 Que la vida te sorprenda con momentos increíbles, llenos de amor, alegría y éxito. Sigue adelante con fuerza. 🚀💖`,
-  `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este año sea mejor que el anterior y te acerque aún más a tus sueños. ¡Lo mejor está por venir! 🥳🎈`,
-  `🎂 ¡Muchas felicidades, ${cumpleañero.nombre}! 🥳 Hoy es un día especial porque celebramos a alguien increíble. Que la vida te llene de bendiciones y nuevos logros. 🎊✨`,
-  `🎊 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Que cada día te acerque más a la mejor versión de ti mismo. No dejes de soñar y trabajar por lo que deseas. 🚀🥳`,
-  `🎁 ¡Hoy es tu día, ${cumpleañero.nombre}! 🎂 Aprovecha este nuevo año de vida para seguir creciendo, aprendiendo y disfrutando. ¡Eres capaz de todo! 🔥🎉`,
-  `🥳 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎈 Que la vida te regale momentos llenos de amor, felicidad y éxito. ¡Nunca dejes de creer en ti! 🌟🎊`,
-  `🎉 ¡Muchas felicidades, ${cumpleañero.nombre}! 🎂 Que cada día de este nuevo año de vida esté lleno de energía positiva y grandes oportunidades. ¡A por todas! 💪✨`,
-  `🎊 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que este año traiga nuevos retos y muchas victorias. Confía en ti mismo y sigue luchando por tus sueños. 🚀🥳`,
-  `🎁 ¡Felicidades, ${cumpleañero.nombre}! 🎂 Que la alegría, la prosperidad y la paz te acompañen en cada paso que des. ¡Sigue brillando con tu luz única! 🌟🎉`,
-  `🎂 ¡Hoy celebramos a alguien increíble, ${cumpleañero.nombre}! 🎈 Que este nuevo año de vida esté lleno de momentos inolvidables y grandes logros. ¡A disfrutarlo! 🎊🥳`,
-  `🎉 ¡Feliz cumpleaños, ${cumpleañero.nombre}! 🎂 Que nunca te falten motivos para sonreír y seguir adelante con entusiasmo. ¡El éxito y la felicidad te esperan! 🚀✨`
-];
+        function mostrarRegalo() {
+            let regalo = document.getElementById("pantallaRegalo");
 
-// Seleccionar un mensaje aleatorio
-const mensajeAleatorio = mensajes[Math.floor(Math.random() * mensajes.length)];
+            if (!regalo) {
+                regalo = document.createElement("div");
+                regalo.id = "pantallaRegalo";
+                regalo.style.position = "fixed";
+                regalo.style.top = "0";
+                regalo.style.left = "0";
+                regalo.style.width = "100vw";
+                regalo.style.height = "100vh";
+                regalo.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+                regalo.style.display = "flex";
+                regalo.style.justifyContent = "center";
+                regalo.style.alignItems = "center";
+                regalo.style.zIndex = "2000";
 
-// Asignarlo al elemento HTML
-document.getElementById("mensajeCumple").textContent = mensajeAleatorio;
-        
-        if (!localStorage.getItem('cumpleañosHoy')) {
-            mostrarRegalo(); // 🛍️ Mostrar el regalo antes del modal
-        } else {
+                let iconoRegalo = document.createElement("div");
+                iconoRegalo.innerHTML = "🎁";
+                iconoRegalo.style.fontSize = "100px";
+                iconoRegalo.style.cursor = "pointer";
+                iconoRegalo.style.animation = "latir 1.5s infinite";
+                iconoRegalo.addEventListener("click", abrirRegalo);
+
+                regalo.appendChild(iconoRegalo);
+                document.body.appendChild(regalo);
+            }
+
+            regalo.style.display = "flex";
+        }
+
+        function abrirRegalo() {
+            const regalo = document.getElementById("pantallaRegalo");
+            if (regalo) {
+                regalo.style.display = "none";
+            }
+
+            audioPermitido = true;
+            mostrarModal();
+        }
+
+        function mostrarModal() {
+            const modal = document.getElementById("birthdayModal");
+            modal.classList.add("active");
+            ocultarBotonFlotante();
+            localStorage.setItem('cumpleañosHoy', 'true');
+            lanzarConfeti();
+            fuegosArtificiales();
+            audioPermitido = true;
+            reproducirAudio();
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById("birthdayModal");
+            modal.classList.remove("active");
+            detenerEfectos();
+            detenerAudio();
             mostrarBotonFlotante();
         }
-    }
-}
 
-function mostrarRegalo() {
-    let regalo = document.getElementById("pantallaRegalo");
+        function mostrarBotonFlotante() {
+            let boton = document.getElementById("botonCumple");
 
-    if (!regalo) {
-        regalo = document.createElement("div");
-        regalo.id = "pantallaRegalo";
-        regalo.style.position = "fixed";
-        regalo.style.top = "0";
-        regalo.style.left = "0";
-        regalo.style.width = "100vw";
-        regalo.style.height = "100vh";
-        regalo.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Fondo semi-transparente
-        regalo.style.display = "flex";
-        regalo.style.justifyContent = "center";
-        regalo.style.alignItems = "center";
-        regalo.style.zIndex = "1500"; // Asegurar que está por encima de todo
+            if (!boton) {
+                boton = document.createElement("button");
+                boton.id = "botonCumple";
+                boton.innerHTML = "🎂";
+                boton.style.position = "fixed";
+                boton.style.bottom = "90px";
+                boton.style.right = "20px";
+                boton.style.width = "56px";
+                boton.style.height = "56px";
+                boton.style.fontSize = "24px";
+                boton.style.border = "none";
+                boton.style.borderRadius = "50%";
+                boton.style.background = "linear-gradient(135deg, var(--secondary), #ff5252)";
+                boton.style.color = "#fff";
+                boton.style.cursor = "pointer";
+                boton.style.boxShadow = "var(--shadow-lg)";
+                boton.style.zIndex = "1000";
+                boton.addEventListener("click", () => {
+                    ocultarBotonFlotante();
+                    mostrarModal();
+                });
 
-        // Crear el ícono del regalo
-        let iconoRegalo = document.createElement("div");
-        iconoRegalo.innerHTML = "🎁";
-        iconoRegalo.style.fontSize = "100px";
-        iconoRegalo.style.cursor = "pointer";
-        iconoRegalo.style.animation = "latir 1.5s infinite"; // Animación de latido
-        iconoRegalo.addEventListener("click", abrirRegalo);
-
-        regalo.appendChild(iconoRegalo);
-        document.body.appendChild(regalo);
-
-        // Agregar animación con CSS
-        let estilo = document.createElement("style");
-        estilo.innerHTML = `
-            @keyframes latir {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.1); }
-                100% { transform: scale(1); }
+                document.body.appendChild(boton);
             }
-        `;
-        document.head.appendChild(estilo);
-    }
 
-    regalo.style.display = "flex";
-}
+            boton.style.display = "block";
+        }
 
+        function ocultarBotonFlotante() {
+            const boton = document.getElementById("botonCumple");
+            if (boton) {
+                boton.style.display = "none";
+            }
+        }
 
-function abrirRegalo() {
-    const regalo = document.getElementById("pantallaRegalo");
-    if (regalo) {
-        regalo.style.display = "none"; // Ocultar el regalo después del primer clic
-    }
+        function lanzarConfeti() {
+            confettiInterval = setInterval(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 160,
+                    origin: { y: 0.6, x: 0.5 },
+                    zIndex: 2001  // Asegura que esté sobre el modal
+                });
+            }, 1000);
+        }
 
-    // Habilitar el audio al hacer clic en el regalo
-    audioPermitido = true;
+        function fuegosArtificiales() {
+            fuegosArtificialesInterval = setInterval(function () {
+                confetti({
+                    particleCount: 100,
+                    spread: 90,
+                    angle: 90,
+                    origin: { x: Math.random(), y: Math.random() },
+                    colors: ['#FF0000', '#FFFF00', '#00FF00', '#0000FF'],
+                    shapes: ['circle', 'square'],
+                    scalar: 1.5,
+                    zIndex: 2001  // Asegura que esté sobre el modal
+                });
+            }, 1000);
+        }
 
-    mostrarModal();
-}
+        function detenerEfectos() {
+            clearInterval(confettiInterval);
+            clearInterval(fuegosArtificialesInterval);
+        }
 
+        function reproducirAudio() {
+            if (audioPermitido) {
+                audio.currentTime = 0;
+                audio.play().catch(error => console.error("Error al reproducir el audio:", error));
+            }
+        }
 
+        function detenerAudio() {
+            audio.pause();
+            audio.currentTime = 0;
+        }
 
-
-
-
-function mostrarModal() {
-    const modal = document.getElementById("birthdayModal");
-    modal.style.opacity = 1;
-    modal.style.visibility = "visible";
-
-    ocultarBotonFlotante();
-
-    localStorage.setItem('cumpleañosHoy', 'true');
-
-    lanzarConfeti();
-    fuegosArtificiales();
-    
-    // Habilitar el audio si aún no está permitido
-    audioPermitido = true;  
-    reproducirAudio();  // 🔊 Asegura que el audio se inicie correctamente
-}
-
-
-function cerrarModal() {
-    const modal = document.getElementById("birthdayModal");
-    modal.style.opacity = 0;
-    modal.style.visibility = "hidden";
-
-    detenerEfectos(); // Detiene confeti y fuegos artificiales
-    detenerAudio();  // Detener el audio
-
-    mostrarBotonFlotante();
-}
-
-function mostrarBotonFlotante() {
-    let boton = document.getElementById("botonCumple");
-
-    if (!boton) {
-        boton = document.createElement("button");
-        boton.id = "botonCumple";
-        boton.innerHTML = "🎂";
-        boton.style.position = "fixed";
-        boton.style.bottom = "20px";
-        boton.style.left = "20px";
-        boton.style.width = "50px";
-        boton.style.height = "50px";
-        boton.style.fontSize = "24px";
-        boton.style.border = "none";
-        boton.style.borderRadius = "50%";
-        boton.style.backgroundColor = "#ffcc00";
-        boton.style.color = "#fff";
-        boton.style.cursor = "pointer";
-        boton.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.2)";
-        boton.style.zIndex = "1200";
-        boton.addEventListener("click", () => {
-            ocultarBotonFlotante();
-            mostrarModal();
-        });
-
-        document.body.appendChild(boton);
-    }
-
-    boton.style.display = "block";
-}
-
-function ocultarBotonFlotante() {
-    const boton = document.getElementById("botonCumple");
-    if (boton) {
-        boton.style.display = "none";
-    }
-}
-
-
-function lanzarConfeti() {
-    confettiInterval = setInterval(() => {
-        confetti({
-            particleCount: 100,
-            spread: 160,
-            origin: { y: 0.6, x: 0.5 },
-            zIndex: 1100 // Asegura que esté sobre el modal
-        });
-    }, 1000);  // Cambié el intervalo a 1 segundo (1000 ms)
-}
-
-function fuegosArtificiales() {
-    fuegosArtificialesInterval = setInterval(function () {
-        confetti({
-            particleCount: 100,
-            spread: 90,
-            angle: 90,
-            origin: { x: Math.random(), y: Math.random() },
-            colors: ['#FF0000', '#FFFF00', '#00FF00', '#0000FF'], // Colores de fuegos artificiales
-            shapes: ['circle', 'square'],
-            scalar: 1.5
-        });
-    }, 1000);  // Cambié el intervalo a 1 segundo (1000 ms)
-}
-
-function detenerEfectos() {
-    clearInterval(confettiInterval);
-    clearInterval(fuegosArtificialesInterval);
-}
-
-// 🔊 Funciones para el audio 🎶
-function reproducirAudio() {
-    if (audioPermitido) {
-        audio.currentTime = 0;  // Reinicia el audio desde el inicio
-        audio.play().catch(error => console.error("Error al reproducir el audio:", error));
-    }
-}
-
-function detenerAudio() {
-    audio.pause();
-    audio.currentTime = 0;  // Reinicia el audio para la próxima vez
-}
-
-// Verificar cumpleaños al cargar la página
-verificarCumpleaños();
-        
-
-
-
-
-<!-- Contenedor para Notificaciones-->
-
-        // URL de tu script de Google Apps Script
+        // Sistema de notificaciones (restaurado de i.html)
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXmiIPYUskMzx8jPYFoZKOpvcVL_PD7oI8qzmHuyjaDHLiLLhkOejXUzOTVmRMmt9u/exec";
-
-        // Clave única para las notificaciones vistas en esta página
         const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
-
-        // Cache para notificaciones
         let notificacionesCache = null;
         let ultimaActualizacion = null;
 
-        // Función para obtener notificaciones desde Google Sheets
         async function obtenerNotificaciones() {
             const ahora = Date.now();
             if (notificacionesCache && ultimaActualizacion && (ahora - ultimaActualizacion < 30000)) {
-                return notificacionesCache; // Usar caché si la última actualización fue hace menos de 30 segundos
+                return notificacionesCache;
             }
 
             try {
@@ -913,151 +1613,125 @@ verificarCumpleaños();
             }
         }
 
-        // Función para formatear la hora de 24 horas a 12 horas
         function formatearHora(hora24) {
             const [hora, minutos] = hora24.split(":");
             const horaNum = parseInt(hora, 10);
             const ampm = horaNum >= 12 ? "PM" : "AM";
-            const hora12 = horaNum % 12 || 12; // Convertir 0 a 12
+            const hora12 = horaNum % 12 || 12;
             return `${hora12}:${minutos} ${ampm}`;
         }
 
-        // Función para mostrar notificaciones en la ventana emergente
-async function mostrarNotificaciones() {
-    const notificationIcon = document.getElementById("notification-icon");
-    notificationIcon.style.pointerEvents = "none"; // Desactivar clics durante la carga
+        async function mostrarNotificaciones() {
+            const notificationIcon = document.getElementById("notification-icon");
+            notificationIcon.style.pointerEvents = "none";
 
-    const notificaciones = await obtenerNotificaciones();
-    const notificationList = document.getElementById("notification-list");
-    notificationList.innerHTML = ""; // Limpiar lista
+            const notificaciones = await obtenerNotificaciones();
+            const notificationList = document.getElementById("notification-list");
+            notificationList.innerHTML = "";
 
-    // Obtener notificaciones vistas
-    const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+            const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+            const badge = document.getElementById("notification-badge");
+            badge.style.display = "none";
 
-    // --- CAMBIO CLAVE 1: Ocultar badge inmediatamente ---
-    const badge = document.getElementById("notification-badge");
-    badge.style.display = "none";
-
-    // Mostrar contenido
-    if (notificaciones.length === 0) {
-        const li = document.createElement("li");
-        li.className = "notification-item";
-        li.textContent = "Sin notificaciones";
-        notificationList.appendChild(li);
-    } else {
-        notificaciones.forEach((notificacion) => {
-            const [fecha, hora, mensaje] = notificacion;
-
-            // Verificar si fue vista (comparación normalizada)
-            const notifNormalizada = JSON.stringify({
-                fecha: fecha?.trim(),
-                hora: hora?.trim(),
-                mensaje: mensaje?.trim()
-            });
-            const esVista = notificacionesVistas.includes(notifNormalizada);
-
-            // Mostrar todas las notificaciones (leídas o no)
-            if (fecha && hora && mensaje) {
-                const horaFormateada = formatearHora(hora);
-                const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
-
+            if (notificaciones.length === 0) {
                 const li = document.createElement("li");
                 li.className = "notification-item";
-                li.innerHTML = `
-                    <strong>${fecha} ${horaFormateada}</strong>
-                    <p>${mensajeFormateado}</p>
-                `;
+                li.textContent = "Sin notificaciones";
                 notificationList.appendChild(li);
+            } else {
+                notificaciones.forEach((notificacion) => {
+                    const [fecha, hora, mensaje] = notificacion;
+                    const notifNormalizada = JSON.stringify({
+                        fecha: fecha?.trim(),
+                        hora: hora?.trim(),
+                        mensaje: mensaje?.trim()
+                    });
+                    const esVista = notificacionesVistas.includes(notifNormalizada);
+
+                    if (fecha && hora && mensaje) {
+                        const horaFormateada = formatearHora(hora);
+                        const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
+
+                        const li = document.createElement("li");
+                        li.className = "notification-item";
+                        li.innerHTML = `
+                            <strong>${fecha} ${horaFormateada}</strong>
+                            <p>${mensajeFormateado}</p>
+                        `;
+                        notificationList.appendChild(li);
+                    }
+                });
             }
-        });
-    }
 
-    // --- CAMBIO CLAVE 2: Marcar como vistas después de mostrarlas ---
-    const nuevasNotificacionesVistas = notificaciones.map(notificacion => 
-        JSON.stringify({
-            fecha: notificacion[0]?.trim(),
-            hora: notificacion[1]?.trim(),
-            mensaje: notificacion[2]?.trim()
-        })
-    );
-    localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasNotificacionesVistas));
+            const nuevasNotificacionesVistas = notificaciones.map(notificacion => 
+                JSON.stringify({
+                    fecha: notificacion[0]?.trim(),
+                    hora: notificacion[1]?.trim(),
+                    mensaje: notificacion[2]?.trim()
+                })
+            );
+            localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasNotificacionesVistas));
 
-    // Mostrar modal y reactivar clics
-    document.getElementById("notification-modal").classList.add("active");
-    notificationIcon.style.pointerEvents = "auto";
-}
+            document.getElementById("notification-modal").classList.add("active");
+            notificationIcon.style.pointerEvents = "auto";
+        }
 
-
-
-        // Función para forzar la actualización de notificaciones
         async function actualizarNotificaciones() {
-            // Limpiar la caché de notificaciones
             notificacionesCache = null;
             ultimaActualizacion = null;
-
-            // Obtener notificaciones nuevamente
             const notificaciones = await obtenerNotificaciones();
-
-            // Verificar notificaciones
             verificarNotificaciones();
-
-            // Mostrar las notificaciones actualizadas
             mostrarNotificaciones();
         }
 
-        // Función para cerrar la ventana emergente
         function cerrarNotificaciones() {
             const modal = document.getElementById("notification-modal");
-            modal.classList.remove("active");
+            modal.classList.remove('active');
         }
 
-        // Verificar nuevas notificaciones cada 10 segundos
-        setInterval(verificarNotificaciones, 10000); // 10000 ms = 10 segundos
+        setInterval(verificarNotificaciones, 10000);
 
-        // Cargar notificaciones al iniciar la página
         window.addEventListener("load", verificarNotificaciones);
 
-        // Función para verificar notificaciones
-// Reemplaza la función verificarNotificaciones() completa por esta versión mejorada:
-async function verificarNotificaciones() {
-    const notificaciones = await obtenerNotificaciones();
-    const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
-    
-    let contadorNoVistas = 0;
-    let hayNuevasNotificaciones = false;
+        async function verificarNotificaciones() {
+            const notificaciones = await obtenerNotificaciones();
+            const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+            
+            let contadorNoVistas = 0;
+            let hayNuevasNotificaciones = false;
 
-    notificaciones.forEach(notificacion => {
-        // Crear versión normalizada para comparación
-        const notifNormalizada = JSON.stringify({
-            fecha: notificacion[0]?.trim(),
-            hora: notificacion[1]?.trim(),
-            mensaje: notificacion[2]?.trim()
-        });
+            notificaciones.forEach(notificacion => {
+                const notifNormalizada = JSON.stringify({
+                    fecha: notificacion[0]?.trim(),
+                    hora: notificacion[1]?.trim(),
+                    mensaje: notificacion[2]?.trim()
+                });
 
-        if (!notificacionesVistas.includes(notifNormalizada)) {
-            contadorNoVistas++;
-            hayNuevasNotificaciones = true;
+                if (!notificacionesVistas.includes(notifNormalizada)) {
+                    contadorNoVistas++;
+                    hayNuevasNotificaciones = true;
+                }
+            });
+
+            const badge = document.getElementById("notification-badge");
+            badge.textContent = contadorNoVistas;
+            badge.style.display = contadorNoVistas > 0 ? "block" : "none";
+
+            if (hayNuevasNotificaciones) {
+                const notificationSound = document.getElementById("notification-sound");
+                notificationSound.play().catch(error => console.error("Error al reproducir sonido:", error));
+            }
         }
-    });
 
-    const badge = document.getElementById("notification-badge");
-    badge.textContent = contadorNoVistas;
-    badge.style.display = contadorNoVistas > 0 ? "block" : "none";
+        // Inicializar
+        window.onload = function() {
+            verificarCumpleaños();
+            verificarNotificaciones();
+        };
 
-    // Reproducir sonido solo si hay nuevas notificaciones
-    if (hayNuevasNotificaciones) {
-        const notificationSound = document.getElementById("notification-sound");
-        notificationSound.play().catch(error => console.error("Error al reproducir sonido:", error));
-    }
-}
-
-
-
-<!-- Contenedor para Notificaciones-->
-
-
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
     </script>
-
 </body>
 </html>
-
