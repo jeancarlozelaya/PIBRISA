@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Indicador de Rotación de Personal</title>
+    <title>Seguimiento de Accidentabilidad</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body, html {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
@@ -41,11 +42,8 @@
             width: 90%;
             max-width: 1000px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            text-align: center;
             margin: 40px auto;
-            grid-row: 2;
-            height: auto;
+            text-align: center;
             box-sizing: border-box;
         }
 
@@ -53,6 +51,7 @@
             text-align: center;
             color: #333;
             margin: 0 0 20px 0;
+            font-weight: 600;
         }
 
         .back-button {
@@ -80,9 +79,10 @@
         .scrollable-table {
             max-height: 400px;
             overflow-y: auto;
-            margin-top: 20px;
+            margin: 20px auto;
             border: 1px solid #ddd;
             border-radius: 5px;
+            width: 100%;
         }
 
         table {
@@ -106,49 +106,278 @@
             top: 0;
         }
 
-        .toggle-btn {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
+        /* Colores para filas según tipo de accidente */
+        tr.leve {
+            background-color: #e8f5e9; /* Verde claro */
+        }
+        
+        tr.moderado {
+            background-color: #fff8e1; /* Amarillo claro */
+        }
+        
+        tr.grave {
+            background-color: #ffecb3; /* Amarillo oscuro */
+        }
+        
+        tr.mortal {
+            background-color: #ffebee; /* Rojo claro */
         }
 
-        .toggle-btn:hover {
-            background-color: #5a6268;
+        .chart-container {
+            position: relative;
+            margin: 30px auto;
+            height: 400px; /* Aumentado para incluir explicación */
+            width: 85%;
+            max-width: 800px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; /* Distribuye espacio */
         }
 
-        .indicator-table {
+        .chart-container canvas {
+            width: 100% !important;
+            height: 80% !important; /* Deja espacio para la explicación */
+        }
+
+        .chart-explanation {
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+            border-top: 1px solid #eee;
             width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
         }
 
-        .indicator-table th {
-            background-color: #007BFF;
-            color: white;
+        /* Nuevo diseño para el selector de período - Más profesional */
+        .period-selector {
+            margin: 20px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e0e6ed;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
-        .indicator-table td {
-            padding: 12px;
-            text-align: left;
+        .period-selector h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .indicator-value {
-            font-weight: bold;
+        .period-selector h2 i {
+            margin-right: 10px;
             color: #007BFF;
         }
 
-        .warning {
-            color: #ff9800;
-            font-weight: bold;
+        .period-selector select, .period-selector input {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 0 5px;
+            border: 1px solid #d1d9e6;
+            background-color: white;
+            font-size: 0.95em;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
-        .danger {
-            color: #f44336;
+        .period-selector select:focus, .period-selector input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .period-selector label {
+            font-weight: 500;
+            color: #4a5568;
+            margin-right: 8px;
+        }
+
+        .input-group {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .input-group label {
+            margin-right: 5px;
+            min-width: auto;
+            text-align: left;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .input-group input {
+            padding: 10px;
+            width: 80px;
+            text-align: center;
+            border: 1px solid #d1d9e6;
+            border-radius: 6px;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .hours-info {
+            background-color: #e7f3fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.95em;
+            border-left: 4px solid #007BFF;
+            text-align: left;
+            color: #2c3e50;
+        }
+
+        .hours-info strong {
+            color: #007BFF;
+        }
+
+        .update-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .update-btn:hover {
+            background-color: #0069d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .update-btn i {
+            margin-right: 8px;
+        }
+
+        #customPeriodControls {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px auto;
+            border: 1px solid #e0e6ed;
+            display: none;
+            max-width: 600px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
+        }
+
+        #customPeriodControls .input-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .table-title {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 0;
+            text-align: center;
             font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .table-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        /* Nuevo diseño para las tarjetas de estadísticas - Más profesional */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e6ed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            margin-top: 0;
+            color: #4a5568;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 1.5em;
+            color: #007BFF;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-description {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 10px;
+        }
+
+        .severity-indicator {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, #4CAF50, #FFC107, #FF9800, #F44336);
+            margin-top: 5px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .severity-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 20px;
+            background: #333;
+            transition: left 0.5s ease, background-color 0.5s ease;
         }
 
         #overlay {
@@ -172,17 +401,19 @@
             padding: 20px;
         }
 
-        .period-selector {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #e9f7ef;
-            border-radius: 5px;
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
         }
 
-        .period-selector select {
-            padding: 8px;
-            border-radius: 5px;
-            margin: 0 5px;
+        .warning {
+            color: #FFC107;
+            font-weight: bold;
+        }
+
+        .danger {
+            color: #555;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
@@ -204,25 +435,60 @@
             th, td {
                 padding: 8px;
             }
+
+            .input-group label {
+                min-width: 100%;
+                text-align: left;
+                margin-bottom: 5px;
+            }
+
+            .chart-container {
+                width: 95%;
+                height: 450px; /* Más alto en móviles */
+                padding: 10px;
+            }
+
+            .period-selector {
+                padding: 15px;
+            }
+
+            .period-selector h2 {
+                font-size: 1.2em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
         }
 
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
 
-        .table-title {
-            background-color: #007BFF;
-            color: white;
-            padding: 10px;
-            border-radius: 5px 5px 0 0;
-            margin-bottom: 0;
-            text-align: center;
-            font-weight: bold;
+            .period-selector select, .period-selector input {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .input-group input {
+                width: 100%;
+            }
         }
-
-        .table-container {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
     </style>
 </head>
 <body>
@@ -231,108 +497,166 @@
     </div>
     <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
     <div class="container">
-        <h1>Seguimiento del Flujo Laboral</h1>
+        <h1>Seguimiento de Accidentabilidad</h1>
         
+        <!-- Nuevo diseño para el período de análisis -->
         <div class="period-selector">
-            <label for="periodType">Período de análisis:</label>
-            <select id="periodType" onchange="updatePeriodControls()">
-                <option value="12">Últimos 12 meses</option>
-                <option value="6">Últimos 6 meses</option>
-                <option value="3">Últimos 3 meses</option>
-                <option value="custom">Personalizado</option>
-            </select>
+            <h2><i class="fas fa-calendar-alt"></i> Período de Análisis</h2>
             
-            <div id="customPeriodControls" style="display: none; margin-top: 10px;">
-                <label for="startDate">Desde:</label>
-                <input type="date" id="startDate">
-                
-                <label for="endDate">Hasta:</label>
-                <input type="date" id="endDate">
+            <div class="input-row">
+                <label for="periodType">Rango de tiempo:</label>
+                <select id="periodType" onchange="updatePeriodControls()">
+                    <option value="12">Últimos 12 meses</option>
+                    <option value="6">Últimos 6 meses</option>
+                    <option value="3">Últimos 3 meses</option>
+                    <option value="custom">Personalizado</option>
+                </select>
             </div>
             
-            <button onclick="loadData()" style="margin-top: 10px;">
+            <div id="customPeriodControls">
+                <div class="input-row">
+                    <label for="startDate">Desde:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="input-row">
+                    <label for="endDate">Hasta:</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <div>
+                    <label for="totalWorkers"><i class="fas fa-users"></i> Trabajadores:</label>
+                    <input type="number" id="totalWorkers" value="10" min="1">
+                </div>
+                <div>
+                    <label for="weeklyHours"><i class="fas fa-clock"></i> Horas/semana:</label>
+                    <input type="number" id="weeklyHours" value="44" min="1">
+                </div>
+            </div>
+            
+            <div id="hoursCalculation" class="hours-info">
+                <i class="fas fa-calculator"></i> Cálculo automático: 10 trabajadores × 44 horas/semana × 52 semanas = <strong>22,880 horas/año</strong>
+            </div>
+            
+            <button onclick="loadData()" class="update-btn">
                 <i class="fas fa-sync-alt"></i> Actualizar datos
             </button>
         </div>
         
-        <!-- Tabla de personal actual -->
+        <!-- Nuevo diseño para las tarjetas de estadísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <h3>Total Incidentes</h3>
+                <div id="totalAccidents" class="stat-value">0</div>
+                <div class="stat-description">Global</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="far fa-calendar-check"></i></div>
+                <h3>Días sin Incidentes</h3>
+                <div id="daysSinceLastAccident" class="stat-value">0</div>
+                <div class="stat-description">Días desde el último incidente</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-bed"></i></div>
+                <h3>Días Perdidos</h3>
+                <div id="totalLostDays" class="stat-value">0</div>
+                <div class="stat-description">Total días de incapacidad</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Índice Frecuencia</h3>
+                <div id="frequencyIndex" class="stat-value">0</div>
+                <div class="stat-description">Incidentes por millón de horas</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-weight-hanging"></i></div>
+                <h3>Índice Gravedad</h3>
+                <div id="severityIndex" class="stat-value">0</div>
+                <div class="stat-description">Días perdidos por mil horas</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-redo"></i></div>
+                <h3>Tasa de Reincidentes</h3>
+                <div id="repeatOffenders" class="stat-value">0%</div>
+                <div class="stat-description">Empleados con >1 incidente</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <h3>Efectividad Medidas</h3>
+                <div id="measureEffectiveness" class="stat-value">0%</div>
+                <div class="stat-description">Incidentes post-intervención</div>
+            </div>
+        </div>
+
+        <!-- Indicador de Severidad -->
+        <div class="stat-card" style="max-width: 100%; margin: 20px auto;">
+            <h3>Nivel de Severidad</h3>
+            <div id="severityLevel" class="stat-value">Bajo</div>
+            <div class="severity-indicator">
+                <div id="severityMarker" class="severity-marker" style="left: 0%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span>Bajo</span>
+                <span>Medio</span>
+                <span>Alto</span>
+                <span>Crítico</span>
+            </div>
+            <div class="chart-explanation">
+                <strong>Indica el nivel general de gravedad de los incidentes, considerando su frecuencia y consecuencias.</strong> 
+            </div>
+        </div>
+
+<!-- Pirámide SISO (con título restaurado) -->
+<div class="chart-container">
+    <div class="chart-title">Pirámide de Incidentalidad SISO</div>
+    <canvas id="sisoPyramidChart"></canvas>
+    <div class="chart-explanation">
+        <strong>Relación jerárquica entre incidentes graves y leves.</strong> 
+    </div>
+</div>
+
+<!-- Opción 1: Gráfico de Barras Horizontales (recomendado) -->
+<div class="chart-container">
+    <div class="chart-title">Incidentes por Lugar</div>
+    <canvas id="accidentsByAreaChart"></canvas>
+    <div class="chart-explanation">
+        <strong>Áreas con mayor concentración de incidentes.</strong> 
+    </div>
+</div>
+
+        <!-- Tabla de incidentes con colores -->
         <div class="table-container">
-            <div class="table-title">Personal en Proyecto Actualmente</div>
+            <div class="table-title">Registro de Incidentes</div>
             <div class="scrollable-table">
-                <table id="currentEmployeesTable">
+                <table id="accidentsTable">
                     <thead>
                         <tr>
+                            <th>Fecha</th>
                             <th>Nombre</th>
                             <th>Identidad</th>
-                            <th>Fecha de Ingreso</th>
-                            <th>Antigüedad</th>
+                            <th>Lugar</th>
+                            <th>Tipo</th>
+                            <th>Días Perdidos</th>
+                            <th>Parte Afectada</th>
+                            <th>Causa</th>
+                            <th>Categoría SISO</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="4">Cargando datos...</td>
+                            <td colspan="9">Cargando datos...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <button id="toggleFormerBtn" class="toggle-btn" onclick="toggleFormerEmployees()">
-            <i class="fas fa-eye"></i> Mostrar Personal que ya no labora
-        </button>
-
-        <!-- Tabla de personal que ya no labora -->
-        <div id="formerEmployeesContainer" style="display: none;">
-            <div class="table-container">
-                <div class="table-title">Personal que ya no labora</div>
-                <div class="scrollable-table">
-                    <table id="formerEmployeesTable">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Identidad</th>
-                                <th>Fecha de Ingreso</th>
-                                <th>Fecha de Salida</th>
-                                <th>Antigüedad</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5">No hay datos para mostrar</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla de indicadores (se mantiene igual) -->
-        <div class="table-container">
-            <div class="table-title">Indicadores de Rotación</div>
-            <table class="indicator-table">
-                <tbody>
-                    <tr>
-                        <td>Personal Actual:</td>
-                        <td id="currentCount" class="indicator-value">0</td>
-                    </tr>
-                    <tr>
-                        <td>Personal que ha salido:</td>
-                        <td id="formerCount" class="indicator-value">0</td>
-                    </tr>
-                    <tr>
-                        <td>Tasa de Rotación:</td>
-                        <td id="turnoverRate" class="indicator-value">0%</td>
-                    </tr>
-                    <tr>
-                        <td>Promedio de permanencia:</td>
-                        <td id="avgStay" class="indicator-value">0 días</td>
-                    </tr>
-                    <tr>
-                        <td>Rotación en período seleccionado:</td>
-                        <td id="periodTurnover" class="indicator-value">0%</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
         <div id="overlay" style="display: none;">
@@ -342,33 +666,17 @@
         </div>
     </div>
 
-
-<script>
+    <script>
     // URL de tu Google Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAOdoF2NMI7PeJpCFF0y6EHBM9WajBbED7dRbwD9QoSNdkx76zRiY-Jy1f1NLj9QYi/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwACjTUeWNc8NhToDb8hlourXj1f6zgF3qe7ShpZzxjLlInjweYE6a0CoJBqic9K7EG/exec";
     
-    // Variables globales para almacenar datos
-    let allEmployees = [];
-    let currentEmployees = [];
-    let formerEmployees = [];
+    // Variables globales para almacenar datos y gráficos
+    let allAccidents = [];
+    let typeChart, areaChart, pyramidChart;
     
     // Función para volver al inicio
     function goBack() {
-        window.location.href = "Supervisión - 3.html";
-    }
-
-    // Función para alternar la visualización de ex-empleados
-    function toggleFormerEmployees() {
-        const container = document.getElementById("formerEmployeesContainer");
-        const btn = document.getElementById("toggleFormerBtn");
-        
-        if (container.style.display === "none") {
-            container.style.display = "block";
-            btn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar Personal que ya no labora';
-        } else {
-            container.style.display = "none";
-            btn.innerHTML = '<i class="fas fa-eye"></i> Mostrar Personal que ya no labora';
-        }
+        window.location.href = "index.html";
     }
 
     // Función para actualizar controles de período
@@ -389,102 +697,502 @@
         } else {
             customControls.style.display = "none";
         }
+        
+        updateHoursCalculation();
     }
 
-    // Función para formatear fecha (corregido problema de zona horaria)
+    // Función para actualizar el cálculo de horas mostrado
+    function updateHoursCalculation() {
+        const periodType = document.getElementById("periodType").value;
+        const workers = document.getElementById("totalWorkers").value || 10;
+        const hoursPerWeek = document.getElementById("weeklyHours").value || 44;
+        
+        let weeks;
+        let periodText;
+        
+        switch(periodType) {
+            case "6":
+                weeks = 26;
+                periodText = "6 meses (26 semanas)";
+                break;
+            case "3":
+                weeks = 13;
+                periodText = "3 meses (13 semanas)";
+                break;
+            case "custom":
+                weeks = 52; // Valor por defecto para personalizado
+                periodText = "período personalizado";
+                break;
+            default:
+                weeks = 52;
+                periodText = "12 meses (52 semanas)";
+        }
+        
+        const totalHours = workers * hoursPerWeek * weeks;
+        document.getElementById("hoursCalculation").innerHTML = 
+            `<i class="fas fa-calculator"></i> Cálculo automático: ${workers} trabajadores × ${hoursPerWeek} horas/semana × ${weeks} semanas = <strong>${totalHours.toLocaleString()} horas</strong> (${periodText})`;
+    }
+
+    // Función para calcular horas trabajadas
+    function calculateWorkedHours(periodMonths) {
+        const workers = parseInt(document.getElementById("totalWorkers").value) || 10;
+        const hoursPerWeek = parseInt(document.getElementById("weeklyHours").value) || 44;
+        
+        // Calcular semanas en el período (aproximado)
+        const weeks = (periodMonths * 52) / 12;
+        return workers * hoursPerWeek * weeks;
+    }
+
+    // Función para formatear fecha
     function formatDate(dateString) {
         if (!dateString) return "";
-        
-        // Ajustar por zona horaria - agregar un día si es necesario
         const date = new Date(dateString);
-        const timezoneOffset = date.getTimezoneOffset() * 60000;
-        const adjustedDate = new Date(date.getTime() + timezoneOffset);
-        
-        return adjustedDate.toLocaleDateString('es-ES');
+        return date.toLocaleDateString('es-ES');
     }
 
-    // Función para calcular años, meses y días entre fechas
-    function calculateDuration(startDate, endDate) {
-        if (!startDate) return "0 días";
-        
-        // Ajustar fechas por zona horaria
-        const adjustForTimezone = (dateStr) => {
-            if (!dateStr) return new Date();
-            const date = new Date(dateStr);
-            const timezoneOffset = date.getTimezoneOffset() * 60000;
-            return new Date(date.getTime() + timezoneOffset);
-        };
-        
-        const start = adjustForTimezone(startDate);
-        const end = endDate ? adjustForTimezone(endDate) : new Date();
-        
-        // Asegurarse de que la fecha de inicio sea anterior a la fecha de fin
-        if (start > end) {
-            return "0 días";
-        }
-        
-        let years = end.getFullYear() - start.getFullYear();
-        let months = end.getMonth() - start.getMonth();
-        let days = end.getDate() - start.getDate();
-        
-        // Ajustar meses y días si es necesario
-        if (days < 0) {
-            months--;
-            // Obtener el último día del mes anterior
-            const tempDate = new Date(end.getFullYear(), end.getMonth(), 0);
-            days += tempDate.getDate();
-        }
-        
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-        
-        // Construir el string de resultado
-        let result = [];
-        if (years > 0) result.push(years + (years === 1 ? " año" : " años"));
-        if (months > 0) result.push(months + (months === 1 ? " mes" : " meses"));
-        if (days > 0 || result.length === 0) result.push(days + (days === 1 ? " día" : " días"));
-        
-        return result.join(", ");
-    }
+    // Función para calcular indicadores adicionales
+function calculateAdditionalIndicators(filteredAccidents) {
+    // 1. Tasa de reincidentes
+    const allNames = filteredAccidents.map(acc => acc.nombre);
+    const uniqueNames = [...new Set(allNames)];
+    const repeatOffenders = [...new Set(
+        allNames.filter((name, index) => allNames.indexOf(name) !== index)
+    )];
+    
+    // Evitar división por cero
+    const repeatRate = uniqueNames.length > 0 ? 
+        (repeatOffenders.length / uniqueNames.length * 100).toFixed(1) : 0;
+    document.getElementById("repeatOffenders").textContent = `${repeatRate}%`;
 
-    // Función para calcular días entre fechas (para indicadores)
-    function calculateDays(startDate, endDate) {
-        if (!startDate) return 0;
+    // 2. Efectividad de medidas (modificado para considerar tiempo sin incidentes)
+    const lastAccidentDate = filteredAccidents.length > 0 ? 
+        new Date(filteredAccidents[0].fecha) : null;
+    
+    let effectiveness = 0;
+    if (lastAccidentDate) {
+        // Ordenar para obtener el incidente más reciente
+        const sorted = [...filteredAccidents].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        const mostRecent = sorted[0];
         
-        // Ajustar por zona horaria
-        const adjustForTimezone = (dateStr) => {
-            if (!dateStr) return new Date();
-            const date = new Date(dateStr);
-            const timezoneOffset = date.getTimezoneOffset() * 60000;
-            return new Date(date.getTime() + timezoneOffset);
-        };
-        
-        const start = adjustForTimezone(startDate);
-        const end = endDate ? adjustForTimezone(endDate) : new Date();
-        const diffTime = Math.abs(end - start);
-        return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        // Si el incidente más reciente tiene medidas implementadas
+        if (mostRecent.medidas && mostRecent.medidas.trim() !== "") {
+            const today = new Date();
+            const daysSince = (today - lastAccidentDate) / (1000 * 60 * 60 * 24);
+            
+            // Calcular efectividad basada en días sin incidentes post-intervención
+            // Consideramos efectivo si han pasado más de 30 días sin incidentes
+            effectiveness = daysSince > 30 ? 100 : (daysSince / 30 * 100).toFixed(1);
+        }
     }
+    
+    document.getElementById("measureEffectiveness").textContent = `${effectiveness}%`;
 
-    // Función para convertir días en formato años, meses y días
-    function daysToYMD(totalDays) {
-        const years = Math.floor(totalDays / 365);
-        const remainingDays = totalDays % 365;
-        const months = Math.floor(remainingDays / 30);
-        const days = remainingDays % 30;
+    // 3. Nivel de severidad (global)
+    updateSeverityIndicator(filteredAccidents);
+}
+
+
+    // Función para actualizar el indicador de severidad
+    function updateSeverityIndicator(filteredAccidents) {
+        const totalAccidents = filteredAccidents.length;
+        const fatalCount = filteredAccidents.filter(acc => 
+            acc.tipo === "Mortal" || 
+            (acc.categoriaSISO && acc.categoriaSISO.includes("FAT"))
+        ).length;
+        const graveCount = filteredAccidents.filter(acc => acc.tipo === "Grave").length;
+        const moderateCount = filteredAccidents.filter(acc => acc.tipo === "Moderado").length;
         
-        let result = [];
-        if (years > 0) result.push(years + (years === 1 ? " año" : " años"));
-        if (months > 0) result.push(months + (months === 1 ? " mes" : " meses"));
-        if (days > 0 || result.length === 0) result.push(days + (days === 1 ? " día" : " días"));
+        // Fórmula ponderada: Mortal (10x), Grave (5x), Moderado (3x), Leve (1x)
+        const severityScore = (fatalCount * 10) + (graveCount * 5) + (moderateCount * 3) + 
+                            (filteredAccidents.length - fatalCount - graveCount - moderateCount);
+        const maxPossibleScore = totalAccidents * 10;
+        const severityPercentage = (severityScore / maxPossibleScore) * 100;
         
-        return result.join(", ");
+        // Determinar nivel
+        let severityLevel, markerPosition;
+        if (severityPercentage < 20) {
+            severityLevel = "Bajo";
+            markerPosition = severityPercentage * 0.2;
+        } else if (severityPercentage < 50) {
+            severityLevel = "Medio";
+            markerPosition = 20 + (severityPercentage - 20) * 0.4;
+        } else if (severityPercentage < 80) {
+            severityLevel = "Alto";
+            markerPosition = 50 + (severityPercentage - 50) * 0.4;
+        } else {
+            severityLevel = "Crítico";
+            markerPosition = 80 + (severityPercentage - 80) * 0.2;
+        }
+        
+        // Actualizar UI de manera profesional
+        const levelElement = document.getElementById("severityLevel");
+        levelElement.textContent = severityLevel;
+        levelElement.className = "stat-value";
+        
+        // Color según nivel
+        if (severityLevel === "Crítico") {
+            levelElement.classList.add("danger");
+            document.getElementById("severityMarker").style.backgroundColor = "#f44336";
+        } else if (severityLevel === "Alto") {
+            levelElement.classList.add("warning");
+            document.getElementById("severityMarker").style.backgroundColor = "#FF9800";
+        } else if (severityLevel === "Medio") {
+            levelElement.classList.add("warning");
+            document.getElementById("severityMarker").style.backgroundColor = "#FFC107";
+        } else {
+            levelElement.classList.add("success");
+            document.getElementById("severityMarker").style.backgroundColor = "#4CAF50";
+        }
+        
+        document.getElementById("severityMarker").style.left = `${markerPosition}%`;
     }
 
     // Función para calcular indicadores
-    function calculateIndicators() {
-        // Obtener parámetros del período seleccionado
+function calculateIndicators(filteredAccidents) {
+    // Calcular usando TODOS los incidentes para los indicadores globales
+    const globalAccidents = allAccidents.length > 0 ? allAccidents : filteredAccidents;
+    
+    const periodType = document.getElementById("periodType").value;
+    let periodMonths;
+    
+    if (periodType === "custom") {
+        const startDate = new Date(document.getElementById("startDate").value);
+        const endDate = new Date(document.getElementById("endDate").value);
+        periodMonths = (endDate - startDate) / (1000 * 60 * 60 * 24 * 30.44);
+    } else {
+        periodMonths = parseInt(periodType);
+    }
+    
+    // Calcular horas trabajadas para el período seleccionado
+    const periodHours = calculateWorkedHours(periodMonths);
+    // Calcular horas trabajadas totales (aproximación de 1 año)
+    const totalHours = calculateWorkedHours(12);
+    
+    const avgWorkers = parseInt(document.getElementById("totalWorkers").value) || 10;
+    
+    // Calcular totales
+    const totalAccidents = globalAccidents.length;
+    const periodAccidents = filteredAccidents.length;
+    const totalLostDays = globalAccidents.reduce((sum, acc) => sum + (parseInt(acc.diasPerdidos) || 0), 0);
+    const periodLostDays = filteredAccidents.reduce((sum, acc) => sum + (parseInt(acc.diasPerdidos) || 0), 0);
+    
+    // Calcular índices (usando datos globales)
+    const frequencyIndex = totalHours > 0 ? 
+        ((totalAccidents * 1000000) / totalHours).toFixed(2) : 0;
+    
+    const severityIndex = totalHours > 0 ? 
+        ((totalLostDays * 1000) / totalHours).toFixed(2) : 0;
+    
+    // Actualizar UI - Mostrar datos globales
+    document.getElementById("totalAccidents").textContent = totalAccidents;
+    document.getElementById("totalLostDays").textContent = totalLostDays;
+    document.getElementById("frequencyIndex").textContent = frequencyIndex;
+    document.getElementById("severityIndex").textContent = severityIndex;
+    
+    // Calcular días desde último incidente (global)
+    calculateDaysSinceLastAccident(globalAccidents);
+    
+    // Calcular indicadores adicionales (usando datos globales)
+    calculateAdditionalIndicators(globalAccidents);
+    
+    // Actualizar gráficos con datos del período seleccionado
+    updateCharts(filteredAccidents);
+    updatePyramidChart(filteredAccidents);
+}
+
+
+    // Función para actualizar gráficos
+    function updateCharts(filteredAccidents) {
+        // Datos para gráfico por tipo (ahora con 4 categorías)
+        const typeCounts = {
+            Leve: 0,
+            Moderado: 0,
+            Grave: 0,
+            Mortal: 0
+        };
+        
+        // Datos para gráfico por área
+        const areaCounts = {};
+        
+        filteredAccidents.forEach(acc => {
+            // Contar por tipo
+            typeCounts[acc.tipo] = (typeCounts[acc.tipo] || 0) + 1;
+            
+            // Contar por área
+            areaCounts[acc.area] = (areaCounts[acc.area] || 0) + 1;
+        });
+        
+        // Actualizar gráfico por área
+        const areas = Object.keys(areaCounts);
+        const areaData = areas.map(area => areaCounts[area]);
+        
+        if (areaChart) {
+            areaChart.data.labels = areas;
+            areaChart.data.datasets[0].data = areaData;
+            areaChart.update();
+        } else {
+            createAreaChart(areas, areaData);
+        }
+    }
+
+    // Función para crear gráfico por área
+function createAreaChart(labels, data) {
+    const ctx = document.getElementById('accidentsByAreaChart').getContext('2d');
+    areaChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Incidentes',
+                data: data,
+                backgroundColor: '#007BFF',
+                borderColor: '#0056b3',
+                borderWidth: 1,
+                borderRadius: 4,
+                hoverBackgroundColor: '#0056b3'
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    position: 'nearest',
+                    intersect: false,
+                    mode: 'index',
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.parsed.x} incidentes`;
+                        }
+                    },
+                    displayColors: true,
+                    usePointStyle: true,
+                    padding: 12,
+                    bodyFont: {
+                        weight: '500'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        display: true,
+                        color: '#f0f0f0'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+    // Función para actualizar el gráfico de pirámide SISO
+    function updatePyramidChart(filteredAccidents) {
+        // Definir categorías SISO simplificadas
+        const sisoCategories = {
+            'FAT': ['Fatalidad', 'FAT', 'Fatal', 'Accidente fatal'],
+            'LWC': ['Incidente con pérdida de tiempo', 'LWC', 'Accidente LWC'],
+            'MTC': ['Incidente de tratamiento médico', 'MTC', 'Tratamiento médico'],
+            'FAC': ['Incidente de primeros auxilios', 'FAC', 'Primeros auxilios'],
+            'N-M': ['Casi incidentes', 'N-M', 'Near Miss', 'Casi accidente']
+        };
+
+        // Inicializar contadores
+        const sisoCounts = {};
+        Object.keys(sisoCategories).forEach(key => {
+            sisoCounts[key] = 0;
+        });
+
+        // Contar incidentes por categoría SISO
+        filteredAccidents.forEach(acc => {
+            const categoria = (acc.categoriaSISO || 'No especificado').trim();
+            let categoriaEncontrada = false;
+
+            // Buscar coincidencia en las categorías definidas
+            for (const [key, aliases] of Object.entries(sisoCategories)) {
+                if (aliases.some(alias => categoria.toLowerCase().includes(alias.toLowerCase()))) {
+                    sisoCounts[key]++;
+                    categoriaEncontrada = true;
+                    break;
+                }
+            }
+
+            // Si no encuentra coincidencia, mostrar en consola para depuración
+            if (!categoriaEncontrada && categoria !== 'No especificado') {
+                console.log('Categoría no incluida en pirámide SISO:', categoria);
+            }
+        });
+
+        // Ordenar según la pirámide SISO simplificada
+        const pyramidLabels = [
+            'Fatalidades (FAT)',
+            'Incidentes con pérdida de tiempo (LWC)',
+            'Incidentes de tratamiento médico (MTC)',
+            'Incidentes de primeros auxilios (FAC)',
+            'Casi incidentes (N-M)'
+        ];
+
+        const pyramidData = [
+            sisoCounts['FAT'],
+            sisoCounts['LWC'],
+            sisoCounts['MTC'],
+            sisoCounts['FAC'],
+            sisoCounts['N-M']
+        ];
+
+        // Actualizar o crear el gráfico
+        if (pyramidChart) {
+            pyramidChart.data.labels = pyramidLabels;
+            pyramidChart.data.datasets[0].data = pyramidData;
+            pyramidChart.update();
+        } else {
+            createPyramidChart(pyramidLabels, pyramidData);
+        }
+    }
+
+    // Función para crear el gráfico de pirámide SISO
+function createPyramidChart(labels, data) {
+    const ctx = document.getElementById('sisoPyramidChart').getContext('2d');
+    pyramidChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Número de incidentes',
+                data: data,
+                backgroundColor: [
+                    '#F44336', // FAT - Rojo
+                    '#FF9800', // LWC - Naranja
+                    '#FFC107', // MTC - Amarillo
+                    '#4CAF50', // FAC - Verde
+                    '#2196F3'  // N-M - Azul
+                ],
+                borderColor: [
+                    '#D32F2F',
+                    '#F57C00',
+                    '#FFA000',
+                    '#388E3C',
+                    '#1976D2'
+                ],
+                borderWidth: 1,
+                borderRadius: 4,
+                hoverBackgroundColor: [
+                    '#E53935',
+                    '#FB8C00',
+                    '#FFB300',
+                    '#43A047',
+                    '#1E88E5'
+                ]
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    position: 'nearest',
+                    intersect: true,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.parsed.x} incidentes`;
+                        }
+                    },
+                    displayColors: true,
+                    usePointStyle: true,
+                    padding: 12,
+                    bodyFont: {
+                        weight: '500'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0,
+                        font: {
+                            weight: '500'
+                        }
+                    },
+                    grid: {
+                        display: true,
+                        color: '#f0f0f0',
+                        drawTicks: false
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false,
+                        drawBorder: true
+                    },
+                    ticks: {
+                        font: {
+                            weight: '500'
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+}
+
+
+    // Función para cargar datos desde Google Sheets
+async function loadData() {
+    document.getElementById("overlay").style.display = "flex";
+    
+    try {
+        const response = await fetch(`${SCRIPT_URL}?action=getAccidents`);
+        
+        if (!response.ok) throw new Error(`Error en la consulta: ${response.status}`);
+        
+        const data = await response.json();
+        
+        if (data.error) throw new Error(data.message);
+        
+        // Procesar datos
+        allAccidents = data.map(accident => ({
+            fecha: accident.fecha || accident[0],
+            nombre: accident.nombre || accident[1],
+            identidad: accident.identidad || accident[2],
+            area: accident.area || accident[3],
+            tipo: accident.tipo || accident[4],
+            descripcion: accident.descripcion || accident[5],
+            diasPerdidos: accident.diasPerdidos || accident[6] || 0,
+            parte: accident.parte || accident[7],
+            causa: accident.causa || accident[8],
+            medidas: accident.medidas || accident[9],
+            categoriaSISO: accident.categoriaSISO || accident[10] || 'No especificado'
+        }));
+        
+        // Ordenar incidentes por fecha (más reciente primero)
+        allAccidents.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        
+        // Filtrar por período seleccionado para la tabla y gráficos
         const periodType = document.getElementById("periodType").value;
         let startDate, endDate = new Date();
         
@@ -496,160 +1204,109 @@
             startDate.setMonth(endDate.getMonth() - parseInt(periodType));
         }
         
-        // Filtrar empleados que salieron en el período seleccionado
-        const periodDepartures = formerEmployees.filter(emp => {
-            if (!emp.fechaSalida) return false;
-            const exitDate = new Date(emp.fechaSalida);
-            return exitDate >= startDate && exitDate <= endDate;
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        
+        const filteredAccidents = allAccidents.filter(acc => {
+            if (!acc.fecha) return false;
+            const accDate = new Date(acc.fecha);
+            return accDate >= startDate && accDate <= endDate;
         });
         
-        // Calcular promedio de empleados en el período
-        const employeesAtStart = allEmployees.filter(emp => {
-            const hireDate = new Date(emp.fechaIngreso);
-            const exitDate = emp.fechaSalida ? new Date(emp.fechaSalida) : null;
-            
-            return hireDate <= startDate && (!exitDate || exitDate >= startDate);
-        }).length;
+        // Mostrar datos en tabla
+        const accidentsTable = document.getElementById("accidentsTable").getElementsByTagName('tbody')[0];
+        accidentsTable.innerHTML = "";
         
-        const employeesAtEnd = allEmployees.filter(emp => {
-            const hireDate = new Date(emp.fechaIngreso);
-            const exitDate = emp.fechaSalida ? new Date(emp.fechaSalida) : null;
-            
-            return hireDate <= endDate && (!exitDate || exitDate >= endDate);
-        }).length;
-        
-        const avgEmployees = (employeesAtStart + employeesAtEnd) / 2;
-        
-        // Calcular tasas de rotación
-        const periodTurnoverRate = avgEmployees > 0 ? 
-            (periodDepartures.length / avgEmployees * 100).toFixed(2) : 0;
-        
-        // Tasa de rotación últimos 12 meses (como referencia)
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        
-        const yearlyDepartures = formerEmployees.filter(emp => {
-            if (!emp.fechaSalida) return false;
-            const exitDate = new Date(emp.fechaSalida);
-            return exitDate >= oneYearAgo;
-        }).length;
-        
-        const yearlyAvgEmployees = (currentEmployees.length + (currentEmployees.length + yearlyDepartures)) / 2;
-        const yearlyTurnoverRate = yearlyAvgEmployees > 0 ? 
-            (yearlyDepartures / yearlyAvgEmployees * 100).toFixed(2) : 0;
-        
-        // Promedio de permanencia
-        const totalDays = formerEmployees.reduce((sum, emp) => {
-            return sum + calculateDays(emp.fechaIngreso, emp.fechaSalida);
-        }, 0);
-        
-        const avgStayDays = formerEmployees.length > 0 ? Math.floor(totalDays / formerEmployees.length) : 0;
-        const avgStayFormatted = formerEmployees.length > 0 ? 
-            `${avgStayDays} días (${daysToYMD(avgStayDays)})` : "0 días";
-        
-        // Actualizar UI con los indicadores
-        document.getElementById("currentCount").textContent = currentEmployees.length;
-        document.getElementById("formerCount").textContent = formerEmployees.length;
-        document.getElementById("turnoverRate").textContent = yearlyTurnoverRate + "%";
-        document.getElementById("avgStay").textContent = avgStayFormatted;
-        
-        const periodTurnoverElement = document.getElementById("periodTurnover");
-        periodTurnoverElement.textContent = periodTurnoverRate + "%";
-        
-        // Resaltar si la rotación es alta
-        if (parseFloat(periodTurnoverRate) > 15) {
-            periodTurnoverElement.className = "indicator-value warning";
-        } else if (parseFloat(periodTurnoverRate) > 25) {
-            periodTurnoverElement.className = "indicator-value danger";
-        } else {
-            periodTurnoverElement.className = "indicator-value";
-        }
-    }
-
-    // Función para cargar datos desde Google Sheets
-    async function loadData() {
-        document.getElementById("overlay").style.display = "flex";
-        
-        try {
-            // Realizar la consulta al servidor
-            const response = await fetch(`${SCRIPT_URL}?action=getEmployees`);
-            
-            if (!response.ok) {
-                throw new Error(`Error en la consulta: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.message);
-            }
-            
-            // Procesar datos
-            currentEmployees = [];
-            formerEmployees = [];
-            
-            data.forEach(employee => {
-                const empData = {
-                    nombre: employee[0], // Columna B (Nombre de Colaborador)
-                    identidad: employee[1], // Columna C (Identidad)
-                    fechaIngreso: employee[2], // Columna D (Fecha de Ingreso)
-                    fechaSalida: employee[3] || null // Columna E (Fecha de Salida)
-                };
+        filteredAccidents.forEach(acc => {
+            const row = accidentsTable.insertRow();
                 
-                if (!empData.fechaSalida) {
-                    currentEmployees.push(empData);
+                // Añadir clase según el tipo de accidente para el color
+                if (acc.tipo === "Mortal") {
+                    row.className = "mortal";
+                } else if (acc.tipo === "Grave") {
+                    row.className = "grave";
+                } else if (acc.tipo === "Moderado") {
+                    row.className = "moderado";
                 } else {
-                    formerEmployees.push(empData);
+                    row.className = "leve";
                 }
+                
+                // Celda de fecha
+                const dateCell = row.insertCell(0);
+                dateCell.textContent = formatDate(acc.fecha);
+                
+                row.insertCell(1).textContent = acc.nombre;
+                row.insertCell(2).textContent = acc.identidad;
+                row.insertCell(3).textContent = acc.area;
+                
+                // Celda de tipo
+                const typeCell = row.insertCell(4);
+                typeCell.textContent = acc.tipo;
+                
+                row.insertCell(5).textContent = acc.diasPerdidos || '0';
+                row.insertCell(6).textContent = acc.parte;
+                row.insertCell(7).textContent = acc.causa;
+                row.insertCell(8).textContent = acc.categoriaSISO || 'No especificado';
             });
             
-            allEmployees = [...currentEmployees, ...formerEmployees];
-            
-            // Mostrar empleados actuales
-            const currentTable = document.getElementById("currentEmployeesTable").getElementsByTagName('tbody')[0];
-            currentTable.innerHTML = "";
-            
-            currentEmployees.forEach(emp => {
-                const row = currentTable.insertRow();
-                row.insertCell(0).textContent = emp.nombre;
-                row.insertCell(1).textContent = emp.identidad;
-                row.insertCell(2).textContent = formatDate(emp.fechaIngreso);
-                row.insertCell(3).textContent = calculateDuration(emp.fechaIngreso);
-            });
-            
-            // Mostrar ex-empleados
-            const formerTable = document.getElementById("formerEmployeesTable").getElementsByTagName('tbody')[0];
-            formerTable.innerHTML = "";
-            
-            formerEmployees.forEach(emp => {
-                const row = formerTable.insertRow();
-                row.insertCell(0).textContent = emp.nombre;
-                row.insertCell(1).textContent = emp.identidad;
-                row.insertCell(2).textContent = formatDate(emp.fechaIngreso);
-                row.insertCell(3).textContent = formatDate(emp.fechaSalida);
-                row.insertCell(4).textContent = calculateDuration(emp.fechaIngreso, emp.fechaSalida);
-            });
-            
-            // Calcular indicadores
-            calculateIndicators();
-            
-        } catch (error) {
-            console.error("Error al cargar datos:", error);
-            Swal.fire({
-                title: 'Error',
-                text: 'No se pudieron cargar los datos del personal',
-                icon: 'error'
-            });
-        } finally {
-            document.getElementById("overlay").style.display = "none";
-        }
+      // Calcular indicadores (usará datos globales pero mostrará gráficos del período)
+        calculateIndicators(filteredAccidents);
+        
+    } catch (error) {
+        console.error("Error al cargar datos:", error);
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudieron cargar los datos de incidentes',
+            icon: 'error'
+        });
+    } finally {
+        document.getElementById("overlay").style.display = "none";
     }
+}
+
+
+    // Event listeners para cambios en trabajadores/horas
+    document.getElementById("totalWorkers").addEventListener("change", updateHoursCalculation);
+    document.getElementById("weeklyHours").addEventListener("change", updateHoursCalculation);
 
     // Cargar datos al iniciar
     window.onload = function() {
         updatePeriodControls();
         loadData();
     };
+
+    // Función para calcular días desde el último incidente
+    function calculateDaysSinceLastAccident(filteredAccidents) {
+        if (filteredAccidents.length === 0) {
+            document.getElementById("daysSinceLastAccident").textContent = "N/A";
+            return;
+        }
+
+        // Ordenar incidentes por fecha (más reciente primero)
+        const sortedAccidents = [...filteredAccidents].sort((a, b) => {
+            return new Date(b.fecha) - new Date(a.fecha);
+        });
+
+        const lastAccidentDate = new Date(sortedAccidents[0].fecha);
+        const today = new Date();
+        
+        // Calcular diferencia en días
+        const diffTime = today - lastAccidentDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Actualizar UI
+        const daysElement = document.getElementById("daysSinceLastAccident");
+        daysElement.textContent = diffDays;
+        
+        // Color según cantidad de días (verde si son muchos, rojo si son pocos)
+        if (diffDays >= 30) {
+            daysElement.className = "stat-value success";
+        } else if (diffDays >= 7) {
+            daysElement.className = "stat-value warning";
+        } else {
+            daysElement.className = "stat-value danger";
+        }
+    }
 </script>
 </body>
 </html>
