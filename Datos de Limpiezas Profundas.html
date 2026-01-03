@@ -10,6 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AÑADIR PDF.JS (Mismo que PROFUNDOARGOS.html) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
         /* ESTILOS BASE - MISMOS COLORES QUE EL ORIGINAL */
@@ -146,15 +149,211 @@
         #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
         #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
         
-        /* MODAL PDF FULLSCREEN */
-        .modal-pdf-body {
-            height: calc(100vh - 56px); 
+        /* MODAL PDF - NUEVO ESTILO (Igual que PROFUNDOARGOS.html) */
+        .modal-pdf-fullscreen .modal-dialog {
+            max-width: 100%;
+            height: 100vh;
+            margin: 0;
             padding: 0;
-            overflow: hidden;
-            background-color: #525659;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .modal-pdf-iframe { width: 100%; height: 100%; border: none; display: block; }
-        .modal-header { background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; padding: 10px 20px; }
+
+        .modal-pdf-fullscreen .modal-content {
+            height: 100vh;
+            width: 100vw;
+            border-radius: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            border: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10000;
+        }
+
+        .modal-pdf-fullscreen .modal-header {
+            border-bottom: 1px solid #333;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 10001;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-pdf-fullscreen .modal-body {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.95);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Contenedor de renderizado PDF */
+        .pdf-render-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 0 20px 0; /* Espacio para header */
+        }
+
+        .pdf-canvas-container {
+            width: 100%;
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .pdf-page {
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .pdf-page canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .pdf-page-number {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        /* Controles de navegación */
+        .pdf-navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 10002;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .pdf-nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .pdf-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .pdf-nav-btn:disabled:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .pdf-zoom-controls {
+            position: fixed;
+            right: 20px;
+            top: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10002;
+        }
+
+        .pdf-zoom-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .pdf-zoom-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .pdf-counter {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10002;
+        }
+
+        .pdf-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pdf-loading .spinner-border {
+            width: 50px;
+            height: 50px;
+        }
         
         /* TOOLTIP PARA KPI */
         .kpi-tooltip {
@@ -242,15 +441,57 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalPDF" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
+    <!-- NUEVO MODAL PDF (Reemplaza el anterior) -->
+    <div class="modal fade modal-pdf-fullscreen" id="modalPDF" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-secondary"><i class="fas fa-file-pdf me-2"></i>Visualizador de Reporte</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-pdf me-2"></i>Visualizador de Reporte
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body modal-pdf-body">
-                    <iframe id="iframePDF" class="modal-pdf-iframe" src=""></iframe>
+                <div class="modal-body">
+                    <div class="pdf-render-container">
+                        <div class="pdf-counter" id="pdf-counter">
+                            Página 1 de 1
+                        </div>
+                        
+                        <div class="pdf-zoom-controls">
+                            <button class="pdf-zoom-btn" id="pdf-zoom-in" title="Acercar">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-out" title="Alejar">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-reset" title="Tamaño original">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="pdf-loading" id="pdf-loading">
+                            <div class="spinner-border text-light" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <span>Cargando PDF...</span>
+                        </div>
+                        
+                        <div class="pdf-canvas-container" id="pdf-canvas-container">
+                            <!-- Aquí se renderizarán las páginas del PDF -->
+                        </div>
+                        
+                        <div class="pdf-navigation">
+                            <button class="pdf-nav-btn" id="pdf-prev" title="Página anterior">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="pdf-nav-btn" id="pdf-next" title="Página siguiente">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="pdf-nav-btn" id="pdf-close" title="Cerrar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -402,6 +643,9 @@
     </div>
 
     <script>
+        // Configuración global de pdf.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        
         const URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbw-Kn8bD1w4CNJOpZa5lRTxmPwr2nnvBjBUC_mzy_lEPlJ_O9oGGPhyJqCTE3_0nKqbOQ/exec";
 
         let chartMensual = null;
@@ -409,19 +653,20 @@
         let datosTablaGlobal = [];
         let modalPDF = null;
         let proyectoActual = "";
+        
+        // Variables para el renderizado de PDF
+        let currentPDF = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let scale = 1.0;
+        const minScale = 0.5;
+        const maxScale = 3.0;
+        const scaleStep = 0.25;
 
         const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
         
         function focusPDF() {
-            const iframe = document.getElementById('iframePDF');
-            if (iframe) {
-                iframe.focus();
-                try {
-                    iframe.contentWindow.focus();
-                } catch(e) {
-                    // Si falla por seguridad
-                }
-            }
+            // Mantener esta función por compatibilidad
         }
 
         window.onload = function() {
@@ -429,8 +674,23 @@
             modalPDF = new bootstrap.Modal(modalEl);
             
             modalEl.addEventListener('shown.bs.modal', function () {
-                setTimeout(focusPDF, 100);
+                // No necesitamos focus ahora
             });
+
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                // Limpiar el PDF actual cuando se cierra el modal
+                if (currentPDF) {
+                    currentPDF.destroy();
+                    currentPDF = null;
+                }
+                document.getElementById('pdf-canvas-container').innerHTML = '';
+                currentPage = 1;
+                totalPages = 1;
+                scale = 1.0;
+            });
+
+            // Configurar controles del modal PDF
+            setupPDFControls();
 
             const selectMes = document.getElementById('filtroMes');
             mesesNombres.forEach((m, i) => {
@@ -458,6 +718,219 @@
 
             document.getElementById('filtroTabla').addEventListener('keyup', filtrarTablaLocal);
         };
+
+        function setupPDFControls() {
+            // Botones de navegación
+            document.getElementById('pdf-prev').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPDFPage();
+                }
+            });
+
+            document.getElementById('pdf-next').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPDFPage();
+                }
+            });
+
+            document.getElementById('pdf-close').addEventListener('click', () => {
+                modalPDF.hide();
+            });
+
+            // Botones de zoom
+            document.getElementById('pdf-zoom-in').addEventListener('click', () => {
+                if (scale < maxScale) {
+                    scale += scaleStep;
+                    renderPDFPage();
+                }
+            });
+
+            document.getElementById('pdf-zoom-out').addEventListener('click', () => {
+                if (scale > minScale) {
+                    scale -= scaleStep;
+                    renderPDFPage();
+                }
+            });
+
+            document.getElementById('pdf-zoom-reset').addEventListener('click', () => {
+                scale = 1.0;
+                renderPDFPage();
+            });
+        }
+
+        async function loadPDF(url) {
+            showLoading("Cargando PDF...", "Por favor espera");
+            
+            try {
+                // Convertir la URL de Google Drive a una URL directa
+                const directUrl = await getDirectPDFUrl(url);
+                
+                const loadingTask = pdfjsLib.getDocument(directUrl);
+                currentPDF = await loadingTask.promise;
+                
+                totalPages = currentPDF.numPages;
+                currentPage = 1;
+                
+                await renderPDFPage();
+                
+                hideLoading();
+            } catch (error) {
+                console.error("Error cargando PDF:", error);
+                hideLoading();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al cargar PDF',
+                    text: 'No se pudo cargar el archivo PDF. Intenta descargarlo directamente.'
+                });
+            }
+        }
+
+        async function renderPDFPage() {
+            if (!currentPDF) return;
+            
+            const container = document.getElementById('pdf-canvas-container');
+            const loadingDiv = document.getElementById('pdf-loading');
+            const counter = document.getElementById('pdf-counter');
+            
+            container.innerHTML = '';
+            loadingDiv.style.display = 'flex';
+            
+            try {
+                const page = await currentPDF.getPage(currentPage);
+                
+                // Calcular dimensiones
+                const viewport = page.getViewport({ scale: scale });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                // Ajustar ancho máximo para pantalla
+                const maxWidth = window.innerWidth * 0.9;
+                if (canvas.width > maxWidth) {
+                    const ratio = maxWidth / canvas.width;
+                    canvas.height = canvas.height * ratio;
+                    canvas.width = maxWidth;
+                }
+                
+                canvas.style.width = `${canvas.width}px`;
+                canvas.style.height = `${canvas.height}px`;
+                canvas.style.maxWidth = '90%';
+                canvas.style.margin = '0 auto';
+                
+                // Crear contenedor de página
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'pdf-page';
+                pageDiv.style.width = `${canvas.width}px`;
+                pageDiv.style.maxWidth = '90%';
+                pageDiv.style.margin = '0 auto 20px auto';
+                
+                // Añadir número de página
+                const pageNumber = document.createElement('div');
+                pageNumber.className = 'pdf-page-number';
+                pageNumber.textContent = `Página ${currentPage} de ${totalPages}`;
+                
+                pageDiv.appendChild(canvas);
+                pageDiv.appendChild(pageNumber);
+                container.appendChild(pageDiv);
+                
+                // Renderizar la página
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: page.getViewport({ scale: scale })
+                };
+                
+                await page.render(renderContext).promise;
+                
+                // Actualizar controles
+                updatePDFControls();
+                loadingDiv.style.display = 'none';
+                
+                // Auto-scroll al inicio
+                container.scrollTop = 0;
+                
+            } catch (error) {
+                console.error("Error renderizando página:", error);
+                loadingDiv.style.display = 'none';
+                container.innerHTML = '<div class="text-center text-white p-4">Error al renderizar la página del PDF.</div>';
+            }
+        }
+
+        function updatePDFControls() {
+            const counter = document.getElementById('pdf-counter');
+            const prevBtn = document.getElementById('pdf-prev');
+            const nextBtn = document.getElementById('pdf-next');
+            const zoomInBtn = document.getElementById('pdf-zoom-in');
+            const zoomOutBtn = document.getElementById('pdf-zoom-out');
+            
+            // Actualizar contador
+            counter.textContent = `Página ${currentPage} de ${totalPages}`;
+            
+            // Actualizar botones de navegación
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            // Actualizar botones de zoom
+            zoomInBtn.disabled = scale >= maxScale;
+            zoomOutBtn.disabled = scale <= minScale;
+        }
+
+        async function getDirectPDFUrl(url) {
+            // Si ya es una URL directa, usarla
+            if (url.includes('.pdf')) {
+                return url;
+            }
+            
+            // Si es URL de Google Drive, convertirla
+            const fileId = getDriveId(url);
+            if (fileId) {
+                // Intentar diferentes formatos de URL directa
+                const directUrls = [
+                    `https://drive.google.com/uc?export=download&id=${fileId}`,
+                    `https://drive.google.com/file/d/${fileId}/preview`,
+                    `https://docs.google.com/document/d/${fileId}/export?format=pdf`
+                ];
+                
+                // Probar cada URL
+                for (const testUrl of directUrls) {
+                    try {
+                        const response = await fetch(testUrl, { method: 'HEAD' });
+                        if (response.ok) {
+                            return testUrl;
+                        }
+                    } catch (e) {
+                        // Continuar con la siguiente URL
+                    }
+                }
+            }
+            
+            // Si no se puede obtener URL directa, usar la original
+            return url;
+        }
+
+        function getDriveId(url) {
+            if (!url) return null;
+            
+            // Patrones para extraer ID de Google Drive
+            const patterns = [
+                /\/d\/([a-zA-Z0-9-_]+)/,
+                /id=([a-zA-Z0-9-_]+)/,
+                /\/file\/d\/([a-zA-Z0-9-_]+)/,
+                /\/document\/d\/([a-zA-Z0-9-_]+)/
+            ];
+            
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+            
+            return null;
+        }
 
         function showLoading(mensaje, submensaje = "") {
             const overlay = document.getElementById('overlay');
@@ -664,20 +1137,17 @@
 
         function verPDF(url) {
             if(!url) return;
-            let previewUrl = url;
-            if (url.includes('/view')) {
-                previewUrl = url.replace(/\/view.*/, '/preview');
-            }
-            document.getElementById('iframePDF').src = previewUrl;
+            
+            // Limpiar el modal antes de mostrar
+            document.getElementById('pdf-canvas-container').innerHTML = '';
+            document.getElementById('pdf-counter').textContent = 'Cargando...';
+            document.getElementById('pdf-loading').style.display = 'flex';
+            
+            // Mostrar el modal
             modalPDF.show();
-        }
-
-        function getDriveId(url) {
-            if (!url) return null;
-            let match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-            if (match) return match[1];
-            match = url.match(/id=([a-zA-Z0-9-_]+)/);
-            return match ? match[1] : null;
+            
+            // Cargar el PDF
+            loadPDF(url);
         }
 
         function descargarPDF(url) {
