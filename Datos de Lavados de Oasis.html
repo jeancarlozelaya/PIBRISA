@@ -133,11 +133,12 @@
             transition: width 0.5s ease;
         }
         
-        /* COLORES PARA MOTIVOS ESPECÍFICOS */
+        /* COLORES PARA MOTIVOS ESPECÍFICOS - SIMPLIFICADOS */
         .segmento-motivo1 { background-color: #e74c3c; } /* Área no disponible */
         .segmento-motivo2 { background-color: #f39c12; } /* Indisponibilidad de agua */
         .segmento-motivo3 { background-color: #3498db; } /* Lavado no realizado por solicitud del cliente */
-        .segmento-motivo4 { background-color: #95a5a6; } /* No se hizo el lavado */
+        .segmento-motivo4 { background-color: #95a5a6; } /* No se hizo el lavado / No se reportó */
+        .segmento-motivo5 { background-color: #9b59b6; } /* Aún no reportado */
         
         .leyenda-motivos {
             display: flex;
@@ -196,7 +197,7 @@
             color: #155724 !important;
         }
         
-        /* COLORES PARA MOTIVOS EN CELDAS */
+        /* COLORES PARA MOTIVOS EN CELDAS - SIMPLIFICADOS */
         .estado-motivo1 {
             background-color: #f8d7da !important; /* Área no disponible */
             color: #721c24 !important;
@@ -210,8 +211,12 @@
             color: #0c5460 !important;
         }
         .estado-motivo4 {
-            background-color: #e2e3e5 !important; /* No se hizo el lavado */
+            background-color: #e2e3e5 !important; /* No se hizo el lavado / No se reportó */
             color: #383d41 !important;
+        }
+        .estado-motivo5 {
+            background-color: #e8d6f0 !important; /* Aún no reportado */
+            color: #4a235a !important;
         }
         
         /* TOOLTIP PARA MOTIVOS */
@@ -503,7 +508,11 @@
                             </div>
                             <div class="item-leyenda">
                                 <div class="color-leyenda" style="background-color: #95a5a6;"></div>
-                                <span>No se hizo el lavado</span>
+                                <span>No se hizo el lavado / No se reportó</span>
+                            </div>
+                            <div class="item-leyenda">
+                                <div class="color-leyenda" style="background-color: #9b59b6;"></div>
+                                <span>Aún no reportado</span>
                             </div>
                         </div>
                     </div>
@@ -520,7 +529,7 @@
                         <div class="text-center mt-2">
                             <small class="text-muted">
                                 <i class="fas fa-info-circle me-1"></i>
-                                Oasis lavados vs no lavados por semana
+                                Oasis lavados vs no lavados por semana (incluyendo pendientes)
                             </small>
                         </div>
                     </div>
@@ -619,12 +628,13 @@
             "ARRIO": {}
         };
         
-        // Configuración de motivos
+        // Configuración de motivos (SIMPLIFICADA)
         const MOTIVOS = [
             "Área no disponible",
             "Indisponibilidad de agua", 
             "Lavado no realizado por solicitud del cliente",
-            "No se hizo el lavado"
+            "No se hizo el lavado", // Este incluye "No se reportó actividad"
+            "Aún no reportado"
         ];
         
         let chartMensual = null;
@@ -632,6 +642,8 @@
         let datosGlobales = null;
         let proyectoActual = "";
         let modalPDF = null;
+        let mesActual = "";
+        let anioActual = "";
 
         const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
                              "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -698,8 +710,8 @@
 
         function consultarDatosOasis() {
             proyectoActual = document.getElementById('filtroProyecto').value;
-            const mesVal = document.getElementById('filtroMes').value;
-            const anio = document.getElementById('filtroAnio').value;
+            mesActual = document.getElementById('filtroMes').value;
+            anioActual = document.getElementById('filtroAnio').value;
 
             if (!proyectoActual) {
                 Swal.fire({
@@ -715,28 +727,21 @@
             document.getElementById('dashboardContent').style.display = 'none';
             document.getElementById('alertNoData').style.display = 'none';
 
-            // USANDO LA MISMA TÉCNICA QUE LA PÁGINA DE REFERENCIA
             const requestData = {
                 action: "obtenerDatos",
                 proyecto: proyectoActual,
-                mes: mesVal,
-                anio: anio
+                mes: mesActual,
+                anio: anioActual
             };
 
-            // Usar XMLHttpRequest que funciona mejor con Google Apps Script
             const xhr = new XMLHttpRequest();
             xhr.open('POST', URL_SCRIPT_GOOGLE_OASIS, true);
-            
-            // Importante: Usar 'text/plain' para evitar problemas CORS
             xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
             
             xhr.onload = function() {
                 hideLoading();
                 try {
-                    // Google Apps Script devuelve JSON como string
                     const responseText = xhr.responseText;
-                    
-                    // Limpiar posible texto extra que Google añade
                     let cleanResponse = responseText;
                     if (cleanResponse.includes('//')) {
                         cleanResponse = cleanResponse.substring(cleanResponse.indexOf('{'));
@@ -746,7 +751,7 @@
                     
                     if (data.status === "success") {
                         datosGlobales = data.data;
-                        renderizarDashboardOasis(datosGlobales, mesVal, anio);
+                        renderizarDashboardOasis(datosGlobales, mesActual, anioActual);
                         
                         if (!datosGlobales.existeHoja || datosGlobales.totalOasis === 0) {
                             document.getElementById('alertNoData').style.display = 'block';
@@ -766,23 +771,216 @@
                 Swal.fire("Error", "Error de conexión con el servidor", "error");
             };
             
-            // Enviar como JSON string
             xhr.send(JSON.stringify(requestData));
         }
 
+        function calcularFinDeSemana(numeroSemana, mes, anio) {
+            // Asumimos que las semanas terminan los sábados a las 23:59:59
+            const primerDiaMes = new Date(anio, mes - 1, 1);
+            const diaSemanaPrimerDia = primerDiaMes.getDay(); // 0=Domingo, 1=Lunes...
+            
+            // Calcular días hasta el primer sábado (día 6)
+            let diasHastaPrimerSabado = (6 - diaSemanaPrimerDia + 7) % 7;
+            if (diasHastaPrimerSabado === 0) diasHastaPrimerSabado = 7;
+            
+            // Calcular la fecha del fin de semana solicitado (sábado)
+            const diasHastaFinSemana = diasHastaPrimerSabado + (numeroSemana - 1) * 7;
+            const fechaFinSemana = new Date(anio, mes - 1, diasHastaFinSemana);
+            
+            // Ajustar al final del día sábado (23:59:59)
+            fechaFinSemana.setHours(23, 59, 59, 999);
+            
+            return fechaFinSemana;
+        }
+
+        // Función auxiliar para contar motivos
+        function contarMotivo(motivoTexto, motivosContados) {
+            if (!motivoTexto) {
+                motivosContados["No se hizo el lavado"]++;
+                return;
+            }
+            
+            let motivoEncontrado = false;
+            for (const motivo of MOTIVOS) {
+                if (motivoTexto.toLowerCase().includes(motivo.toLowerCase()) && 
+                    motivo !== "Aún no reportado") {
+                    motivosContados[motivo]++;
+                    motivoEncontrado = true;
+                    break;
+                }
+            }
+            
+            if (!motivoEncontrado) {
+                motivosContados["No se hizo el lavado"]++;
+            }
+        }
+
+        function calcularEstadisticasPorSemana(semanaData, semanaNumero, mes, anio) {
+            const totalOasis = calcularTotalOasisReales();
+            const hoy = new Date();
+            const finSemana = calcularFinDeSemana(semanaNumero, mes, anio);
+            const semanaYaTermino = hoy > finSemana;
+            
+            // Obtener todas las ubicaciones con sus sub-ubicaciones
+            const todasUbicaciones = generarListaUbicacionesCompleta();
+            
+            let lavadosReportados = 0;
+            let noLavadosReportados = 0;
+            const motivosContados = {
+                "Área no disponible": 0,
+                "Indisponibilidad de agua": 0,
+                "Lavado no realizado por solicitud del cliente": 0,
+                "No se hizo el lavado": 0,
+                "Otro": 0
+            };
+            
+            // Contar registros para cada ubicación/sub-ubicación
+            todasUbicaciones.forEach(item => {
+                const ubicacionKey = item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre;
+                const ubicacionEnSemana = semanaData.ubicaciones?.[ubicacionKey];
+                
+                if (item.esSubUbicacion) {
+                    // Es una sub-ubicación
+                    const reporteEnSemana = datosGlobales?.listaReportes?.find(reporte => 
+                        reporte.semana === semanaNumero.toString() && 
+                        reporte.ubicacion === item.ubicacionPrincipal &&
+                        reporte.subUbicacion === item.nombre
+                    );
+                    
+                    if (reporteEnSemana) {
+                        if (reporteEnSemana.esLavado) {
+                            lavadosReportados++;
+                        } else {
+                            noLavadosReportados++;
+                            
+                            // Contar por motivo
+                            contarMotivo(reporteEnSemana.motivo, motivosContados);
+                        }
+                    }
+                } else {
+                    // Es una ubicación principal sin sub-ubicaciones
+                    if (ubicacionEnSemana) {
+                        if (ubicacionEnSemana.lavado) {
+                            lavadosReportados++;
+                        } else {
+                            noLavadosReportados++;
+                            
+                            // Contar por motivo
+                            contarMotivo(ubicacionEnSemana.motivo, motivosContados);
+                        }
+                    }
+                }
+            });
+            
+            const reportadosTotal = lavadosReportados + noLavadosReportados;
+            const pendientes = totalOasis - reportadosTotal;
+            
+            // Calcular estadísticas finales
+            let lavadosFinal = lavadosReportados;
+            let noLavadosFinal = noLavadosReportados;
+            let pendientesFinal = pendientes;
+            let motivoPendientes = "";
+            
+            if (semanaYaTermino && pendientes > 0) {
+                // Semana terminada con pendientes = no se reportó actividad
+                // Estos se suman a "No se hizo el lavado" para simplificar
+                motivosContados["No se hizo el lavado"] += pendientes;
+                noLavadosFinal += pendientes;
+                motivoPendientes = "No se reportó actividad";
+                pendientesFinal = 0;
+            } else if (!semanaYaTermino && pendientes > 0) {
+                // Semana en curso con pendientes
+                motivoPendientes = "Aún no reportado";
+            }
+            
+            const totalFinal = lavadosFinal + noLavadosFinal;
+            const porcentaje = totalFinal > 0 ? Math.round((lavadosFinal / totalFinal) * 100) : 0;
+            
+            return {
+                lavados: lavadosFinal,
+                noLavados: noLavadosFinal,
+                pendientes: pendientesFinal,
+                motivoPendientes: motivoPendientes,
+                total: totalFinal,
+                porcentaje: porcentaje,
+                semanaYaTermino: semanaYaTermino,
+                reportados: reportadosTotal,
+                motivos: motivosContados,
+                totalOasis: totalOasis
+            };
+        }
+
+        function calcularTotalOasisReales() {
+            if (!datosGlobales || !proyectoActual) return 0;
+            
+            const todasUbicaciones = generarListaUbicacionesCompleta();
+            
+            // Contar cada ubicación/sub-ubicación como 1 oasis
+            return todasUbicaciones.length;
+        }
+
+function calcularEstadisticasMensuales(data, mes, anio) {
+    const semanas = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
+    const totalOasis = calcularTotalOasisReales();
+    
+    let totalLavadosMes = 0;
+    let totalNoLavadosMes = 0;
+    
+    semanas.forEach(semana => {
+        const semanaData = data.resumenSemanas[semana];
+        const estadisticas = calcularEstadisticasPorSemana(semanaData, semana, mes, anio);
+        
+        totalLavadosMes += estadisticas.lavados;
+        totalNoLavadosMes += estadisticas.noLavados;
+    });
+    
+    // TOTAL de oasis posibles en el mes = (oasis por semana) × (número de semanas en el mes)
+    const totalSemanasEnMes = semanas.length;
+    const totalOasisPosiblesMes = totalOasis * totalSemanasEnMes;
+    
+    // Porcentaje = (Total lavados) / (Total posibles) × 100
+    const porcentajeMes = totalOasisPosiblesMes > 0 ? 
+        Math.round((totalLavadosMes / totalOasisPosiblesMes) * 100) : 0;
+    
+    return {
+        totalLavados: totalLavadosMes,
+        totalNoLavados: totalNoLavadosMes,
+        porcentaje: porcentajeMes,
+        totalOasis: totalOasis,
+        semanasEnMes: totalSemanasEnMes,
+        totalOasisPosibles: totalOasisPosiblesMes
+    };
+}
         function renderizarDashboardOasis(data, mesVal, anio) {
             document.getElementById('dashboardContent').style.display = 'block';
             
-            // Actualizar KPI's
-            document.getElementById('kpiLavados').textContent = data.oasisLavados;
-            document.getElementById('kpiNoLavados').textContent = data.oasisNoLavados;
-            document.getElementById('kpiCumplimiento').textContent = `${data.porcentajeCumplimiento}%`;
+            // Calcular estadísticas mensuales
+            const estadisticasMes = calcularEstadisticasMensuales(data, parseInt(mesVal), parseInt(anio));
+            
+            // Actualizar KPI's - SOLO EL PORCENTAJE, SIN (X/Y)
+            document.getElementById('kpiLavados').textContent = estadisticasMes.totalLavados;
+            document.getElementById('kpiNoLavados').textContent = estadisticasMes.totalNoLavados;
+            document.getElementById('kpiCumplimiento').textContent = `${estadisticasMes.porcentaje}%`;
             
             // Calcular porcentaje de cumplimiento anual
             const porcentajeCumplimientoAnual = calcularPorcentajeCumplimientoAnual(data.datosGraficoAnual);
             document.getElementById('kpiCumplimientoAnual').textContent = `${porcentajeCumplimientoAnual}%`;
             
             const nombreMes = mesesNombres[parseInt(mesVal) - 1];
+            
+            // Preparar datos para gráfico mensual
+            const semanas = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
+            const labelsSemanas = semanas.map(s => `Sem ${s}`);
+            const lavadosPorSemana = [];
+            const noLavadosPorSemana = [];
+            
+            semanas.forEach(semana => {
+                const semanaData = data.resumenSemanas[semana];
+                const estadisticas = calcularEstadisticasPorSemana(semanaData, semana, parseInt(mesVal), parseInt(anio));
+                
+                lavadosPorSemana.push(estadisticas.lavados);
+                noLavadosPorSemana.push(estadisticas.noLavados);
+            });
             
             // Crear gráfico mensual
             const ctxMensual = document.getElementById('chartMensual');
@@ -791,17 +989,17 @@
             chartMensual = new Chart(ctxMensual, {
                 type: 'bar',
                 data: {
-                    labels: data.datosGraficoMensual.labels.map(s => `Sem ${s}`),
+                    labels: labelsSemanas,
                     datasets: [
                         {
                             label: 'Oasis Lavados',
-                            data: data.datosGraficoMensual.lavados,
+                            data: lavadosPorSemana,
                             backgroundColor: '#27ae60',
                             borderRadius: 4
                         },
                         {
                             label: 'Oasis No Lavados',
-                            data: data.datosGraficoMensual.noLavados,
+                            data: noLavadosPorSemana,
                             backgroundColor: '#e74c3c',
                             borderRadius: 4
                         }
@@ -818,7 +1016,20 @@
                         },
                         tooltip: {
                             mode: 'index',
-                            intersect: false
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y;
+                                    const total = calcularTotalOasisReales();
+                                    const porcentaje = total > 0 ? Math.round((context.parsed.y / total) * 100) : 0;
+                                    label += ` (${porcentaje}%)`;
+                                    return label;
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -832,13 +1043,14 @@
                         },
                         y: {
                             beginAtZero: true,
+                            max: calcularTotalOasisReales(),
                             title: {
                                 display: true,
                                 text: 'Cantidad de Oasis',
                                 font: { weight: 'bold' }
                             },
                             ticks: {
-                                stepSize: 1
+                                stepSize: Math.max(1, Math.floor(calcularTotalOasisReales() / 10))
                             }
                         }
                     }
@@ -896,10 +1108,10 @@
             });
 
             // Renderizar desglose de cumplimiento
-            renderizarDesgloseCumplimiento(data);
+            renderizarDesgloseCumplimiento(data, parseInt(mesVal), parseInt(anio));
             
-            // Renderizar tabla semanal con sub-ubicaciones
-            renderizarTablaSemanas(data);
+            // Renderizar tabla semanal
+            renderizarTablaSemanas(data, parseInt(mesVal), parseInt(anio));
         }
 
         function calcularPorcentajeCumplimientoAnual(datosAnual) {
@@ -915,98 +1127,90 @@
             return Math.round((totalLavados / totalGeneral) * 100);
         }
 
-        function renderizarDesgloseCumplimiento(data) {
+        function renderizarDesgloseCumplimiento(data, mes, anio) {
             const container = document.getElementById('desgloseContainer');
             container.innerHTML = '';
             
-            // Primero, procesar los datos para contar por motivo
-            const estadisticasPorSemana = {};
+            const semanas = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
             
-            Object.keys(data.resumenSemanas).sort((a, b) => a - b).forEach(semana => {
-                const resumen = data.resumenSemanas[semana];
-                
-                // Inicializar estadísticas para esta semana
-                estadisticasPorSemana[semana] = {
-                    lavados: resumen.lavados,
-                    noLavados: resumen.noLavados,
-                    total: resumen.lavados + resumen.noLavados,
-                    porMotivo: {
-                        "Área no disponible": 0,
-                        "Indisponibilidad de agua": 0,
-                        "Lavado no realizado por solicitud del cliente": 0,
-                        "No se hizo el lavado": 0,
-                        "Otro": 0
-                    }
-                };
-                
-                // Contar motivos en los registros de esta semana
-                Object.values(resumen.ubicaciones).forEach(ubicacion => {
-                    if (!ubicacion.lavado && ubicacion.motivo) {
-                        let motivoEncontrado = false;
-                        
-                        // Buscar si el motivo coincide con alguno de los definidos
-                        for (const motivo of MOTIVOS) {
-                            if (ubicacion.motivo.toLowerCase().includes(motivo.toLowerCase())) {
-                                estadisticasPorSemana[semana].porMotivo[motivo]++;
-                                motivoEncontrado = true;
-                                break;
-                            }
-                        }
-                        
-                        // Si no coincide con ningún motivo definido, contar como "Otro"
-                        if (!motivoEncontrado) {
-                            estadisticasPorSemana[semana].porMotivo["Otro"]++;
-                        }
-                    }
-                });
-            });
+            if (semanas.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-3">No hay datos de semanas</div>';
+                return;
+            }
             
-            // Ahora renderizar cada semana
-            Object.keys(estadisticasPorSemana).sort((a, b) => a - b).forEach(semana => {
-                const estadisticas = estadisticasPorSemana[semana];
-                const porcentajeLavados = estadisticas.total > 0 ? 
-                    Math.round((estadisticas.lavados / estadisticas.total) * 100) : 0;
+            // Calcular total real de oasis
+            const totalOasis = calcularTotalOasisReales();
+            
+            semanas.forEach(semana => {
+                const semanaData = data.resumenSemanas[semana];
+                const estadisticas = calcularEstadisticasPorSemana(semanaData, semana, mes, anio);
                 
                 const semanaDiv = document.createElement('div');
                 semanaDiv.className = 'desglose-semana';
                 
+                let estadoSemana = '';
+                if (!estadisticas.semanaYaTermino) {
+                    estadoSemana = `<span class="badge bg-warning text-dark ms-2">En curso</span>`;
+                }
+                
                 let contenidoHTML = `
                     <div class="semana-header">
-                        <div class="semana-titulo">Semana ${semana}</div>
+                        <div class="semana-titulo">Semana ${semana} ${estadoSemana}</div>
                         <div class="semana-estadisticas">
-                            ${estadisticas.lavados} lavados / ${estadisticas.total} total (${porcentajeLavados}% cumplimiento)
+                            ${estadisticas.lavados} lavados / ${totalOasis} total (${estadisticas.porcentaje}% cumplimiento)
+                            ${estadisticas.pendientes > 0 && !estadisticas.semanaYaTermino ? ` | ${estadisticas.pendientes} ${estadisticas.motivoPendientes.toLowerCase()}` : ''}
                         </div>
                     </div>
                     <div class="barra-desglose">
                 `;
                 
+                // Calcular porcentajes para la barra (siempre sobre el total de oasis)
+                
                 // Agregar segmento de lavados
                 if (estadisticas.lavados > 0) {
-                    const porcentajeSegmentoLavado = (estadisticas.lavados / estadisticas.total) * 100;
+                    const porcentajeSegmentoLavado = (estadisticas.lavados / totalOasis) * 100;
                     contenidoHTML += `
                         <div class="segmento-lavado" style="width: ${porcentajeSegmentoLavado}%" 
                              title="${estadisticas.lavados} lavados (${Math.round(porcentajeSegmentoLavado)}%)"></div>
                     `;
                 }
                 
-                // Agregar segmentos por motivo
-                MOTIVOS.forEach((motivo, index) => {
-                    const cantidad = estadisticas.porMotivo[motivo];
+                // Agregar segmentos por motivo de no lavados reportados
+                Object.keys(estadisticas.motivos).forEach(motivo => {
+                    const cantidad = estadisticas.motivos[motivo];
                     if (cantidad > 0) {
-                        const porcentajeSegmento = (cantidad / estadisticas.total) * 100;
+                        const porcentajeSegmento = (cantidad / totalOasis) * 100;
+                        let motivoIndex = 4; // Por defecto "No se hizo el lavado"
+                        
+                        if (motivo === "Área no disponible") motivoIndex = 1;
+                        else if (motivo === "Indisponibilidad de agua") motivoIndex = 2;
+                        else if (motivo === "Lavado no realizado por solicitud del cliente") motivoIndex = 3;
+                        else if (motivo === "No se hizo el lavado") motivoIndex = 4;
+                        else if (motivo === "Otro") motivoIndex = 4;
+                        
                         contenidoHTML += `
-                            <div class="segmento-motivo${index + 1}" style="width: ${porcentajeSegmento}%"
+                            <div class="segmento-motivo${motivoIndex}" style="width: ${porcentajeSegmento}%"
                                  title="${motivo}: ${cantidad} (${Math.round(porcentajeSegmento)}%)"></div>
                         `;
                     }
                 });
                 
-                // Agregar segmento para "Otro" si existe
-                if (estadisticas.porMotivo["Otro"] > 0) {
-                    const porcentajeSegmentoOtro = (estadisticas.porMotivo["Otro"] / estadisticas.total) * 100;
+                // Agregar segmento para pendientes (si aplica)
+                if (estadisticas.pendientes > 0) {
+                    const porcentajeSegmentoPendientes = (estadisticas.pendientes / totalOasis) * 100;
+                    const clasePendientes = estadisticas.semanaYaTermino ? "segmento-motivo4" : "segmento-motivo5";
+                    const tituloPendientes = estadisticas.semanaYaTermino ? "No se reportó actividad" : "Aún no reportado";
                     contenidoHTML += `
-                        <div class="segmento-motivo4" style="width: ${porcentajeSegmentoOtro}%"
-                             title="Otro motivo: ${estadisticas.porMotivo["Otro"]} (${Math.round(porcentajeSegmentoOtro)}%)"></div>
+                        <div class="${clasePendientes}" style="width: ${porcentajeSegmentoPendientes}%"
+                             title="${tituloPendientes}: ${estadisticas.pendientes} (${Math.round(porcentajeSegmentoPendientes)}%)"></div>
+                    `;
+                }
+                
+                // Si no hay nada reportado y la semana ya terminó, mostrar barra completa en "No se hizo el lavado"
+                if (estadisticas.reportados === 0 && estadisticas.semanaYaTermino) {
+                    contenidoHTML += `
+                        <div class="segmento-motivo4" style="width: 100%"
+                             title="No se reportó actividad: ${totalOasis} oasis (100%)"></div>
                     `;
                 }
                 
@@ -1016,194 +1220,232 @@
             });
         }
 
-function renderizarTablaSemanas(data) {
-    const thead = document.querySelector('#tablaSemanas thead tr');
-    const tbody = document.getElementById('tablaSemanasCuerpo');
-    
-    // Limpiar contenido previo
-    thead.innerHTML = '<th style="width: 300px; min-width: 300px; text-align: left;">Ubicación / Sub-Ubicación</th>';
-    tbody.innerHTML = '';
-    
-    // Crear encabezados de semanas
-    Object.keys(data.resumenSemanas).sort((a, b) => a - b).forEach(semana => {
-        const th = document.createElement('th');
-        th.className = 'text-center';
-        th.innerHTML = `Sem ${semana}`;
-        thead.appendChild(th);
-    });
-    
-    // Generar lista completa de ubicaciones (con formato "Ubicación - Sub-ubicación")
-    const todasUbicaciones = generarListaUbicacionesCompleta();
-    
-    // Crear filas para cada ubicación/sub-ubicación
-    todasUbicaciones.forEach(item => {
-        const tr = document.createElement('tr');
-        
-        // Celda de ubicación/sub-ubicación con formato "Ubicación - Sub-ubicación"
-        let ubicacionHTML = `<td class="fw-bold" style="text-align: left;">`;
-        
-        if (item.esSubUbicacion) {
-            ubicacionHTML += `
-                <div class="sububicacion-con-ubicacion">
-                    <div class="texto-ubicacion-principal">${item.ubicacionPrincipal}</div>
-                    <div class="texto-sububicacion">${item.nombre}</div>
-                </div>
-            `;
-        } else {
-            ubicacionHTML += item.nombre;
-        }
-        
-        ubicacionHTML += `</td>`;
-        
-        // Celdas de semanas
-        Object.keys(data.resumenSemanas).sort((a, b) => a - b).forEach(semana => {
-            const ubicacionKey = item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre;
-            const nombreCompleto = item.esSubUbicacion ? `${item.ubicacionPrincipal} - ${item.nombre}` : item.nombre;
-            const ubicacionEnSemana = data.resumenSemanas[semana].ubicaciones[ubicacionKey];
+        function renderizarTablaSemanas(data, mes, anio) {
+            const thead = document.querySelector('#tablaSemanas thead tr');
+            const tbody = document.getElementById('tablaSemanasCuerpo');
             
-            let contenido = '';
-            let clase = '';
-            let motivo = '';
-            let url = '';
-            let rowNumber = null;
-            let tieneMotivo = false;
+            // Limpiar contenido previo
+            thead.innerHTML = '<th style="width: 300px; min-width: 300px; text-align: left;">Ubicación / Sub-Ubicación</th>';
+            tbody.innerHTML = '';
             
-            if (ubicacionEnSemana) {
-                // Si es sub-ubicación, buscar específicamente en los datos del servidor
+            // Crear encabezados de semanas
+            const semanas = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
+            semanas.forEach(semana => {
+                const th = document.createElement('th');
+                th.className = 'text-center';
+                
+                // Verificar si la semana está en curso
+                const hoy = new Date();
+                const finSemana = calcularFinDeSemana(semana, mes, anio);
+                const semanaEnCurso = hoy <= finSemana;
+                
+                th.innerHTML = `Sem ${semana}${semanaEnCurso ? '<br><small class="badge bg-warning text-dark">En curso</small>' : ''}`;
+                thead.appendChild(th);
+            });
+            
+            // Generar lista completa de ubicaciones
+            const todasUbicaciones = generarListaUbicacionesCompleta();
+            
+            // Función auxiliar para buscar registro específico
+            function buscarRegistroEspecifico(semana, ubicacionPrincipal, subUbicacion) {
+                if (!data.listaReportes) return null;
+                
+                return data.listaReportes.find(reporte => {
+                    // Verificar que la semana coincida
+                    if (reporte.semana !== semana.toString()) return false;
+                    
+                    // Verificar que la ubicación principal coincida
+                    if (reporte.ubicacion !== ubicacionPrincipal) return false;
+                    
+                    // Para sub-ubicaciones: verificar que subUbicacion coincida
+                    if (subUbicacion) {
+                        return reporte.subUbicacion === subUbicacion;
+                    } else {
+                        // Para ubicaciones principales: verificar que no tenga subUbicacion
+                        return !reporte.subUbicacion || reporte.subUbicacion === '';
+                    }
+                });
+            }
+            
+            // Crear filas para cada ubicación/sub-ubicación
+            todasUbicaciones.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // Celda de ubicación/sub-ubicación
+                let ubicacionHTML = `<td class="fw-bold" style="text-align: left;">`;
+                
                 if (item.esSubUbicacion) {
-                    // Buscar en la lista de reportes si hay registro para esta sub-ubicación
-                    const reporteEnSemana = data.listaReportes.find(reporte => 
-                        reporte.semana === semana && 
-                        reporte.ubicacion === item.ubicacionPrincipal &&
-                        reporte.subUbicacion === item.nombre
+                    ubicacionHTML += `
+                        <div class="sububicacion-con-ubicacion">
+                            <div class="texto-ubicacion-principal">${item.ubicacionPrincipal}</div>
+                            <div class="texto-sububicacion">${item.nombre}</div>
+                        </div>
+                    `;
+                } else {
+                    ubicacionHTML += item.nombre;
+                }
+                
+                ubicacionHTML += `</td>`;
+                
+                // Celdas de semanas
+                semanas.forEach(semana => {
+                    const ubicacionKey = item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre;
+                    const nombreCompleto = item.esSubUbicacion ? `${item.ubicacionPrincipal} - ${item.nombre}` : item.nombre;
+                    
+                    let contenido = '';
+                    let clase = '';
+                    let motivo = '';
+                    let url = '';
+                    let rowNumber = null;
+                    let tieneMotivo = false;
+                    
+                    // Verificar si la semana ya terminó
+                    const hoy = new Date();
+                    const finSemana = calcularFinDeSemana(semana, mes, anio);
+                    const semanaYaTermino = hoy > finSemana;
+                    
+                    // Buscar registro específico para esta ubicación/sub-ubicación
+                    const registroEncontrado = buscarRegistroEspecifico(
+                        semana, 
+                        item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre,
+                        item.esSubUbicacion ? item.nombre : null
                     );
                     
-                    if (reporteEnSemana) {
-                        if (reporteEnSemana.esLavado) {
+                    if (registroEncontrado) {
+                        // HAY REGISTRO ENCONTRADO
+                        if (registroEncontrado.esLavado) {
                             contenido = '<i class="fas fa-check"></i>';
                             clase = 'estado-lavado';
-                            url = reporteEnSemana.url;
-                            rowNumber = reporteEnSemana.rowNumber;
+                            url = registroEncontrado.url || '';
+                            rowNumber = registroEncontrado.rowNumber;
                         } else {
                             contenido = '<i class="fas fa-times"></i>';
-                            clase = getClasePorMotivo(reporteEnSemana.motivo);
-                            motivo = reporteEnSemana.motivo;
+                            clase = getClasePorMotivo(registroEncontrado.motivo);
+                            motivo = registroEncontrado.motivo || 'No se hizo el lavado';
                             tieneMotivo = true;
-                            rowNumber = reporteEnSemana.rowNumber;
-                        }
-                    }
-                } else {
-                    // Es ubicación principal (sin sub-ubicaciones)
-                    if (ubicacionEnSemana.lavado) {
-                        contenido = '<i class="fas fa-check"></i>';
-                        clase = 'estado-lavado';
-                        // Buscar URL en lista de reportes
-                        const reporteEnSemana = data.listaReportes.find(reporte => 
-                            reporte.semana === semana && 
-                            reporte.ubicacion === item.nombre &&
-                            !reporte.subUbicacion
-                        );
-                        if (reporteEnSemana) {
-                            url = reporteEnSemana.url;
-                            rowNumber = reporteEnSemana.rowNumber;
+                            rowNumber = registroEncontrado.rowNumber;
                         }
                     } else {
-                        contenido = '<i class="fas fa-times"></i>';
-                        clase = getClasePorMotivo(ubicacionEnSemana.motivo);
-                        motivo = ubicacionEnSemana.motivo;
-                        tieneMotivo = true;
-                        // Buscar rowNumber en lista de reportes para eliminación
-                        const reporteEnSemana = data.listaReportes.find(reporte => 
-                            reporte.semana === semana && 
-                            reporte.ubicacion === item.nombre &&
-                            !reporte.subUbicacion
-                        );
-                        if (reporteEnSemana) {
-                            rowNumber = reporteEnSemana.rowNumber;
+                        // NO HAY REGISTRO ENCONTRADO
+                        if (semanaYaTermino) {
+                            // Semana ya terminó y NO se reportó
+                            contenido = '<i class="fas fa-times"></i>';
+                            clase = 'estado-motivo4';
+                            motivo = 'No se reportó actividad';
+                            tieneMotivo = true;
+                        } else {
+                            // Semana aún en curso
+                            contenido = '<i class="fas fa-clock"></i>';
+                            clase = 'estado-motivo5';
+                            motivo = 'Aún no reportado';
+                            tieneMotivo = true;
                         }
                     }
-                }
-            }
+                    
+                    // Construir celda
+                    if (tieneMotivo) {
+                        if (rowNumber) {
+                            // Tiene registro en la base de datos (con motivo)
+                            ubicacionHTML += `
+                                <td class="${clase}">
+                                    <div class="icono-centrado">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="mb-1 motivo-tooltip">
+                                                ${contenido}
+                                                <span class="motivo-texto">${motivo}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-center">
+                                                <button class="btn btn-action btn-delete" onclick="confirmarEliminar('${url || ''}', ${rowNumber}, '${nombreCompleto}', '${semana}', true)" title="Eliminar registro">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            `;
+                        } else {
+                            // No tiene registro en la base de datos (solo estado)
+                            ubicacionHTML += `
+                                <td class="${clase}">
+                                    <div class="icono-centrado">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="mb-1 motivo-tooltip">
+                                                ${contenido}
+                                                <span class="motivo-texto">${motivo}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            `;
+                        }
+                    } else if (url) {
+                        // Tiene registro con PDF
+                        ubicacionHTML += `
+                            <td class="${clase}">
+                                <div class="icono-centrado">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="mb-1">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <button class="btn btn-action btn-pdf" onclick="verPDF('${url}')" title="Ver Reporte">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-share" onclick="compartirPDF('${url}', '${nombreCompleto}', '${semana}')" title="Compartir">
+                                                <i class="fas fa-share-alt"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-download" onclick="descargarPDF('${url}')" title="Descargar">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-delete" onclick="confirmarEliminar('${url}', ${rowNumber}, '${nombreCompleto}', '${semana}', false)" title="Eliminar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        // Solo check sin URL
+                        ubicacionHTML += `
+                            <td class="${clase}">
+                                <div class="icono-centrado">
+                                    ${contenido}
+                                </div>
+                            </td>
+                        `;
+                    }
+                });
+                
+                tr.innerHTML = ubicacionHTML;
+                tbody.appendChild(tr);
+            });
             
-            // Construir celda
-            if (contenido === '') {
-                ubicacionHTML += `<td class="text-muted"><div class="icono-centrado">-</div></td>`;
-            } else if (tieneMotivo) {
-                // Celda con X, motivo y botón de eliminar
-                ubicacionHTML += `
-                    <td class="${clase}">
-                        <div class="icono-centrado">
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="mb-1 motivo-tooltip">
-                                    <i class="fas fa-times"></i>
-                                    <span class="motivo-texto">${motivo}</span>
-                                </div>
-                                <div class="d-flex justify-content-center">
-                                    <button class="btn btn-action btn-delete" onclick="confirmarEliminar('${url || ''}', ${rowNumber}, '${nombreCompleto}', '${semana}', ${tieneMotivo})" title="Eliminar registro">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            // Si no hay ubicaciones, mostrar mensaje
+            if (todasUbicaciones.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="${semanas.length + 1}" class="text-center text-muted py-4">
+                        No hay ubicaciones configuradas para este proyecto
                     </td>
                 `;
-            } else if (url) {
-                // Celda con check y botones de acción
-                ubicacionHTML += `
-                    <td class="${clase}">
-                        <div class="icono-centrado">
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="mb-1">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div class="d-flex justify-content-center">
-                                    <button class="btn btn-action btn-pdf" onclick="verPDF('${url}')" title="Ver Reporte">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-action btn-share" onclick="compartirPDF('${url}', '${nombreCompleto}', '${semana}')" title="Compartir">
-                                        <i class="fas fa-share-alt"></i>
-                                    </button>
-                                    <button class="btn btn-action btn-download" onclick="descargarPDF('${url}')" title="Descargar">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                    <button class="btn btn-action btn-delete" onclick="confirmarEliminar('${url}', ${rowNumber}, '${nombreCompleto}', '${semana}', ${tieneMotivo})" title="Eliminar">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                `;
-            } else {
-                // Celda solo con check (sin URL)
-                ubicacionHTML += `
-                    <td class="${clase}">
-                        <div class="icono-centrado">
-                            ${contenido}
-                        </div>
-                    </td>
-                `;
+                tbody.appendChild(tr);
             }
-        });
-        
-        tr.innerHTML = ubicacionHTML;
-        tbody.appendChild(tr);
-    });
-}
-
+        }
 
         function generarListaUbicacionesCompleta() {
             const todasUbicaciones = [];
             
-            // Recorrer ubicaciones del estado global
-            Object.keys(datosGlobales.ubicacionesEstado).sort().forEach(ubicacion => {
-                // Verificar si esta ubicación tiene sub-ubicaciones
+            if (!datosGlobales || !proyectoActual) {
+                return todasUbicaciones;
+            }
+            
+            Object.keys(datosGlobales.ubicacionesEstado || {}).sort().forEach(ubicacion => {
                 const tieneSubUbicaciones = SUB_UBICACIONES_POR_PROYECTO[proyectoActual] && 
                                            SUB_UBICACIONES_POR_PROYECTO[proyectoActual][ubicacion] &&
                                            SUB_UBICACIONES_POR_PROYECTO[proyectoActual][ubicacion].length > 0;
                 
                 if (tieneSubUbicaciones) {
-                    // Agregar las sub-ubicaciones con formato "Ubicación - Sub-ubicación"
                     SUB_UBICACIONES_POR_PROYECTO[proyectoActual][ubicacion].sort().forEach(subUbicacion => {
                         todasUbicaciones.push({
                             nombre: subUbicacion,
@@ -1212,7 +1454,6 @@ function renderizarTablaSemanas(data) {
                         });
                     });
                 } else {
-                    // Agregar ubicación principal (no tiene sub-ubicaciones)
                     todasUbicaciones.push({
                         nombre: ubicacion,
                         esSubUbicacion: false,
@@ -1224,26 +1465,27 @@ function renderizarTablaSemanas(data) {
             return todasUbicaciones;
         }
 
-function getClasePorMotivo(motivo) {
-    if (!motivo) return 'estado-motivo4';
-    
-    const motivoLower = motivo.toLowerCase();
-    
-    // Mapear motivos específicos a clases de color
-    if (motivoLower.includes('área no disponible') || motivoLower.includes('area no disponible')) {
-        return 'estado-motivo1';
-    } else if (motivoLower.includes('indisponibilidad de agua') || motivoLower.includes('agua')) {
-        return 'estado-motivo2';
-    } else if (motivoLower.includes('solicitud del cliente') || motivoLower.includes('cliente')) {
-        return 'estado-motivo3';
-    } else if (motivoLower.includes('no se hizo') || motivoLower.includes('no se realizó')) {
-        return 'estado-motivo4';
-    } else {
-        return 'estado-motivo4'; // Gris por defecto
-    }
-}
+        function getClasePorMotivo(motivo) {
+            if (!motivo) return 'estado-motivo4';
+            
+            const motivoLower = motivo.toLowerCase();
+            
+            if (motivoLower.includes('área no disponible') || motivoLower.includes('area no disponible')) {
+                return 'estado-motivo1';
+            } else if (motivoLower.includes('indisponibilidad de agua') || motivoLower.includes('agua')) {
+                return 'estado-motivo2';
+            } else if (motivoLower.includes('solicitud del cliente') || motivoLower.includes('cliente')) {
+                return 'estado-motivo3';
+            } else if (motivoLower.includes('no se hizo') || motivoLower.includes('no se realizó') || motivoLower.includes('no se reportó')) {
+                return 'estado-motivo4';
+            } else if (motivoLower.includes('aún no reportado') || motivoLower.includes('pendiente')) {
+                return 'estado-motivo5';
+            } else {
+                return 'estado-motivo4';
+            }
+        }
 
-        // FUNCIONES PARA MANEJO DE PDFs - IGUAL QUE LA PÁGINA DE REFERENCIA
+        // FUNCIONES PARA MANEJO DE PDFs
         function verPDF(url) {
             if(!url) return;
             let previewUrl = url;
@@ -1296,37 +1538,36 @@ function getClasePorMotivo(motivo) {
             }
         }
 
-function confirmarEliminar(url, rowNumber, ubicacion, semana, tieneMotivo) {
-    const tipoRegistro = tieneMotivo ? "registro de motivo" : "reporte con archivo";
-    
-    Swal.fire({
-        title: `Eliminar ${tieneMotivo ? 'Motivo' : 'Reporte'}`,
-        text: `¿Estás seguro de eliminar este ${tipoRegistro}? Ingresa la contraseña para confirmar:`,
-        input: 'password',
-        inputAttributes: {
-            autocapitalize: 'off',
-            placeholder: 'Contraseña'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Eliminar',
-        confirmButtonColor: '#e74c3c',
-        cancelButtonText: 'Cancelar',
-        allowOutsideClick: false,
-        backdrop: `rgba(43, 62, 80, 0.8)`,
-        preConfirm: (password) => {
-            if (password !== 'argos123') {
-                Swal.showValidationMessage('Contraseña incorrecta');
-                return false;
-            }
-            return password;
+        function confirmarEliminar(url, rowNumber, ubicacion, semana, tieneMotivo) {
+            const tipoRegistro = tieneMotivo ? "registro de motivo" : "reporte con archivo";
+            
+            Swal.fire({
+                title: `Eliminar ${tieneMotivo ? 'Motivo' : 'Reporte'}`,
+                text: `¿Estás seguro de eliminar este ${tipoRegistro}? Ingresa la contraseña para confirmar:`,
+                input: 'password',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    placeholder: 'Contraseña'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                confirmButtonColor: '#e74c3c',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                backdrop: `rgba(43, 62, 80, 0.8)`,
+                preConfirm: (password) => {
+                    if (password !== 'argos123') {
+                        Swal.showValidationMessage('Contraseña incorrecta');
+                        return false;
+                    }
+                    return password;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ejecutarEliminacion(rowNumber, url);
+                }
+            });
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            ejecutarEliminacion(rowNumber, url);
-        }
-    });
-}
-
 
         function ejecutarEliminacion(rowNumber, fileUrl) {
             const proyecto = document.getElementById('filtroProyecto').value;
@@ -1383,4 +1624,3 @@ function confirmarEliminar(url, rowNumber, ubicacion, semana, tieneMotivo) {
     </script>
 </body>
 </html>
-
