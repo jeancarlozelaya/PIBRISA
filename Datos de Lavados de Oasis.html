@@ -774,51 +774,24 @@
             xhr.send(JSON.stringify(requestData));
         }
 
-function calcularFinDeSemana(numeroSemana, mes, anio) {
-    // Validar que el año no sea demasiado futuro
-    const currentYear = new Date().getFullYear();
-    if (anio > currentYear + 1) {
-        // Si es un año muy futuro, usar el año actual para el cálculo
-        anio = currentYear;
-    }
-    
-    // Asegurar que el mes esté en rango válido
-    const mesAjustado = Math.max(1, Math.min(12, parseInt(mes)));
-    
-    // Calcular el primer día del mes
-    const primerDiaMes = new Date(anio, mesAjustado - 1, 1);
-    
-    // Verificar si la fecha es válida
-    if (isNaN(primerDiaMes.getTime())) {
-        // Si la fecha no es válida, usar el mes actual
-        const ahora = new Date();
-        return new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + (numeroSemana * 7));
-    }
-    
-    const diaSemanaPrimerDia = primerDiaMes.getDay(); // 0=Domingo, 1=Lunes...
-    
-    // Calcular días hasta el primer sábado (día 6)
-    let diasHastaPrimerSabado = (6 - diaSemanaPrimerDia + 7) % 7;
-    if (diasHastaPrimerSabado === 0) diasHastaPrimerSabado = 7;
-    
-    // Calcular la fecha del fin de semana solicitado (sábado)
-    const diasHastaFinSemana = diasHastaPrimerSabado + (numeroSemana - 1) * 7;
-    const fechaFinSemana = new Date(anio, mesAjustado - 1, diasHastaFinSemana);
-    
-    // Verificar que la fecha sea válida
-    if (isNaN(fechaFinSemana.getTime())) {
-        // Fallback: sumar semanas a la fecha actual
-        const ahora = new Date();
-        ahora.setDate(ahora.getDate() + (numeroSemana * 7));
-        return ahora;
-    }
-    
-    // Ajustar al final del día sábado (23:59:59)
-    fechaFinSemana.setHours(23, 59, 59, 999);
-    
-    return fechaFinSemana;
-}
-
+        function calcularFinDeSemana(numeroSemana, mes, anio) {
+            // Asumimos que las semanas terminan los sábados a las 23:59:59
+            const primerDiaMes = new Date(anio, mes - 1, 1);
+            const diaSemanaPrimerDia = primerDiaMes.getDay(); // 0=Domingo, 1=Lunes...
+            
+            // Calcular días hasta el primer sábado (día 6)
+            let diasHastaPrimerSabado = (6 - diaSemanaPrimerDia + 7) % 7;
+            if (diasHastaPrimerSabado === 0) diasHastaPrimerSabado = 7;
+            
+            // Calcular la fecha del fin de semana solicitado (sábado)
+            const diasHastaFinSemana = diasHastaPrimerSabado + (numeroSemana - 1) * 7;
+            const fechaFinSemana = new Date(anio, mes - 1, diasHastaFinSemana);
+            
+            // Ajustar al final del día sábado (23:59:59)
+            fechaFinSemana.setHours(23, 59, 59, 999);
+            
+            return fechaFinSemana;
+        }
 
         // Función auxiliar para contar motivos
         function contarMotivo(motivoTexto, motivosContados) {
@@ -984,7 +957,7 @@ function renderizarDashboardOasis(data, mesVal, anio) {
     // Calcular estadísticas mensuales
     const estadisticasMes = calcularEstadisticasMensuales(data, parseInt(mesVal), parseInt(anio));
     
-    // Actualizar KPI's
+    // Actualizar KPI's - SOLO EL PORCENTAJE, SIN (X/Y)
     document.getElementById('kpiLavados').textContent = estadisticasMes.totalLavados;
     document.getElementById('kpiNoLavados').textContent = estadisticasMes.totalNoLavados;
     document.getElementById('kpiCumplimiento').textContent = `${estadisticasMes.porcentaje}%`;
@@ -995,24 +968,25 @@ function renderizarDashboardOasis(data, mesVal, anio) {
     
     const nombreMes = mesesNombres[parseInt(mesVal) - 1];
     
-    // Obtener las semanas del mes REALES basadas en la fecha
-    const semanasReales = obtenerSemanasRealesDelMes(mesVal, anio);
+    // Obtener las semanas ISO reales del mes
+    const semanasRealesISO = obtenerSemanasRealesDelMes(parseInt(mesVal), parseInt(anio));
     
-    // Preparar datos para gráfico mensual usando semanas reales
-    const labelsSemanas = semanasReales.map(s => `Sem ${s.numeroReal}`);
+    // Las semanas del servidor (internas: 1, 2, 3, 4...)
+    const semanasServidor = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
+    
+    // Preparar datos para gráfico mensual usando semanas ISO reales
+    const labelsSemanas = semanasRealesISO.map(s => `Sem ${s.numeroReal}`);
     const lavadosPorSemana = [];
     const noLavadosPorSemana = [];
     
-    // Mapear los datos de las semanas del servidor a las semanas reales
-    semanasReales.forEach((semanaReal, index) => {
-        // Buscar datos para esta semana real
-        // Si no hay datos en la semana real, usar datos de la semana del servidor correspondiente
-        const semanaServidorIndex = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b)[index];
+    // Mapear datos del servidor a semanas ISO
+    semanasRealesISO.forEach((semanaISO, index) => {
+        // Usar la semana interna correspondiente (1, 2, 3...)
+        const semanaInternaIndex = index < semanasServidor.length ? semanasServidor[index] : (index + 1).toString();
+        const semanaData = data.resumenSemanas[semanaInternaIndex];
         
-        if (semanaServidorIndex !== undefined) {
-            const semanaData = data.resumenSemanas[semanaServidorIndex];
-            const estadisticas = calcularEstadisticasPorSemana(semanaData, semanaServidorIndex, parseInt(mesVal), parseInt(anio));
-            
+        if (semanaData) {
+            const estadisticas = calcularEstadisticasPorSemana(semanaData, semanaInternaIndex, parseInt(mesVal), parseInt(anio));
             lavadosPorSemana.push(estadisticas.lavados);
             noLavadosPorSemana.push(estadisticas.noLavados);
         } else {
@@ -1021,12 +995,6 @@ function renderizarDashboardOasis(data, mesVal, anio) {
             noLavadosPorSemana.push(0);
         }
     });
-    
-    // Si no hay semanas reales, usar las semanas del servidor
-    if (semanasReales.length === 0) {
-        const semanasServidor = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
-        semanasReales = semanasServidor.map((s, i) => ({ numero: s, numeroReal: s }));
-    }
     
     // Crear gráfico mensual
     const ctxMensual = document.getElementById('chartMensual');
@@ -1103,7 +1071,7 @@ function renderizarDashboardOasis(data, mesVal, anio) {
         }
     });
 
-    // Crear gráfico anual
+    // Crear gráfico anual (este se mantiene igual)
     const ctxAnual = document.getElementById('chartAnual');
     if (chartAnual) chartAnual.destroy();
     
@@ -1153,58 +1121,12 @@ function renderizarDashboardOasis(data, mesVal, anio) {
         }
     });
 
-    // Renderizar desglose de cumplimiento CON SEMANAS REALES
-    renderizarDesgloseCumplimiento(data, parseInt(mesVal), parseInt(anio), semanasReales);
+    // Renderizar desglose de cumplimiento CON SEMANAS ISO
+    renderizarDesgloseCumplimiento(data, parseInt(mesVal), parseInt(anio), semanasRealesISO);
     
-    // Renderizar tabla semanal CON SEMANAS REALES
-    renderizarTablaSemanas(data, parseInt(mesVal), parseInt(anio), semanasReales);
+    // Renderizar tabla semanal CON SEMANAS ISO
+    renderizarTablaSemanas(data, parseInt(mesVal), parseInt(anio), semanasRealesISO);
 }
-
-function obtenerSemanasRealesDelMes(mes, anio) {
-    // Calcular el número de semana ISO para cada sábado del mes
-    const semanas = [];
-    
-    // Crear fecha del primer día del mes
-    const primerDia = new Date(anio, mes - 1, 1);
-    
-    // Encontrar el primer sábado del mes
-    let primerSabado = new Date(primerDia);
-    while (primerSabado.getDay() !== 6) { // 6 = Sábado
-        primerSabado.setDate(primerSabado.getDate() + 1);
-    }
-    
-    // Calcular el número de semana ISO para el primer sábado
-    function getWeekNumber(date) {
-        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-        const dayNum = d.getUTCDay() || 7;
-        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    }
-    
-    // Recorrer todos los sábados del mes
-    let currentSabado = new Date(primerSabado);
-    let semanaIndex = 1;
-    
-    while (currentSabado.getMonth() === mes - 1) {
-        const numeroSemanaISO = getWeekNumber(currentSabado);
-        
-        semanas.push({
-            fecha: new Date(currentSabado),
-            numero: semanaIndex.toString(),
-            numeroReal: numeroSemanaISO.toString()
-        });
-        
-        // Ir al siguiente sábado
-        currentSabado.setDate(currentSabado.getDate() + 7);
-        semanaIndex++;
-    }
-    
-    return semanas;
-}
-
-
-
         function calcularPorcentajeCumplimientoAnual(datosAnual) {
             let totalLavados = 0;
             let totalGeneral = 0;
@@ -1218,16 +1140,17 @@ function obtenerSemanasRealesDelMes(mes, anio) {
             return Math.round((totalLavados / totalGeneral) * 100);
         }
 
-function renderizarDesgloseCumplimiento(data, mes, anio, semanasReales = null) {
+function renderizarDesgloseCumplimiento(data, mes, anio, semanasRealesISO = null) {
     const container = document.getElementById('desgloseContainer');
     container.innerHTML = '';
     
-    // Usar semanas reales si están disponibles, si no usar las del servidor
+    // Usar semanas ISO reales si están disponibles
     let semanasAMostrar = [];
     
-    if (semanasReales && semanasReales.length > 0) {
-        semanasAMostrar = semanasReales;
+    if (semanasRealesISO && semanasRealesISO.length > 0) {
+        semanasAMostrar = semanasRealesISO;
     } else {
+        // Fallback: usar semanas del servidor
         const semanasServidor = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
         semanasAMostrar = semanasServidor.map(s => ({ numero: s, numeroReal: s }));
     }
@@ -1241,18 +1164,18 @@ function renderizarDesgloseCumplimiento(data, mes, anio, semanasReales = null) {
     const totalOasis = calcularTotalOasisReales();
     
     semanasAMostrar.forEach((semanaInfo, index) => {
-        const semanaNumero = semanaInfo.numero;
-        const semanaNumeroReal = semanaInfo.numeroReal;
-        const semanaData = data.resumenSemanas[semanaNumero];
+        const semanaNumeroReal = semanaInfo.numeroReal; // Número ISO real (6, 7, 8...)
+        const semanaNumeroInterna = semanaInfo.numero; // Número interno (1, 2, 3...)
+        const semanaData = data.resumenSemanas[semanaNumeroInterna];
         
         // Si no hay datos para esta semana, crear datos vacíos
         let estadisticas;
         if (semanaData) {
-            estadisticas = calcularEstadisticasPorSemana(semanaData, semanaNumero, mes, anio);
+            estadisticas = calcularEstadisticasPorSemana(semanaData, semanaNumeroInterna, mes, anio);
         } else {
             // Datos vacíos para semanas sin datos
             const hoy = new Date();
-            const finSemana = calcularFinDeSemana(semanaNumero, mes, anio);
+            const finSemana = calcularFinDeSemana(semanaNumeroInterna, mes, anio);
             const semanaYaTermino = hoy > finSemana;
             
             estadisticas = {
@@ -1350,7 +1273,7 @@ function renderizarDesgloseCumplimiento(data, mes, anio, semanasReales = null) {
 }
 
 
-function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
+function renderizarTablaSemanas(data, mes, anio, semanasRealesISO = null) {
     const thead = document.querySelector('#tablaSemanas thead tr');
     const tbody = document.getElementById('tablaSemanasCuerpo');
     
@@ -1358,27 +1281,28 @@ function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
     thead.innerHTML = '<th style="width: 300px; min-width: 300px; text-align: left;">Ubicación / Sub-Ubicación</th>';
     tbody.innerHTML = '';
     
-    // Usar semanas reales si están disponibles, si no usar las del servidor
+    // Usar semanas ISO reales si están disponibles
     let semanasAMostrar = [];
     
-    if (semanasReales && semanasReales.length > 0) {
-        semanasAMostrar = semanasReales;
+    if (semanasRealesISO && semanasRealesISO.length > 0) {
+        semanasAMostrar = semanasRealesISO;
     } else {
+        // Fallback: usar semanas del servidor
         const semanasServidor = Object.keys(data.resumenSemanas || {}).sort((a, b) => a - b);
         semanasAMostrar = semanasServidor.map(s => ({ numero: s, numeroReal: s }));
     }
     
     // Crear encabezados de semanas
     semanasAMostrar.forEach(semanaInfo => {
-        const semanaNumeroReal = semanaInfo.numeroReal;
-        const semanaNumero = semanaInfo.numero;
+        const semanaNumeroReal = semanaInfo.numeroReal; // Número ISO real (6, 7, 8...)
+        const semanaNumeroInterna = semanaInfo.numero; // Número interno (1, 2, 3...)
         
         const th = document.createElement('th');
         th.className = 'text-center';
         
-        // Verificar si la semana está en curso
+        // Verificar si la semana está en curso (usar número interno para cálculo)
         const hoy = new Date();
-        const finSemana = calcularFinDeSemana(semanaNumero, mes, anio);
+        const finSemana = calcularFinDeSemana(semanaNumeroInterna, mes, anio);
         const semanaEnCurso = hoy <= finSemana;
         
         th.innerHTML = `Sem ${semanaNumeroReal}${semanaEnCurso ? '<br><small class="badge bg-warning text-dark">En curso</small>' : ''}`;
@@ -1393,7 +1317,7 @@ function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
         if (!data.listaReportes) return null;
         
         return data.listaReportes.find(reporte => {
-            // Verificar que la semana coincida
+            // Verificar que la semana coincida (usar número interno)
             if (reporte.semana !== semana.toString()) return false;
             
             // Verificar que la ubicación principal coincida
@@ -1431,8 +1355,8 @@ function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
         
         // Celdas de semanas
         semanasAMostrar.forEach(semanaInfo => {
-            const semanaNumero = semanaInfo.numero;
-            const semanaNumeroReal = semanaInfo.numeroReal;
+            const semanaNumeroReal = semanaInfo.numeroReal; // Para mostrar
+            const semanaNumeroInterna = semanaInfo.numero; // Para buscar datos
             const ubicacionKey = item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre;
             const nombreCompleto = item.esSubUbicacion ? `${item.ubicacionPrincipal} - ${item.nombre}` : item.nombre;
             
@@ -1443,14 +1367,14 @@ function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
             let rowNumber = null;
             let tieneMotivo = false;
             
-            // Verificar si la semana ya terminó
+            // Verificar si la semana ya terminó (usar número interno para cálculo)
             const hoy = new Date();
-            const finSemana = calcularFinDeSemana(semanaNumero, mes, anio);
+            const finSemana = calcularFinDeSemana(semanaNumeroInterna, mes, anio);
             const semanaYaTermino = hoy > finSemana;
             
-            // Buscar registro específico para esta ubicación/sub-ubicación
+            // Buscar registro específico para esta ubicación/sub-ubicación (usar número interno)
             const registroEncontrado = buscarRegistroEspecifico(
-                semanaNumero, 
+                semanaNumeroInterna, 
                 item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre,
                 item.esSubUbicacion ? item.nombre : null
             );
@@ -1576,6 +1500,8 @@ function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
         tbody.appendChild(tr);
     }
 }
+
+
         function generarListaUbicacionesCompleta() {
             const todasUbicaciones = [];
             
@@ -1764,6 +1690,53 @@ function renderizarTablaSemanas(data, mes, anio, semanasReales = null) {
             
             xhr.send(JSON.stringify(requestData));
         }
+
+// =========================================================================
+// FUNCIÓN NUEVA PARA OBTENER SEMANAS ISO REALES DEL MES
+// =========================================================================
+function obtenerSemanasRealesDelMes(mes, anio) {
+    const semanas = [];
+    
+    // Crear fecha del primer día del mes
+    const primerDia = new Date(anio, mes - 1, 1);
+    
+    // Encontrar el primer sábado del mes (las semanas terminan en sábado)
+    let primerSabado = new Date(primerDia);
+    while (primerSabado.getDay() !== 6) { // 6 = Sábado
+        primerSabado.setDate(primerSabado.getDate() + 1);
+    }
+    
+    // Función para calcular número de semana ISO
+    function getWeekNumberISO(date) {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+    
+    // Recorrer todos los sábados del mes
+    let currentSabado = new Date(primerSabado);
+    let semanaIndex = 1;
+    
+    while (currentSabado.getMonth() === mes - 1) {
+        const numeroSemanaISO = getWeekNumberISO(currentSabado);
+        
+        semanas.push({
+            fecha: new Date(currentSabado),
+            numero: semanaIndex.toString(), // Número interno (1, 2, 3...)
+            numeroReal: numeroSemanaISO.toString() // Número ISO real (6, 7, 8, 9...)
+        });
+        
+        // Ir al siguiente sábado
+        currentSabado.setDate(currentSabado.getDate() + 7);
+        semanaIndex++;
+    }
+    
+    console.log(`Semanas ISO para ${mes}/${anio}:`, semanas.map(s => `${s.numero}→${s.numeroReal}`));
+    return semanas;
+}
+
+
     </script>
 </body>
 </html>
