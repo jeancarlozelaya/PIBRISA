@@ -370,6 +370,78 @@
                 </div>
             </div>
 
+
+<!-- SECCIÓN DE DUPLICADOS DETECTADOS -->
+<div class="row mb-4" id="seccionDuplicados" style="display: none;">
+    <div class="col-12">
+        <div class="card-custom border-warning">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                <h5 class="text-warning mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Duplicados Detectados
+                </h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-warning me-2" onclick="verDuplicadosDetallados()">
+                        <i class="fas fa-info-circle me-1"></i> Detalles
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarDuplicadosEnBloque()">
+                        <i class="fas fa-trash-alt me-1"></i> Eliminar Todos
+                    </button>
+                </div>
+            </div>
+            
+<div class="alert alert-warning border-warning bg-warning bg-opacity-10 mb-3">
+    <i class="fas fa-info-circle me-2"></i>
+    Se han detectado <strong><span id="contadorDuplicados">0</span> registros duplicados</strong>.
+    <small class="text-muted d-block mt-2">Recomendación: Eliminar los duplicados para mantener la integridad de los datos.</small>
+</div>
+            
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Área</th>
+                            <th>Sub-Ubicaciones</th>
+                            <th>Archivos</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDuplicados"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA DETALLES DE DUPLICADOS -->
+<div class="modal fade" id="modalDetallesDuplicados" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="fas fa-clone me-2"></i>Análisis de Duplicados
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Criterios de detección:</strong>
+                    <p class="mb-1">Se consideran duplicados EXACTOS cuando coinciden:</p>
+                    <ol class="mb-0">
+                        <li><strong>Fecha:</strong> Exactamente la misma fecha</li>
+                        <li><strong>Ubicación:</strong> Misma área principal y mismas sub-ubicaciones (si aplica)</li>
+                        <li><strong>Archivo:</strong> Mismo tamaño de archivo PDF (bytes exactos)</li>
+                    </ol>
+                </div>
+                <div id="detallesDuplicadosContenido"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
             <div class="row">
                 <div class="col-12">
                     <div class="card-custom">
@@ -584,6 +656,10 @@
             document.getElementById('kpiUbicaciones').textContent = data.ubicacionesUnicas;
             document.getElementById('kpiDias').textContent = data.diasConActividad;
 
+    // GUARDAR DUPLICADOS GLOBALMENTE
+    window.duplicadosGlobal = data.duplicados || [];
+
+
             const nombreMes = mesesNombres[parseInt(mesVal) - 1];
             const commonOpts = (titulo) => ({
                 responsive: true, maintainAspectRatio: false,
@@ -678,6 +754,10 @@
             renderizarRankingCompleto(data.rankingCompleto);
             renderizarSubUbicaciones(data.subUbicaciones);
             renderizarTabla(datosTablaGlobal);
+
+    // AÑADE ESTA LÍNEA: Mostrar duplicados si existen
+    renderizarDuplicados(data.duplicados || []);
+
         }
 
         function renderizarRankingCompleto(ranking) {
@@ -976,6 +1056,338 @@
                 Swal.fire("Error", "No se pudo conectar con el servidor.", "error");
             });
         }
+
+
+// FUNCIÓN PARA RENDERIZAR DUPLICADOS
+// FUNCIÓN PARA RENDERIZAR DUPLICADOS
+function renderizarDuplicados(duplicados) {
+    const seccion = document.getElementById('seccionDuplicados');
+    const contador = document.getElementById('contadorDuplicados');
+    const tabla = document.getElementById('tablaDuplicados');
+    
+    if (!duplicados || duplicados.length === 0) {
+        seccion.style.display = 'none';
+        return;
+    }
+    
+    // Mostrar sección
+    seccion.style.display = 'block';
+    contador.textContent = duplicados.length;
+    
+    // Limpiar tabla
+    tabla.innerHTML = '';
+    
+    // Renderizar cada duplicado
+    duplicados.forEach((dup, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'table-warning';
+        
+        // Formatear sub-ubicaciones
+        let subUbicacionesHTML = '<span class="text-muted small">-</span>';
+        if (dup.subUbicaciones && dup.subUbicaciones.trim() !== '') {
+            const subUbicacionesArray = dup.subUbicaciones.split(';').map(s => s.trim());
+            subUbicacionesHTML = subUbicacionesArray.map(sub => 
+                `<span class="badge bg-light text-dark border me-1 mb-1">${sub}</span>`
+            ).join('');
+        }
+        
+        // Información del archivo
+        let archivoInfo = '<span class="badge bg-danger">Sin archivo</span>';
+        if (dup.tiene_archivo) {
+            archivoInfo = `<span class="badge bg-success">Mismo archivo</span>`;
+        } else if (dup.tiene_archivo_original || dup.tiene_archivo_duplicado) {
+            archivoInfo = `<span class="badge bg-warning text-dark">Archivos diferentes</span>`;
+        }
+        
+        tr.innerHTML = `
+            <td class="fw-bold">${dup.fecha}</td>
+            <td>${dup.ubicacion}</td>
+            <td>${subUbicacionesHTML}</td>
+            <td>${archivoInfo}</td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-outline-danger" onclick="eliminarDuplicadoIndividual(${index})" title="Eliminar duplicado">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
+        tabla.appendChild(tr);
+    });
+}
+
+
+// FUNCIÓN PARA VER DETALLES DE UN DUPLICADO ESPECÍFICO
+function verDetalleDuplicado(index) {
+    const duplicados = window.duplicadosGlobal || [];
+    const dup = duplicados[index];
+    
+    if (!dup) return;
+    
+    let contenido = `
+        <div class="card border-warning mb-3">
+            <div class="card-header bg-warning text-dark">
+                <strong>Grupo de Duplicados</strong>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Fecha:</strong><br>
+                        <span class="badge bg-dark">${dup.fecha}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Área:</strong><br>
+                        ${dup.ubicacion}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Sub-ubicaciones:</strong><br>
+                        ${dup.subUbicaciones || 'Ninguna'}
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Registros duplicados:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><strong>Original:</strong> Fila ${dup.fila_original}</li>
+                        <li><strong>Duplicado:</strong> Fila ${dup.fila_duplicada}</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-file-pdf me-2"></i>
+                    <strong>Información de archivos:</strong><br>
+                    ${dup.info_archivo || 'Sin información detallada'}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('detallesDuplicadosContenido').innerHTML = contenido;
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('modalDetallesDuplicados'));
+    modal.show();
+}
+
+// FUNCIÓN PARA VER TODOS LOS DETALLES DE DUPLICADOS
+function verDuplicadosDetallados() {
+    const duplicados = window.duplicadosGlobal || [];
+    
+    if (duplicados.length === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Sin duplicados',
+            text: 'No se han detectado registros duplicados.'
+        });
+        return;
+    }
+    
+    let contenido = `
+        <div class="alert alert-success mb-3">
+            <i class="fas fa-chart-bar me-2"></i>
+            <strong>Resumen:</strong> ${duplicados.length} grupos de duplicados detectados
+        </div>
+    `;
+    
+    // Agrupar por fecha para mejor visualización
+    const duplicadosPorFecha = {};
+    duplicados.forEach(dup => {
+        if (!duplicadosPorFecha[dup.fecha]) {
+            duplicadosPorFecha[dup.fecha] = [];
+        }
+        duplicadosPorFecha[dup.fecha].push(dup);
+    });
+    
+    // Mostrar por fecha
+    Object.keys(duplicadosPorFecha).sort().reverse().forEach(fecha => {
+        contenido += `
+            <div class="card mb-3 border-info">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-calendar-day me-2"></i>${fecha}
+                </div>
+                <div class="card-body">
+        `;
+        
+        duplicadosPorFecha[fecha].forEach((dup, idx) => {
+            contenido += `
+                <div class="border-bottom pb-2 mb-2 ${idx > 0 ? 'pt-2' : ''}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Área:</strong> ${dup.ubicacion}<br>
+                            <small class="text-muted">Sub-ubicaciones: ${dup.subUbicaciones || 'Ninguna'}</small>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Duplicados:</strong> Fila ${dup.fila_original} → Fila ${dup.fila_duplicada}<br>
+                            <span class="badge ${dup.mismo_archivo ? 'bg-success' : 'bg-warning'}">
+                                ${dup.mismo_archivo ? 'Mismo archivo' : 'Archivos diferentes'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        contenido += `
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('detallesDuplicadosContenido').innerHTML = contenido;
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('modalDetallesDuplicados'));
+    modal.show();
+}
+
+// FUNCIÓN PARA ELIMINAR UN DUPLICADO INDIVIDUAL
+function eliminarDuplicadoIndividual(index) {
+    const duplicados = window.duplicadosGlobal || [];
+    const dup = duplicados[index];
+    
+    if (!dup) return;
+    
+    Swal.fire({
+        title: '¿Eliminar duplicado?',
+        html: `
+            <div class="text-start">
+                <p>Se eliminará el registro <strong>duplicado</strong> (fila ${dup.fila_duplicada})</p>
+                <div class="alert alert-warning mt-2">
+                    <small>
+                        <strong>Detalles:</strong><br>
+                        Fecha: ${dup.fecha}<br>
+                        Área: ${dup.ubicacion}<br>
+                        ${dup.subUbicaciones ? `Sub-ubicaciones: ${dup.subUbicaciones}` : ''}
+                    </small>
+                </div>
+                <p>Ingresa la contraseña para confirmar:</p>
+                <input type="password" id="passwordEliminarIndividual" class="form-control mt-2" placeholder="Contraseña">
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Eliminar duplicado',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        allowOutsideClick: false,
+        preConfirm: () => {
+            const password = document.getElementById('passwordEliminarIndividual').value;
+            if (password !== 'argos123') {
+                Swal.showValidationMessage('Contraseña incorrecta');
+                return false;
+            }
+            return true;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Llamar a la función de eliminación con la fila del duplicado
+            ejecutarEliminacion(dup.fila_duplicada, dup.url_duplicado || '');
+        }
+    });
+}
+
+
+// FUNCIÓN PARA ELIMINAR TODOS LOS DUPLICADOS EN BLOQUE
+function eliminarDuplicadosEnBloque() {
+    const duplicados = window.duplicadosGlobal || [];
+    
+    if (duplicados.length === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Sin duplicados',
+            text: 'No hay duplicados para eliminar.'
+        });
+        return;
+    }
+    
+    Swal.fire({
+        title: '¿Eliminar TODOS los duplicados?',
+        html: `
+            <div class="text-start">
+                <p>Se eliminarán <strong>${duplicados.length} registros duplicados</strong>.</p>
+                <div class="alert alert-danger mt-2">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>ADVERTENCIA:</strong> Esta acción no se puede deshacer.
+                    Se conservará el registro ORIGINAL (menor número de fila) de cada grupo.
+                </div>
+                <p>Ingresa la contraseña para confirmar:</p>
+                <input type="password" id="passwordEliminarBloque" class="form-control mt-2" placeholder="Contraseña">
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Eliminar todos',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        preConfirm: () => {
+            const password = document.getElementById('passwordEliminarBloque').value;
+            if (password !== 'argos123') {
+                Swal.showValidationMessage('Contraseña incorrecta');
+                return false;
+            }
+            return true;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            ejecutarEliminacionEnBloque();
+        }
+    });
+}
+
+// FUNCIÓN PARA EJECUTAR ELIMINACIÓN EN BLOQUE
+function ejecutarEliminacionEnBloque() {
+    const proyecto = document.getElementById('filtroProyecto').value;
+    const mesVal = document.getElementById('filtroMes').value;
+    const anio = document.getElementById('filtroAnio').value;
+    
+    showLoading("Eliminando duplicados...", "Esto puede tardar unos segundos");
+    
+    fetch(URL_SCRIPT_GOOGLE, {
+        method: 'POST',
+        body: JSON.stringify({ 
+            action: "eliminarDuplicadosEnBloque", 
+            proyecto, 
+            mes: mesVal, 
+            anio
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        hideLoading();
+        
+        if (data.status === "success") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Duplicados eliminados',
+                html: `
+                    <div class="text-start">
+                        <p>Se han eliminado <strong>${data.data.eliminados} registros duplicados</strong>.</p>
+                        ${data.data.archivos_movidos ? 
+                            `<p><i class="fas fa-check text-success me-1"></i> Archivos movidos al basurero: ${data.data.archivos_movidos}</p>` : 
+                            ''}
+                        <div class="alert alert-info mt-2">
+                            <small>Se han conservado los registros originales de cada grupo.</small>
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'Actualizar dashboard'
+            }).then(() => {
+                consultarDatos(); // Recargar datos
+            });
+        } else {
+            Swal.fire("Error", data.message, "error");
+        }
+    })
+    .catch(err => {
+        hideLoading();
+        Swal.fire("Error", "No se pudo conectar con el servidor.", "error");
+    });
+}
+
+
     </script>
 </body>
 </html>
