@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Evaluación de Desempeño y Conducta</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .form-container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 25px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 25px 0 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        /* INICIO: Estilos para el autocompletado */
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f5f5f5;
+        }
+        /* FIN: Estilos para el autocompletado */
+
+        .question-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .question-container input,
+        .question-container select,
+        .question-container textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: white;
+            font-family: inherit;
+        }
+
+        .question-container input:focus,
+        .question-container select:focus,
+        .question-container textarea:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .question-container textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+        }
+
+        .rating-label {
+            flex: 1;
+            font-weight: 500;
+            min-width: 250px;
+            padding-right: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .rating-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .rating-options input[type="radio"] {
+            display: none;
+        }
+
+        .rating-options label {
+            flex: 1;
+            text-align: center;
+            padding: 10px 5px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .rating-options label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .rating-options input[value="2"] + label { border-color: #a3d9a5; color: #155724; }
+        .rating-options input[value="1"] + label { border-color: #ffeeba; color: #856404; }
+        .rating-options input[value="0"] + label { border-color: #f5c6cb; color: #721c24; }
+        
+        .rating-options input[value="2"]:hover + label { background-color: #e9f7e9; }
+        .rating-options input[value="1"]:hover + label { background-color: #fff9e6; }
+        .rating-options input[value="0"]:hover + label { background-color: #fdedee; }
+
+        .rating-options input[value="2"]:checked + label { background-color: #28a745; border-color: #28a745; color: white; font-weight: bold; }
+        .rating-options input[value="1"]:checked + label { background-color: #ffc107; border-color: #ffc107; color: white; font-weight: bold; }
+        .rating-options input[value="0"]:checked + label { background-color: #dc3545; border-color: #dc3545; color: white; font-weight: bold; }
+
+        .result-container {
+            background-color: #e8f4fd;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            color: var(--primary-color);
+        }
+
+        .firma-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            min-height: 200px;
+        }
+
+        .firma-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .icon-button {
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .icon-button.active {
+            background: var(--secondary-color);
+            color: #fff;
+            border-color: var(--secondary-color);
+        }
+
+        .icon-button:hover {
+            background: #e2e6ea;
+        }
+
+        #toggleEraser, #undo, #redo {
+            display: none;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 15px;
+        }
+
+        #generarPdf {
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        #generarPdf:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #generarPdf:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #loadingMessage {
+            text-align: center;
+            color: var(--dark-color);
+        }
+
+        #loadingMessage h4 {
+            margin: 0 0 10px;
+            font-size: 1.3rem;
+        }
+
+        #loadingMessage p {
+            margin: 0;
+            color: #7f8c8d;
+        }
+
+        .scroll-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: fixed;
+            right: 25px;
+            z-index: 1000;
+        }
+
+        .scroll-button:hover {
+            background-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        #scroll-top-button {
+            top: 25px;
+        }
+
+        #scroll-bottom-button {
+            bottom: 25px;
+        }
+
+        #firmaCanvas, #firmaCanvasColaborador {
+            width: 100% !important;
+            height: 200px !important;
+            background: white;
+            border: 1px solid #ccc;
+            touch-action: none;
+            -ms-touch-action: none;
+        }
+
+        .firma-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #firmaCanvas, #firmaCanvasColaborador {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            #toggleEraser, #undo, #redo, #toggleEraserColaborador, #undoColaborador, #redoColaborador {
+                display: block !important;
+            }
+            
+            .firma-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .icon-button {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                width: 95%;
+                padding: 15px;
+                margin: 15px auto;
+            }
+            
+            .scroll-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+                right: 15px;
+            }
+            
+            #scroll-top-button { top: 15px; }
+            #scroll-bottom-button { bottom: 15px; }
+            
+            h1 { font-size: 1.5rem; }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            #generarPdf { width: 100%; }
+            
+            .rating-item {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .question-container { padding: 15px; }
+            .rating-options { flex-direction: column; }
+        }
+
+        #constancia-pendiente-button {
+            background-color: var(--warning-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: fixed;
+            left: 25px;
+            top: 80px;
+            z-index: 1000;
+        }
+
+        #constancia-pendiente-button:hover {
+            background-color: #e67e22;
+            transform: scale(1.1);
+        }
+
+        #constancia-pendiente-button.pendiente {
+            display: flex;
+            animation: pulse 2s infinite;
+        }
+
+        #constancia-pendiente-button .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.8em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            #constancia-pendiente-button {
+                width: 55px;
+                height: 55px;
+                font-size: 1.3em;
+                left: 15px;
+                top: 70px;
+            }
+
+            #constancia-pendiente-button .badge {
+                width: 22px;
+                height: 22px;
+                font-size: 0.7em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">Pisos Brillantes</div>
+    
+    <div class="form-container">
+        <h1>Evaluación de Desempeño y Conducta</h1>
+
+        <form id="formulario">
+            <div class="question-container">
+                <label for="nombreEmpleado"><strong>Nombre del Empleado:</strong></label>
+                <div class="autocomplete-container">
+                    <input type="text" id="nombreEmpleado" name="nombreEmpleado" placeholder="Cargando empleados..." required autocomplete="off">
+                    <div class="autocomplete-list"></div>
+                </div>
+                <input type="hidden" id="identidadEmpleado" name="identidadEmpleado">
+                <label for="puesto"><strong>Puesto:</strong></label>
+                <input type="text" id="puesto" name="puesto" placeholder="Ej: Auxiliar de Higiene" value="AUXILIAR DE HIGIENENE">
+                
+                <label for="fechaEvaluacion"><strong>Fecha de Evaluación:</strong></label>
+                <input type="date" id="fechaEvaluacion" name="fechaEvaluacion" required>
+                
+                <label for="nombreEvaluador"><strong>Nombre del Evaluador:</strong></label>
+                <select id="nombreEvaluador" name="nombreEvaluador" required>
+                    <option value="" disabled selected>Seleccione un evaluador</option>
+                    <option value="Ana Ponce">Ana Ponce</option>
+                    <option value="Angela Flores">Angela Flores</option>
+                    <option value="Henry Ávila">Henry Ávila</option>
+                    <option value="Heydi Vargas">Heydi Vargas</option>
+                    <option value="Marvin Motiño">Marvin Motiño</option>
+                    <option value="Noe Izaguirre">Noe Izaguirre</option>
+                    <option value="Rommel Rodríguez">Rommel Rodríguez</option>
+                    <option value="Jeancarlo Zelaya">Jeancarlo Zelaya</option>
+                </select>
+            </div>
+
+            <div class="section-title">I. Productividad</div>
+            <div class="question-container">
+                <div class="rating-container" id="productividadContainer"></div>
+            </div>
+
+            <div class="section-title">II. Iniciativa</div>
+            <div class="question-container">
+                <div class="rating-container" id="iniciativaContainer"></div>
+            </div>
+            
+            <div class="section-title">III. Conducta Laboral</div>
+            <div class="question-container">
+                <div class="rating-container" id="conductaContainer"></div>
+            </div>
+
+            <div class="section-title">IV. Comentarios y Compromisos</div>
+            <div class="question-container">
+                <label for="comentariosGenerales"><strong>Observaciones y Comentarios Adicionales:</strong></label>
+                <textarea id="comentariosGenerales" name="comentariosGenerales" placeholder="Anote cualquier observación adicional que desee resaltar. La retroalimentación es valiosa."></textarea>
+                
+                <label for="compromisoMejora"><strong>Compromiso de Mejora del Evaluado:</strong></label>
+                <textarea id="compromisoMejora" name="compromisoMejora" placeholder="El evaluado expresa su compromiso identificando áreas específicas a mejorar."></textarea>
+                
+                <label for="recomendaciones"><strong>Recomendaciones del evaluador:</strong></label>
+                <textarea id="recomendaciones" name="recomendaciones" placeholder="Describa las recomendaciones para el empleado"></textarea>
+            </div>
+
+            <div class="section-title">V. Resultado Final</div>
+            <div class="result-container">
+                <div class="result-item">
+                    <span>Puntos de Productividad:</span>
+                    <span id="puntosProductividad" class="result-value">0</span>
+                </div>
+                <div class="result-item">
+                    <span>Puntos de Iniciativa:</span>
+                    <span id="puntosIniciativa" class="result-value">0</span>
+                </div>
+                <div class="result-item">
+                    <span>Puntos de Conducta Laboral:</span>
+                    <span id="puntosConducta" class="result-value">0</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
+                <div class="result-item">
+                    <span>Total de Puntos:</span>
+                    <span id="puntosTotal" class="result-value">0</span>
+                </div>
+                <div class="result-item" style="font-size: 1.2em;">
+                    <strong><span>Nota Final:</span></strong>
+                    <strong><span id="notaFinal" class="result-value">0.00</span></strong>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <label for="firmaColaborador"><strong>Firma del Colaborador (Opcional):</strong></label>
+                <div id="firmaContainerColaborador" class="firma-container">
+                    <canvas id="firmaCanvasColaborador" width="400" height="200"></canvas>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                    <button type="button" id="toggleEraserColaborador" title="Borrador" class="icon-button"><i class="fas fa-eraser"></i></button>
+                    <button type="button" id="undoColaborador" title="Deshacer" class="icon-button"><i class="fas fa-undo"></i></button>
+                    <button type="button" id="redoColaborador" title="Rehacer" class="icon-button"><i class="fas fa-redo"></i></button>
+                    <button type="button" id="clearSignatureColaborador" title="Limpiar" class="icon-button"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <label for="firma"><strong>Firma del Evaluador:</strong></label>
+                <div id="firmaContainer" class="firma-container">
+                    <canvas id="firmaCanvas" width="400" height="200"></canvas>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                    <button type="button" id="toggleEraser" title="Borrador" class="icon-button"><i class="fas fa-eraser"></i></button>
+                    <button type="button" id="undo" title="Deshacer" class="icon-button"><i class="fas fa-undo"></i></button>
+                    <button type="button" id="redo" title="Rehacer" class="icon-button"><i class="fas fa-redo"></i></button>
+                    <button type="button" id="clearSignature" title="Limpiar" class="icon-button"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="button" id="generarPdf" disabled>Generar PDF</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="overlay">
+        <div class="spinner"></div>
+        <div id="loadingMessage">
+            <h4>Por favor espera un momento...</h4>
+            <p id="loadingStatus"></p>
+        </div>
+    </div>
+
+    <button class="scroll-button" id="scroll-top-button" onclick="scrollToTop()" title="Ir arriba"><i class="fas fa-arrow-up"></i></button>
+    <button class="scroll-button" id="scroll-bottom-button" onclick="scrollToBottom()" title="Ir abajo"><i class="fas fa-arrow-down"></i></button>
+    <button class="scroll-button" id="constancia-pendiente-button" onclick="mostrarTodasLasConstancias()" title="Evaluaciones pendientes">
+        <i class="fa-solid fa-download"></i>
+        <span class="badge">0</span>
+    </button>
+
+    <script>
+        const MAX_PDFS_ALMACENADOS = 5;
+        let totalCriterios = 0;
+        let empleadosData = [];
+
+        let isDrawing = false, isErasing = false, lastX = 0, lastY = 0;
+        const canvas = document.getElementById("firmaCanvas");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        const undoStack = [], redoStack = [];
+
+        let isDrawingColaborador = false, isErasingColaborador = false, lastXColaborador = 0, lastYColaborador = 0;
+        const canvasColaborador = document.getElementById("firmaCanvasColaborador");
+        const ctxColaborador = canvasColaborador.getContext("2d", { willReadFrequently: true });
+        const undoStackColaborador = [], redoStackColaborador = [];
+
+        function initializeCanvas() {
+            [canvas, canvasColaborador].forEach(c => {
+                const context = c.getContext('2d');
+                c.width = 400;
+                c.height = 200;
+                context.strokeStyle = "#000000";
+                context.lineWidth = 4;
+                context.lineCap = "round";
+                context.lineJoin = "round";
+                context.fillStyle = "#FFFFFF";
+                context.fillRect(0, 0, c.width, c.height);
+            });
+            setTimeout(verificarFormulario, 100);
+        }
+
+        function getCoordinates(e, canvasElement) {
+            const rect = canvasElement.getBoundingClientRect();
+            const scaleX = canvasElement.width / rect.width;
+            const scaleY = canvasElement.height / rect.height;
+            
+            if (e.touches && e.touches.length > 0) {
+                return {
+                    x: (e.touches[0].clientX - rect.left) * scaleX,
+                    y: (e.touches[0].clientY - rect.top) * scaleY
+                };
+            }
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+
+        function startDrawing(e, canvasElement, context, state) {
+            e.preventDefault();
+            saveToUndoStack(canvasElement, state.undoStack);
+            state.isDrawing = true;
+            const { x, y } = getCoordinates(e, canvasElement);
+            state.lastX = x;
+            state.lastY = y;
+            context.beginPath();
+            context.arc(x, y, context.lineWidth / 2, 0, Math.PI * 2);
+            context.fill();
+            context.beginPath();
+            context.moveTo(x, y);
+        }
+
+        function draw(e, canvasElement, context, state) {
+            if (!state.isDrawing) return;
+            e.preventDefault();
+            const { x, y } = getCoordinates(e, canvasElement);
+            context.beginPath();
+            context.moveTo(state.lastX, state.lastY);
+            context.lineTo(x, y);
+            context.strokeStyle = state.isErasing ? "#FFFFFF" : "#000000";
+            context.lineWidth = state.isErasing ? 20 : 4;
+            context.stroke();
+            state.lastX = x;
+            state.lastY = y;
+        }
+
+        function stopDrawing(state) {
+            if (state.isDrawing) {
+                state.isDrawing = false;
+                setTimeout(verificarFormulario, 50);
+            }
+        }
+
+        function saveToUndoStack(canvasElement, stack) {
+            stack.push(canvasElement.toDataURL());
+            updateButtonStates();
+        }
+
+        function undo(canvasElement, context, state) {
+            if (state.undoStack.length > 0) {
+                state.redoStack.push(canvasElement.toDataURL());
+                const lastState = state.undoStack.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                    context.drawImage(img, 0, 0);
+                    verificarFormulario();
+                };
+                updateButtonStates();
+            }
+        }
+
+        function redo(canvasElement, context, state) {
+            if (state.redoStack.length > 0) {
+                state.undoStack.push(canvasElement.toDataURL());
+                const lastState = state.redoStack.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                    context.drawImage(img, 0, 0);
+                    verificarFormulario();
+                };
+                updateButtonStates();
+            }
+        }
+        
+        function updateButtonStates() {
+            document.getElementById("undo").style.display = undoStack.length > 0 ? "block" : "none";
+            document.getElementById("redo").style.display = redoStack.length > 0 ? "block" : "none";
+            document.getElementById("undoColaborador").style.display = undoStackColaborador.length > 0 ? "block" : "none";
+            document.getElementById("redoColaborador").style.display = redoStackColaborador.length > 0 ? "block" : "none";
+        }
+
+        function clearSignature(canvasElement, context, stack) {
+            saveToUndoStack(canvasElement, stack);
+            context.fillStyle = "#FFFFFF";
+            context.fillRect(0, 0, canvasElement.width, canvasElement.height);
+            setTimeout(verificarFormulario, 100);
+            updateButtonStates();
+        }
+
+        function setupSignatureEvents() {
+            const stateEvaluador = { isDrawing, isErasing, lastX, lastY, undoStack, redoStack };
+            const stateColaborador = { isDrawing: isDrawingColaborador, isErasing: isErasingColaborador, lastX: lastXColaborador, lastY: lastYColaborador, undoStack: undoStackColaborador, redoStack: redoStackColaborador };
+            
+            const addListeners = (canvasEl, context, state) => {
+                canvasEl.addEventListener('mousedown', (e) => startDrawing(e, canvasEl, context, state));
+                canvasEl.addEventListener('touchstart', (e) => startDrawing(e, canvasEl, context, state), { passive: false });
+                canvasEl.addEventListener('mousemove', (e) => draw(e, canvasEl, context, state));
+                canvasEl.addEventListener('touchmove', (e) => draw(e, canvasEl, context, state), { passive: false });
+                ['mouseup', 'mouseout', 'touchend', 'touchcancel'].forEach(evt => {
+                    canvasEl.addEventListener(evt, () => stopDrawing(state));
+                });
+            };
+
+            addListeners(canvas, ctx, stateEvaluador);
+            addListeners(canvasColaborador, ctxColaborador, stateColaborador);
+
+            document.getElementById("toggleEraser").addEventListener("click", function() {
+                stateEvaluador.isErasing = !stateEvaluador.isErasing;
+                this.classList.toggle("active", stateEvaluador.isErasing);
+            });
+            document.getElementById("undo").addEventListener("click", () => undo(canvas, ctx, stateEvaluador));
+            document.getElementById("redo").addEventListener("click", () => redo(canvas, ctx, stateEvaluador));
+            document.getElementById("clearSignature").addEventListener("click", () => clearSignature(canvas, ctx, stateEvaluador.undoStack));
+            
+            document.getElementById("toggleEraserColaborador").addEventListener("click", function() {
+                stateColaborador.isErasing = !stateColaborador.isErasing;
+                this.classList.toggle("active", stateColaborador.isErasing);
+            });
+            document.getElementById("undoColaborador").addEventListener("click", () => undo(canvasColaborador, ctxColaborador, stateColaborador));
+            document.getElementById("redoColaborador").addEventListener("click", () => redo(canvasColaborador, ctxColaborador, stateColaborador));
+            document.getElementById("clearSignatureColaborador").addEventListener("click", () => clearSignature(canvasColaborador, ctxColaborador, stateColaborador.undoStack));
+        }
+        
+        // INICIO: Funciones de Autocompletado (Modificadas)
+        async function cargarEmpleados() {
+            const urlObtener = "https://script.google.com/macros/s/AKfycbzI3W9kPzdQO_bSKR4tYPOgD3b0Nr0akLMI5Gzw_ErhIhspq-7Y0bCtm2L6ChOgctwhpw/exec";
+            const inputEmpleado = $('#nombreEmpleado');
+
+            try {
+                const response = await fetch(urlObtener);
+                const data = await response.json();
+
+                if (data && data.activos) {
+                    empleadosData = data.activos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                    inputEmpleado.attr('placeholder', 'Escriba para buscar un empleado...');
+                } else {
+                    throw new Error("No se encontraron datos de empleados activos.");
+                }
+            } catch (error) {
+                console.error("Error al cargar empleados:", error);
+                inputEmpleado.attr('placeholder', 'Error al cargar empleados');
+                Swal.fire('Error', 'No se pudo obtener la lista de empleados. Por favor, revise la conexión o la URL del script.', 'error');
+            }
+        }
+        
+        function setupAutocomplete() {
+            const input = $('#nombreEmpleado');
+            const list = $('.autocomplete-list');
+            const hiddenId = $('#identidadEmpleado');
+
+            input.on('input', function() {
+                const valor = input.val().trim().toLowerCase();
+                hiddenId.val(''); // Limpiar la identidad si el usuario modifica el campo
+                
+                if (valor.length < 2) { // Empezar a buscar después de 2 caracteres
+                    list.hide().empty();
+                    verificarFormulario();
+                    return;
+                }
+
+                const sugerencias = empleadosData.filter(col => col.nombre.toLowerCase().includes(valor));
+                list.empty();
+
+                if (sugerencias.length > 0) {
+                    sugerencias.forEach(sug => {
+                        list.append(`<div class="autocomplete-item" data-id="${sug.identidad}">${sug.nombre}</div>`);
+                    });
+                    list.show();
+                } else {
+                    list.hide();
+                }
+                verificarFormulario(); // Verificar en cada pulsación
+            });
+
+            // Usar delegación de eventos para los ítems creados dinámicamente
+            $(document).on('click', '.autocomplete-item', function() {
+                const nombre = $(this).text();
+                const id = $(this).data('id');
+                input.val(nombre);
+                hiddenId.val(id);
+                list.hide().empty();
+                verificarFormulario();
+            });
+
+            // Ocultar la lista si se hace clic fuera del contenedor
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.autocomplete-container').length) {
+                    list.hide();
+                }
+            });
+        }
+        // FIN: Funciones de Autocompletado
+
+        function crearCriteriosDeEvaluacion() {
+            const criterios = {
+                productividad: ["Capacidad del empleado para completar las tareas de limpieza asignadas en el tiempo estipulado.", "Medición de la eficiencia en la realización de las labores diarias.", "Revisión de la calidad de la limpieza realizada en las áreas asignadas.", "Observación de la atención al detalle y la capacidad para mantener los estándares de limpieza requeridos.", "Evaluación del uso adecuado de productos de limpieza y equipos.", "Minimización del desperdicio y cuidado de los recursos proporcionados.", "Tiene la capacidad y autonomía para realizar las tareas asignadas de forma independiente sin necesidad de supervisión constante."],
+                iniciativa: ["Se muestra asequible al cambio.", "Se anticipa a las dificultades.", "Tiene gran capacidad para resolver problemas.", "Muestra aptitud para integrarse al equipo.", "Se identifica fácilmente con los objetivos del equipo.", "Planifica sus actividades.", "Se preocupa por alcanzar las metas.", "Mantiene un seguimiento efectivo y preciso de los registros proporcionados para documentar sus actividades diarias en el trabajo."],
+                conducta: ["Registro de la puntualidad y asistencia del empleado.", "Manejo de ausencias y justificaciones en caso de retrasos.", "Observación de la actitud del empleado hacia el trabajo y sus compañeros.", "Colaboración con el equipo y disposición para realizar tareas adicionales cuando sea necesario.", "Respeto y seguimiento de las normas de seguridad, higiene y procedimientos establecidos.", "Adherencia a las políticas internas del proyecto.", "Evita los conflictos dentro del trabajo."]
+            };
+            totalCriterios = 0;
+
+            const crearOpciones = (pilar, index) => `
+                <div class="rating-options">
+                    <input type="radio" id="${pilar}-cumple-${index}" name="${pilar}-${index}" value="2"><label for="${pilar}-cumple-${index}">Cumple</label>
+                    <input type="radio" id="${pilar}-parcial-${index}" name="${pilar}-${index}" value="1"><label for="${pilar}-parcial-${index}">Cumple Parcial</label>
+                    <input type="radio" id="${pilar}-nocumple-${index}" name="${pilar}-${index}" value="0"><label for="${pilar}-nocumple-${index}">No Cumple</label>
+                </div>`;
+
+            const popularContenedor = (idContenedor, pilar, listaCriterios) => {
+                const container = document.getElementById(idContenedor);
+                listaCriterios.forEach((criterio, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'rating-item';
+                    item.innerHTML = `<div class="rating-label">${criterio}</div>${crearOpciones(pilar, index)}`;
+                    container.appendChild(item);
+                    totalCriterios++;
+                });
+            };
+
+            popularContenedor('productividadContainer', 'prod', criterios.productividad);
+            popularContenedor('iniciativaContainer', 'inic', criterios.iniciativa);
+            popularContenedor('conductaContainer', 'cond', criterios.conducta);
+            
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    calcularResultados();
+                    verificarFormulario();
+                });
+            });
+        }
+
+        function calcularResultados() {
+            const calcularPuntos = containerId => Array.from(document.querySelectorAll(`#${containerId} input[type="radio"]:checked`)).reduce((sum, radio) => sum + parseInt(radio.value), 0);
+
+            const puntosProductividad = calcularPuntos('productividadContainer');
+            const puntosIniciativa = calcularPuntos('iniciativaContainer');
+            const puntosConducta = calcularPuntos('conductaContainer');
+
+            $('#puntosProductividad').text(puntosProductividad);
+            $('#puntosIniciativa').text(puntosIniciativa);
+            $('#puntosConducta').text(puntosConducta);
+            
+            const totalPuntos = puntosProductividad + puntosIniciativa + puntosConducta;
+            $('#puntosTotal').text(totalPuntos);
+
+            const notaFinal = (totalPuntos * 100) / 44;
+            $('#notaFinal').text(notaFinal.toFixed(2));
+        }
+
+        function isCanvasBlank(canvas) {
+            const context = canvas.getContext('2d');
+            const pixelBuffer = new Uint32Array(context.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+            return !pixelBuffer.some(color => color !== 0);
+        }
+
+        function verificarFormulario() {
+            const otrosCampos = ["#puesto", "#fechaEvaluacion", "#nombreEvaluador"];
+            const otrosCamposLlenos = otrosCampos.every(campo => $(campo).val() && $(campo).val().trim() !== "");
+            
+            const nombreEmpleadoValido = $('#nombreEmpleado').val().trim() !== '' && $('#identidadEmpleado').val().trim() !== '';
+            
+            const calificacionesCompletas = document.querySelectorAll('input[type="radio"]:checked').length === totalCriterios;
+            const hayFirmaEvaluador = !isCanvasBlank(document.getElementById('firmaCanvas'));
+            
+            $("#generarPdf").prop("disabled", !(otrosCamposLlenos && nombreEmpleadoValido && calificacionesCompletas && hayFirmaEvaluador));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("fechaEvaluacion").value = new Date().toISOString().split('T')[0];
+            initializeCanvas();
+            setupSignatureEvents();
+            crearCriteriosDeEvaluacion();
+            cargarEmpleados();
+            setupAutocomplete(); // Llamar a la nueva función
+            configurarEventos();
+            setTimeout(mostrarBotonesConstanciasPendientes, 1000);
+            updateButtonStates();
+        });
+
+        function configurarEventos() {
+            // Eventos para todos los campos, excepto el de nombre de empleado que ya es manejado
+            $("input:not(#nombreEmpleado), textarea, select").on("input change", verificarFormulario);
+            $('#generarPdf').on('click', generarPDF);
+        }
+
+        async function guardarPDFEnStorage(pdfBlob, pdfData) {
+            try {
+                let pdfsExistentes = JSON.parse(localStorage.getItem('pdfsEvaluacionesDesempeno') || '[]');
+                const reader = new FileReader();
+                const dataUrl = await new Promise(resolve => {
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(pdfBlob);
+                });
+                const nuevoPDF = { ...pdfData, data: dataUrl, timestamp: Date.now() };
+                pdfsExistentes.unshift(nuevoPDF);
+                if (pdfsExistentes.length > MAX_PDFS_ALMACENADOS) {
+                    pdfsExistentes.pop();
+                }
+                localStorage.setItem('pdfsEvaluacionesDesempeno', JSON.stringify(pdfsExistentes));
+                mostrarBotonesConstanciasPendientes();
+            } catch (error) { console.error('Error al guardar PDF:', error); }
+        }
+
+        function formatearFecha(fecha, paraArchivo = false) {
+            if (!fecha) return '';
+            const date = new Date(fecha + 'T00:00:00');
+            return paraArchivo ? `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}` : date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+        
+        async function enviarDatosAGoogleSheet() {
+            // =========================================================================
+            // ¡IMPORTANTE! Reemplaza esta URL con la URL de tu script implementado.
+            // =========================================================================
+            const URL_SCRIPT_SALIDA = "https://script.google.com/macros/s/AKfycbwT-7p3fErCLvNBdbJMHjsry7HXxXh2djLe-trwXeVKYfRhmV8u5wEsEDO2qa826PTO/exec"; 
+
+            if (URL_SCRIPT_SALIDA === "URL_DE_TU_SCRIPT_SALIDA_AQUI") {
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Configuración Incompleta',
+                    text: 'Se debe configurar la URL del script "Salida" para poder guardar los datos.',
+                });
+                return false;
+            }
+
+            const getScores = (containerId) => {
+                return Array.from(document.querySelectorAll(`#${containerId} .rating-item`)).map(item => {
+                    return item.querySelector('input:checked')?.value || '0';
+                });
+            };
+
+            const payload = {
+                fecha: $('#fechaEvaluacion').val(),
+                nombre: $('#nombreEmpleado').val(),
+                identidad: $('#identidadEmpleado').val(),
+                productividad: getScores('productividadContainer'),
+                iniciativa: getScores('iniciativaContainer'),
+                conducta: getScores('conductaContainer'),
+                observaciones: $('#comentariosGenerales').val(),
+                compromiso: $('#compromisoMejora').val(),
+                recomendaciones: $('#recomendaciones').val()
+            };
+            
+            try {
+                const response = await fetch(URL_SCRIPT_SALIDA, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload),
+                    redirect: 'follow'
+                });
+                const result = await response.json();
+                if(result.status !== 'success'){
+                    throw new Error(result.message);
+                }
+                return true; 
+            } catch (error) {
+                console.error("Error al enviar datos a Google Sheet:", error);
+                Swal.fire('Error de Conexión', `No se pudieron registrar los datos en la hoja de cálculo. <br><small>Error: ${error.message}</small>`, 'error');
+                return false;
+            }
+        }
+
+
+        async function generarPDF() {
+            const confirmacion = await Swal.fire({
+                title: '¿Generar Evaluación?',
+                html: `<div style="text-align: center;"><p style="font-size: 1.1em; margin-bottom: 15px;">¿Estás seguro de que quieres generar la evaluación de desempeño?</p><div style="color: #f39c12; font-size: 2.5em; margin-bottom: 15px;"><i class="fas fa-exclamation-triangle"></i></div><p style="font-size: 0.9em; color: #666; margin-bottom: 10px;"><strong>Empleado:</strong> ${$("#nombreEmpleado").val()}<br><strong>Fecha de evaluación:</strong> ${formatearFecha($("#fechaEvaluacion").val())}</p><p style="font-size: 0.85em; color: #e74c3c; font-style: italic;">Esta acción registrará los datos y generará un documento formal.</p></div>`,
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Sí, generar', cancelButtonText: 'Cancelar', reverseButtons: true, focusCancel: true
+            });
+            if (!confirmacion.isConfirmed) return;
+            
+            $('#overlay').css('display', 'flex');
+            $('#loadingStatus').text('Enviando datos a la hoja de cálculo...');
+
+            const datosEnviados = await enviarDatosAGoogleSheet();
+            if (!datosEnviados) {
+                $('#overlay').hide();
+                return;
+            }
+
+            $('#loadingStatus').text('Generando el documento PDF...');
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', format: 'letter', unit: 'mm' });
+            
+            const getCalificaciones = (containerId) => {
+                return Array.from(document.querySelectorAll(`#${containerId} .rating-item`)).map(item => {
+                    const criterio = item.querySelector('.rating-label').textContent;
+                    let puntajeTexto = 'No Cumple';
+                    const valor = item.querySelector('input:checked')?.value;
+                    if (valor === '1') puntajeTexto = 'Cumple Parcial';
+                    if (valor === '2') puntajeTexto = 'Cumple';
+                    return [criterio, puntajeTexto];
+                });
+            };
+
+            const data = {
+                nombreEmpleado: $("#nombreEmpleado").val(), puesto: $("#puesto").val(), fechaEvaluacion: $("#fechaEvaluacion").val(), nombreEvaluador: $("#nombreEvaluador").val(),
+                comentarios: $("#comentariosGenerales").val(), compromiso: $("#compromisoMejora").val(), recomendaciones: $("#recomendaciones").val(),
+                calificaciones: {
+                    productividad: getCalificaciones('productividadContainer'), iniciativa: getCalificaciones('iniciativaContainer'), conducta: getCalificaciones('conductaContainer')
+                },
+                resultados: {
+                    productividad: $("#puntosProductividad").text(), iniciativa: $("#puntosIniciativa").text(), conducta: $("#puntosConducta").text(),
+                    total: $("#puntosTotal").text(), final: $("#notaFinal").text()
+                }
+            };
+            
+            const margin = 12, pageWidth = doc.internal.pageSize.getWidth(), textWidth = pageWidth - 2 * margin;
+            let y = 15;
+            
+            doc.setFont("times", "bold").setFontSize(14).text("EVALUACIÓN DE DESEMPEÑO Y CONDUCTA", pageWidth / 2, y, { align: 'center' });
+            y += 8;
+            doc.setDrawColor(100, 100, 100).setLineWidth(0.3).line(margin, y, pageWidth - margin, y);
+            y += 10;
+            
+            doc.setFontSize(10).setTextColor(0, 0, 0);
+            doc.setFont("times", "bold").text("Fecha de Evaluación:", margin, y);
+            doc.setFont("times", "normal").text(formatearFecha(data.fechaEvaluacion), margin + 35, y);
+            doc.setFont("times", "bold").text("Evaluador:", pageWidth / 2, y);
+            doc.setFont("times", "normal").text(data.nombreEvaluador, pageWidth / 2 + 20, y);
+            y += 6;
+            doc.setFont("times", "bold").text("Empleado:", margin, y);
+            doc.setFont("times", "normal").text(data.nombreEmpleado, margin + 20, y);
+            doc.setFont("times", "bold").text("Puesto:", pageWidth / 2, y);
+            doc.setFont("times", "normal").text(data.puesto, pageWidth / 2 + 15, y);
+            y += 12;
+
+            const addSectionTable = (title, tableData, subtotal) => {
+                if (y > doc.internal.pageSize.getHeight() - 80) { doc.addPage(); y = 15; }
+                
+                doc.setFont("times", "bold").setFontSize(11).text(title, margin, y);
+                y += 7;
+                doc.autoTable({
+                    startY: y, 
+                    head: [["Criterio", "Calificación"]], 
+                    body: tableData,
+                    foot: [['Total Puntos', subtotal]],
+                    theme: 'grid',
+                    headStyles: { fillColor: [80, 80, 80], textColor: [255, 255, 255], font: "times", fontSize: 9, cellPadding: 1.5, halign: 'center' },
+                    footStyles: { fillColor: [80, 80, 80], textColor: [255, 255, 255], font: "times", fontSize: 9, fontStyle: 'bold', halign: 'center' },
+                    styles: { fontSize: 8, font: "times", cellPadding: 1 },
+                    columnStyles: { 0: { cellWidth: textWidth * 0.8 }, 1: { halign: 'center' } },
+                });
+                y = doc.autoTable.previous.finalY + 8;
+            };
+            addSectionTable("I. Productividad", data.calificaciones.productividad, data.resultados.productividad);
+            addSectionTable("II. Iniciativa", data.calificaciones.iniciativa, data.resultados.iniciativa);
+            addSectionTable("III. Conducta Laboral", data.calificaciones.conducta, data.resultados.conducta);
+            
+            const addTextAreaContent = (title, content) => {
+                if (content && content.trim() !== '') {
+                    if (y > doc.internal.pageSize.getHeight() - 40) { doc.addPage(); y = 15; }
+                    doc.setFont("times", "bold").setFontSize(10).text(title, margin, y);
+                    y += 5;
+                    doc.setFont("times", "normal").setFontSize(9);
+                    const lines = doc.splitTextToSize(content, textWidth - 5);
+                    doc.text(lines, margin + 2, y);
+                    y += (lines.length * 3.5) + 8;
+                }
+            };
+            
+            let hasCommentary = (data.comentarios && data.comentarios.trim() !== '') || (data.compromiso && data.compromiso.trim() !== '') || (data.recomendaciones && data.recomendaciones.trim() !== '');
+            if (hasCommentary) {
+                if (y > doc.internal.pageSize.getHeight() - 100) { doc.addPage(); y = 15; }
+                doc.setFont("times", "bold").setFontSize(11).text("IV. Comentarios, Compromisos y Recomendaciones", margin, y);
+                y += 10;
+                addTextAreaContent("Observaciones y Comentarios Adicionales:", data.comentarios);
+                addTextAreaContent("Compromiso de Mejora del Evaluado:", data.compromiso);
+                addTextAreaContent("Recomendaciones del evaluador:", data.recomendaciones);
+            }
+
+            if (y > doc.internal.pageSize.getHeight() - 80) { doc.addPage(); y = 15; }
+            doc.setFont("times", "bold").setFontSize(11).text("V. Resultado Final", margin, y);
+            y += 8;
+            doc.setFont("times", "normal").setFontSize(10);
+            doc.text(`Total de Puntos: ${data.resultados.total}`, margin, y); y += 8;
+
+            const notaFinalLabel = "Nota Final:";
+            const notaFinalValue = data.resultados.final;
+            doc.setFont("times", "bold").setFontSize(12);
+            const labelWidth = doc.getTextWidth(notaFinalLabel);
+            doc.text(notaFinalLabel, margin, y + 2);
+
+            const valueX = margin + labelWidth + 3;
+            doc.setFont("times", "bold").setFontSize(16);
+            const valueWidth = doc.getTextWidth(notaFinalValue);
+            
+            doc.setFillColor(46, 204, 113);
+            doc.roundedRect(valueX - 2, y - 5, valueWidth + 4, 10, 2, 2, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text(notaFinalValue, valueX, y + 2);
+            
+            doc.setTextColor(0,0,0);
+            y += 10;
+            
+            doc.setFont("times", "italic").setFontSize(8).setTextColor(127, 140, 141);
+            const explanation = `La Nota Final se calcula con la fórmula: (Total de Puntos × 100) / 44, donde 44 es el puntaje máximo posible.`;
+            doc.text(explanation, margin, y);
+            y += 15;
+
+            if (y > doc.internal.pageSize.getHeight() - 45) { doc.addPage(); y = 25; }
+            const firmaWidth = 45, firmaHeight = 18, espacio = 15, anchoTotal = firmaWidth * 3 + espacio * 2;
+            const inicioX = (pageWidth - anchoTotal) / 2;
+            
+            const addFirma = (imgDataUrl, x, label, label2 = null, blankCanvas) => {
+                if (!blankCanvas) doc.addImage(imgDataUrl, 'PNG', x, y, firmaWidth, firmaHeight);
+                doc.setDrawColor(0,0,0).setLineWidth(0.2).line(x, y + firmaHeight + 1, x + firmaWidth, y + firmaHeight + 1);
+                doc.setFont("times", "bold").setFontSize(9).setTextColor(0,0,0).text(label, x + firmaWidth/2, y + firmaHeight + 6, { align: 'center' });
+                if (label2) doc.text(label2, x + firmaWidth/2, y + firmaHeight + 10, { align: 'center' });
+            };
+
+            addFirma(canvasColaborador.toDataURL(), inicioX, "COLABORADOR", null, isCanvasBlank(canvasColaborador));
+            addFirma(canvas.toDataURL(), inicioX + firmaWidth + espacio, "EVALUADOR", null, isCanvasBlank(canvas));
+            addFirma('', inicioX + (firmaWidth + espacio) * 2, "COORDINADOR", "DE CC.HH.", true);
+            
+            const nombreArchivo = `${formatearFecha(data.fechaEvaluacion, true)} - Evaluación - ${data.nombreEmpleado}.pdf`;
+            const pdfBlob = doc.output('blob');
+            const pdfFile = new File([pdfBlob], nombreArchivo, { type: 'application/pdf' });
+            await guardarPDFEnStorage(pdfBlob, { name: nombreArchivo, empleado: data.nombreEmpleado, fecha: formatearFecha(data.fechaEvaluacion) });
+            
+            setTimeout(() => {
+                $('#overlay').hide();
+                Swal.fire({
+                    title: '¡Éxito!',
+                    html: `<div style="text-align: center;"><p style="font-size: 1.1em; margin-bottom: 15px;">Evaluación de desempeño generada correctamente</p><div style="color: #28a745; font-size: 2em; margin-bottom: 15px;"><i class="fas fa-check-circle"></i></div><p style="font-size: 0.9em; color: #666; margin-bottom: 20px;">¿Qué deseas hacer con el PDF?</p><div style="display: flex; justify-content: center; gap: 10px;"><button id="sharePdfBtn" class="swal2-confirm swal2-styled" style="background-color: #007bff;"><i class="fas fa-share-alt"></i> Compartir</button><button id="downloadPdfBtn" class="swal2-cancel swal2-styled" style="background-color: #6c757d;"><i class="fas fa-download"></i> Descargar</button></div><p style="font-size: 0.8em; color: #888; margin-top: 15px;"><i class="fas fa-info-circle"></i> El PDF también se ha guardado localmente.</p></div>`,
+                    icon: 'success', showConfirmButton: false, showCloseButton: true, allowOutsideClick: false,
+                    didOpen: () => {
+                        $('#sharePdfBtn').on('click', async () => {
+                            try {
+                                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                                    await navigator.share({ files: [pdfFile], title: nombreArchivo });
+                                } else { doc.save(nombreArchivo); }
+                            } catch (error) { if (error.name !== 'AbortError') doc.save(nombreArchivo); }
+                        });
+                        $('#downloadPdfBtn').on('click', () => doc.save(nombreArchivo));
+                    }
+                }).then(() => location.reload());
+            }, 500);
+        }
+        
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function scrollToBottom() { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }
+        window.addEventListener('scroll', () => {
+            $('#scroll-top-button').toggle(window.scrollY > 300);
+            $('#scroll-bottom-button').toggle((window.innerHeight + window.scrollY) < document.body.offsetHeight - 100);
+        });
+
+        function mostrarBotonesConstanciasPendientes() {
+            const pdfs = JSON.parse(localStorage.getItem('pdfsEvaluacionesDesempeno') || '[]');
+            const boton = $('#constancia-pendiente-button');
+            if (pdfs.length > 0) {
+                boton.addClass('pendiente').find('.badge').text(pdfs.length);
+                boton.attr('title', `Tienes ${pdfs.length} evaluación(es) pendiente(s)`);
+            } else {
+                boton.removeClass('pendiente');
+            }
+        }
+
+        function mostrarTodasLasConstancias() {
+            const pdfs = JSON.parse(localStorage.getItem('pdfsEvaluacionesDesempeno') || '[]');
+            if (pdfs.length === 0) { Swal.fire('Información', 'No hay evaluaciones guardadas.', 'info'); return; }
+            
+            let html = `<div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">${pdfs.map((pdf, i) => `
+                <div style="border: 2px solid #6c757d; border-radius: 10px; padding: 15px; margin-bottom: 12px; text-align: left; background-color: ${pdf.data ? '#f8fff8' : '#fff8f8'};">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <strong style="font-size: 1.1em;">${pdf.empleado}</strong>
+                        <span style="font-size: 0.8em; color: #6c757d;">#${i + 1}</span>
+                    </div>
+                    <div style="font-size: 0.9em; color: #555; margin-bottom: 8px;">
+                        <div><strong>Fecha:</strong> ${pdf.fecha}</div>
+                        <div><strong>Generado:</strong> ${new Date(pdf.timestamp).toLocaleString()}</div>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                        <button onclick="compartirConstancia(${i})" class="swal2-confirm swal2-styled" style="background-color: #007bff; font-size: 12px; padding: 8px 12px;"><i class="fas fa-share-alt"></i> Compartir</button>
+                        <button onclick="descargarConstancia(${i})" class="swal2-confirm swal2-styled" style="background-color: #28a745; font-size: 12px; padding: 8px 12px;"><i class="fas fa-download"></i> Descargar</button>
+                        <button onclick="eliminarConstancia(${i})" class="swal2-cancel swal2-styled" style="background-color: #dc3545; font-size: 12px; padding: 8px 12px;"><i class="fas fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>`).join('')}</div>
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <button id="eliminarTodasBtn" class="swal2-cancel swal2-styled" style="background-color: #dc3545; font-size: 12px; padding: 10px 15px;"><i class="fas fa-trash-alt"></i> Eliminar todas</button>
+                    <button onclick="Swal.close()" class="swal2-confirm swal2-styled" style="background-color: #6c757d; font-size: 12px; padding: 10px 15px;"><i class="fas fa-times"></i> Cerrar</button>
+                </div>`;
+
+            Swal.fire({
+                title: `Evaluaciones Recientes (${pdfs.length})`, html, icon: 'info', showConfirmButton: false, showCloseButton: true, width: '95%', maxWidth: '700px',
+                didOpen: () => $('#eliminarTodasBtn').on('click', () => {
+                    Swal.fire({ title: '¿Eliminar todas las evaluaciones?', text: "Esta acción no se puede deshacer.", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sí, eliminar todo' })
+                        .then(r => { if (r.isConfirmed) { localStorage.removeItem('pdfsEvaluacionesDesempeno'); mostrarBotonesConstanciasPendientes(); Swal.fire('Eliminadas', '', 'success').then(() => Swal.close()); }});
+                })
+            });
+        }
+        
+        async function dataUrlToBlob(dataUrl) { return await (await fetch(dataUrl)).blob(); }
+
+        async function compartirConstancia(i) {
+            const pdf = JSON.parse(localStorage.getItem('pdfsEvaluacionesDesempeno'))[i];
+            if (!pdf.data) { Swal.fire('Error', 'PDF no disponible para compartir.', 'error'); return; }
+            const file = new File([await dataUrlToBlob(pdf.data)], pdf.name, { type: 'application/pdf' });
+            try {
+                if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: pdf.name });
+                else descargarConstancia(i);
+            } catch (e) { if (e.name !== 'AbortError') descargarConstancia(i); }
+        }
+
+        function descargarConstancia(i) {
+            const pdf = JSON.parse(localStorage.getItem('pdfsEvaluacionesDesempeno'))[i];
+            if (!pdf.data) { Swal.fire('Error', 'PDF no disponible para descargar.', 'error'); return; }
+            const a = document.createElement('a'); a.href = pdf.data; a.download = pdf.name;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+
+        function eliminarConstancia(i) {
+            const pdfs = JSON.parse(localStorage.getItem('pdfsEvaluacionesDesempeno'));
+            Swal.fire({ title: '¿Eliminar esta evaluación?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sí, eliminar' })
+                .then(r => { if (r.isConfirmed) {
+                    pdfs.splice(i, 1);
+                    localStorage.setItem('pdfsEvaluacionesDesempeno', JSON.stringify(pdfs));
+                    mostrarBotonesConstanciasPendientes();
+                    Swal.fire('Eliminada', '', 'success').then(() => { Swal.close(); if(pdfs.length > 0) mostrarTodasLasConstancias(); });
+                }});
+        }
+    </script>
+</body>
+</html>
+
