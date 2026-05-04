@@ -8,6 +8,7 @@
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
     <link rel="manifest" href="/PIBRISA/manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 agregado -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -44,8 +45,8 @@
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
-            padding-bottom: 80px; /* Espacio para el footer */
-            user-select: none; /* Estándar */
+            padding-bottom: 80px;
+            user-select: none;
         }
 
         #install-button {
@@ -342,7 +343,6 @@
             gap: 10px;
         }
 
-        /* ESTILO CORREGIDO PARA EL BOTÓN DE ACTUALIZAR */
         .refresh-button {
             background-color: transparent;
             border: none;
@@ -404,7 +404,6 @@
             color: var(--gray-800);
         }
 
-        /* Modal de información (Acerca de) */
         .info-modal {
             position: fixed;
             top: 0;
@@ -491,7 +490,6 @@
             text-decoration: underline;
         }
 
-        /* Estilos para el modal de cumpleaños */
         .modal {
             position: fixed;
             top: 0;
@@ -554,7 +552,6 @@
             position: relative;
         }
 
-        /* Modal de próximos cumpleaños */
         .birthdays-modal {
             position: fixed;
             top: 0;
@@ -658,7 +655,6 @@
             color: var(--gray-800);
         }
 
-        /* Contenedor para animaciones dentro del modal */
         #animaciones {
             position: fixed;
             top: 0;
@@ -670,7 +666,6 @@
             pointer-events: none;
         }
 
-        /* Botón flotante de cumpleaños */
         #botonCumple {
             position: fixed;
             bottom: 90px;
@@ -696,7 +691,6 @@
             box-shadow: 0 6px 12px rgba(255, 107, 107, 0.3);
         }
 
-        /* Pantalla de regalo */
         #pantallaRegalo {
             position: fixed;
             top: 0;
@@ -791,7 +785,6 @@
             }
         }
 
-        /* Nuevos estilos para el modal de contactos de emergencia */
         .emergency-contacts-modal {
             position: fixed;
             top: 0;
@@ -915,9 +908,8 @@
             background-color: var(--primary-dark);
         }
 
-        /* Estilos para el contacto de emergencia destacado */
         .emergency-highlight {
-            background-color: #ffe6e6; /* Un color más llamativo */
+            background-color: #ffe6e6;
             border: 2px solid var(--secondary);
             animation: pulse-border 2s infinite;
         }
@@ -954,7 +946,6 @@
             margin-right: 15px;
         }
 
-        /* Estilo especial para elementos que son carpetas */
         .folder-item span {
             background: linear-gradient(135deg, var(--warning), var(--secondary));
             -webkit-background-clip: text;
@@ -964,8 +955,6 @@
         .folder-item::before {
             background: linear-gradient(90deg, var(--warning), var(--secondary));
         }
-
-
     </style>
 </head>
 
@@ -975,7 +964,8 @@
 
 <body>
     <div id="birthdayModal" class="modal">
-        <div id="animaciones"></div> <div class="modal-content">
+        <div id="animaciones"></div>
+        <div class="modal-content">
             <button class="cerrar-modal" onclick="cerrarModal()">✖</button>
             <img id="fotoCumpleañero" src="" alt="Foto del cumpleañero">
             <p id="mensajeCumple"></p>
@@ -1039,7 +1029,6 @@
                     <div class="contact-action"><i class="fas fa-phone-alt"></i></div>
                 </div>
 
-                
                 <div class="contact-item" onclick="window.open('tel:+50497389450');">
                     <img src="Imágenes\Colaboradores\HeydiVargas.jpg" alt="Heydi Vargas">
                     <div class="contact-info">
@@ -1110,7 +1099,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="header">
         Menú Principal
@@ -1193,6 +1181,14 @@
             <div class="menu-item folder-item" onclick="window.location.href='Supervisión.html';">
                 <span><i class="fas fa-folder"></i></span>
                 <p>Supervisión</p>
+            </div>
+
+            <div class="separator"></div>
+
+            <!-- NUEVA CARPETA: Nuevas Funciones (con protección por contraseña) -->
+            <div class="menu-item folder-item" onclick="promptForAdmin()">
+                <span><i class="fas fa-lock"></i></span>
+                <p>Nuevas Funciones</p>
             </div>
             
             <div class="separator"></div>
@@ -1304,14 +1300,52 @@
             document.getElementById('birthdays-modal').classList.remove('active');
         }
 
-        // Nueva función para mostrar contactos de emergencia
         function mostrarContactosEmergencia() {
             document.getElementById('emergency-contacts-modal').classList.add('active');
         }
         
-        // Nueva función para cerrar contactos de emergencia
         function cerrarContactosEmergencia() {
             document.getElementById('emergency-contacts-modal').classList.remove('active');
+        }
+
+        // --- Función de autenticación para la nueva carpeta "Nuevas Funciones" ---
+        function promptForAdmin() {
+            const sessionKey = 'adminSessionTimestamp';
+            const sessionStart = localStorage.getItem(sessionKey);
+
+            if (sessionStart) {
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                const timeElapsed = new Date().getTime() - parseInt(sessionStart, 10);
+                if (timeElapsed < twentyFourHours) {
+                    window.location.href = 'Pag - Admin.html';
+                    return;
+                }
+            }
+
+            Swal.fire({
+                title: 'Acceso Restringido',
+                html: 'Ingrese la contraseña para acceder a Nuevas Funciones.',
+                input: 'password',
+                inputPlaceholder: 'Contraseña',
+                confirmButtonText: 'Ingresar',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                backdrop: `rgba(43, 62, 80, 0.8)`,
+                preConfirm: (password) => {
+                    if (password !== 'macdel1') { // Misma contraseña que en CCG.html
+                        Swal.showValidationMessage('Contraseña incorrecta');
+                        return false;
+                    }
+                    return password;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem(sessionKey, new Date().getTime().toString());
+                    window.location.href = 'Pag - Admin.html';
+                }
+            });
         }
 
         // Código para la instalación de la app
@@ -1362,7 +1396,6 @@
         let audio = new Audio('cumpleaños.mp3');
         let audioPermitido = false;
 
-        // Detectar la primera interacción del usuario para habilitar el audio
         document.addEventListener("click", function habilitarAudio() {
             audioPermitido = true;
             document.removeEventListener("click", habilitarAudio);
@@ -1410,13 +1443,11 @@
             const lista = document.getElementById("birthdays-list");
             lista.innerHTML = '';
             
-            // Ordenar cumpleaños por proximidad
             const cumpleañosProximos = [...cumpleañeros]
                 .map(persona => {
                     const [dia, mes] = persona.fecha.split('/').map(Number);
                     const fechaCumple = new Date(hoy.getFullYear(), mes - 1, dia);
                     
-                    // Si el cumpleaños ya pasó este año, calcular para el próximo año
                     if (fechaCumple < hoy) {
                         fechaCumple.setFullYear(hoy.getFullYear() + 1);
                     }
@@ -1430,7 +1461,7 @@
                     };
                 })
                 .sort((a, b) => a.diasRestantes - b.diasRestantes)
-                .slice(0, 11); // Mostrar solo los 5 próximos
+                .slice(0, 11);
             
             if (cumpleañosProximos.length === 0) {
                 const li = document.createElement("li");
@@ -1559,7 +1590,7 @@
                     particleCount: 100,
                     spread: 160,
                     origin: { y: 0.6, x: 0.5 },
-                    zIndex: 2001  // Asegura que esté sobre el modal
+                    zIndex: 2001
                 });
             }, 1000);
         }
@@ -1574,7 +1605,7 @@
                     colors: ['#FF0000', '#FFFF00', '#00FF00', '#0000FF'],
                     shapes: ['circle', 'square'],
                     scalar: 1.5,
-                    zIndex: 2001  // Asegura que esté sobre el modal
+                    zIndex: 2001
                 });
             }, 1000);
         }
@@ -1596,7 +1627,7 @@
             audio.currentTime = 0;
         }
 
-        // Sistema de notificaciones (restaurado de i.html)
+        // Sistema de notificaciones
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXmiIPYUskMzx8jPYFoZKOpvcVL_PD7oI8qzmHuyjaDHLiLLhkOejXUzOTVmRMmt9u/exec";
         const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
         let notificacionesCache = null;
@@ -1648,13 +1679,6 @@
             } else {
                 notificaciones.forEach((notificacion) => {
                     const [fecha, hora, mensaje] = notificacion;
-                    const notifNormalizada = JSON.stringify({
-                        fecha: fecha?.trim(),
-                        hora: hora?.trim(),
-                        mensaje: mensaje?.trim()
-                    });
-                    const esVista = notificacionesVistas.includes(notifNormalizada);
-
                     if (fecha && hora && mensaje) {
                         const horaFormateada = formatearHora(hora);
                         const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
@@ -1730,7 +1754,6 @@
             }
         }
 
-        // Inicializar
         window.onload = function() {
             verificarCumpleaños();
             verificarNotificaciones();
@@ -1742,13 +1765,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
