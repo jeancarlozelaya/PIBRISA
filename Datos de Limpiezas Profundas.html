@@ -893,7 +893,7 @@
                 allowOutsideClick: false,
                 backdrop: `rgba(43, 62, 80, 0.8)`,
                 preConfirm: (password) => {
-                    if (password !== 'argos123') {
+                    if (password !== '123argos123') {
                         Swal.showValidationMessage('Contraseña incorrecta');
                         return false;
                     }
@@ -1107,7 +1107,7 @@ function eliminarDuplicadoIndividual(index) {
         allowOutsideClick: false,
         preConfirm: () => {
             const password = document.getElementById('passwordEliminarIndividual').value;
-            if (password !== 'argos123') {
+            if (password !== '123argos123') {
                 Swal.showValidationMessage('Contraseña incorrecta');
                 return false;
             }
@@ -1157,7 +1157,7 @@ function eliminarDuplicadosEnBloque() {
         focusConfirm: false,
         preConfirm: () => {
             const password = document.getElementById('passwordEliminarBloque').value;
-            if (password !== 'argos123') {
+            if (password !== '123argos123') {
                 Swal.showValidationMessage('Contraseña incorrecta');
                 return false;
             }
