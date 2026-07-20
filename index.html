@@ -1187,8 +1187,8 @@
 
             <!-- NUEVA CARPETA: Nuevas Funciones (con protección por contraseña) -->
             <div class="menu-item folder-item" onclick="promptForAdmin()">
-                <span><i class="fas fa-lock"></i></span>
-                <p>Nuevas Funciones</p>
+                <span><i class="fa-solid fa-handshake"></i></span>
+                <p>Gestión de Empleados y Disciplina</p>
             </div>
             
             <div class="separator"></div>
@@ -1334,7 +1334,7 @@
                 allowEscapeKey: false,
                 backdrop: `rgba(43, 62, 80, 0.8)`,
                 preConfirm: (password) => {
-                    if (password !== 'argospisos123') { // Misma contraseña que en CCG.html
+                    if (password !== '123argos123') { // Misma contraseña que en CCG.html
                         Swal.showValidationMessage('Contraseña incorrecta');
                         return false;
                     }
