@@ -2673,7 +2673,7 @@ let graficoHorasExtras = null; // NUEVA: Gráfico de horas extras
 
 
         // URLs de los scripts de Google Apps Script
-        const SCRIPT_URL_OBTENER = "https://script.google.com/macros/s/AKfycbzvdAey3VIR4ydbD6ms8sK2KcRhhlFfphYt1GIzs4cSd58YEfBfK5sjI_Af4Ouxrn92_A/exec";
+        const SCRIPT_URL_OBTENER = "https://script.google.com/macros/s/AKfycbzI3W9kPzdQO_bSKR4tYPOgD3b0Nr0akLMI5Gzw_ErhIhspq-7Y0bCtm2L6ChOgctwhpw/exec";
         const SCRIPT_URL_ENVIAR = "https://script.google.com/macros/s/AKfycbz7lGxIPoGPGhf5o70DEJ0s2Fuaukhy01qHUlkeoRmRnN7CrcArd6-PC1pU8edxE539cw/exec";
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -9065,7 +9065,7 @@ function mostrarHistorialAsistencia(datos) {
     const tabla = $('#tabla-asistencia').empty();
     
     // META DE ASISTENCIA (constante)
-    const META_ASISTENCIA = 87;
+    const META_ASISTENCIA = 8;
     
     if (!datosAMostrar || datosAMostrar.length === 0) {
         tabla.append('<tr><td colspan="7" class="text-center">No hay registros de asistencia.</td></tr>');
@@ -9076,7 +9076,7 @@ function mostrarHistorialAsistencia(datos) {
     const asistenciaOrdenada = [...datosAMostrar].sort((a, b) => b.fecha.localeCompare(a.fecha));
     
     asistenciaOrdenada.forEach(reg => {
-        // --- NUEVO: Calcular porcentaje en base a la meta de 87 ---
+        // --- NUEVO: Calcular porcentaje en base a la meta de 8 ---
         const porcentajeAsistencia = Math.min(100, (reg.presentes / META_ASISTENCIA) * 100).toFixed(1);
         
         let badgeColor = 'success';
@@ -9117,9 +9117,9 @@ function calcularPromediosAsistencia() {
     const anoActual = hoy.getFullYear();
     
     // META DE ASISTENCIA (constante)
-    const META_ASISTENCIA = 87;
+    const META_ASISTENCIA = 8;
     
-    // --- % Asistencia del Mes (en base a la meta de 87) ---
+    // --- % Asistencia del Mes (en base a la meta de 8) ---
     const datosMes = asistencia.filter(reg => {
         const fecha = new Date(reg.fecha + 'T00:00:00');
         return fecha.getMonth() === mesActual && fecha.getFullYear() === anoActual;
@@ -9132,7 +9132,7 @@ function calcularPromediosAsistencia() {
         // Calcular el promedio de presentes por día
         const promedioPresentes = sumaPresentes / datosMes.length;
         
-        // Calcular el porcentaje en base a la meta de 87
+        // Calcular el porcentaje en base a la meta de 8
         const porcentajeAsistencia = Math.min(100, (promedioPresentes / META_ASISTENCIA) * 100).toFixed(1);
         
         $('#porcentaje-asistencia-mes').text(porcentajeAsistencia + '%');
@@ -9181,7 +9181,7 @@ function crearGraficoAsistenciaMensual(ano, mes) {
     const ctx = document.getElementById('graficoAsistenciaMensual').getContext('2d');
     
     // META DE ASISTENCIA (constante)
-    const META_ASISTENCIA = 87;
+    const META_ASISTENCIA = 8;
     
     // Filtrar datos del mes seleccionado
     const datosMes = asistencia.filter(reg => {
