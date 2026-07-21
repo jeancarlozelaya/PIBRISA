@@ -728,7 +728,7 @@
         // VARIABLES GLOBALES
         // =====================================================================
         const URL_INVENTARIO = "https://script.google.com/macros/s/AKfycbzH_ByOqzw8wkU1PSKXQihf-3iJdPTllb0fN4rGFsdSjq97g9_-TbjUzD6gO9sOKgL7iA/exec";
-        const URL_ENTRADAS = "https://script.google.com/macros/s/AKfycbyCJ07ulrD6Ee8yshBtdRAjqBoHwUGhrIRIYmYODVXoh6pNeVqY8qw5xnVDbdG1GwzJGQ/exec";
+        const URL_ENTRADAS = "https://script.google.com/macros/s/AKfycbwzzg5jk7orAm7u3BU5WMiTpLNIlfVrylCm-sJQ83J9owABfO5ZnuDlTV4PgU4tqzKb/exec";
         const URL_SALIDAS = "https://script.google.com/macros/s/AKfycbz4Lp11fLPslohz6SGmwOPa1En9TSbNmWh55RQ_LbzmUnBJpRSAv0JA2ava2l7Z1JusXQ/exec";
         const URL_REGISTRO = "https://script.google.com/macros/s/AKfycbzZgsUp5JMkM3UrU0ZgjqwpXcAoTwZashFQl8l-iU9bsJ--uQ_OPKY3zDPz_McSqhHw/exec";
 
@@ -767,75 +767,116 @@
         // =====================================================================
         // FUNCIONES DE CARGA
         // =====================================================================
-        async function cargarDatosIniciales() {
-            showLoading('Por favor espera un momento...');
-            try {
-                const response = await fetch(URL_INVENTARIO);
-                const data = await response.json();
-                productosValidos = data.productos || [];
-                if (data.inventario) {
-                    inventarioActual = data.inventario;
-                    mostrarInventario(data.inventario);
-                }
-                
-                // Precargar historial
-                Promise.all([
-                    fetch(URL_ENTRADAS).then(r => r.json()),
-                    fetch(URL_SALIDAS).then(r => r.json())
-                ]).then(([entradas, salidas]) => {
-                    historialEntradas = entradas.map(f => [...f, 'entrada']);
-                    historialSalidas = salidas.map(f => [...f, 'salida']);
-                    
-                    // Actualizar select de años después de cargar historial
-                    actualizarSelectAnios();
-                }).catch(err => console.error('Error precargando historial:', err));
-
-            } catch (error) {
-                console.error('Error cargando datos iniciales:', error);
-                Swal.fire('Error', 'No se pudieron cargar los datos iniciales', 'error');
-            } finally {
-                hideLoading();
-            }
+async function cargarDatosIniciales() {
+    showLoading('Por favor espera un momento...');
+    try {
+        const response = await fetch(URL_INVENTARIO);
+        const data = await response.json();
+        productosValidos = data.productos || [];
+        if (data.inventario) {
+            inventarioActual = data.inventario;
+            mostrarInventario(data.inventario);
         }
+        
+        // Precargar historial - CORREGIDO
+        Promise.all([
+            fetch(URL_ENTRADAS).then(r => r.json()),
+            fetch(URL_SALIDAS).then(r => r.json())
+        ]).then(([entradasData, salidasData]) => {
+            // Procesar datos de entradas
+            let entradas = [];
+            if (Array.isArray(entradasData)) {
+                entradas = entradasData;
+            } else if (entradasData.datos && Array.isArray(entradasData.datos)) {
+                entradas = entradasData.datos;
+            }
+            
+            // Procesar datos de salidas
+            let salidas = [];
+            if (Array.isArray(salidasData)) {
+                salidas = salidasData;
+            } else if (salidasData.datos && Array.isArray(salidasData.datos)) {
+                salidas = salidasData.datos;
+            }
+            
+            // Asignar al historial con tipo
+            historialEntradas = entradas
+                .filter(fila => fila && fila.length > 0 && fila.some(celda => celda !== "" && celda !== undefined && celda !== null))
+                .map(fila => [...fila, 'entrada']);
+                
+            historialSalidas = salidas
+                .filter(fila => fila && fila.length > 0 && fila.some(celda => celda !== "" && celda !== undefined && celda !== null))
+                .map(fila => [...fila, 'salida']);
+            
+            // Actualizar select de años después de cargar historial
+            actualizarSelectAnios();
+            
+            console.log('Historial cargado correctamente:', {
+                entradas: historialEntradas.length,
+                salidas: historialSalidas.length
+            });
+            
+        }).catch(err => {
+            console.error('Error precargando historial:', err);
+            // Inicializar arrays vacíos en caso de error
+            historialEntradas = [];
+            historialSalidas = [];
+        });
+
+    } catch (error) {
+        console.error('Error cargando datos iniciales:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos iniciales', 'error');
+    } finally {
+        hideLoading();
+    }
+}
 
         // =====================================================================
         // NUEVA FUNCIÓN: Actualizar select de años según datos reales
         // =====================================================================
-        function actualizarSelectAnios() {
-            const selectAnio = document.getElementById('filtroAnioHistorial');
-            
-            // Recopilar todos los años de los movimientos
-            const añosSet = new Set();
-            
-            [...historialEntradas, ...historialSalidas].forEach(item => {
+function actualizarSelectAnios() {
+    const selectAnio = document.getElementById('filtroAnioHistorial');
+    
+    // Recopilar todos los años de los movimientos
+    const añosSet = new Set();
+    const todosMovimientos = [...historialEntradas, ...historialSalidas];
+    
+    todosMovimientos.forEach(item => {
+        if (item && item.length >= 1) {
+            try {
                 const fecha = new Date(item[0]);
                 if (!isNaN(fecha.getTime())) {
                     añosSet.add(fecha.getFullYear());
                 }
-            });
-            
-            // Convertir a array y ordenar descendente
-            const años = Array.from(añosSet).sort((a, b) => b - a);
-            
-            // Limpiar y llenar select
-            selectAnio.innerHTML = '<option value="todos">Todos</option>';
-            
-            años.forEach(año => {
-                const option = document.createElement('option');
-                option.value = año;
-                option.textContent = año;
-                selectAnio.appendChild(option);
-            });
-            
-            // Si no hay años, poner el actual
-            if (años.length === 0) {
-                const añoActual = new Date().getFullYear();
-                const option = document.createElement('option');
-                option.value = añoActual;
-                option.textContent = añoActual;
-                selectAnio.appendChild(option);
+            } catch (e) {
+                // Ignorar fechas inválidas
             }
         }
+    });
+    
+    // Convertir a array y ordenar descendente
+    const años = Array.from(añosSet).sort((a, b) => b - a);
+    
+    // Limpiar y llenar select
+    selectAnio.innerHTML = '<option value="todos">Todos</option>';
+    
+    años.forEach(año => {
+        const option = document.createElement('option');
+        option.value = año;
+        option.textContent = año;
+        selectAnio.appendChild(option);
+    });
+    
+    // Si no hay años, poner el actual
+    if (años.length === 0) {
+        const añoActual = new Date().getFullYear();
+        const option = document.createElement('option');
+        option.value = añoActual;
+        option.textContent = añoActual;
+        selectAnio.appendChild(option);
+    }
+}
+
 
         // =====================================================================
         // INVENTARIO
@@ -1079,95 +1120,169 @@
         // =====================================================================
         // HISTORIAL - CORREGIDO (nombres completos)
         // =====================================================================
-        async function cargarHistorialCompleto() {
-            showLoading('Por favor espera un momento...');
-            try {
-                const [entradas, salidas] = await Promise.all([
-                    fetch(URL_ENTRADAS).then(r => r.json()),
-                    fetch(URL_SALIDAS).then(r => r.json())
-                ]);
+async function cargarHistorialCompleto() {
+    showLoading('Por favor espera un momento...');
+    try {
+        // Cargar datos de entrada y salida
+        const [entradaResponse, salidaResponse] = await Promise.all([
+            fetch(URL_ENTRADAS),
+            fetch(URL_SALIDAS)
+        ]);
 
-                historialEntradas = entradas.map(f => [...f, 'entrada']);
-                historialSalidas = salidas.map(f => [...f, 'salida']);
-                
-                actualizarSelectAnios();
-                aplicarFiltrosHistorial();
-            } catch (error) {
-                console.error(error);
-                Swal.fire('Error', 'No se pudo cargar el historial', 'error');
-            } finally {
-                hideLoading();
+        const entradaData = await entradaResponse.json();
+        const salidaData = await salidaResponse.json();
+
+        // Obtener los arrays de datos (pueden ser objetos con .datos o arrays directos)
+        let entradas = [];
+        let salidas = [];
+
+        if (Array.isArray(entradaData)) {
+            entradas = entradaData;
+        } else if (entradaData.datos && Array.isArray(entradaData.datos)) {
+            entradas = entradaData.datos;
+        }
+
+        if (Array.isArray(salidaData)) {
+            salidas = salidaData;
+        } else if (salidaData.datos && Array.isArray(salidaData.datos)) {
+            salidas = salidaData.datos;
+        }
+
+        // Limpiar datos vacíos y asignar tipo
+        historialEntradas = entradas
+            .filter(fila => fila && fila.length > 0 && fila.some(celda => celda !== "" && celda !== undefined && celda !== null))
+            .map(fila => [...fila, 'entrada']);
+
+        historialSalidas = salidas
+            .filter(fila => fila && fila.length > 0 && fila.some(celda => celda !== "" && celda !== undefined && celda !== null))
+            .map(fila => [...fila, 'salida']);
+
+        // Actualizar select de años
+        actualizarSelectAnios();
+        
+        // Aplicar filtros y mostrar
+        aplicarFiltrosHistorial();
+        
+    } catch (error) {
+        console.error('Error cargando historial:', error);
+        Swal.fire('Error', 'No se pudo cargar el historial: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+
+function aplicarFiltrosHistorial() {
+    const tipo = document.getElementById('filtroTipoHistorial').value;
+    const mes = document.getElementById('filtroMesHistorial').value;
+    const anio = document.getElementById('filtroAnioHistorial').value;
+    const producto = document.getElementById('filtroProductoHistorial').value.toLowerCase();
+
+    // Combinar todos los movimientos
+    let todos = [...historialEntradas, ...historialSalidas];
+
+    // Filtrar
+    todos = todos.filter(item => {
+        // Asegurar que item tenga al menos 5 elementos
+        if (!item || item.length < 5) return false;
+        
+        const [fechaStr, nombreProducto, vencimientoStr, cantidadStr, tipoMov] = item;
+        
+        // Validar que la fecha sea válida
+        const fecha = new Date(fechaStr);
+        if (isNaN(fecha.getTime())) return false;
+        
+        const itemMes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const itemAnio = fecha.getFullYear().toString();
+        
+        // Aplicar filtros
+        if (tipo !== 'todos' && tipoMov !== tipo) return false;
+        if (mes !== 'todos' && itemMes !== mes) return false;
+        if (anio !== 'todos' && itemAnio !== anio) return false;
+        if (producto && !nombreProducto.toLowerCase().includes(producto)) return false;
+        
+        return true;
+    });
+
+    // Ordenar por fecha (más reciente primero)
+    todos.sort((a, b) => {
+        const fechaA = new Date(a[0]);
+        const fechaB = new Date(b[0]);
+        return fechaB - fechaA;
+    });
+
+    mostrarTablaHistorial(todos);
+    document.getElementById('totalMovimientosBadge').textContent = `${todos.length} reg`;
+}
+
+
+
+function mostrarTablaHistorial(datos) {
+    const tbody = document.querySelector("#tabla-historial tbody");
+    tbody.innerHTML = "";
+    let totalUnidades = 0;
+
+    datos.forEach(item => {
+        // Asegurar que item tenga los datos esperados
+        if (!item || item.length < 5) return;
+        
+        const [fechaStr, producto, vencimientoStr, cantidadStr, tipo] = item;
+        const cantidadNum = parseInt(cantidadStr) || 0;
+        totalUnidades += cantidadNum;
+        
+        const badge = tipo === 'entrada' 
+            ? '<span class="badge-entrada">ENTRADA</span>'
+            : '<span class="badge-salida">SALIDA</span>';
+        
+        // Formatear fecha
+        let fechaFormateada = '-';
+        try {
+            const fechaObj = new Date(fechaStr);
+            if (!isNaN(fechaObj.getTime())) {
+                fechaFormateada = fechaObj.toLocaleDateString('es-MX');
             }
+        } catch (e) {
+            fechaFormateada = fechaStr || '-';
         }
-
-        function aplicarFiltrosHistorial() {
-            const tipo = document.getElementById('filtroTipoHistorial').value;
-            const mes = document.getElementById('filtroMesHistorial').value;
-            const anio = document.getElementById('filtroAnioHistorial').value;
-            const producto = document.getElementById('filtroProductoHistorial').value.toLowerCase();
-
-            let todos = [...historialEntradas, ...historialSalidas];
-            
-            todos = todos.filter(item => {
-                const fecha = new Date(item[0]);
-                const itemMes = String(fecha.getMonth() + 1).padStart(2,'0');
-                const itemAnio = fecha.getFullYear().toString();
-                
-                if (tipo !== 'todos' && item[4] !== tipo) return false;
-                if (mes !== 'todos' && itemMes !== mes) return false;
-                if (anio !== 'todos' && itemAnio !== anio) return false;
-                if (producto && !item[1].toLowerCase().includes(producto)) return false;
-                
-                return true;
-            });
-
-            todos.sort((a,b) => new Date(b[0]) - new Date(a[0]));
-
-            mostrarTablaHistorial(todos);
-            document.getElementById('totalMovimientosBadge').innerHTML = `${todos.length} reg`;
-        }
-
-        function mostrarTablaHistorial(datos) {
-            const tbody = document.querySelector("#tabla-historial tbody");
-            tbody.innerHTML = "";
-            let totalUnidades = 0;
-
-            datos.forEach(item => {
-                const [fecha, producto, vencimiento, cantidad, tipo] = item;
-                const cantidadNum = parseInt(cantidad) || 0;
-                totalUnidades += cantidadNum;
-                
-                const badge = tipo === 'entrada' 
-                    ? '<span class="badge-entrada">ENTRADA</span>'
-                    : '<span class="badge-salida">SALIDA</span>';
-                
-                const fechaObj = new Date(fecha);
-                const fechaFormateada = fechaObj.toLocaleDateString('es-MX').split('/').map(p=>p.padStart(2,'0')).join('/');
-                
-                let vencimientoFormateado = '-';
-                if (vencimiento) {
-                    const venObj = new Date(vencimiento);
-                    if (!isNaN(venObj.getTime())) {
-                        const dia = String(venObj.getDate()).padStart(2, '0');
-                        const mes = String(venObj.getMonth() + 1).padStart(2, '0');
-                        const anio = venObj.getFullYear();
-                        vencimientoFormateado = `${dia}/${mes}/${anio}`;
-                    }
+        
+        // Formatear vencimiento
+        let vencimientoFormateado = '-';
+        if (vencimientoStr) {
+            try {
+                // Intentar parsear DD/MM/YYYY o YYYY-MM-DD
+                let fechaVen;
+                if (vencimientoStr.includes('/')) {
+                    const partes = vencimientoStr.split('/');
+                    fechaVen = new Date(partes[2], partes[1] - 1, partes[0]);
+                } else if (vencimientoStr.includes('-')) {
+                    fechaVen = new Date(vencimientoStr);
+                } else {
+                    fechaVen = new Date(vencimientoStr);
                 }
                 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${fechaFormateada}</td>
-                    <td>${badge}</td>
-                    <td class="fw-bold">${producto}</td>
-                    <td>${vencimientoFormateado}</td>
-                    <td class="text-center fw-bold">${cantidadNum}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('totalCantidadHistorial').textContent = totalUnidades;
+                if (!isNaN(fechaVen.getTime())) {
+                    vencimientoFormateado = fechaVen.toLocaleDateString('es-MX');
+                }
+            } catch (e) {
+                vencimientoFormateado = vencimientoStr || '-';
+            }
         }
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${fechaFormateada}</td>
+            <td>${badge}</td>
+            <td class="fw-bold">${producto || '-'}</td>
+            <td>${vencimientoFormateado}</td>
+            <td class="text-center fw-bold">${cantidadNum}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.getElementById('totalCantidadHistorial').textContent = totalUnidades;
+}
+
+
 
         // =====================================================================
         // DASHBOARD
@@ -1262,31 +1377,46 @@ function showLoading(title, subtitle) {
         // =====================================================================
         // INICIALIZACIÓN
         // =====================================================================
-        window.onload = async function() {
-            const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiempre','Octubre','Noviembre','Diciembre'];
-            const selMes = document.getElementById('filtroMesHistorial');
-            selMes.innerHTML = '<option value="todos">Mes</option>';
-            meses.forEach((m,i) => selMes.appendChild(new Option(m, String(i+1).padStart(2,'0'))));
-            
-            await cargarDatosIniciales();
-            configurarAutocompletado();
+window.onload = async function() {
+    // Configurar selects de meses
+    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const selMes = document.getElementById('filtroMesHistorial');
+    selMes.innerHTML = '<option value="todos">Mes</option>';
+    meses.forEach((m, i) => {
+        const option = document.createElement('option');
+        option.value = String(i + 1).padStart(2, '0');
+        option.textContent = m;
+        selMes.appendChild(option);
+    });
+    
+    // Cargar datos iniciales
+    await cargarDatosIniciales();
+    configurarAutocompletado();
 
-            document.getElementById('filtroProductos').addEventListener('input', function() {
-                const f = this.value.toLowerCase();
-                let total = 0;
-                document.querySelectorAll("#tabla-inventario tbody tr").forEach(tr => {
-                    const ok = tr.cells[0].textContent.toLowerCase().includes(f);
-                    tr.style.display = ok ? '' : 'none';
-                    if (ok) total += parseInt(tr.cells[2].textContent) || 0;
-                });
-                document.getElementById('totalCantidadInventario').textContent = total;
-            });
+    // Configurar filtros del historial
+    document.getElementById('filtroTipoHistorial').addEventListener('change', aplicarFiltrosHistorial);
+    document.getElementById('filtroMesHistorial').addEventListener('change', aplicarFiltrosHistorial);
+    document.getElementById('filtroAnioHistorial').addEventListener('change', aplicarFiltrosHistorial);
+    document.getElementById('filtroProductoHistorial').addEventListener('input', aplicarFiltrosHistorial);
 
-            document.getElementById('filtroTipoHistorial').addEventListener('change', aplicarFiltrosHistorial);
-            document.getElementById('filtroMesHistorial').addEventListener('change', aplicarFiltrosHistorial);
-            document.getElementById('filtroAnioHistorial').addEventListener('change', aplicarFiltrosHistorial);
-            document.getElementById('filtroProductoHistorial').addEventListener('input', aplicarFiltrosHistorial);
-        };
+    // Filtro de productos en inventario
+    document.getElementById('filtroProductos').addEventListener('input', function() {
+        const f = this.value.toLowerCase();
+        let total = 0;
+        document.querySelectorAll("#tabla-inventario tbody tr").forEach(tr => {
+            if (tr.cells[0]) {
+                const ok = tr.cells[0].textContent.toLowerCase().includes(f);
+                tr.style.display = ok ? '' : 'none';
+                if (ok && tr.cells[2]) {
+                    total += parseInt(tr.cells[2].textContent) || 0;
+                }
+            }
+        });
+        document.getElementById('totalCantidadInventario').textContent = total;
+    });
+};
+
+
     </script>
 </body>
 </html>
