@@ -636,7 +636,7 @@ body {
     function cargarTodosLosDatos() {
         $('#overlay').show();
         
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxE5J-WQB6MVqcdDlN3WiwKJptv5rMKCRzeQmeSNbPqLCJ7gimxy02HcFKjNjn_RU_0QQ/exec"; 
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyOWhbgL9syy6xezGrenAa7OO4WmSLz2-cFnoy303iSCdlvBg2cp2r_YLcshHpkfeZI_A/exec"; 
         
         $.get(scriptURL, function(data) {
             $('#overlay').hide();
@@ -1041,7 +1041,7 @@ function enviardatos() {
             const idRequisicion = 'req-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
             
             $.ajax({
-                url: "https://script.google.com/macros/s/AKfycbxqZguZch5HAgA8Uvduk5N8hZEOtdn0x5CuGJ6A0C1Fji7pLGMPJYErh9YP7EGnFf9w/exec",
+                url: "https://script.google.com/macros/s/AKfycbxpXfmVUMd12vWne3aufbdKksKcGi1WP2ijX1cmdd3ApeuaXbmTWvTxl3BsoEcZBoMx/exec",
                 type: "POST",
                 data: {
                     seleccion: JSON.stringify(seleccion),
