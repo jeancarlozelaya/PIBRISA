@@ -146,12 +146,13 @@
       text-align: center;
     }
 
-    .otros-abajo-select {
+    .subarea-select {
       width: auto;
       padding: 8px;
       border: 1px solid var(--border-color);
       border-radius: 4px;
       text-align: center;
+      min-width: 150px;
     }
 
     .button-container {
@@ -199,6 +200,11 @@
       
       .cantidad-input {
         width: 50px;
+      }
+      
+      .subarea-select {
+        min-width: 120px;
+        font-size: 0.8em;
       }
     }
 
@@ -483,7 +489,7 @@
   </style>
 </head>
 <body>
-  <!-- Modal de contraseña estilo SweetAlert2 IDÉNTICO a la referencia -->
+  <!-- Modal de contraseña estilo SweetAlert2 -->
   <div id="custom-password-modal" class="custom-swal-container">
     <div class="custom-swal-content">
       <div class="custom-swal-header">
@@ -514,7 +520,7 @@
               <th>Producto</th>
               <th>Cantidad Pendiente</th>
               <th>Devolver</th>
-              <th>Otros (Abajo)</th>
+              <th>Sub-área</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -545,6 +551,12 @@
   const CORRECT_PASSWORD = "macdel1";
   const AUTH_KEY = "pb_auth";
   const AUTH_EXPIRATION_HOURS = 24;
+
+  // Configuración de opciones de Sub-área por edificio
+  const OPCIONES_SUBAREA = {
+    'Otros (Abajo)': ['Despacho', 'Baños Transportistas', 'Salón Vial'],
+    'Administración': ['Baño de Gerencia', 'Baño de Visitas', 'Baño de Sala de Reuniones', 'Baños de Hombres', 'Baño de Mujeres', 'Oficina X']
+  };
 
   document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('main-content').style.display = 'block';
@@ -680,6 +692,10 @@
     });
   }
 
+  function obtenerOpcionesSubarea(area) {
+    return OPCIONES_SUBAREA[area] || [];
+  }
+
   function mostrarDevolucionesEnUI() {
     const tbody = $('#devoluciones-body');
     tbody.empty();
@@ -696,7 +712,7 @@
           rowId: devolucion.rowId,
           originalIndex: index,
           cantidad: 0,
-          otrosAbajo: '',
+          subarea: '',
           fechaOriginal: devolucion.fecha,
           horaOriginal: devolucion.hora,
           colaborador: devolucion.colaborador,
@@ -717,16 +733,18 @@
   function appendDevolucionRow(devolucion, originalIndex, entryNumber) {
       const tbody = $('#devoluciones-body');
       const entryId = `${originalIndex}-${entryNumber}`;
-      const isOtrosAbajo = devolucion.area === 'Otros (Abajo)';
+      const area = devolucion.area;
+      const opciones = obtenerOpcionesSubarea(area);
+      const tieneSubarea = opciones.length > 0;
 
-      const otrosAbajoHtml = isOtrosAbajo ? `
-        <select class="otros-abajo-select"
-                id="select-otros-abajo-${entryId}"
-                onchange="manejarInputOtrosAbajo('${entryId}')">
+      const subareaHtml = tieneSubarea ? `
+        <select class="subarea-select"
+                id="select-subarea-${entryId}"
+                onchange="manejarInputSubarea('${entryId}')">
             <option value="">Seleccione</option>
-            <option value="Despacho" ${editedEntries[entryId].otrosAbajo === 'Despacho' ? 'selected' : ''}>Despacho</option>
-            <option value="Baños Transportistas" ${editedEntries[entryId].otrosAbajo === 'Baños Transportistas' ? 'selected' : ''}>Baños Transportistas</option>
-            <option value="Salón Vial" ${editedEntries[entryId].otrosAbajo === 'Salón Vial' ? 'selected' : ''}>Salón Vial</option>
+            ${opciones.map(opcion => 
+                `<option value="${opcion}" ${editedEntries[entryId].subarea === opcion ? 'selected' : ''}>${opcion}</option>`
+            ).join('')}
         </select>
       ` : `<span></span>`;
 
@@ -750,7 +768,7 @@
                 <button type="button" class="quantity-button quantity-plus-button" onclick="cambiarCantidad('${entryId}', 1, ${devolucion.cantidadPendiente})">+</button>
             </div>
           </td>
-          <td>${otrosAbajoHtml}</td>
+          <td>${subareaHtml}</td>
           <td>
             ${entryNumber === 0 ? 
                 `<button class="add-more-btn" onclick="agregarMasEntradas(${originalIndex})">Agregar Más</button>` 
@@ -792,7 +810,7 @@
           rowId: originalDevolucion.rowId,
           originalIndex: originalIndex,
           cantidad: 0,
-          otrosAbajo: '',
+          subarea: '',
           fechaOriginal: originalDevolucion.fecha,
           horaOriginal: originalDevolucion.hora,
           colaborador: originalDevolucion.colaborador,
@@ -928,9 +946,9 @@
       manejarInputDevolver(entryId, max);
   }
 
-  function manejarInputOtrosAbajo(entryId) {
-      const select = document.getElementById(`select-otros-abajo-${entryId}`);
-      editedEntries[entryId].otrosAbajo = select.value;
+  function manejarInputSubarea(entryId) {
+      const select = document.getElementById(`select-subarea-${entryId}`);
+      editedEntries[entryId].subarea = select.value;
       actualizarEstadoBotonEnviar();
   }
 
@@ -939,7 +957,7 @@
       document.getElementById('btn-enviar').disabled = !hasValidEntries;
   }
 
-function enviarDevoluciones() {
+  function enviarDevoluciones() {
       console.log('Iniciando envío de devoluciones...');
       
       const datosParaEnviar = [];
@@ -950,9 +968,10 @@ function enviarDevoluciones() {
           const cantidadValida = currentEntry.cantidad > 0;
           
           if (cantidadValida) {
-              // Validar que si es "Otros (Abajo)" se haya seleccionado una opción
-              if (currentEntry.area === 'Otros (Abajo)' && (!currentEntry.otrosAbajo || currentEntry.otrosAbajo === '')) {
-                  Swal.fire('Advertencia', `Para el producto '${currentEntry.producto}' del área 'Otros (Abajo)', debe seleccionar una opción (Despacho, Baños Transportistas o Salón Vial).`, 'warning');
+              // Validar que si el área tiene opciones de sub-área, se haya seleccionado una
+              const opciones = obtenerOpcionesSubarea(currentEntry.area);
+              if (opciones.length > 0 && (!currentEntry.subarea || currentEntry.subarea === '')) {
+                  Swal.fire('Advertencia', `Para el producto '${currentEntry.producto}' del área '${currentEntry.area}', debe seleccionar una Sub-área.`, 'warning');
                   validationError = true;
                   break; 
               }
@@ -967,7 +986,7 @@ function enviarDevoluciones() {
               datosParaEnviar.push({
                   rowId: rowId,
                   cantidad: parseInt(currentEntry.cantidad) || 0,
-                  otrosAbajo: currentEntry.otrosAbajo || '',
+                  subarea: currentEntry.subarea || '',
                   colaborador: currentEntry.colaborador || '',
                   area: currentEntry.area || '',
                   producto: currentEntry.producto || '',
@@ -979,7 +998,7 @@ function enviarDevoluciones() {
                   estado: currentEntry.estado || ''
               });
               
-              console.log(`Preparando: ${currentEntry.producto} - Cantidad: ${currentEntry.cantidad} - RowId: ${rowId}`);
+              console.log(`Preparando: ${currentEntry.producto} - Cantidad: ${currentEntry.cantidad} - Sub-área: ${currentEntry.subarea || 'N/A'} - RowId: ${rowId}`);
           }
       }
 
@@ -1044,8 +1063,6 @@ function enviarDevoluciones() {
           }
       });
   }
-
-
 </script>
 </body>
 </html>
