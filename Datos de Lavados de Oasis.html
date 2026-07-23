@@ -637,6 +637,13 @@
         "Aún no reportado"
     ];
     
+    // Motivos que NO son nuestra responsabilidad (excluir del cálculo de cumplimiento)
+    const MOTIVOS_NO_RESPONSABILIDAD = [
+        "Área no disponible",
+        "Indisponibilidad de agua",
+        "Lavado no realizado por solicitud del cliente"
+    ];
+    
     let chartMensual = null;
     let chartAnual = null;
     let datosGlobales = null;
@@ -753,8 +760,13 @@
                     datosGlobales = data.data;
                     renderizarDashboardOasis(datosGlobales, mesActual, anioActual);
                     
-                    if (!datosGlobales.existeHoja || datosGlobales.totalOasis === 0) {
+                    // --- CORRECCIÓN: Mostrar alerta solo si NO hay registros ---
+                    // Verificar si existe la hoja y si la lista de reportes está vacía
+                    const noHayRegistros = !datosGlobales.listaReportes || datosGlobales.listaReportes.length === 0;
+                    if (!datosGlobales.existeHoja || noHayRegistros) {
                         document.getElementById('alertNoData').style.display = 'block';
+                    } else {
+                        document.getElementById('alertNoData').style.display = 'none';
                     }
                 } else {
                     Swal.fire("Error", data.message || "Error desconocido", "error");
@@ -782,7 +794,6 @@
     }
 
     function calcularFinDeSemanaISO(numeroSemana, anio) {
-        // Calcular el fin de semana (domingo) para una semana ISO
         const firstDayOfYear = new Date(anio, 0, 1);
         const dayOfWeek = firstDayOfYear.getDay() || 7;
         const daysToFirstMonday = (dayOfWeek <= 4) ? (1 - dayOfWeek) : (8 - dayOfWeek);
@@ -791,7 +802,6 @@
         const weekStart = new Date(firstMonday);
         weekStart.setDate(weekStart.getDate() + (numeroSemana - 1) * 7);
         
-        // El fin de semana es el domingo (día 6 después del lunes)
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekEnd.getDate() + 6);
         weekEnd.setHours(23, 59, 59, 999);
@@ -799,15 +809,29 @@
         return weekEnd;
     }
 
+    function esMotivoNuestraResponsabilidad(motivo) {
+        if (!motivo) return true;
+        
+        const motivoLower = motivo.toLowerCase();
+        
+        for (const excluido of MOTIVOS_NO_RESPONSABILIDAD) {
+            if (motivoLower.includes(excluido.toLowerCase())) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     function calcularEstadisticasPorSemana(semanaData, semanaKey, mes, anio) {
         const totalOasis = calcularTotalOasisReales();
         const hoy = new Date();
         
-        // Obtener todas las ubicaciones con sus sub-ubicaciones
         const todasUbicaciones = generarListaUbicacionesCompleta();
         
         let lavadosReportados = 0;
         let noLavadosReportados = 0;
+        let noLavadosResponsabilidad = 0;
         const motivosContados = {
             "Área no disponible": 0,
             "Indisponibilidad de agua": 0,
@@ -816,13 +840,11 @@
             "Otro": 0
         };
         
-        // Contar registros para cada ubicación/sub-ubicación
         todasUbicaciones.forEach(item => {
             const ubicacionKey = item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre;
             const ubicacionEnSemana = semanaData.ubicaciones?.[ubicacionKey];
             
             if (item.esSubUbicacion) {
-                // Es una sub-ubicación
                 const reporteEnSemana = datosGlobales?.listaReportes?.find(reporte => 
                     reporte.semana === semanaKey && 
                     reporte.ubicacion === item.ubicacionPrincipal &&
@@ -834,16 +856,21 @@
                         lavadosReportados++;
                     } else {
                         noLavadosReportados++;
+                        if (esMotivoNuestraResponsabilidad(reporteEnSemana.motivo)) {
+                            noLavadosResponsabilidad++;
+                        }
                         contarMotivo(reporteEnSemana.motivo, motivosContados);
                     }
                 }
             } else {
-                // Es una ubicación principal sin sub-ubicaciones
                 if (ubicacionEnSemana) {
                     if (ubicacionEnSemana.lavado) {
                         lavadosReportados++;
                     } else {
                         noLavadosReportados++;
+                        if (esMotivoNuestraResponsabilidad(ubicacionEnSemana.motivo)) {
+                            noLavadosResponsabilidad++;
+                        }
                         contarMotivo(ubicacionEnSemana.motivo, motivosContados);
                     }
                 }
@@ -855,17 +882,19 @@
         
         let lavadosFinal = lavadosReportados;
         let noLavadosFinal = noLavadosReportados;
+        let noLavadosResponsabilidadFinal = noLavadosResponsabilidad;
         let pendientesFinal = pendientes;
         let motivoPendientes = "";
         
-        // Verificar si la semana ya terminó
         const semanaNumero = parseInt(semanaKey.split('-')[1]);
         const finSemana = calcularFinDeSemanaISO(semanaNumero, parseInt(anio));
         const semanaYaTermino = hoy > finSemana;
         
         if (semanaYaTermino && pendientes > 0) {
+            // Los pendientes después de que termina la semana son "No se reportó actividad" (nuestra responsabilidad)
             motivosContados["No se hizo el lavado"] += pendientes;
             noLavadosFinal += pendientes;
+            noLavadosResponsabilidadFinal += pendientes;
             motivoPendientes = "No se reportó actividad";
             pendientesFinal = 0;
         } else if (!semanaYaTermino && pendientes > 0) {
@@ -873,11 +902,14 @@
         }
         
         const totalFinal = lavadosFinal + noLavadosFinal;
-        const porcentaje = totalFinal > 0 ? Math.round((lavadosFinal / totalFinal) * 100) : 0;
+        // Porcentaje de cumplimiento = Lavados / (Lavados + No lavados que son nuestra responsabilidad)
+        const totalResponsabilidad = lavadosFinal + noLavadosResponsabilidadFinal;
+        const porcentaje = totalResponsabilidad > 0 ? Math.round((lavadosFinal / totalResponsabilidad) * 100) : 0;
         
         return {
             lavados: lavadosFinal,
             noLavados: noLavadosFinal,
+            noLavadosResponsabilidad: noLavadosResponsabilidadFinal,
             pendientes: pendientesFinal,
             motivoPendientes: motivoPendientes,
             total: totalFinal,
@@ -916,6 +948,7 @@
         
         let totalLavadosMes = 0;
         let totalNoLavadosMes = 0;
+        let totalNoLavadosResponsabilidad = 0;
         
         semanas.forEach(semana => {
             const semanaData = data.resumenSemanas[semana];
@@ -923,45 +956,41 @@
             
             totalLavadosMes += estadisticas.lavados;
             totalNoLavadosMes += estadisticas.noLavados;
+            totalNoLavadosResponsabilidad += estadisticas.noLavadosResponsabilidad;
         });
         
-        const totalSemanasEnMes = semanas.length;
-        const totalOasisPosiblesMes = totalOasis * totalSemanasEnMes;
-        
-        const porcentajeMes = totalOasisPosiblesMes > 0 ? 
-            Math.round((totalLavadosMes / totalOasisPosiblesMes) * 100) : 0;
+        // Cumplimiento del mes = Lavados / (Lavados + No Lavados que son nuestra responsabilidad)
+        const totalResponsabilidad = totalLavadosMes + totalNoLavadosResponsabilidad;
+        const porcentajeMes = totalResponsabilidad > 0 ? 
+            Math.round((totalLavadosMes / totalResponsabilidad) * 100) : 0;
         
         return {
             totalLavados: totalLavadosMes,
             totalNoLavados: totalNoLavadosMes,
+            totalNoLavadosResponsabilidad: totalNoLavadosResponsabilidad,
             porcentaje: porcentajeMes,
             totalOasis: totalOasis,
-            semanasEnMes: totalSemanasEnMes,
-            totalOasisPosibles: totalOasisPosiblesMes
+            semanasEnMes: semanas.length
         };
     }
 
     function renderizarDashboardOasis(data, mesVal, anio) {
         document.getElementById('dashboardContent').style.display = 'block';
         
-        // Calcular estadísticas mensuales
         const estadisticasMes = calcularEstadisticasMensuales(data, parseInt(mesVal), parseInt(anio));
         
-        // Actualizar KPI's
         document.getElementById('kpiLavados').textContent = estadisticasMes.totalLavados;
         document.getElementById('kpiNoLavados').textContent = estadisticasMes.totalNoLavados;
         document.getElementById('kpiCumplimiento').textContent = `${estadisticasMes.porcentaje}%`;
         
-        // Calcular porcentaje de cumplimiento anual
+        // Calcular porcentaje de cumplimiento anual (CORREGIDO)
         const porcentajeCumplimientoAnual = calcularPorcentajeCumplimientoAnual(data.datosGraficoAnual);
         document.getElementById('kpiCumplimientoAnual').textContent = `${porcentajeCumplimientoAnual}%`;
         
         const nombreMes = mesesNombres[parseInt(mesVal) - 1];
         
-        // Obtener las semanas del mes (ya vienen en el formato correcto del backend)
         const semanasKeys = Object.keys(data.resumenSemanas || {}).sort();
         
-        // Preparar datos para gráfico mensual
         const labelsSemanas = semanasKeys.map(key => {
             const parts = key.split('-');
             return `Sem ${parts[1]}`;
@@ -1106,24 +1135,24 @@
             }
         });
 
-        // Renderizar desglose de cumplimiento
         renderizarDesgloseCumplimiento(data, parseInt(mesVal), parseInt(anio), semanasKeys);
-        
-        // Renderizar tabla semanal
         renderizarTablaSemanas(data, parseInt(mesVal), parseInt(anio), semanasKeys);
     }
 
     function calcularPorcentajeCumplimientoAnual(datosAnual) {
         let totalLavados = 0;
-        let totalGeneral = 0;
+        let totalNoLavadosResponsabilidad = 0;
         
         for (let i = 0; i < datosAnual.lavados.length; i++) {
             totalLavados += datosAnual.lavados[i];
-            totalGeneral += datosAnual.lavados[i] + datosAnual.noLavados[i];
+            if (datosAnual.noLavadosResponsabilidad && datosAnual.noLavadosResponsabilidad[i] !== undefined) {
+                totalNoLavadosResponsabilidad += datosAnual.noLavadosResponsabilidad[i];
+            }
         }
         
-        if (totalGeneral === 0) return 0;
-        return Math.round((totalLavados / totalGeneral) * 100);
+        const totalResponsabilidad = totalLavados + totalNoLavadosResponsabilidad;
+        if (totalResponsabilidad === 0) return 0;
+        return Math.round((totalLavados / totalResponsabilidad) * 100);
     }
 
     function renderizarDesgloseCumplimiento(data, mes, anio, semanasKeys) {
@@ -1152,6 +1181,7 @@
                 estadisticas = {
                     lavados: 0,
                     noLavados: 0,
+                    noLavadosResponsabilidad: 0,
                     pendientes: totalOasis,
                     motivoPendientes: semanaYaTermino ? 'No se reportó actividad' : 'Aún no reportado',
                     porcentaje: 0,
@@ -1166,6 +1196,10 @@
                     },
                     totalOasis: totalOasis
                 };
+                
+                if (semanaYaTermino) {
+                    estadisticas.noLavadosResponsabilidad = totalOasis;
+                }
             }
             
             const semanaDiv = document.createElement('div');
