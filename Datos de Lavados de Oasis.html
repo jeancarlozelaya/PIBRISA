@@ -449,37 +449,29 @@
         <div id="dashboardContent" style="display: none;">
             
             <!-- KPI Cards -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-3">
-                    <div class="card-custom text-center">
-                        <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="kpi-value" id="kpiLavados">0</div>
-                        <div class="kpi-label">Oasis Lavados del Mes</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card-custom text-center">
-                        <div class="kpi-icon"><i class="fas fa-times-circle"></i></div>
-                        <div class="kpi-value" id="kpiNoLavados">0</div>
-                        <div class="kpi-label">Oasis No Lavados del Mes</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card-custom text-center">
-                        <div class="kpi-icon"><i class="fas fa-percentage"></i></div>
-                        <div class="kpi-value" id="kpiCumplimiento">0%</div>
-                        <div class="kpi-label">Cumplimiento del Mes</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card-custom text-center">
-                        <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
-                        <div class="kpi-value" id="kpiCumplimientoAnual">0%</div>
-                        <div class="kpi-label">% Cumplimiento Anual</div>
-                    </div>
-                </div>
-            </div>
-
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card-custom text-center">
+            <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="kpi-value" id="kpiLavados">0</div>
+            <div class="kpi-label">Oasis Lavados del Mes</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-custom text-center">
+            <div class="kpi-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="kpi-value" id="kpiNoLavados">0</div>
+            <div class="kpi-label">Oasis No Lavados del Mes</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-custom text-center">
+            <div class="kpi-icon"><i class="fas fa-percentage"></i></div>
+            <div class="kpi-value" id="kpiCumplimiento">0%</div>
+            <div class="kpi-label">Cumplimiento del Mes</div>
+        </div>
+    </div>
+</div>
             <!-- Desglose de Cumplimiento por Semana -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -522,7 +514,7 @@
 
             <!-- Gráficos -->
             <div class="row g-4 mb-4">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card-custom">
                         <div class="chart-box">
                             <canvas id="chartMensual"></canvas>
@@ -531,19 +523,6 @@
                             <small class="text-muted">
                                 <i class="fas fa-info-circle me-1"></i>
                                 Oasis lavados vs no lavados por semana (incluyendo pendientes)
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card-custom">
-                        <div class="chart-box">
-                            <canvas id="chartAnual"></canvas>
-                        </div>
-                        <div class="text-center mt-2">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Tendencia anual de lavados de oasis
                             </small>
                         </div>
                     </div>
@@ -646,7 +625,6 @@
     ];
     
     let chartMensual = null;
-    let chartAnual = null;
     let datosGlobales = null;
     let proyectoActual = "";
     let modalPDF = null;
@@ -1010,9 +988,7 @@
         // ✅ El % de cumplimiento ya viene corregido desde la función
         document.getElementById('kpiCumplimiento').textContent = `${estadisticasMes.porcentaje}%`;
         
-        // Calcular porcentaje de cumplimiento anual
-        const porcentajeCumplimientoAnual = calcularPorcentajeCumplimientoAnual(data.datosGraficoAnual);
-        document.getElementById('kpiCumplimientoAnual').textContent = `${porcentajeCumplimientoAnual}%`;
+
         
         const nombreMes = mesesNombres[parseInt(mesVal) - 1];
         
@@ -1124,80 +1100,13 @@
             }
         });
 
-        // Crear gráfico anual
-        const ctxAnual = document.getElementById('chartAnual');
-        if (chartAnual) chartAnual.destroy();
-        
-        chartAnual = new Chart(ctxAnual, {
-            type: 'line',
-            data: {
-                labels: data.datosGraficoAnual.labels,
-                datasets: [
-                    {
-                        label: 'Oasis Lavados',
-                        data: data.datosGraficoAnual.lavados,
-                        borderColor: '#27ae60',
-                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Oasis No Lavados (No Justificados)',
-                        data: data.datosGraficoAnual.noLavados,
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: `Tendencia Anual - ${anio}`,
-                        font: { size: 14 }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Cantidad de Oasis',
-                            font: { weight: 'bold' }
-                        }
-                    }
-                }
-            }
-        });
+
 
         // Renderizar desglose de cumplimiento
         renderizarDesgloseCumplimiento(data, parseInt(mesVal), parseInt(anio), semanasKeys);
         
         // Renderizar tabla semanal
         renderizarTablaSemanas(data, parseInt(mesVal), parseInt(anio), semanasKeys);
-    }
-
-    // =========================================================================
-    // CALCULAR PORCENTAJE DE CUMPLIMIENTO ANUAL - CORREGIDO
-    // =========================================================================
-
-    function calcularPorcentajeCumplimientoAnual(datosAnual) {
-        // Para el anual, los no lavados que se muestran son solo los no justificados
-        let totalLavados = 0;
-        let totalNoJustificados = 0;
-        
-        for (let i = 0; i < datosAnual.lavados.length; i++) {
-            totalLavados += datosAnual.lavados[i];
-            totalNoJustificados += datosAnual.noLavados[i];
-        }
-        
-        const totalGeneral = totalLavados + totalNoJustificados;
-        if (totalGeneral === 0) return 0;
-        return Math.round((totalLavados / totalGeneral) * 100);
     }
 
     // =========================================================================
@@ -1715,5 +1624,7 @@
         xhr.send(JSON.stringify(requestData));
     }
 </script>
+
+
 </body>
 </html>
