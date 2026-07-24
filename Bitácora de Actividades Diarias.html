@@ -4,1470 +4,1976 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bitácora de Actividades Diarias</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <style>
-        /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
-        body, html {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+        /* --- ESTILOS BASE --- */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #2ecc71;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --light-yellow: #fff9e6;
+            --insumos-primary: #3f7b57;
+            --insumos-accent: #2196F3;
+            --insumos-light-gray: #f0f2f5;
+            --insumos-danger: #ef5350;
+            --diario-color: #A6D5FA;
+            --semanal-color: #FFC0CB;
         }
 
-        /* Header */
+        html, body {
+            touch-action: manipulation;
+            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--insumos-light-gray);
+            color: var(--dark-color);
+            line-height: 1.6;
+            -webkit-user-scalable: no;
+            -moz-user-scalable: no;
+            -ms-user-scalable: no;
+            user-scalable: no;
+        }
+
+        * {
+            touch-action: pan-x pan-y;
+        }
+
         .header {
-            background-color: #007BFF;
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
             text-align: center;
-            padding: 15px;
-            width: 100%;
-            font-size: 1.5em;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
-        }
-
-        /* Contenedor del formulario */
-        .container {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            text-align: center;
-            margin: 40px auto;
-            grid-row: 2;
-            height: auto;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 100;
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            margin: 0 0 20px 0; /* Ajusta el margen inferior */
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
             font-weight: bold;
         }
 
-        input[type="date"],
-        input[type="time"],
-        input[type="text"],
-        textarea,
-        select,
-        #oficina,
-        button {
-            width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
         }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
+        .container {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: var(--shadow);
             border: none;
-            cursor: pointer;
-            padding: 12px 0;
+            margin-bottom: 25px;
+            border-top: 5px solid var(--insumos-primary);
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .card-body {
+            padding: 2.5rem;
         }
 
-        /* Estilo para el botón "Volver al Inicio" */
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
+        .tab-title {
             text-align: center;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
-            position: fixed;
-            top: 80px;
-            left: 0px;
-            z-index: 1001;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding: 20px 0;
+            position: relative;
         }
 
-        .back-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+        .tab-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            display: inline-block;
+            padding: 0 25px;
+            position: relative;
         }
 
-        /* Estilo para los contenedores de preguntas */
+        .tab-title h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            border-radius: 2px;
+        }
+
+        .tab-title h2:before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        /* Estilos de botones estilo SUPARGOS */
+        .btn-primary, .btn-success, .btn-secondary, .btn-danger {
+            border: none;
+            font-weight: 600;
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            min-width: 130px;
+            transition: var(--transition);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary { background: linear-gradient(45deg, var(--secondary-color), #5dade2); }
+        .btn-success { background: linear-gradient(45deg, #2ecc71, #58d68d); }
+        .btn-secondary { background: linear-gradient(45deg, var(--dark-color), var(--primary-color)); }
+        .btn-danger { background: linear-gradient(45deg, var(--accent-color), #e74c3c); }
+
+        .btn-primary:hover, .btn-success:hover, .btn-secondary:hover, .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
         .question-container {
+            background-color: #fdfdfd;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
-            text-align: left;
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            border-left: 4px solid var(--secondary-color);
             transition: border-color 0.3s;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
         }
 
         .question-container:hover {
-            border-color: #007BFF;
+            border-color: var(--secondary-color);
         }
 
-        .question-container input[type="date"],
-        .question-container input[type="time"],
-        .question-container input[type="text"],
-        .question-container textarea,
-        .question-container select {
+        .question-container label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        /* Estilos de pestañas para actividades */
+        .nav-tabs .nav-link {
+            border: none;
+            color: #7f8c8d;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #e9ecef;
+            color: var(--dark-color);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: white;
+            color: var(--dark-color);
+            border-top: 4px solid var(--secondary-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e9ecef;
+            padding: 0 10px;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-pane {
+            padding: 20px 0;
+        }
+
+        /* Estilos de tabla */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-color: #dee2e6;
+            text-align: center;
             padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            color: #333;
-            transition: border-color 0.3s;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        }
+
+        .table td {
+            padding: 10px;
+            border-color: #dee2e6;
+            vertical-align: middle;
+        }
+
+        .table td:last-child {
+            text-align: center;
+            width: 60px;
+        }
+
+        .table td:first-child {
+            text-align: left;
+        }
+
+        .table td:nth-child(2) {
+            text-align: center;
+            width: 80px;
+        }
+
+        .table input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            transform: scale(1.3);
+            cursor: pointer;
+            margin: 0 auto;
+        }
+
+        .table input[type="checkbox"]:checked {
+            accent-color: var(--secondary-color);
+        }
+
+        .fila-diario {
+            background-color: var(--diario-color);
+        }
+
+        .fila-semanal {
+            background-color: var(--semanal-color);
+        }
+
+        /* Ocultar columna de Frecuencia */
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            display: none;
+        }
+
+        /* Estilo para el contenedor de la semana */
+        #semanaContainer {
+            margin: 20px 0 30px 0;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: var(--shadow);
+        }
+
+        #semanaContainer h3 {
+            margin-top: 0;
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .semana-grid {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            gap: 5px;
+        }
+
+        .dia-item {
+            text-align: center;
+            flex: 1;
+            padding: 10px 5px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .dia-item .dia-nombre {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--dark-color);
+        }
+
+        .dia-item .dia-fecha {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        .dia-item .dia-status {
+            font-size: 0.9rem;
             margin-top: 5px;
         }
 
-        .question-container input[type="date"]:focus,
-        .question-container input[type="time"]:focus,
-        .question-container input[type="text"]:focus,
-        .question-container textarea:focus,
-        .question-container select:focus {
-            border-color: #007BFF;
-            outline: none;
+        .dia-item.dia-actual {
+            background-color: #e6f7ff;
+            border: 2px solid var(--secondary-color);
         }
 
-        /* Estilo del overlay (pantalla bloqueada) */
+        .dia-item.dia-otro-mes {
+            opacity: 0.5;
+            background-color: #f0f0f0;
+        }
+
+        .dia-item .check-completado { color: #2ecc71; }
+        .dia-item .check-pendiente { color: #e74c3c; }
+
+        .botones-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .botones-container button {
+            flex: 1;
+            margin: 0;
+            border: none;
+            font-weight: 600;
+            padding: 12px 25px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            transition: var(--transition);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-width: 130px;
+        }
+
+        #reiniciarBtn {
+            background: linear-gradient(45deg, var(--dark-color), var(--primary-color));
+            color: white;
+            display: none;
+        }
+
+        #reiniciarBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        #enviarBtn {
+            background: linear-gradient(45deg, var(--secondary-color), #5dade2);
+            color: white;
+        }
+
+        #enviarBtn:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+            transform: none;
+        }
+
+        #enviarBtn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Badge de cambios no enviados */
+        .badge-cambios {
+            display: none;
+            background-color: var(--warning-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .badge-cambios.mostrar {
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Overlay de carga */
         #overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         #loadingMessage {
-            color: white;
-            font-size: 24px;
-            font-family: 'Times New Roman', Times, serif;
             text-align: center;
-            padding: 20px;
+            color: var(--dark-color);
         }
 
-        /* Estilo para Mensajes */
-        .swal-actions {
-            display: flex; /* Coloca los botones en una fila */
-            justify-content: center; /* Centra los botones horizontalmente */
-            gap: 10px; /* Espacio entre los botones */
-            width: 80%; /* Limita el ancho del contenedor al 80% del modal */
-            margin: 0 auto; /* Centra el contenedor horizontalmente */
-            flex-wrap: nowrap; /* Evita que los botones se apilen en dos filas */
+        #loadingMessage h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: bold;
         }
 
-        /* Estilo personalizado para el contenido del mensaje */
-        .swal-content {
-            font-size: 0.9em;  /* Reduce el tamaño del texto */
-            line-height: 1.4;  /* Ajusta el espaciado entre líneas */
+        /* Estilos para el modal de edición de semana */
+        .modal-semana {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-        .swal2-html-container {
+        .modal-semana-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 95%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .modal-semana-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
         }
 
-        /* Estilo personalizado para ambos botones */
-        .swal-button,
-        .swal-button-cancel {
-            flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
-            min-width: 120px; /* Ancho mínimo para ambos botones */
-            padding: 10px 20px; /* Espaciado interno */
-            font-size: 14px; /* Tamaño de fuente */
-            text-align: center; /* Centra el texto dentro del botón */
-            border: none; /* Elimina el borde predeterminado */
-            border-radius: 4px; /* Bordes redondeados */
-            color: white; /* Texto en blanco */
-            transition: background-color 0.3s ease; /* Transición suave para el hover */
+        .modal-semana-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 700;
         }
 
-    /* Estilo personalizado para el popup/modal */
-    .swal-popup {
-        width: 300px;  /* Ajusta el ancho máximo del modal */
-        max-width: 90%;  /* Permite que el modal sea flexible en pantallas pequeñas */
-    }
-
-        /* Opcional: colores específicos para cada botón */
-        .swal-button {
-            background-color: #28a745;  /* Verde para el botón de "Sí" */
-            color: white;  /* Texto en blanco */
+        .modal-semana-header .btn-close-modal {
+            background: none;
             border: none;
-            border-radius: 4px;
+            font-size: 1.8rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0 10px;
+            transition: var(--transition);
+            line-height: 1;
         }
 
-        .swal-button-cancel {
-            background-color: #FF6347 ;  /* Rojo para el botón de "No" */
-            color: white;  /* Texto oscuro */
+        .modal-semana-header .btn-close-modal:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .modal-semana-scroll {
+            overflow: auto;
+            flex: 1;
+        }
+
+        .modal-semana-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .modal-semana-scroll th {
+            position: sticky;
+            top: 0;
+            background-color: #f4f4f4;
+            z-index: 10;
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .modal-semana-scroll td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .modal-semana-scroll td:first-child {
+            text-align: left;
+            min-width: 150px;
+        }
+
+        .modal-semana-scroll input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+
+        .modal-semana-scroll input[type="checkbox"]:checked {
+            accent-color: var(--secondary-color);
+        }
+
+        /* Colores para filas en el modal de semana */
+        .modal-semana-scroll .fila-diario-modal {
+            background-color: var(--diario-color);
+        }
+
+        .modal-semana-scroll .fila-semanal-modal {
+            background-color: var(--semanal-color);
+        }
+
+        .modal-semana-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .modal-semana-actions button {
+            padding: 12px 35px;
             border: none;
-            border-radius: 4px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: white;
+            background: linear-gradient(45deg, #28a745, #58d68d);
+        }
+
+        .modal-semana-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Estilos de mensajes SweetAlert2 */
+        .swal2-popup {
+            border-radius: 12px !important;
+            padding: 25px !important;
         }
 
         .swal2-actions {
-            display: flex !important;  /* Asegura que los botones estén en una fila */
-            justify-content: center;   /* Centra los botones horizontalmente */
-            gap: 10px;                 /* Agrega espacio entre los botones */
-            flex-wrap: nowrap;         /* Evita que los botones se apilen en dos filas */
+            gap: 12px !important;
         }
 
-        /* Eliminar el borde negro del ícono personalizado */
-        .swal2-icon.swal2-icon-show {
-            background-color: transparent !important; /* Fondo transparente */
+        .swal2-confirm {
+            border-radius: 50px !important;
+            padding: 10px 30px !important;
+            font-weight: 600 !important;
+            min-width: 120px !important;
         }
 
-        .no-border-icon {
-            border: none !important; /* Elimina el borde circular */
-            background-color: transparent !important; /* Fondo transparente */
+        .swal2-cancel {
+            border-radius: 50px !important;
+            padding: 10px 30px !important;
+            font-weight: 600 !important;
+            min-width: 120px !important;
         }
 
-        /* Estilo para Botones, Habilitar/Deshabilitar */
-        #enviarBtn {
-            background-color: #007bff; /* Color azul */
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 12px 0;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, opacity 0.3s ease;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .semana-grid {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 3px;
+            }
+
+            .dia-item {
+                min-width: 45px;
+                padding: 5px 3px;
+                font-size: 0.7rem;
+            }
+
+            .modal-semana-content {
+                max-width: 100%;
+                max-height: 95%;
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .modal-semana-scroll {
+                font-size: 0.75rem;
+            }
+
+            .modal-semana-scroll th,
+            .modal-semana-scroll td {
+                padding: 5px 3px;
+            }
+
+            .modal-semana-scroll td:first-child {
+                min-width: 100px;
+                font-size: 0.7rem;
+            }
+
+            .botones-container {
+                flex-direction: column;
+            }
+
+            .botones-container button {
+                width: 100%;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+
+            .modal-semana-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .modal-semana-header .btn-close-modal {
+                font-size: 1.5rem;
+            }
         }
 
-        /* Estilo para el botón de enviar cuando está deshabilitado */
-        #enviarBtn:disabled {
-            background-color: #ccc; /* Color gris */
-            color: #666666; /* Texto gris oscuro */
-            cursor: not-allowed; /* Cambia el cursor a "no permitido" */
-            opacity: 0.7; /* Reduce la opacidad para dar un aspecto deshabilitado */
+        @media (max-width: 480px) {
+            .header {
+                font-size: 1.2rem;
+                padding: 12px 0;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .container {
+                margin: 10px auto;
+                padding: 0 10px;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .question-container {
+                padding: 15px;
+            }
+
+            .tab-title h2 {
+                font-size: 1.2rem;
+                padding: 0 15px;
+            }
+
+            .badge-cambios {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+                margin-left: 5px;
+            }
         }
-
-        /* Efecto hover solo cuando el botón está habilitado */
-        #enviarBtn:not(:disabled):hover {
-            background-color: #0056b3; /* Color azul más oscuro al pasar el mouse */
-        }
-
-        /* Estilo para Botones, Misma Linea */
-        .botones-container {
-            display: flex; /* Hace que los botones estén en la misma línea */
-            justify-content: space-between; /* Espacio entre los botones */
-            gap: 10px; /* Espacio entre los botones */
-            margin-top: 20px; /* Margen superior para separar del contenido anterior */
-        }
-
-        /* Estilo para los botones dentro del contenedor */
-        .botones-container button {
-            flex: 1; /* Hace que los botones ocupen el espacio disponible */
-            margin: 0; /* Elimina el margen predeterminado */
-        }
-
-        /* Estilo para el botón Reiniciar */
-        #reiniciarBtn {
-            background-color: #6c757d; /* Color gris */
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 12px 0;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            display: none; /* Oculto por defecto */
-        }
-
-        #reiniciarBtn:hover {
-            background-color: #5a6268; /* Color gris más oscuro al pasar el mouse */
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-
-/* Centrar los encabezados de la tabla */
-#tablaActividades th {
-    text-align: center;
-}
-
-/* Centrar las celdas de las columnas Frecuencia y Realizada */
-#tablaActividades td:nth-child(2),
-#tablaActividades td:nth-child(3) {
-    text-align: center;
-}
-
-/* Centrar los checkboxes en la columna Realizada */
-#tablaActividades td:nth-child(3) input[type="checkbox"] {
-    margin: 0 auto;
-    display: block;
-}
-
-
-/* Color para filas con frecuencia Diario */
-.fila-diario {
-    background-color: #A6D5FA; /* Azul pastel más bonito */
-}
-
-/* Color para filas con frecuencia Semanal */
-.fila-semanal {
-    background-color: #FFC0CB; /* Lila pastel más bonito */
-}
-
-/* Estilo para la simbología */
-.simbologia {
-    margin-bottom: 10px;
-    font-size: 14px;
-    display: flex;
-    gap: 10px;
-}
-
-.simbologia div {
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-/* Estilo para la simbología */
-.simbologia .diario {
-    background-color: #A6D5FA; /* Azul pastel */
-}
-
-.simbologia .semanal {
-    background-color: #FFC0CB; /* Lila pastel */
-}
-
-/* Ocultar la columna de Frecuencia */
-#tablaActividades th:nth-child(2),
-#tablaActividades td:nth-child(2) {
-    display: none;
-}
-
-/* Estilo para hacer los checkboxes más grandes */
-#tablaActividades input[type="checkbox"] {
-    width: 20px;       /* Ancho del checkbox */
-    height: 20px;      /* Alto del checkbox */
-    transform: scale(1.5); /* Escala el checkbox para hacerlo más grande */
-    margin: 0 auto;    /* Centra el checkbox en la celda */
-    display: block;    /* Asegura que el margen auto funcione */
-    cursor: pointer;   /* Cambia el cursor al pasar sobre el checkbox */
-}
-
-/* Opcional: estilo para cuando el checkbox está marcado */
-#tablaActividades input[type="checkbox"]:checked {
-    background-color: #007BFF; /* Color de fondo cuando está marcado */
-}
-
-
-
-
-
-
     </style>
 </head>
 <body>
-    <div class="header">
-        Pisos Brillantes
-    </div>
-    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    <div class="header">Pisos Brillantes</div>
+
     <div class="container">
-        <h1>Bitácora de Actividades Diarias</h1>
-        <div class="form-container">
-            <form id="bitacoraForm">
-                <div class="question-container">
-                    <label for="fecha">Fecha:</label>
-                    <input type="date" id="fecha" name="fecha" required>
-                </div>
+        <h1>
+            Bitácora de Actividades Diarias
+            <span class="badge-cambios" id="badgeCambios">
+                <i class="fas fa-exclamation-triangle me-1"></i>Cambios sin enviar
+            </span>
+        </h1>
 
-                <div class="question-container">
-                    <label for="tipo">Tipo de Actividad:</label>
-                    <select id="tipo" name="tipo" required onchange="mostrarCampos()">
-                        <option value="">Selecciona una opción</option>
-                        <option value="Área">Área</option>
-                        <option value="Baño">Baño</option>
-                    </select>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <form id="bitacoraForm">
+                    <!-- PÁGINA 1: UBICACIÓN -->
+                    <div id="pagina-1" class="pagina active">
+                        <div class="tab-title">
+                            <h2>Ubicación</h2>
+                        </div>
 
-                <div class="question-container" id="areaContainer" style="display: none;">
-                    <label for="area">Área:</label>
-                    <select id="area" name="area">
-                        <option value="">Selecciona una opción</option>
-                        <option value="Administración">Administración</option>
-                        <option value="Almacén General">Almacén General</option>
-                        <option value="Bodega de Limpieza">Bodega de Limpieza</option>
-                        <option value="Chiminike">Chiminike</option>
-                        <option value="Despacho">Despacho</option>
-                        <option value="Enfermería">Enfermería</option>
-                        <option value="Equipo Móvil">Equipo Móvil</option>
-                        <option value="Expedición">Expedición</option>
-                        <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
-                        <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
-                        <option value="Machaqueo A">Machaqueo A</option>
-                        <option value="Posta Principal">Posta Principal</option>
-                        <option value="Sala de Control">Sala de Control</option>
-                        <option value="Sala de Maternidad">Sala de Maternidad</option>
-                        <option value="Salón Vial">Salón Vial</option>
-                        <option value="Taller Eléctrico">Taller Eléctrico</option>
-                    </select>
-                </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="fecha" class="form-label">Fecha</label>
+                                <input type="date" class="form-control auto-save" id="fecha" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="tipo" class="form-label">Tipo de Actividad</label>
+                                <select class="form-select auto-save" id="tipo" required onchange="mostrarCampos()">
+                                    <option value="">Selecciona una opción</option>
+                                    <option value="Área">Área</option>
+                                    <option value="Baño">Baño</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="area" class="form-label">Área / Baño</label>
+                                <select class="form-select auto-save" id="area" required disabled>
+                                    <option value="">Selecciona un tipo primero...</option>
+                                </select>
+                            </div>
+                        </div>
 
-<div class="question-container" id="oficinaContainer" style="display: none;">
-    <label for="oficina">Oficina:</label>
-    <select id="oficina" name="oficina">
-        <option value="">Selecciona una opción</option>
-        <option value="Sección #1">Sección #1</option>
-        <option value="Sección #2">Sección #2</option>
-    </select>
-</div>
+                        <!-- Campo oculto para oficina -->
+                        <div class="row" id="oficinaContainer" style="display: none;">
+                            <div class="col-md-6 mb-3">
+                                <label for="oficina" class="form-label">Oficina</label>
+                                <select class="form-select auto-save" id="oficina">
+                                    <option value="">Selecciona una opción</option>
+                                    <option value="Sección #1">Sección #1</option>
+                                    <option value="Sección #2">Sección #2</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <div class="question-container" id="bañoContainer" style="display: none;">
-                    <label for="baño">Baños de:</label>
-                    <select id="baño" name="baño">
-                        <option value="">Selecciona una opción</option>
-                        <option value="Admin - Gerencia">Admin - Gerencia</option>
-                        <option value="Admin - Hombres">Admin - Hombres</option>
-                        <option value="Admin - Mujeres">Admin - Mujeres</option>
-                        <option value="Admin - Sala de Reuniones">Admin - Sala de Reuniones</option>
-                        <option value="Almacen General">Almacen General</option>
-                        <option value="Camerinos Contratistas">Camerinos Contratistas</option>
-                        <option value="Camerinos Permanentes">Camerinos Permanentes</option>
-                        <option value="Despacho">Despacho</option>
-                        <option value="Enfermería">Enfermería</option>
-                        <option value="Expedición">Expedición</option>
-                        <option value="Laboratorio de Calidad">Laboratorio de Calidad</option>
-                        <option value="Laboratorio de Concreto">Laboratorio de Concreto</option>
-                        <option value="Machaqueo A">Machaqueo A</option>
-                        <option value="Posta Guardias">Posta Guardias</option>
-                        <option value="Posta Recepción">Posta Recepción</option>
-                        <option value="Sala de Control">Sala de Control</option>
-                        <option value="Salón Vial">Salón Vial</option>
-                        <option value="Taller Electrico">Taller Electrico</option>
-                        <option value="Transportistas">Transportistas</option>
-                    </select>
-                </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-primary btn-navegacion" data-pagina-actual="1" data-direccion="siguiente" id="btn-pag1-siguiente" disabled>
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="simbologia">
-                    <div class="diario">Diario</div>
-                    <div class="semanal">Semanal</div>
-                </div>
+                    <!-- PÁGINA 2: ACTIVIDADES -->
+                    <div id="pagina-2" class="pagina">
+                        <div class="tab-title">
+                            <h2>Actividades</h2>
+                        </div>
 
-                <table id="tablaActividades">
-                    <thead>
-                        <tr>
-                            <th>Actividad</th>
-                            <th>Frecuencia</th>
-                            <th>Realizada</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las actividades se generarán automáticamente aquí -->
-                    </tbody>
-                </table>
+                        <!-- Pestañas para actividades -->
+                        <ul class="nav nav-tabs" id="actividadTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-diario" data-bs-toggle="tab" data-bs-target="#contenido-diario" type="button" role="tab">
+                                    <i class="fas fa-calendar-day me-2"></i>Diario
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-semanal" data-bs-toggle="tab" data-bs-target="#contenido-semanal" type="button" role="tab">
+                                    <i class="fas fa-calendar-week me-2"></i>Semanal
+                                </button>
+                            </li>
+                        </ul>
 
-                <div class="botones-container">
-                    <button type="button" id="reiniciarBtn" onclick="reiniciarFormulario()">Reiniciar</button>
-                    <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
-                </div>
-            </form>
+                        <div class="tab-content" id="actividadTabsContent">
+                            <div class="tab-pane fade show active" id="contenido-diario" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaDiario">
+                                        <thead>
+                                            <tr>
+                                                <th>Actividad</th>
+                                                <th>Frecuencia</th>
+                                                <th style="width: 60px;">Realizada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaDiarioBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="contenido-semanal" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaSemanal">
+                                        <thead>
+                                            <tr>
+                                                <th>Actividad</th>
+                                                <th>Frecuencia</th>
+                                                <th style="width: 60px;">Realizada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaSemanalBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Contenedor para bloquear la pantalla -->
-            <div id="overlay" style="display: none;">
-                <div id="loadingMessage">
-                    <p>Procesando...🥱</p>
-                </div>
+                        <!-- Contenedor para la semana -->
+                        <div id="semanaContainer" style="display: none;"></div>
+
+                        <div class="botones-container">
+                            <button type="button" id="reiniciarBtn" onclick="confirmarReinicio()">
+                                <i class="fas fa-undo me-2"></i>Reiniciar
+                            </button>
+                            <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-<script>
-    // Función para volver al inicio
-    function goBack() {
-        window.location.href = "Bitácoras.html";
-    }
-
-    // Precargar la fecha actual
-    function prellenarFechaHora() {
-        let today = new Date();
-        let year = today.getFullYear();
-        let month = String(today.getMonth() + 1).padStart(2, "0");
-        let day = String(today.getDate()).padStart(2, "0");
-        document.getElementById("fecha").value = `${year}-${month}-${day}`;
-    }
-
-    // Llamar a la función para precargar la fecha al cargar la página
-    prellenarFechaHora();
-
-    // Arreglo COMPLETO de actividades para Áreas (sin omitir ninguna)
-    const actividadesArea = [
-        { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
-        { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
-        { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
-        { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
-        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-        { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-        { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
-        { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
-        { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
-        { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
-        { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-    ];
-
-    // Arreglo COMPLETO de actividades para Baños (sin omitir ninguna)
-    const actividadesBaño = [
-        { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
-        { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
-        { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
-        { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
-        { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
-        { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
-        { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
-        { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
-        { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
-        { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
-        { descripcion: "Reemplazar la pastilla PDC con alambre si ha perdido su aroma o está muy reducida en tamaño.", frecuencia: "Semanal" },
-        { descripcion: "Reemplazar el tapete antisalpicadura del urinario si está deteriorado o desprende mal olor.", frecuencia: "Semanal" },
-        { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
-        { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
-    ];
-
-
-    // Función para generar las filas de la tabla
-    function generarTablaActividades(actividades) {
-        const tbody = document.querySelector("#tablaActividades tbody");
-        tbody.innerHTML = ""; // Limpiar la tabla antes de generar nuevas filas
-
-        actividades.forEach((actividad) => {
-            const row = document.createElement("tr");
-
-            // Agregar clase según la frecuencia
-            if (actividad.frecuencia === "Diario") {
-                row.classList.add("fila-diario");
-            } else if (actividad.frecuencia === "Semanal") {
-                row.classList.add("fila-semanal");
-            }
-
-            row.innerHTML = `
-                <td>${actividad.descripcion}</td>
-                <td>${actividad.frecuencia}</td>
-                <td><input type="checkbox" name="actividad" value="${actividad.descripcion}"></td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    // Función para bloquear los campos del formulario
-function bloquearCampos() {
-    const campos = [
-        'fecha', 'tipo', 'area', 'baño', 'oficina'
-    ];
-    
-    campos.forEach(id => {
-        const campo = document.getElementById(id);
-        if (campo) {
-            campo.disabled = true;
-        }
-    });
-    
-    // Mostrar botón Reiniciar (siempre)
-    document.getElementById('reiniciarBtn').style.display = 'block';
-}
-
-    // Función para reiniciar el formulario (simplificada)
-    function reiniciarFormulario() {
-        Swal.fire({
-            text: "¿Estás seguro de que deseas reiniciar el formulario?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Sí, reiniciar",
-            cancelButtonText: "Cancelar",
-            customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                cancelButton: "swal-button-cancel",
-                actions: "swal-actions",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Limpiar el localStorage
-                localStorage.removeItem('formData');
-                
-                // Recargar la página
-                location.reload();
-            }
-        });
-    }
-
-    // Función para habilitar o deshabilitar el botón de Enviar
-    function actualizarBotonEnviar() {
-        const enviarBtn = document.getElementById("enviarBtn");
-        enviarBtn.disabled = !verificarCampos();
-    }
-
-    // Escuchar cambios en los campos
-    document.getElementById("tipo").addEventListener("change", function () {
-        mostrarCampos(); // Mostrar u ocultar campos según el tipo
-        actualizarBotonEnviar(); // Actualizar el estado del botón
-    });
-
-    document.getElementById("area").addEventListener("change", function() {
-        const area = this.value;
-        const oficinaContainer = document.getElementById("oficinaContainer");
-        
-        if (area === "Administración") {
-            oficinaContainer.style.display = "block";
-        } else {
-            oficinaContainer.style.display = "none";
-            document.getElementById("oficina").value = ""; // Resetear el valor
-        }
-        
-        actualizarBotonEnviar(); // Actualizar el estado del botón
-    });
-
-    document.getElementById("baño").addEventListener("change", actualizarBotonEnviar);
-    document.getElementById("oficina").addEventListener("change", actualizarBotonEnviar);
-
-    // Escuchar cambios en las actividades
-    document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
-        if (e.target.type === "checkbox") {
-            actualizarBotonEnviar(); // Actualizar el estado del botón
-        }
-    });
-
-
-    // Función para mostrar u ocultar campos según el tipo de actividad
-    function mostrarCampos() {
-        const tipo = document.getElementById("tipo").value;
-        const areaContainer = document.getElementById("areaContainer");
-        const bañoContainer = document.getElementById("bañoContainer");
-        const oficinaContainer = document.getElementById("oficinaContainer");
-        const tablaContainer = document.getElementById("tablaActividades");
-
-        // Resetear visibilidad
-        areaContainer.style.display = "none";
-        bañoContainer.style.display = "none";
-        oficinaContainer.style.display = "none";
-        tablaContainer.style.display = "none"; // Ocultar tabla inicialmente
-
-        if (tipo === "Área") {
-            areaContainer.style.display = "block";
-        } else if (tipo === "Baño") {
-            bañoContainer.style.display = "block";
-        }
-    }
-
-    // Función para verificar si todos los campos están completos
-    function verificarCampos() {
-        const tipo = document.getElementById("tipo").value;
-        const area = document.getElementById("area").value;
-        const baño = document.getElementById("baño").value;
-        const oficina = document.getElementById("oficina").value;
-
-        // Verificar el tipo de actividad
-        if (tipo === "") {
-            return false; // No se ha seleccionado un tipo
-        }
-
-        // Verificar si es Área o Baño
-        if (tipo === "Área") {
-            if (area === "") return false; // No se ha seleccionado un área
-            if (area === "Administración" && oficina === "") return false; // Para administración, se requiere oficina
-        } else if (tipo === "Baño" && baño === "") {
-            return false; // No se ha seleccionado un baño
-        }
-
-        return true;
-    }
-
-// Función para mostrar los controles de la semana
-function mostrarControlesSemana(semanaData) {
-  const semanaContainer = document.createElement('div');
-  semanaContainer.id = 'semanaContainer';
-  semanaContainer.style.margin = '20px 0';
-  semanaContainer.style.padding = '15px';
-  semanaContainer.style.border = '1px solid #ddd';
-  semanaContainer.style.borderRadius = '5px';
-  semanaContainer.style.backgroundColor = '#f9f9f9';
-  
-  // Obtener mes de la fecha seleccionada
-  const fechaSeleccionada = document.getElementById('fecha').value;
-  const mesSeleccionado = fechaSeleccionada.split('-')[1];
-  
-  // Contar cuántos días no son del mismo mes
-  const diasOtroMes = semanaData.filter(dia => !dia.mismoMes).length;
-  
-  semanaContainer.innerHTML = `
-    <h3 style="margin-top: 0; text-align: center;">Semana del ${formatearFecha(semanaData[0].fecha)} al ${formatearFecha(semanaData[semanaData.length - 1].fecha)}</h3>
-    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-      ${semanaData.map((dia, index) => `
-        <div style="text-align: center; flex: 1; padding: 5px; 
-                    ${!dia.mismoMes ? 'opacity: 0.5; background-color: #f0f0f0;' : ''}
-                    ${dia.fecha === fechaSeleccionada ? 'background-color: #e6f7ff; border: 1px solid #007BFF;' : ''}">
-          <div style="font-weight: bold;">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}</div>
-          <div>${dia.fecha.split('-')[2]}/${dia.fecha.split('-')[1]}</div>
-          <div style="font-size: 0.8em; color: ${dia.actividades.length > 0 ? 'green' : 'gray'}">
-            ${dia.mismoMes ? (dia.actividades.length > 0 ? '✔' : '✖') : '—'}
-          </div>
+    <!-- Overlay de carga -->
+    <div id="overlay">
+        <div class="spinner"></div>
+        <div id="loadingMessage">
+            <h4>Por favor espera un momento...</h4>
         </div>
-      `).join('')}
     </div>
-    <div style="text-align: center;">
-      <button id="editarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Editar semana actual (${7 - diasOtroMes} días)
-      </button>
-    </div>
-    ${diasOtroMes > 0 ? `
-      <div style="text-align: center; margin-top: 10px; font-size: 0.8em; color: #666;">
-        ${diasOtroMes} día(s) sombreado(s) pertenece(n) a otro mes
-      </div>
-    ` : ''}
-  `;
-  
-  // Insertar después de la tabla
-  const tabla = document.getElementById('tablaActividades');
-  tabla.parentNode.insertBefore(semanaContainer, tabla.nextSibling);
-  
-  // Agregar evento al botón - solo editar días del mismo mes
-  document.getElementById('editarSemanaBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    mostrarModalSemana(semanaData.filter(dia => dia.mismoMes));
-  });
-}
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // =========================================================================
+        // CONFIGURACIÓN
+        // =========================================================================
 
+        const SESSION_KEY = 'bitacoraSessionData';
+        const DB_NAME = 'BitacoraImageDB';
+        const STORE_NAME = 'images';
 
+        // Arreglos de actividades
+        const actividadesArea = [
+            { descripcion: "Sacudir o aspirar el polvo de los muebles y las estanterías en las áreas designadas.", frecuencia: "Diario" },
+            { descripcion: "Limpiar y desinfectar todas las superficies de trabajo, incluyendo escritorios, mesas, estantes, archiveros y mostradores.", frecuencia: "Diario" },
+            { descripcion: "Limpiar y desinfectar los teléfonos, teclados, mouse y otros dispositivos electrónicos compartidos.", frecuencia: "Diario" },
+            { descripcion: "Limpiar y desinfectar todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfeccion de los oasis. Limpiar toda la superficie exterior con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfeccion de los microondas. Limpiar la superficie exterior e interior, con un paño desinfectante o toallitas adecuadas para eliminar gérmenes y mantener un entorno de trabajo saludable.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y lavado de las percoladoras, desmontar las piezas removibles y lavarlas con agua y jabón, asegurándose de enjuagarlas bien. Limpia la superficie exterior con un paño desinfectante para mantener la higiene.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de las refrigeradoras, limpiar tanto por dentro como por fuera, incluyendo estantes y cajones, usando un paño desinfectante para mantener un entorno seguro para los alimentos.", frecuencia: "Diario" },
+            { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+            { descripcion: "Recolectar la basura de todos los basureros, asegurandose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+            { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+            { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+            { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+            { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+            { descripcion: "Realizar un lavado profundo del oasis, de esta manera garantizar la calidad del agua que se dispensa y mantener el funcionamiento óptimo del equipo.", frecuencia: "Semanal" },
+            { descripcion: "Eliminar las partículas de polvo en los diferentes vidrios con un paño de microfibra color café. Aplicar limpiador de vidrio con un paño de microfibra azul para obtener un acabado brillante y sin rayas.", frecuencia: "Semanal" },
+            { descripcion: "Limpiar y aplicar abrillantador en las patas de las sillas usando un paño de microfibra color cafe para eliminar la suciedad y el polvo acumulado, y de esta manera dejarlas con un acabado brillante.", frecuencia: "Semanal" },
+            { descripcion: "Lavar las piletas de alrededores de las áreas.", frecuencia: "Semanal" },
+            { descripcion: "Lavar las papeleras de basura de las oficinas. Utilizar detergente y agua para lavar tanto el interior como el exterior de las papeleras, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+        ];
 
+        const actividadesBaño = [
+            { descripcion: "Recolectar la basura de todos los basureros, asegurándose de reemplazar las bolsas de basura por nuevas.", frecuencia: "Diario" },
+            { descripcion: "Barrer o mopear el suelo en toda el área designada para eliminar el polvo y la suciedad.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de los urinarios presentes.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de los sanitarios presentes.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de las duchas presentes.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de los lavamanos presentes.", frecuencia: "Diario" },
+            { descripcion: "Revisar que no haya daños o problemas de funcionamiento en los baños, y en caso que aplique reportar al supervisor.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de todas las superficies de contacto frecuente, como manijas de puertas, interruptores de luz y pasamanos.", frecuencia: "Diario" },
+            { descripcion: "Limpieza y desinfección de los recubrimientos como azulejos aplicando una solución concentrada de cloro al 0.2% y secar con una toalla de microfibra color amarillo.", frecuencia: "Diario" },
+            { descripcion: "Aplicar el limpiador y pulidor de acero inoxidable, con una toalla de microfibra color café en las superficies de acero inoxidable presentes en el área.", frecuencia: "Diario" },
+            { descripcion: "Aplicar limpiador de vidrio en los espejos con un paño de microfibra color azul para obtener un acabado brillante y sin rayas.", frecuencia: "Diario" },
+            { descripcion: "Reponer los suministros de papel higiénico, toallas de papel, jabón y otros suministros necesarios.", frecuencia: "Diario" },
+            { descripcion: "Revisar el estado de funcionamiento de los diferentes dispensadores que estén presentes, y en caso de daño reportar al supervisor.", frecuencia: "Diario" },
+            { descripcion: "Trapear el suelo en toda el área designada utilizando desinfectante, asegurando una limpieza más profunda y desinfección.", frecuencia: "Diario" },
+            { descripcion: "Aplicar un aromatizante en el área designada después de haber terminado la limpieza para mantener un ambiente fresco y agradable.", frecuencia: "Diario" },
+            { descripcion: "Reemplazar la pastilla PDC con alambre si ha perdido su aroma o está muy reducida en tamaño.", frecuencia: "Semanal" },
+            { descripcion: "Reemplazar el tapete antisalpicadura del urinario si está deteriorado o desprende mal olor.", frecuencia: "Semanal" },
+            { descripcion: "Limpiar las telas de araña y el polvo acumulado en las esquinas y techos utilizando un escobillón para alcanzar las áreas altas de manera efectiva.", frecuencia: "Semanal" },
+            { descripcion: "Lavar las papeleras de basura. Utilizar detergente y agua para lavar tanto el interior como el exterior, asegurándose de eliminar los gérmenes y olores no deseados.", frecuencia: "Semanal" }
+        ];
 
-// Función para formatear fecha (DD/MM/YYYY)
-function formatearFecha(fechaStr) {
-  const [year, month, day] = fechaStr.split('-');
-  return `${day}/${month}/${year}`;
-}
+        // Listas de áreas y baños
+        const areasList = [
+            "Administración", "Almacén General", "Bodega de Limpieza", "Chiminike",
+            "Despacho", "Enfermería", "Equipo Móvil", "Expedición",
+            "Laboratorio de Calidad", "Laboratorio de Concreto", "Machaqueo A",
+            "Posta Principal", "Sala de Control", "Sala de Maternidad",
+            "Salón Vial", "Taller Eléctrico"
+        ];
 
-// Función para mostrar el modal de edición semanal
-function mostrarModalSemana(semanaData) {
+        const bañosList = [
+            "Admin - Gerencia", "Admin - Hombres", "Admin - Mujeres",
+            "Admin - Sala de Reuniones", "Almacen General", "Camerinos Contratistas",
+            "Camerinos Permanentes", "Despacho", "Enfermería", "Expedición",
+            "Laboratorio de Calidad", "Laboratorio de Concreto", "Machaqueo A",
+            "Posta Guardias", "Posta Recepción", "Sala de Control",
+            "Salón Vial", "Taller Electrico", "Transportistas"
+        ];
 
-  // Filtrar solo los días del mismo mes
-  const mesSeleccionado = document.getElementById('fecha').value.split('-')[1];
-  const diasMismoMes = semanaData.filter(dia => dia.fecha.split('-')[1] === mesSeleccionado);
+        // =========================================================================
+        // VARIABLES GLOBALES
+        // =========================================================================
 
+        let db = null;
+        let $form, $fechaInput, $tipoSelect, $areaSelect, $oficinaContainer, $oficinaSelect;
+        let $btnPag1Siguiente, $enviarBtn, $reiniciarBtn;
+        let $tablaDiarioBody, $tablaSemanalBody, $semanaContainer;
+        let currentActividades = [];
+        let semanaData = null;
+        let hayCambiosSinEnviar = false;
+        let estadoInicialCheckboxes = [];
+        let actividadEnviada = false;
 
-  // Crear el modal
-  const modal = document.createElement('div');
-  modal.id = 'semanaModal';
-  modal.style.position = 'fixed';
-  modal.style.top = '0';
-  modal.style.left = '0';
-  modal.style.width = '100%';
-  modal.style.height = '100%';
-  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-  modal.style.display = 'flex';
-  modal.style.justifyContent = 'center';
-  modal.style.alignItems = 'center';
-  modal.style.zIndex = '1000';
-  
-  // Crear el contenido del modal
-  const modalContent = document.createElement('div');
-  modalContent.style.backgroundColor = 'white';
-  modalContent.style.padding = '20px';
-  modalContent.style.borderRadius = '5px';
-  modalContent.style.maxWidth = '90%';
-  modalContent.style.maxHeight = '90%';
-  modalContent.style.display = 'flex';
-  modalContent.style.flexDirection = 'column';
-  
-  modalContent.innerHTML = `
-    <h2 style="margin-top: 0; text-align: center;">Editar Semana</h2>
-    <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
-      <div style="overflow: auto; flex: 1;">
-        <table id="semanaModalTable" style="width: 100%; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4;">Actividad</th>
-              ${semanaData.map(dia => `
-                <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: center;">
-                  ${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][semanaData.indexOf(dia)]}<br>
-                  ${dia.fecha.split('-')[2]}
-                </th>
-              `).join('')}
-            </tr>
-          </thead>
-          <tbody id="semanaModalBody">
-            <!-- Las filas se generarán dinámicamente -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
-      <button id="cancelarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Cancelar
-      </button>
-      <button id="guardarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Guardar Cambios
-      </button>
-    </div>
-  `;
-  
-  modal.appendChild(modalContent);
-  document.body.appendChild(modal);
-  
-  // Generar las filas de actividades con colores
-  const actividades = semanaData[0].actividadesLista || [];
-  const tbody = document.getElementById('semanaModalBody');
-  
-  actividades.forEach((actividad, index) => {
-    const row = document.createElement('tr');
-    
-    // Agregar clase según la frecuencia
-    if (actividad.frecuencia === "Diario") {
-      row.style.backgroundColor = '#A6D5FA'; // Azul pastel
-    } else if (actividad.frecuencia === "Semanal") {
-      row.style.backgroundColor = '#FFC0CB'; // Rosa pastel
-    }
-    
-    // Celda de actividad
-    const actividadCell = document.createElement('td');
-    actividadCell.textContent = actividad.descripcion;
-    actividadCell.style.padding = '8px';
-    actividadCell.style.border = '1px solid #ddd';
-    row.appendChild(actividadCell);
-    
-    // Celdas de checkboxes para cada día
-    semanaData.forEach(dia => {
-      const cell = document.createElement('td');
-      cell.style.padding = '8px';
-      cell.style.border = '1px solid #ddd';
-      cell.style.textAlign = 'center';
-      
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.dataset.fecha = dia.fecha;
-      checkbox.dataset.actividad = actividad.descripcion;
-      checkbox.checked = dia.actividades.includes(actividad.descripcion);
-      checkbox.style.width = '20px';
-      checkbox.style.height = '20px';
-      checkbox.style.cursor = 'pointer';
-      
-      cell.appendChild(checkbox);
-      row.appendChild(cell);
-    });
-    
-    tbody.appendChild(row);
-  });
-  
-  // Hacer los encabezados fijos
-  const table = document.getElementById('semanaModalTable');
-  const thead = table.querySelector('thead');
-  const tbodyContainer = table.parentElement;
-  
-  // Calcular el ancho de las columnas
-  const firstRow = tbody.querySelector('tr');
-  if (firstRow) {
-    const cells = firstRow.querySelectorAll('td');
-    const headers = thead.querySelectorAll('th');
-    
-    cells.forEach((cell, index) => {
-      if (headers[index]) {
-        headers[index].style.width = `${cell.offsetWidth}px`;
-        cell.style.width = `${cell.offsetWidth}px`;
-      }
-    });
-  }
-  
-  // Configurar el scroll con encabezados fijos
-  thead.style.position = 'sticky';
-  thead.style.top = '0';
-  thead.style.zIndex = '10';
-  tbodyContainer.style.overflowY = 'auto';
-  
-  // Eventos de los botones
-  document.getElementById('cancelarSemanaBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.body.removeChild(modal);
-  });
-  
-  document.getElementById('guardarSemanaBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    // Recopilar los cambios
-    const checkboxes = document.querySelectorAll('#semanaModalBody input[type="checkbox"]');
-    const semanaActualizada = JSON.parse(JSON.stringify(semanaData));
-    
-    checkboxes.forEach(checkbox => {
-      const fecha = checkbox.dataset.fecha;
-      const actividad = checkbox.dataset.actividad;
-      const dia = semanaActualizada.find(d => d.fecha === fecha);
-      
-      if (checkbox.checked) {
-        if (!dia.actividades.includes(actividad)) {
-          dia.actividades.push(actividad);
-        }
-      } else {
-        dia.actividades = dia.actividades.filter(a => a !== actividad);
-      }
-    });
-    
-    // Guardar los cambios
-    guardarCambiosSemana(semanaActualizada);
-    document.body.removeChild(modal);
-  });
-}
+        // =========================================================================
+        // FUNCIONES DE INICIALIZACIÓN
+        // =========================================================================
 
-// Función para guardar los cambios de la semana
-function guardarCambiosSemana(semanaActualizada) {
-  // Mostrar confirmación antes de guardar
-  Swal.fire({
-    text: "¿Estás seguro de guardar los cambios para toda la semana?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, guardar",
-    cancelButtonText: "Cancelar",
-    customClass: {
-      popup: "swal-popup",
-      confirmButton: "swal-button",
-      cancelButton: "swal-button-cancel",
-      actions: "swal-actions",
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const fecha = document.getElementById('fecha').value;
-      const tipo = document.getElementById('tipo').value;
-      const area = document.getElementById('area').value;
-      const baño = document.getElementById('baño').value;
-      const oficina = document.getElementById('oficina').value;
-      
-      // Mostrar overlay de carga
-      document.getElementById('overlay').style.display = 'flex';
-      
-      // Enviar los datos al servidor
-      const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
-      
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          fecha: fecha,
-          tipo: tipo,
-          area: area,
-          baño: baño,
-          oficina: oficina,
-          semana: JSON.stringify(semanaActualizada),
-          actividades: JSON.stringify([]),
-          accion: "guardarSemana"
-        })
-      })
-      .then(response => response.text())
-      .then(response => {
-        // Ocultar overlay
-        document.getElementById('overlay').style.display = 'none';
-        
-        if (response === 'Éxito') {
-          // LIMPIAR LOCALSTORAGE ANTES DE MOSTRAR EL MENSAJE DE ÉXITO
-          localStorage.removeItem('formData');
-          
-          Swal.fire({
-            text: '¡Semana actualizada correctamente!',
-            icon: 'success',
-            confirmButtonText: 'Aceptar',
-            customClass: {
-              popup: "swal-popup",
-              confirmButton: "swal-button",
-              actions: "swal-actions",
-            },
-          }).then(() => {
-            // Recargar la página después de aceptar
-            location.reload();
-          });
-        } else {
-          throw new Error(response);
-        }
-      })
-      .catch(error => {
-        console.error('Error al guardar la semana:', error);
-        document.getElementById('overlay').style.display = 'none';
-        Swal.fire({
-          text: 'Error al guardar los cambios de la semana',
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initDB();
+                inicializarElementos();
+                prellenarFechaHora();
+                configurarEventos();
+                await verificarSesionGuardada();
+            } catch (error) {
+                console.error("Error en inicialización:", error);
+            }
         });
-      });
-    }
-  });
-}
 
+        function inicializarElementos() {
+            $form = $('#bitacoraForm');
+            $fechaInput = $('#fecha');
+            $tipoSelect = $('#tipo');
+            $areaSelect = $('#area');
+            $oficinaContainer = $('#oficinaContainer');
+            $oficinaSelect = $('#oficina');
+            $btnPag1Siguiente = $('#btn-pag1-siguiente');
+            $enviarBtn = $('#enviarBtn');
+            $reiniciarBtn = $('#reiniciarBtn');
+            $tablaDiarioBody = $('#tablaDiarioBody');
+            $tablaSemanalBody = $('#tablaSemanalBody');
+            $semanaContainer = $('#semanaContainer');
 
-// Función cargarActividades (mejorada con manejo de errores)
-async function cargarActividades() {
-  if (!verificarCampos()) return;
-
-  const tipo = document.getElementById("tipo").value;
-  const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
-  
-  // Mostrar overlay de carga
-  document.getElementById("overlay").style.display = "flex";
-
-  try {
-    // Generar tabla con actividades básicas
-    generarTablaActividades(actividades);
-    
-    // Obtener datos para la consulta
-    const fecha = document.getElementById("fecha").value;
-    const tipo = document.getElementById("tipo").value;
-    const area = document.getElementById("area").value;
-    const baño = document.getElementById("baño").value;
-    const oficina = document.getElementById("oficina").value;
-    
-    // Consultar actividades existentes (ahora con datos semanales)
-    const response = await fetch("https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        fecha: fecha,
-        tipo: tipo,
-        area: area,
-        baño: baño,
-        oficina: oficina,
-        accion: "consultarSemana"
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error("Error en la consulta");
-    }
-    
-    const data = await response.json();
-    
-    // Verificar si hay error en la respuesta
-    if (data.error) {
-      console.error("Error del servidor:", data.message);
-      return;
-    }
-    
-    // Marcar checkboxes para el día seleccionado
-    if (data.actividades && data.actividades.length > 0) {
-      data.actividades.forEach(actividad => {
-        const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-        if (checkbox) {
-          checkbox.checked = true;
+            // Inicialmente deshabilitar área
+            $areaSelect.prop('disabled', true);
         }
-      });
-    }
-    
-    // Mostrar controles de la semana si hay datos
-    if (data.semana && data.semana.length > 0) {
-      // Agregar la lista completa de actividades a cada día para el modal de edición
-      data.semana.forEach(dia => {
-        dia.actividadesLista = actividades;
-      });
-      
-      // Eliminar el contenedor de semana si ya existe
-      const existingContainer = document.getElementById('semanaContainer');
-      if (existingContainer) {
-        existingContainer.remove();
-      }
-      
-      mostrarControlesSemana(data.semana);
-    }
-    
-    // BLOQUEAR CAMPOS SIEMPRE
-    bloquearCampos();
-    
-    // Mostrar tabla
-    document.getElementById("tablaActividades").style.display = "table";
-    
-  } catch (error) {
-    console.error("Error al cargar actividades:", error);
-    Swal.fire({
-      text: "Error al cargar actividades existentes",
-      icon: "error",
-      confirmButtonText: "Aceptar"
-    });
-  } finally {
-    // Ocultar overlay
-    document.getElementById("overlay").style.display = "none";
-    actualizarBotonEnviar();
-  }
-}
 
-    // Modificar los event listeners para llamar a cargarActividades cuando los campos estén completos
-    document.getElementById("area").addEventListener("change", function() {
-        const area = this.value;
-        const oficinaContainer = document.getElementById("oficinaContainer");
-        
-        if (area === "Administración") {
-            oficinaContainer.style.display = "block";
-        } else {
-            oficinaContainer.style.display = "none";
-            document.getElementById("oficina").value = "";
+        function prellenarFechaHora() {
+            let today = new Date();
+            let year = today.getFullYear();
+            let month = String(today.getMonth() + 1).padStart(2, "0");
+            let day = String(today.getDate()).padStart(2, "0");
+            $fechaInput.val(`${year}-${month}-${day}`);
         }
-        
-        if (verificarCampos()) {
-            cargarActividades();
-        } else {
-            document.getElementById("tablaActividades").style.display = "none";
-        }
-    });
 
-    document.getElementById("baño").addEventListener("change", function() {
-        if (verificarCampos()) {
-            cargarActividades();
-        } else {
-            document.getElementById("tablaActividades").style.display = "none";
-        }
-    });
+        function configurarEventos() {
+            // Eventos de página 1
+            $tipoSelect.on('change', function() {
+                mostrarCampos();
+                validarPagina1();
+                $areaSelect.prop('disabled', false);
+                guardarSesion();
+            });
 
-    document.getElementById("oficina").addEventListener("change", function() {
-        if (verificarCampos()) {
-            cargarActividades();
-        } else {
-            document.getElementById("tablaActividades").style.display = "none";
-        }
-    });
+            $areaSelect.on('change', function() {
+                const area = $(this).val();
+                if (area === "Administración") {
+                    $oficinaContainer.slideDown();
+                } else {
+                    $oficinaContainer.slideUp();
+                    $oficinaSelect.val('');
+                }
+                validarPagina1();
+                guardarSesion();
+            });
 
-    // Función para confirmar el envío
-    function confirmarEnvio() {
-        Swal.fire({
-            text: "¿Estás seguro de continuar? 🤔",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí 🫡",
-            cancelButtonText: "No 😬",
-            customClass: {
-                popup: "swal-popup", // Clase para el modal
-                confirmButton: "swal-button", // Clase para el botón de confirmación
-                cancelButton: "swal-button-cancel", // Clase para el botón de cancelación
-                actions: "swal-actions", // Clase para el contenedor de los botones
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Mostrar el overlay de "Procesando..."
-                document.getElementById("overlay").style.display = "flex";
+            $oficinaSelect.on('change', function() {
+                validarPagina1();
+                guardarSesion();
+            });
 
-                const fecha = $('#fecha').val();
-                const tipo = $('#tipo').val();
-                const area = $('#area').val();
-                const baño = $('#baño').val();
-                const oficina = $('#oficina').val();
-                const actividades = [];
+            $fechaInput.on('change', function() {
+                validarPagina1();
+                guardarSesion();
+            });
 
-                // Recolectar las actividades marcadas
-                $('input[name="actividad"]:checked').each(function() {
-                    actividades.push($(this).val());
-                });
-
-                // Verificar que se hayan seleccionado actividades
-                if (actividades.length === 0) {
+            $btnPag1Siguiente.on('click', async function() {
+                if (!validarPagina1()) {
                     Swal.fire({
-                        text: 'Debes seleccionar al menos una actividad.',
-                        icon: 'warning',
-                        confirmButtonText: 'Aceptar'
+                        text: "Debes completar todos los campos de ubicación.",
+                        icon: "warning",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#3498db"
                     });
                     return;
                 }
 
-                enviarDatos(fecha, tipo, area, baño, oficina, actividades);
-            }
-        });
-    }
+                const $btn = $(this);
+                // DESHABILITAR EL BOTÓN INMEDIATAMENTE
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-2"></i> Cargando...');
 
-    // Función para enviar datos
-function enviarDatos(fecha, tipo, area, baño, oficina, actividades) {
-    let url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
-    let alertaUrl = "https://script.google.com/macros/s/AKfycbyD1cxV7dX7yHG0zUH7ISLexvTFpyFA4xFmmcgD5nk9vQino7EqIlXXOUYRq6Cb-Zhv9A/exec";
+                try {
+                    await cargarActividades();
+                    navegarPagina('pagina-2');
+                } catch (error) {
+                    console.error("Error al cargar actividades:", error);
+                    Swal.fire({
+                        text: "Hubo un problema al cargar las actividades. Intenta nuevamente.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#e74c3c"
+                    });
+                    // RE-HABILITAR EN CASO DE ERROR
+                    $btn.prop('disabled', false);
+                    $btn.html('Siguiente <i class="fas fa-arrow-right ms-2"></i>');
+                }
+            });
 
-    // Enviar los datos usando AJAX
-    $.ajax({
-        url: url,
-        type: "POST",
-        data: {
-            fecha: fecha,
-            tipo: tipo,
-            area: area,
-            baño: baño,
-            oficina: oficina,
-            actividades: JSON.stringify(actividades)
-        },
-        success: function(response) {
-            console.log("Respuesta del servidor:", response);
+            // Auto-save en todos los cambios
+            $('.auto-save').on('change input', function() {
+                guardarSesion();
+                if (!actividadEnviada) {
+                    verificarCambiosSinEnviar();
+                }
+            });
 
-            // Ocultar el overlay de espera
-            document.getElementById('overlay').style.display = 'none';
+            // Eventos de checkboxes para detectar cambios
+            $(document).on('change', 'input[type="checkbox"]', function() {
+                guardarSesion();
+                if (!actividadEnviada) {
+                    verificarCambiosSinEnviar();
+                }
+                actualizarBotonEnviar();
+            });
 
-            // Limpiar localStorage después de enviar
-            localStorage.removeItem('formData');
+            // Eventos de cambio en semana (editar semana)
+            $(document).on('change', '.semana-checkbox', function() {
+                guardarSesion();
+                if (!actividadEnviada) {
+                    verificarCambiosSinEnviar();
+                }
+            });
+        }
 
-            /***** NUEVO MÉTODO PARA ENVIAR ALERTAS *****/
-            const img = new Image();
-            const params = new URLSearchParams();
-            params.append('tipo', tipo);
-            
+        // =========================================================================
+        // FUNCIONES DE PÁGINA 1
+        // =========================================================================
+
+        function mostrarCampos() {
+            const tipo = $tipoSelect.val();
+
             if (tipo === "Área") {
-                params.append('area', area);
-                if (area === "Administración" && oficina) {
-                    params.append('oficina', oficina);
-                }
-            } else if (tipo === "Baño") {
-                params.append('baño', baño);
-            }
-            
-            img.src = `${alertaUrl}?${params.toString()}`;
-            
-            // Mostrar éxito después de un breve retraso
-            setTimeout(function() {
-                Swal.fire({
-                    text: "¡Envío exitoso! 🥳🎉",
-                    icon: "success",
-                    showCancelButton: false,
-                    confirmButtonText: "Aceptar",
-                    customClass: {
-                        content: "swal-content",
-                        confirmButton: "swal-button",
-                        popup: "swal-popup",
-                    },
-                }).then(() => {
-                    location.reload();
+                $areaSelect.prop('disabled', false);
+                $areaSelect.empty();
+                $areaSelect.append('<option value="">Selecciona un área...</option>');
+                areasList.forEach(area => {
+                    $areaSelect.append(`<option value="${area}">${area}</option>`);
                 });
-            }, 500);
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al enviar los datos:", xhr.responseText);
-            document.getElementById("overlay").style.display = "none";
-            Swal.fire({
-                text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
-}
-
-
-    // Función para guardar las respuestas en localStorage
-    function guardarRespuestas() {
-        const formData = {};
-
-        // Recopilar todos los campos del formulario
-        const inputs = document.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            if (input.type !== 'file') { // Excluimos los campos de archivo
-                formData[input.id] = input.value;
+            } else if (tipo === "Baño") {
+                $areaSelect.prop('disabled', false);
+                $areaSelect.empty();
+                $areaSelect.append('<option value="">Selecciona un baño...</option>');
+                bañosList.forEach(baño => {
+                    $areaSelect.append(`<option value="${baño}">${baño}</option>`);
+                });
+            } else {
+                $areaSelect.prop('disabled', true);
+                $areaSelect.empty();
+                $areaSelect.append('<option value="">Selecciona un tipo primero...</option>');
+                $oficinaContainer.slideUp();
             }
-        });
-
-        // Guardar las actividades seleccionadas
-        const actividades = [];
-        document.querySelectorAll('input[name="actividad"]:checked').forEach(checkbox => {
-            actividades.push(checkbox.value);
-        });
-        formData.actividades = actividades;
-
-        // Guardar en localStorage
-        localStorage.setItem('formData', JSON.stringify(formData));
-    }
-
-    // Función para cargar las respuestas guardadas
-function cargarRespuestas() {
-    const savedData = localStorage.getItem('formData');
-    if (savedData) {
-        const formData = JSON.parse(savedData);
-
-        // Cargar los valores de los campos
-        Object.keys(formData).forEach(key => {
-            const input = document.getElementById(key);
-            if (input) {
-                input.value = formData[key];
-
-                // Disparar el evento "change" en los selects para que se muestren/oculten las preguntas dinámicas
-                if (input.tagName === 'SELECT') {
-                    input.dispatchEvent(new Event('change'));
-                }
-            }
-        });
-
-        // Cargar las actividades seleccionadas
-        if (formData.actividades) {
-            formData.actividades.forEach(actividad => {
-                const checkbox = document.querySelector(`input[name="actividad"][value="${actividad}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
         }
 
-        // Actualizar el estado del botón de Enviar
-        actualizarBotonEnviar();
-        
-        // BLOQUEAR CAMPOS SIEMPRE (cambio principal)
-        bloquearCampos();
-    }
-}
+        function validarPagina1() {
+            const fechaValida = $fechaInput.val() !== '';
+            const tipoValido = $tipoSelect.val() !== '';
+            const areaValida = $areaSelect.val() !== '';
 
-    // Función para preguntar al usuario si desea continuar con las respuestas guardadas
-    function preguntarContinuar() {
-        const savedData = localStorage.getItem('formData');
-        if (savedData) {
+            let oficinaValida = true;
+            if ($areaSelect.val() === "Administración" && $oficinaContainer.is(':visible')) {
+                oficinaValida = $oficinaSelect.val() !== '';
+            }
+
+            const valida = fechaValida && tipoValido && areaValida && oficinaValida;
+            // Solo deshabilitar si no está en proceso de carga
+            if (!$btnPag1Siguiente.data('cargando')) {
+                $btnPag1Siguiente.prop('disabled', !valida);
+            }
+            return valida;
+        }
+
+        // =========================================================================
+        // FUNCIONES DE NAVEGACIÓN
+        // =========================================================================
+
+        function navegarPagina(paginaId) {
+            $('.pagina').removeClass('active');
+            $(`#${paginaId}`).addClass('active');
+
+            if (paginaId === 'pagina-1') {
+                $btnPag1Siguiente.prop('disabled', !validarPagina1());
+            }
+
+            guardarSesion();
+        }
+
+        // =========================================================================
+        // FUNCIONES DE ACTIVIDADES
+        // =========================================================================
+
+        function generarTablasActividades(actividades) {
+            // Limpiar tablas
+            $tablaDiarioBody.empty();
+            $tablaSemanalBody.empty();
+
+            // Separar actividades por frecuencia
+            const diarias = actividades.filter(a => a.frecuencia === "Diario");
+            const semanales = actividades.filter(a => a.frecuencia === "Semanal");
+
+            // Generar tabla diaria
+            diarias.forEach((actividad, index) => {
+                const row = document.createElement('tr');
+                row.className = 'fila-diario';
+                row.innerHTML = `
+                    <td>${actividad.descripcion}</td>
+                    <td>${actividad.frecuencia}</td>
+                    <td><input type="checkbox" name="actividad" value="${actividad.descripcion}" data-tipo="diario" data-index="${index}"></td>
+                `;
+                $tablaDiarioBody.append(row);
+            });
+
+            // Generar tabla semanal
+            semanales.forEach((actividad, index) => {
+                const row = document.createElement('tr');
+                row.className = 'fila-semanal';
+                row.innerHTML = `
+                    <td>${actividad.descripcion}</td>
+                    <td>${actividad.frecuencia}</td>
+                    <td><input type="checkbox" name="actividad" value="${actividad.descripcion}" data-tipo="semanal" data-index="${index}"></td>
+                `;
+                $tablaSemanalBody.append(row);
+            });
+
+            // Guardar estado inicial de checkboxes
+            guardarEstadoInicial();
+
+            actualizarBotonEnviar();
+        }
+
+        function guardarEstadoInicial() {
+            estadoInicialCheckboxes = [];
+            const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+            todosLosCheckboxes.each(function() {
+                estadoInicialCheckboxes.push({
+                    valor: $(this).val(),
+                    checked: $(this).is(':checked')
+                });
+            });
+            
+            // Verificar si hay cambios comparando con la sesión guardada
+            verificarCambiosSinEnviar();
+        }
+
+        function actualizarBotonEnviar() {
+            const checkboxes = $tablaDiarioBody.find('input[type="checkbox"]').add($tablaSemanalBody.find('input[type="checkbox"]'));
+            const algunaMarcada = checkboxes.is(':checked');
+            $enviarBtn.prop('disabled', !algunaMarcada);
+        }
+
+        function obtenerTodosLosCheckboxes() {
+            return $tablaDiarioBody.find('input[type="checkbox"]').add($tablaSemanalBody.find('input[type="checkbox"]'));
+        }
+
+        function verificarCambiosSinEnviar() {
+            if (actividadEnviada) {
+                hayCambiosSinEnviar = false;
+                actualizarBadgeCambios();
+                return;
+            }
+
+            const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+            let cambios = false;
+
+            // Verificar cambios en checkboxes comparando con estado inicial
+            todosLosCheckboxes.each(function() {
+                const valor = $(this).val();
+                const checked = $(this).is(':checked');
+                const estadoInicial = estadoInicialCheckboxes.find(e => e.valor === valor);
+                if (estadoInicial && estadoInicial.checked !== checked) {
+                    cambios = true;
+                    return false;
+                }
+            });
+
+            // Si no hay cambios en checkboxes, verificar cambios en la semana
+            if (!cambios && semanaData) {
+                const sessionData = localStorage.getItem(SESSION_KEY);
+                if (sessionData) {
+                    try {
+                        const data = JSON.parse(sessionData);
+                        if (data.semanaData) {
+                            const semanaActual = JSON.stringify(semanaData);
+                            const semanaGuardada = JSON.stringify(data.semanaData);
+                            if (semanaActual !== semanaGuardada) {
+                                cambios = true;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error al comparar semana:", e);
+                    }
+                }
+            }
+
+            hayCambiosSinEnviar = cambios;
+            actualizarBadgeCambios();
+            
+            // Guardar el estado de cambios en localStorage
+            guardarEstadoCambios();
+        }
+
+        function guardarEstadoCambios() {
+            try {
+                const sessionData = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+                sessionData.hayCambiosSinEnviar = hayCambiosSinEnviar;
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+            } catch (e) {
+                console.error("Error al guardar estado de cambios:", e);
+            }
+        }
+
+        function actualizarBadgeCambios() {
+            const $badge = $('#badgeCambios');
+            if (hayCambiosSinEnviar && !actividadEnviada) {
+                $badge.addClass('mostrar');
+            } else {
+                $badge.removeClass('mostrar');
+            }
+        }
+
+        async function cargarActividades() {
+            const tipo = $tipoSelect.val();
+            const area = $areaSelect.val();
+            const oficina = $oficinaSelect.val();
+
+            if (!tipo || !area) {
+                // Rehabilitar botón si no hay datos
+                $btnPag1Siguiente.prop('disabled', false);
+                $btnPag1Siguiente.html('Siguiente <i class="fas fa-arrow-right ms-2"></i>');
+                return;
+            }
+
+            const actividades = tipo === "Área" ? actividadesArea : actividadesBaño;
+            currentActividades = actividades;
+
+            // Mostrar overlay
+            mostrarOverlay();
+
+            try {
+                // Generar tablas
+                generarTablasActividades(actividades);
+
+                // Consultar actividades existentes (semana)
+                const fecha = $fechaInput.val();
+                const response = await fetch("https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({
+                        fecha: fecha,
+                        tipo: tipo,
+                        area: area,
+                        baño: area,
+                        oficina: oficina || "",
+                        accion: "consultarSemana"
+                    })
+                });
+
+                if (!response.ok) throw new Error("Error en la consulta");
+
+                const data = await response.json();
+
+                // Marcar checkboxes del día
+                if (data.actividades && data.actividades.length > 0) {
+                    const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+                    todosLosCheckboxes.each(function() {
+                        const valor = $(this).val();
+                        if (data.actividades.includes(valor)) {
+                            $(this).prop('checked', true);
+                        }
+                    });
+                    actualizarBotonEnviar();
+                }
+
+                // Guardar estado inicial después de marcar
+                guardarEstadoInicial();
+
+                // Mostrar controles de semana
+                if (data.semana && data.semana.length > 0) {
+                    semanaData = data.semana;
+                    semanaData.forEach(dia => {
+                        dia.actividadesLista = actividades;
+                    });
+                    mostrarControlesSemana(semanaData);
+                } else {
+                    $semanaContainer.hide();
+                }
+
+                // Bloquear campos
+                bloquearCampos();
+
+                // Resetear estado de envío
+                actividadEnviada = false;
+
+                // Verificar cambios después de cargar (incluye estado guardado)
+                verificarCambiosSinEnviar();
+
+                // Guardar sesión después de cargar
+                guardarSesion();
+
+            } catch (error) {
+                console.error("Error al cargar actividades:", error);
+                Swal.fire({
+                    text: "Error al cargar actividades existentes. Verifica tu conexión.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#e74c3c"
+                });
+            } finally {
+                ocultarOverlay();
+                // RE-HABILITAR EL BOTÓN DESPUÉS DE CARGAR
+                $btnPag1Siguiente.prop('disabled', false);
+                $btnPag1Siguiente.html('Siguiente <i class="fas fa-arrow-right ms-2"></i>');
+                // Remover flag de carga
+                $btnPag1Siguiente.removeData('cargando');
+            }
+        }
+
+        function bloquearCampos() {
+            $('#fecha, #tipo, #area, #oficina').prop('disabled', true);
+            $reiniciarBtn.show();
+        }
+
+        // =========================================================================
+        // FUNCIONES DE SEMANA
+        // =========================================================================
+
+        function mostrarControlesSemana(semanaData) {
+            const $container = $semanaContainer;
+            $container.empty().show();
+
+            const fechaSeleccionada = $fechaInput.val();
+            const mesSeleccionado = fechaSeleccionada.split('-')[1];
+            const diasOtroMes = semanaData.filter(dia => !dia.mismoMes).length;
+
+            const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+            let html = `
+                <h3>Semana del ${formatearFecha(semanaData[0].fecha)} al ${formatearFecha(semanaData[semanaData.length - 1].fecha)}</h3>
+                <div class="semana-grid">
+            `;
+
+            semanaData.forEach((dia, index) => {
+                const esActual = dia.fecha === fechaSeleccionada;
+                const esOtroMes = !dia.mismoMes;
+                const tieneActividades = dia.actividades && dia.actividades.length > 0;
+
+                let statusIcon = '';
+                if (!esOtroMes) {
+                    statusIcon = tieneActividades ? 
+                        '<i class="fas fa-check-circle check-completado"></i>' : 
+                        '<i class="fas fa-times-circle check-pendiente"></i>';
+                } else {
+                    statusIcon = '<span style="color: #999;">—</span>';
+                }
+
+                html += `
+                    <div class="dia-item ${esActual ? 'dia-actual' : ''} ${esOtroMes ? 'dia-otro-mes' : ''}">
+                        <div class="dia-nombre">${diasSemana[index]}</div>
+                        <div class="dia-fecha">${dia.fecha.split('-')[2]}/${dia.fecha.split('-')[1]}</div>
+                        <div class="dia-status">${statusIcon}</div>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button type="button" class="btn btn-primary" id="editarSemanaBtn" style="border-radius: 50px; padding: 8px 25px;">
+                        <i class="fas fa-edit me-2"></i>Editar semana actual (${7 - diasOtroMes} días)
+                    </button>
+                </div>
+            `;
+
+            if (diasOtroMes > 0) {
+                html += `
+                    <div style="text-align: center; margin-top: 8px; font-size: 0.8em; color: #6c757d;">
+                        ${diasOtroMes} día(s) sombreado(s) pertenece(n) a otro mes
+                    </div>
+                `;
+            }
+
+            $container.html(html);
+
+            // Evento del botón editar semana
+            $('#editarSemanaBtn').on('click', function(e) {
+                e.preventDefault();
+                const diasMismoMes = semanaData.filter(dia => dia.mismoMes);
+                mostrarModalSemana(diasMismoMes);
+            });
+        }
+
+        function formatearFecha(fechaStr) {
+            const [year, month, day] = fechaStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function mostrarModalSemana(semanaData) {
+            const mesSeleccionado = $fechaInput.val().split('-')[1];
+            const diasMismoMes = semanaData.filter(dia => dia.fecha.split('-')[1] === mesSeleccionado);
+
+            // Crear modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-semana';
+            modal.id = 'semanaModal';
+
+            const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+            let html = `
+                <div class="modal-semana-content">
+                    <div class="modal-semana-header">
+                        <h2><i class="fas fa-calendar-alt me-2"></i>Editar Semana</h2>
+                        <button class="btn-close-modal" onclick="cerrarModalSemana()" title="Cerrar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-semana-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 150px;">Actividad</th>
+                                    ${semanaData.map((dia, i) => `
+                                        <th style="min-width: 60px;">
+                                            ${diasSemana[i]}<br>
+                                            <small>${dia.fecha.split('-')[2]}</small>
+                                        </th>
+                                    `).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            const actividades = semanaData[0].actividadesLista || [];
+
+            actividades.forEach((actividad, index) => {
+                const claseFila = actividad.frecuencia === "Diario" ? "fila-diario-modal" : "fila-semanal-modal";
+                html += `<tr class="${claseFila}">`;
+                html += `<td style="text-align: left; font-size: 0.8rem;">${actividad.descripcion}</td>`;
+
+                semanaData.forEach(dia => {
+                    const checked = dia.actividades && dia.actividades.includes(actividad.descripcion) ? 'checked' : '';
+                    html += `
+                        <td>
+                            <input type="checkbox" class="semana-checkbox" 
+                                   data-fecha="${dia.fecha}" 
+                                   data-actividad="${actividad.descripcion}" 
+                                   ${checked}>
+                        </td>
+                    `;
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-semana-actions">
+                        <button onclick="guardarCambiosSemana()">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+
+            // Guardar referencia de la semana actual para el modal
+            window.semanaModalData = semanaData;
+        }
+
+        function cerrarModalSemana() {
+            const modal = document.getElementById('semanaModal');
+            if (modal) modal.remove();
+        }
+
+        async function guardarCambiosSemana() {
+            const checkboxes = document.querySelectorAll('.semana-checkbox');
+            const semanaActualizada = JSON.parse(JSON.stringify(window.semanaModalData));
+
+            checkboxes.forEach(checkbox => {
+                const fecha = checkbox.dataset.fecha;
+                const actividad = checkbox.dataset.actividad;
+                const dia = semanaActualizada.find(d => d.fecha === fecha);
+
+                if (checkbox.checked) {
+                    if (!dia.actividades.includes(actividad)) {
+                        dia.actividades.push(actividad);
+                    }
+                } else {
+                    dia.actividades = dia.actividades.filter(a => a !== actividad);
+                }
+            });
+
+            // Confirmar guardado
             Swal.fire({
-                text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
-                iconHtml: "🫵🏻",
+                text: "¿Estás seguro de guardar los cambios para toda la semana?",
+                icon: "question",
                 showCancelButton: true,
-                confirmButtonText: "Sí, continuar 😎",
-                cancelButtonText: "No, reiniciar 🤓",
-                allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
-                customClass: {
-                    popup: "swal-popup",
-                    confirmButton: "swal-button",
-                    cancelButton: "swal-button-cancel",
-                    actions: "swal-actions",
-                    icon: "no-border-icon", // Clase personalizada para el ícono
-                },
+                confirmButtonText: "Sí, guardar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#6c757d"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    mostrarOverlay();
+
+                    try {
+                        const fecha = $fechaInput.val();
+                        const tipo = $tipoSelect.val();
+                        const area = $areaSelect.val();
+                        const oficina = $oficinaSelect.val();
+
+                        const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+
+                        const response = await fetch(url, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            body: new URLSearchParams({
+                                fecha: fecha,
+                                tipo: tipo,
+                                area: area,
+                                baño: area,
+                                oficina: oficina || "",
+                                semana: JSON.stringify(semanaActualizada),
+                                actividades: JSON.stringify([]),
+                                accion: "guardarSemana"
+                            })
+                        });
+
+                        const resultText = await response.text();
+
+                        if (resultText === 'Éxito') {
+                            // Actualizar semanaData
+                            semanaData = semanaActualizada;
+                            cerrarModalSemana();
+                            ocultarOverlay();
+                            guardarSesion();
+                            verificarCambiosSinEnviar();
+
+                            Swal.fire({
+                                text: "¡Semana actualizada correctamente!",
+                                icon: "success",
+                                confirmButtonText: "Aceptar",
+                                confirmButtonColor: "#28a745"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(resultText);
+                        }
+                    } catch (error) {
+                        console.error("Error al guardar semana:", error);
+                        ocultarOverlay();
+                        Swal.fire({
+                            text: "Error al guardar los cambios de la semana. Intenta nuevamente.",
+                            icon: "error",
+                            confirmButtonText: "Aceptar",
+                            confirmButtonColor: "#e74c3c"
+                        });
+                    }
+                }
+            });
+        }
+
+        // =========================================================================
+        // FUNCIONES DE ENVÍO
+        // =========================================================================
+
+        function confirmarEnvio() {
+            const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+            const actividadesSeleccionadas = todosLosCheckboxes.filter(':checked');
+            
+            if (actividadesSeleccionadas.length === 0) {
+                Swal.fire({
+                    text: "Debes seleccionar al menos una actividad.",
+                    icon: "warning",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#f39c12"
+                });
+                return;
+            }
+
+            Swal.fire({
+                text: "¿Estás seguro de continuar? 🤔",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí 🫡",
+                cancelButtonText: "No 😬",
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#e74c3c"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    cargarRespuestas(); // Continuar con el progreso guardado
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    // Mostrar segundo mensaje de confirmación
+                    enviarDatos();
+                }
+            });
+        }
+
+        function enviarDatos() {
+            // Ocultar botón de enviar para evitar clics accidentales
+            $enviarBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Enviando...');
+            actividadEnviada = true;
+            
+            mostrarOverlay();
+
+            const fecha = $fechaInput.val();
+            const tipo = $tipoSelect.val();
+            const area = $areaSelect.val();
+            const oficina = $oficinaSelect.val();
+            const actividades = [];
+
+            const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+            todosLosCheckboxes.filter(':checked').each(function() {
+                actividades.push($(this).val());
+            });
+
+            const url = "https://script.google.com/macros/s/AKfycbzsMXfJpI0OPp14uqJ_FRxm012OyWLPhixbgE9AbHpTxoljNI2vXC7T-g4Lm8Qv6CHmSw/exec";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    fecha: fecha,
+                    tipo: tipo,
+                    area: area,
+                    baño: area,
+                    oficina: oficina,
+                    actividades: JSON.stringify(actividades)
+                },
+                success: function(response) {
+                    ocultarOverlay();
+                    localStorage.removeItem(SESSION_KEY);
+                    hayCambiosSinEnviar = false;
+                    actualizarBadgeCambios();
+
                     Swal.fire({
-                        text: "¿Estás seguro de que deseas perder todo tu progreso?",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "Sí, reiniciar",
-                        cancelButtonText: "No, recuperar progreso",
-                        allowOutsideClick: false,
-                        customClass: {
-                            popup: "swal-popup",
-                            confirmButton: "swal-button",
-                            cancelButton: "swal-button-cancel",
-                            actions: "swal-actions",
-                        },
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            localStorage.removeItem('formData'); // Eliminar respuestas guardadas
-                            location.reload(); // Recargar la página para reiniciar el formulario
-                        } else {
-                            cargarRespuestas(); // Recuperar el progreso guardado
-                        }
+                        text: "¡Envío exitoso! 🥳🎉",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#28a745"
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al enviar:", error);
+                    ocultarOverlay();
+                    // Restaurar botón
+                    $enviarBtn.prop('disabled', false).html('<i class="fas fa-paper-plane me-2"></i>Enviar');
+                    actividadEnviada = false;
+                    Swal.fire({
+                        text: "Hubo un problema al enviar los datos. Intenta nuevamente. 😢",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#e74c3c"
                     });
                 }
             });
         }
-    }
 
-    // Limpiar respuestas guardadas al enviar el formulario
-    function limpiarRespuestasGuardadas() {
-        localStorage.removeItem('formData');
-    }
+        // =========================================================================
+        // FUNCIONES DE REINICIO
+        // =========================================================================
 
-    // Escuchar cambios en los campos del formulario
-    document.querySelectorAll('input, select, textarea').forEach(input => {
-        input.addEventListener('input', guardarRespuestas);
-        input.addEventListener('change', guardarRespuestas);
-    });
-
-    // Escuchar cambios en las actividades
-    document.querySelector("#tablaActividades tbody").addEventListener("change", function (e) {
-        if (e.target.type === "checkbox") {
-            guardarRespuestas(); // Guardar respuestas al cambiar las actividades
-            actualizarBotonEnviar(); // Actualizar el estado del botón
-        }
-    });
-
-    // Llamar a la función al cargar la página
-window.onload = function() {
-    preguntarContinuar();
-    prellenarFechaHora(); // Precargar la fecha actual
-    // No necesitamos verificar localStorage aquí porque preguntarContinuar ya lo hace
-};
-
-    let backPressCount = 0; // Contador para rastrear el número de veces que se presiona el botón atrás
-
-    // Bloquear el historial al cargar la página
-    history.pushState(null, null, document.URL);
-
-    // Escuchar el evento "popstate" (cuando se presiona el botón atrás)
-    window.addEventListener("popstate", function (event) {
-        if (backPressCount === 0) {
-            // Mostrar el mensaje de advertencia cuando se presiona el botón atrás por primera vez
+        function confirmarReinicio() {
             Swal.fire({
-                text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
+                text: "¿Estás seguro de que deseas reiniciar el formulario?",
                 icon: "warning",
-                showCancelButton: false, // Eliminamos el botón de cancelar
-                confirmButtonText: "Quedarme", // Cambiamos el texto del botón de confirmar
-                allowOutsideClick: false, // Evita que el modal se cierre al hacer clic fuera
-                customClass: {
-                    popup: "swal-popup",
-                    confirmButton: "swal-button",
-                    actions: "swal-actions",
-                    icon: "swal-icon-circle", // Clase personalizada para el ícono
-                },
+                showCancelButton: true,
+                confirmButtonText: "Sí, reiniciar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#e74c3c",
+                cancelButtonColor: "#6c757d"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Si el usuario hace clic en "Quedarme", reiniciamos el contador y bloqueamos el historial nuevamente
-                    history.pushState(null, null, document.URL);
-                    backPressCount = 0; // Reiniciamos el contador
+                    reiniciarFormulario();
                 }
             });
-
-            backPressCount++; // Aumentamos el contador para la siguiente vez
-        } else {
-            // Si el contador ya es mayor a 0, dejamos que el usuario salga del formulario
-            backPressCount = 0; // Reiniciamos el contador
-            history.back(); // Dejamos que el usuario salga
         }
-    });
-</script>
 
+        function reiniciarFormulario() {
+            localStorage.removeItem(SESSION_KEY);
+            location.reload();
+        }
+
+        // =========================================================================
+        // FUNCIONES DE SESIÓN (Guardar y Restaurar)
+        // =========================================================================
+
+        function guardarSesion() {
+            // No guardar si ya se envió
+            if (actividadEnviada) return;
+
+            const sessionData = {
+                paginaActual: $('.pagina.active').attr('id') || 'pagina-1',
+                fecha: $fechaInput.val(),
+                tipo: $tipoSelect.val(),
+                area: $areaSelect.val(),
+                oficina: $oficinaSelect.val(),
+                actividades: [],
+                semanaData: semanaData,
+                hayCambiosSinEnviar: hayCambiosSinEnviar  // Guardar el estado de cambios
+            };
+
+            // Guardar actividades marcadas de ambas tablas
+            const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+            todosLosCheckboxes.each(function() {
+                sessionData.actividades.push({
+                    valor: $(this).val(),
+                    checked: $(this).is(':checked')
+                });
+            });
+
+            localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+        }
+
+        async function cargarSesion() {
+            const dataString = localStorage.getItem(SESSION_KEY);
+            if (!dataString) return;
+
+            try {
+                const data = JSON.parse(dataString);
+
+                // Restaurar campos de página 1
+                $fechaInput.val(data.fecha || '');
+                $tipoSelect.val(data.tipo || '');
+                mostrarCampos();
+                $areaSelect.val(data.area || '');
+                if (data.area === "Administración") {
+                    $oficinaContainer.show();
+                    $oficinaSelect.val(data.oficina || '');
+                }
+                validarPagina1();
+
+                // Si hay tipo y área, cargar actividades
+                if (data.tipo && data.area) {
+                    // Cargar actividades sin mostrar overlay
+                    const actividades = data.tipo === "Área" ? actividadesArea : actividadesBaño;
+                    currentActividades = actividades;
+                    generarTablasActividades(actividades);
+
+                    // Restaurar checkboxes
+                    if (data.actividades && data.actividades.length > 0) {
+                        const todosLosCheckboxes = obtenerTodosLosCheckboxes();
+                        todosLosCheckboxes.each(function() {
+                            const valor = $(this).val();
+                            const item = data.actividades.find(a => a.valor === valor);
+                            if (item) {
+                                $(this).prop('checked', item.checked);
+                            }
+                        });
+                        actualizarBotonEnviar();
+                    }
+
+                    // Guardar estado inicial después de restaurar
+                    guardarEstadoInicial();
+
+                    // Restaurar semana si existe
+                    if (data.semanaData) {
+                        semanaData = data.semanaData;
+                        semanaData.forEach(dia => {
+                            dia.actividadesLista = actividades;
+                        });
+                        mostrarControlesSemana(semanaData);
+                    }
+
+                    bloquearCampos();
+                    
+                    // RESTAURAR EL ESTADO DE CAMBIOS SIN ENVIAR
+                    if (data.hayCambiosSinEnviar !== undefined) {
+                        hayCambiosSinEnviar = data.hayCambiosSinEnviar;
+                        actualizarBadgeCambios();
+                    } else {
+                        // Si no existe el campo, verificar manualmente
+                        verificarCambiosSinEnviar();
+                    }
+                }
+
+                // Navegar a la página guardada
+                if (data.paginaActual && data.paginaActual !== 'pagina-1') {
+                    navegarPagina(data.paginaActual);
+                }
+
+            } catch (error) {
+                console.error("Error al cargar sesión:", error);
+            }
+        }
+
+        async function verificarSesionGuardada() {
+            if (localStorage.getItem(SESSION_KEY)) {
+                Swal.fire({
+                    text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, continuar 😎",
+                    cancelButtonText: "No, reiniciar 🤓",
+                    confirmButtonColor: "#3498db",
+                    cancelButtonColor: "#e74c3c",
+                    allowOutsideClick: false
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await cargarSesion();
+                        Swal.fire({
+                            text: "¡Progreso restaurado!",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                            confirmButtonColor: "#28a745",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            text: "¿Estás seguro de que deseas perder todo tu progreso?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Sí, reiniciar",
+                            cancelButtonText: "No, recuperar progreso",
+                            confirmButtonColor: "#e74c3c",
+                            cancelButtonColor: "#3498db",
+                            allowOutsideClick: false
+                        }).then(async (result) => {
+                            if (result.isConfirmed) {
+                                localStorage.removeItem(SESSION_KEY);
+                                location.reload();
+                            } else {
+                                await cargarSesion();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // =========================================================================
+        // FUNCIONES DE OVERLAY
+        // =========================================================================
+
+        function mostrarOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'flex';
+        }
+
+        function ocultarOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // =========================================================================
+        // FUNCIONES DE INDEXEDDB
+        // =========================================================================
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+
+                request.onupgradeneeded = function(event) {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+
+                request.onsuccess = function(event) {
+                    db = event.target.result;
+                    console.log('IndexedDB abierta correctamente');
+                    resolve(db);
+                };
+
+                request.onerror = function(event) {
+                    console.error('Error DB:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // =========================================================================
+        // CONTROL DE BOTÓN ATRÁS
+        // =========================================================================
+
+        let backPressCount = 0;
+
+        history.pushState(null, null, document.URL);
+
+        window.addEventListener("popstate", function(event) {
+            if (backPressCount === 0) {
+                Swal.fire({
+                    text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
+                    icon: "warning",
+                    confirmButtonText: "Quedarme",
+                    confirmButtonColor: "#3498db",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        history.pushState(null, null, document.URL);
+                        backPressCount = 0;
+                    }
+                });
+                backPressCount++;
+            } else {
+                backPressCount = 0;
+                history.back();
+            }
+        });
+    </script>
 </body>
 </html>
