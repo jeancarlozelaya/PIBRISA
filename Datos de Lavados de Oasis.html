@@ -79,7 +79,8 @@
         }
         .btn-custom:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
 
-        .kpi-value { font-size: 2.5rem; font-weight: 800; color: var(--primary-color); }
+        .kpi-value { font-size: 1.8rem; font-weight: 800; color: var(--primary-color); line-height: 1.2; }
+
         .kpi-label { font-size: 0.85rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .kpi-icon { font-size: 2rem; color: var(--secondary-color); margin-bottom: 15px; opacity: 0.8; }
 
@@ -637,8 +638,8 @@
         "Aún no reportado"
     ];
     
-    // Motivos que NO son nuestra responsabilidad (excluir del cálculo de cumplimiento)
-    const MOTIVOS_NO_RESPONSABILIDAD = [
+    // Motivos que NO afectan el cumplimiento (justificados)
+    const MOTIVOS_JUSTIFICADOS = [
         "Área no disponible",
         "Indisponibilidad de agua",
         "Lavado no realizado por solicitud del cliente"
@@ -654,6 +655,20 @@
 
     const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
                          "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    // =========================================================================
+    // FUNCIÓN PARA VERIFICAR SI UN MOTIVO ES JUSTIFICADO
+    // =========================================================================
+
+    function esMotivoJustificado(motivo) {
+        if (!motivo) return false;
+        const motivoLower = motivo.toLowerCase();
+        return MOTIVOS_JUSTIFICADOS.some(m => motivoLower.includes(m.toLowerCase()));
+    }
+
+    // =========================================================================
+    // FUNCIONES DE UI (focusPDF, window.onload, showLoading, hideLoading)
+    // =========================================================================
 
     function focusPDF() {
         const iframe = document.getElementById('iframePDF');
@@ -715,6 +730,10 @@
         document.getElementById('overlay').style.display = 'none';
     }
 
+    // =========================================================================
+    // CONSULTAR DATOS - MODIFICADO PARA RECIBIR LOS NUEVOS CAMPOS
+    // =========================================================================
+
     function consultarDatosOasis() {
         proyectoActual = document.getElementById('filtroProyecto').value;
         mesActual = document.getElementById('filtroMes').value;
@@ -760,13 +779,8 @@
                     datosGlobales = data.data;
                     renderizarDashboardOasis(datosGlobales, mesActual, anioActual);
                     
-                    // --- CORRECCIÓN: Mostrar alerta solo si NO hay registros ---
-                    // Verificar si existe la hoja y si la lista de reportes está vacía
-                    const noHayRegistros = !datosGlobales.listaReportes || datosGlobales.listaReportes.length === 0;
-                    if (!datosGlobales.existeHoja || noHayRegistros) {
+                    if (!datosGlobales.existeHoja || datosGlobales.totalOasis === 0) {
                         document.getElementById('alertNoData').style.display = 'block';
-                    } else {
-                        document.getElementById('alertNoData').style.display = 'none';
                     }
                 } else {
                     Swal.fire("Error", data.message || "Error desconocido", "error");
@@ -786,12 +800,20 @@
         xhr.send(JSON.stringify(requestData));
     }
 
+    // =========================================================================
+    // CALCULAR TOTAL DE OASIS REALES
+    // =========================================================================
+
     function calcularTotalOasisReales() {
         if (!datosGlobales || !proyectoActual) return 0;
         
         const todasUbicaciones = generarListaUbicacionesCompleta();
         return todasUbicaciones.length;
     }
+
+    // =========================================================================
+    // CALCULAR FIN DE SEMANA ISO
+    // =========================================================================
 
     function calcularFinDeSemanaISO(numeroSemana, anio) {
         const firstDayOfYear = new Date(anio, 0, 1);
@@ -809,19 +831,9 @@
         return weekEnd;
     }
 
-    function esMotivoNuestraResponsabilidad(motivo) {
-        if (!motivo) return true;
-        
-        const motivoLower = motivo.toLowerCase();
-        
-        for (const excluido of MOTIVOS_NO_RESPONSABILIDAD) {
-            if (motivoLower.includes(excluido.toLowerCase())) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
+    // =========================================================================
+    // CALCULAR ESTADÍSTICAS POR SEMANA - CORREGIDO
+    // =========================================================================
 
     function calcularEstadisticasPorSemana(semanaData, semanaKey, mes, anio) {
         const totalOasis = calcularTotalOasisReales();
@@ -830,8 +842,8 @@
         const todasUbicaciones = generarListaUbicacionesCompleta();
         
         let lavadosReportados = 0;
-        let noLavadosReportados = 0;
-        let noLavadosResponsabilidad = 0;
+        let noLavadosJustificados = 0;
+        let noLavadosNoJustificados = 0;
         const motivosContados = {
             "Área no disponible": 0,
             "Indisponibilidad de agua": 0,
@@ -840,6 +852,7 @@
             "Otro": 0
         };
         
+        // Contar registros para cada ubicación/sub-ubicación
         todasUbicaciones.forEach(item => {
             const ubicacionKey = item.esSubUbicacion ? item.ubicacionPrincipal : item.nombre;
             const ubicacionEnSemana = semanaData.ubicaciones?.[ubicacionKey];
@@ -855,9 +868,10 @@
                     if (reporteEnSemana.esLavado) {
                         lavadosReportados++;
                     } else {
-                        noLavadosReportados++;
-                        if (esMotivoNuestraResponsabilidad(reporteEnSemana.motivo)) {
-                            noLavadosResponsabilidad++;
+                        if (esMotivoJustificado(reporteEnSemana.motivo)) {
+                            noLavadosJustificados++;
+                        } else {
+                            noLavadosNoJustificados++;
                         }
                         contarMotivo(reporteEnSemana.motivo, motivosContados);
                     }
@@ -867,9 +881,10 @@
                     if (ubicacionEnSemana.lavado) {
                         lavadosReportados++;
                     } else {
-                        noLavadosReportados++;
-                        if (esMotivoNuestraResponsabilidad(ubicacionEnSemana.motivo)) {
-                            noLavadosResponsabilidad++;
+                        if (esMotivoJustificado(ubicacionEnSemana.motivo)) {
+                            noLavadosJustificados++;
+                        } else {
+                            noLavadosNoJustificados++;
                         }
                         contarMotivo(ubicacionEnSemana.motivo, motivosContados);
                     }
@@ -877,47 +892,40 @@
             }
         });
         
-        const reportadosTotal = lavadosReportados + noLavadosReportados;
-        const pendientes = totalOasis - reportadosTotal;
-        
-        let lavadosFinal = lavadosReportados;
-        let noLavadosFinal = noLavadosReportados;
-        let noLavadosResponsabilidadFinal = noLavadosResponsabilidad;
-        let pendientesFinal = pendientes;
+        const reportadosTotal = lavadosReportados + noLavadosJustificados + noLavadosNoJustificados;
+        let pendientes = totalOasis - reportadosTotal;
         let motivoPendientes = "";
         
+        // Verificar si la semana ya terminó
         const semanaNumero = parseInt(semanaKey.split('-')[1]);
         const finSemana = calcularFinDeSemanaISO(semanaNumero, parseInt(anio));
         const semanaYaTermino = hoy > finSemana;
         
         if (semanaYaTermino && pendientes > 0) {
-            // Los pendientes después de que termina la semana son "No se reportó actividad" (nuestra responsabilidad)
-            motivosContados["No se hizo el lavado"] += pendientes;
-            noLavadosFinal += pendientes;
-            noLavadosResponsabilidadFinal += pendientes;
+            noLavadosNoJustificados += pendientes;
             motivoPendientes = "No se reportó actividad";
-            pendientesFinal = 0;
+            pendientes = 0;
         } else if (!semanaYaTermino && pendientes > 0) {
             motivoPendientes = "Aún no reportado";
         }
         
-        const totalFinal = lavadosFinal + noLavadosFinal;
-        // Porcentaje de cumplimiento = Lavados / (Lavados + No lavados que son nuestra responsabilidad)
-        const totalResponsabilidad = lavadosFinal + noLavadosResponsabilidadFinal;
-        const porcentaje = totalResponsabilidad > 0 ? Math.round((lavadosFinal / totalResponsabilidad) * 100) : 0;
+        // ✅ El total de cumplimiento = lavados + no lavados justificados
+        const totalCumplimiento = lavadosReportados + noLavadosJustificados;
+        const porcentaje = totalOasis > 0 ? Math.round((totalCumplimiento / totalOasis) * 100) : 0;
         
         return {
-            lavados: lavadosFinal,
-            noLavados: noLavadosFinal,
-            noLavadosResponsabilidad: noLavadosResponsabilidadFinal,
-            pendientes: pendientesFinal,
+            lavados: lavadosReportados,
+            noLavadosJustificados: noLavadosJustificados,
+            noLavadosNoJustificados: noLavadosNoJustificados,
+            pendientes: pendientes,
             motivoPendientes: motivoPendientes,
-            total: totalFinal,
+            total: totalOasis,
             porcentaje: porcentaje,
             semanaYaTermino: semanaYaTermino,
             reportados: reportadosTotal,
             motivos: motivosContados,
-            totalOasis: totalOasis
+            totalOasis: totalOasis,
+            totalCumplimiento: totalCumplimiento
         };
     }
 
@@ -942,71 +950,96 @@
         }
     }
 
+    // =========================================================================
+    // CALCULAR ESTADÍSTICAS MENSUALES - CORREGIDO
+    // =========================================================================
+
     function calcularEstadisticasMensuales(data, mes, anio) {
         const semanas = Object.keys(data.resumenSemanas || {}).sort();
         const totalOasis = calcularTotalOasisReales();
         
         let totalLavadosMes = 0;
-        let totalNoLavadosMes = 0;
-        let totalNoLavadosResponsabilidad = 0;
+        let totalNoLavadosJustificadosMes = 0;
+        let totalNoLavadosNoJustificadosMes = 0;
         
         semanas.forEach(semana => {
             const semanaData = data.resumenSemanas[semana];
             const estadisticas = calcularEstadisticasPorSemana(semanaData, semana, mes, anio);
             
             totalLavadosMes += estadisticas.lavados;
-            totalNoLavadosMes += estadisticas.noLavados;
-            totalNoLavadosResponsabilidad += estadisticas.noLavadosResponsabilidad;
+            totalNoLavadosJustificadosMes += estadisticas.noLavadosJustificados;
+            totalNoLavadosNoJustificadosMes += estadisticas.noLavadosNoJustificados;
         });
         
-        // Cumplimiento del mes = Lavados / (Lavados + No Lavados que son nuestra responsabilidad)
-        const totalResponsabilidad = totalLavadosMes + totalNoLavadosResponsabilidad;
-        const porcentajeMes = totalResponsabilidad > 0 ? 
-            Math.round((totalLavadosMes / totalResponsabilidad) * 100) : 0;
+        // ✅ El numerador incluye lavados + justificados
+        const totalCumplimientoMes = totalLavadosMes + totalNoLavadosJustificadosMes;
+        const totalOasisPosiblesMes = totalOasis * semanas.length;
+        
+        const porcentajeMes = totalOasisPosiblesMes > 0 ? 
+            Math.round((totalCumplimientoMes / totalOasisPosiblesMes) * 100) : 0;
         
         return {
             totalLavados: totalLavadosMes,
-            totalNoLavados: totalNoLavadosMes,
-            totalNoLavadosResponsabilidad: totalNoLavadosResponsabilidad,
+            totalNoLavadosJustificados: totalNoLavadosJustificadosMes,
+            totalNoLavadosNoJustificados: totalNoLavadosNoJustificadosMes,
+            totalCumplimiento: totalCumplimientoMes,
             porcentaje: porcentajeMes,
             totalOasis: totalOasis,
-            semanasEnMes: semanas.length
+            semanasEnMes: semanas.length,
+            totalOasisPosibles: totalOasisPosiblesMes
         };
     }
+
+    // =========================================================================
+    // RENDERIZAR DASHBOARD - CORREGIDO
+    // =========================================================================
 
     function renderizarDashboardOasis(data, mesVal, anio) {
         document.getElementById('dashboardContent').style.display = 'block';
         
+        // Calcular estadísticas mensuales
         const estadisticasMes = calcularEstadisticasMensuales(data, parseInt(mesVal), parseInt(anio));
         
+        // Actualizar KPI's
         document.getElementById('kpiLavados').textContent = estadisticasMes.totalLavados;
-        document.getElementById('kpiNoLavados').textContent = estadisticasMes.totalNoLavados;
+        
+        // ✅ Mostrar separados los no lavados (justificados vs no justificados)
+        document.getElementById('kpiNoLavados').textContent = 
+            `${estadisticasMes.totalNoLavadosJustificados} justificados / ${estadisticasMes.totalNoLavadosNoJustificados} no justificados`;
+        
+        // ✅ El % de cumplimiento ya viene corregido desde la función
         document.getElementById('kpiCumplimiento').textContent = `${estadisticasMes.porcentaje}%`;
         
-        // Calcular porcentaje de cumplimiento anual (CORREGIDO)
+        // Calcular porcentaje de cumplimiento anual
         const porcentajeCumplimientoAnual = calcularPorcentajeCumplimientoAnual(data.datosGraficoAnual);
         document.getElementById('kpiCumplimientoAnual').textContent = `${porcentajeCumplimientoAnual}%`;
         
         const nombreMes = mesesNombres[parseInt(mesVal) - 1];
         
+        // Obtener las semanas del mes
         const semanasKeys = Object.keys(data.resumenSemanas || {}).sort();
         
+        // Preparar datos para gráfico mensual
         const labelsSemanas = semanasKeys.map(key => {
             const parts = key.split('-');
             return `Sem ${parts[1]}`;
         });
+        
         const lavadosPorSemana = [];
-        const noLavadosPorSemana = [];
+        const justificadosPorSemana = [];
+        const noJustificadosPorSemana = [];
         
         semanasKeys.forEach(semanaKey => {
             const semanaData = data.resumenSemanas[semanaKey];
             if (semanaData) {
                 const estadisticas = calcularEstadisticasPorSemana(semanaData, semanaKey, parseInt(mesVal), parseInt(anio));
                 lavadosPorSemana.push(estadisticas.lavados);
-                noLavadosPorSemana.push(estadisticas.noLavados);
+                justificadosPorSemana.push(estadisticas.noLavadosJustificados);
+                noJustificadosPorSemana.push(estadisticas.noLavadosNoJustificados);
             } else {
                 lavadosPorSemana.push(0);
-                noLavadosPorSemana.push(0);
+                justificadosPorSemana.push(0);
+                noJustificadosPorSemana.push(0);
             }
         });
         
@@ -1026,8 +1059,14 @@
                         borderRadius: 4
                     },
                     {
-                        label: 'Oasis No Lavados',
-                        data: noLavadosPorSemana,
+                        label: 'No Lavados (Justificados)',
+                        data: justificadosPorSemana,
+                        backgroundColor: '#f39c12',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'No Lavados (No Justificados)',
+                        data: noJustificadosPorSemana,
                         backgroundColor: '#e74c3c',
                         borderRadius: 4
                     }
@@ -1103,7 +1142,7 @@
                         tension: 0.3
                     },
                     {
-                        label: 'Oasis No Lavados',
+                        label: 'Oasis No Lavados (No Justificados)',
                         data: data.datosGraficoAnual.noLavados,
                         borderColor: '#e74c3c',
                         backgroundColor: 'rgba(231, 76, 60, 0.1)',
@@ -1135,25 +1174,35 @@
             }
         });
 
+        // Renderizar desglose de cumplimiento
         renderizarDesgloseCumplimiento(data, parseInt(mesVal), parseInt(anio), semanasKeys);
+        
+        // Renderizar tabla semanal
         renderizarTablaSemanas(data, parseInt(mesVal), parseInt(anio), semanasKeys);
     }
 
+    // =========================================================================
+    // CALCULAR PORCENTAJE DE CUMPLIMIENTO ANUAL - CORREGIDO
+    // =========================================================================
+
     function calcularPorcentajeCumplimientoAnual(datosAnual) {
+        // Para el anual, los no lavados que se muestran son solo los no justificados
         let totalLavados = 0;
-        let totalNoLavadosResponsabilidad = 0;
+        let totalNoJustificados = 0;
         
         for (let i = 0; i < datosAnual.lavados.length; i++) {
             totalLavados += datosAnual.lavados[i];
-            if (datosAnual.noLavadosResponsabilidad && datosAnual.noLavadosResponsabilidad[i] !== undefined) {
-                totalNoLavadosResponsabilidad += datosAnual.noLavadosResponsabilidad[i];
-            }
+            totalNoJustificados += datosAnual.noLavados[i];
         }
         
-        const totalResponsabilidad = totalLavados + totalNoLavadosResponsabilidad;
-        if (totalResponsabilidad === 0) return 0;
-        return Math.round((totalLavados / totalResponsabilidad) * 100);
+        const totalGeneral = totalLavados + totalNoJustificados;
+        if (totalGeneral === 0) return 0;
+        return Math.round((totalLavados / totalGeneral) * 100);
     }
+
+    // =========================================================================
+    // RENDERIZAR DESGLOSE DE CUMPLIMIENTO - CORREGIDO
+    // =========================================================================
 
     function renderizarDesgloseCumplimiento(data, mes, anio, semanasKeys) {
         const container = document.getElementById('desgloseContainer');
@@ -1180,9 +1229,9 @@
                 
                 estadisticas = {
                     lavados: 0,
-                    noLavados: 0,
-                    noLavadosResponsabilidad: 0,
-                    pendientes: totalOasis,
+                    noLavadosJustificados: 0,
+                    noLavadosNoJustificados: semanaYaTermino ? totalOasis : 0,
+                    pendientes: semanaYaTermino ? 0 : totalOasis,
                     motivoPendientes: semanaYaTermino ? 'No se reportó actividad' : 'Aún no reportado',
                     porcentaje: 0,
                     semanaYaTermino: semanaYaTermino,
@@ -1194,12 +1243,9 @@
                         "No se hizo el lavado": 0,
                         "Otro": 0
                     },
-                    totalOasis: totalOasis
+                    totalOasis: totalOasis,
+                    totalCumplimiento: 0
                 };
-                
-                if (semanaYaTermino) {
-                    estadisticas.noLavadosResponsabilidad = totalOasis;
-                }
             }
             
             const semanaDiv = document.createElement('div');
@@ -1210,58 +1256,54 @@
                 estadoSemana = `<span class="badge bg-warning text-dark ms-2">En curso</span>`;
             }
             
+            // ✅ Mostrar cumplimiento corregido
+            const cumplimientoMostrar = estadisticas.lavados + estadisticas.noLavadosJustificados;
+            
             let contenidoHTML = `
                 <div class="semana-header">
                     <div class="semana-titulo">Semana ${semanaNumero} ${estadoSemana}</div>
                     <div class="semana-estadisticas">
-                        ${estadisticas.lavados} lavados / ${totalOasis} total (${estadisticas.porcentaje}% cumplimiento)
+                        ${cumplimientoMostrar} cumplimiento / ${totalOasis} total (${estadisticas.porcentaje}% cumplimiento)
                         ${estadisticas.pendientes > 0 && !estadisticas.semanaYaTermino ? ` | ${estadisticas.pendientes} ${estadisticas.motivoPendientes.toLowerCase()}` : ''}
+                        ${estadisticas.noLavadosJustificados > 0 ? ` | ${estadisticas.noLavadosJustificados} justificados` : ''}
                     </div>
                 </div>
                 <div class="barra-desglose">
             `;
             
-            if (estadisticas.lavados > 0) {
-                const porcentajeSegmentoLavado = (estadisticas.lavados / totalOasis) * 100;
+            // ✅ Barra de cumplimiento (verde)
+            if (cumplimientoMostrar > 0) {
+                const porcentajeSegmento = (cumplimientoMostrar / totalOasis) * 100;
                 contenidoHTML += `
-                    <div class="segmento-lavado" style="width: ${porcentajeSegmentoLavado}%" 
-                         title="${estadisticas.lavados} lavados (${Math.round(porcentajeSegmentoLavado)}%)"></div>
+                    <div class="segmento-lavado" style="width: ${porcentajeSegmento}%" 
+                         title="${cumplimientoMostrar} cumplimiento (${Math.round(porcentajeSegmento)}%)"></div>
                 `;
             }
             
-            Object.keys(estadisticas.motivos).forEach(motivo => {
-                const cantidad = estadisticas.motivos[motivo];
-                if (cantidad > 0) {
-                    const porcentajeSegmento = (cantidad / totalOasis) * 100;
-                    let motivoIndex = 4;
-                    
-                    if (motivo === "Área no disponible") motivoIndex = 1;
-                    else if (motivo === "Indisponibilidad de agua") motivoIndex = 2;
-                    else if (motivo === "Lavado no realizado por solicitud del cliente") motivoIndex = 3;
-                    else if (motivo === "No se hizo el lavado") motivoIndex = 4;
-                    else if (motivo === "Otro") motivoIndex = 4;
-                    
-                    contenidoHTML += `
-                        <div class="segmento-motivo${motivoIndex}" style="width: ${porcentajeSegmento}%"
-                             title="${motivo}: ${cantidad} (${Math.round(porcentajeSegmento)}%)"></div>
-                    `;
-                }
-            });
+            // ✅ No lavados justificados (amarillo)
+            if (estadisticas.noLavadosJustificados > 0) {
+                const porcentajeSegmento = (estadisticas.noLavadosJustificados / totalOasis) * 100;
+                contenidoHTML += `
+                    <div class="segmento-motivo2" style="width: ${porcentajeSegmento}%"
+                         title="Justificados: ${estadisticas.noLavadosJustificados} (${Math.round(porcentajeSegmento)}%)"></div>
+                `;
+            }
             
+            // ✅ No lavados no justificados (rojo)
+            if (estadisticas.noLavadosNoJustificados > 0) {
+                const porcentajeSegmento = (estadisticas.noLavadosNoJustificados / totalOasis) * 100;
+                contenidoHTML += `
+                    <div class="segmento-motivo4" style="width: ${porcentajeSegmento}%"
+                         title="No justificados: ${estadisticas.noLavadosNoJustificados} (${Math.round(porcentajeSegmento)}%)"></div>
+                `;
+            }
+            
+            // ✅ Pendientes (morado)
             if (estadisticas.pendientes > 0) {
-                const porcentajeSegmentoPendientes = (estadisticas.pendientes / totalOasis) * 100;
-                const clasePendientes = estadisticas.semanaYaTermino ? "segmento-motivo4" : "segmento-motivo5";
-                const tituloPendientes = estadisticas.semanaYaTermino ? "No se reportó actividad" : "Aún no reportado";
+                const porcentajeSegmento = (estadisticas.pendientes / totalOasis) * 100;
                 contenidoHTML += `
-                    <div class="${clasePendientes}" style="width: ${porcentajeSegmentoPendientes}%"
-                         title="${tituloPendientes}: ${estadisticas.pendientes} (${Math.round(porcentajeSegmentoPendientes)}%)"></div>
-                `;
-            }
-            
-            if (estadisticas.reportados === 0 && estadisticas.semanaYaTermino) {
-                contenidoHTML += `
-                    <div class="segmento-motivo4" style="width: 100%"
-                         title="No se reportó actividad: ${totalOasis} oasis (100%)"></div>
+                    <div class="segmento-motivo5" style="width: ${porcentajeSegmento}%"
+                         title="${estadisticas.motivoPendientes}: ${estadisticas.pendientes} (${Math.round(porcentajeSegmento)}%)"></div>
                 `;
             }
             
@@ -1270,6 +1312,10 @@
             container.appendChild(semanaDiv);
         });
     }
+
+    // =========================================================================
+    // RENDERIZAR TABLA SEMANAL
+    // =========================================================================
 
     function renderizarTablaSemanas(data, mes, anio, semanasKeys) {
         const thead = document.querySelector('#tablaSemanas thead tr');
@@ -1469,6 +1515,10 @@
         }
     }
 
+    // =========================================================================
+    // GENERAR LISTA DE UBICACIONES COMPLETA
+    // =========================================================================
+
     function generarListaUbicacionesCompleta() {
         const todasUbicaciones = [];
         
@@ -1500,6 +1550,10 @@
         
         return todasUbicaciones;
     }
+
+    // =========================================================================
+    // OBTENER CLASE POR MOTIVO
+    // =========================================================================
 
     function getClasePorMotivo(motivo) {
         if (!motivo) return 'estado-motivo4';
@@ -1661,6 +1715,5 @@
         xhr.send(JSON.stringify(requestData));
     }
 </script>
-
 </body>
 </html>
