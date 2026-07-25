@@ -3,363 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bitácora de Actividades Diarias</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <title>Bitácora de Oficinas en Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <style>
-        body, html {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            width: 100%;
-            max-width: 100%;
+        /* --- ESTILOS BASE --- */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #2ecc71;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --light-yellow: #fff9e6;
+            --insumos-primary: #3f7b57;
+            --insumos-accent: #2196F3;
+            --insumos-light-gray: #f0f2f5;
+            --insumos-danger: #ef5350;
+            --diario-color: #A6D5FA;
+            --semanal-color: #FFC0CB;
+        }
+
+        html, body {
+            touch-action: manipulation;
             overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--insumos-light-gray);
+            color: var(--dark-color);
+            line-height: 1.6;
+            -webkit-user-scalable: no;
+            -moz-user-scalable: no;
+            -ms-user-scalable: no;
+            user-scalable: no;
+        }
+
+        * {
+            touch-action: pan-x pan-y;
         }
 
         .header {
-            background-color: #007BFF;
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
             text-align: center;
-            padding: 15px;
-            width: 100%;
-            font-size: 1.5em;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
-
-        .container {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            text-align: center;
-            margin: 40px auto;
-            grid-row: 2;
-            height: auto;
-            box-sizing: border-box;
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 100;
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            margin: 0 0 20px 0;
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
             font-weight: bold;
         }
 
-        input[type="date"],
-        input[type="time"],
-        input[type="text"],
-        textarea,
-        select,
-        #oficina,
-        button {
-            width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
         }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
+        .container {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: var(--shadow);
             border: none;
-            cursor: pointer;
-            padding: 12px 0;
+            margin-bottom: 25px;
+            border-top: 5px solid var(--insumos-primary);
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .card-body {
+            padding: 2.5rem;
         }
 
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
+        .tab-title {
             text-align: center;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
-            position: fixed;
-            top: 80px;
-            left: 0px;
-            z-index: 1001;
-            box-sizing: border-box;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding: 20px 0;
+            position: relative;
         }
 
-        .back-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+        .tab-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            display: inline-block;
+            padding: 0 25px;
+            position: relative;
+        }
+
+        .tab-title h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            border-radius: 2px;
+        }
+
+        .tab-title h2:before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        /* Estilos de botones estilo SUPARGOS */
+        .btn-primary, .btn-success, .btn-secondary, .btn-danger {
+            border: none;
+            font-weight: 600;
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            min-width: 130px;
+            transition: var(--transition);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary { background: linear-gradient(45deg, var(--secondary-color), #5dade2); }
+        .btn-success { background: linear-gradient(45deg, #2ecc71, #58d68d); }
+        .btn-secondary { background: linear-gradient(45deg, var(--dark-color), var(--primary-color)); }
+        .btn-danger { background: linear-gradient(45deg, var(--accent-color), #e74c3c); }
+
+        .btn-primary:hover, .btn-success:hover, .btn-secondary:hover, .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
         }
 
         .question-container {
+            background-color: #fdfdfd;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
-            text-align: left;
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            border-left: 4px solid var(--secondary-color);
             transition: border-color 0.3s;
-            box-sizing: border-box;
         }
 
         .question-container:hover {
-            border-color: #007BFF;
+            border-color: var(--secondary-color);
         }
 
-        .question-container input[type="date"],
-        .question-container input[type="time"],
-        .question-container input[type="text"],
-        .question-container textarea,
-        .question-container select {
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            color: #333;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-            margin-top: 5px;
+        .question-container label {
+            font-weight: 600;
+            color: var(--dark-color);
         }
 
-        .question-container input[type="date"]:focus,
-        .question-container input[type="time"]:focus,
-        .question-container input[type="text"]:focus,
-        .question-container textarea:focus,
-        .question-container select:focus {
-            border-color: #007BFF;
-            outline: none;
+        /* Estilos de pestañas para actividades */
+        .nav-tabs .nav-link {
+            border: none;
+            color: #7f8c8d;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            background: transparent;
         }
 
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+        .nav-tabs .nav-link:hover {
+            background: #e9ecef;
+            color: var(--dark-color);
         }
 
-        #loadingMessage {
-            color: white;
-            font-size: 24px;
-            font-family: 'Times New Roman', Times, serif;
+        .nav-tabs .nav-link.active {
+            background: white;
+            color: var(--dark-color);
+            border-top: 4px solid var(--secondary-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e9ecef;
+            padding: 0 10px;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-pane {
+            padding: 20px 0;
+        }
+
+        /* Estilos de tabla */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-color: #dee2e6;
             text-align: center;
-            padding: 20px;
-        }
-
-        .swal-actions {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            width: 80%;
-            margin: 0 auto;
-            flex-wrap: nowrap;
-        }
-
-        .swal-content {
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-
-        .swal2-html-container {
-            margin-bottom: 15px;
-        }
-
-        .swal-button,
-        .swal-button-cancel {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px 20px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-
-        .swal-popup {
-            width: 300px;
-            max-width: 90%;
-        }
-
-        .swal-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-
-        .swal-button-cancel {
-            background-color: #FF6347;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-
-        .swal2-actions {
-            display: flex !important;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: nowrap;
-        }
-
-        .swal2-icon.swal2-icon-show {
-            background-color: transparent !important;
-        }
-
-        .no-border-icon {
-            border: none !important;
-            background-color: transparent !important;
-        }
-
-        #enviarBtn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 12px 0;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, opacity 0.3s ease;
-        }
-
-        #enviarBtn:disabled {
-            background-color: #ccc;
-            color: #666666;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        #enviarBtn:not(:disabled):hover {
-            background-color: #0056b3;
-        }
-
-        .botones-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .botones-container button {
-            flex: 1;
-            margin: 0;
-        }
-
-        #reiniciarBtn {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 12px 0;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            display: none;
-        }
-
-        #reiniciarBtn:hover {
-            background-color: #5a6268;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
             padding: 10px;
+        }
+
+        .table td {
+            padding: 10px;
+            border-color: #dee2e6;
+            vertical-align: middle;
+        }
+
+        .table td:last-child {
+            text-align: center;
+            width: 100px;
+        }
+
+        .table td:first-child {
             text-align: left;
         }
-        th {
-            background-color: #f4f4f4;
+
+        .table td:nth-child(2) {
+            text-align: center;
+            width: 80px;
         }
 
-        #tablaActividades th {
-            text-align: center;
-        }
-
-        #tablaActividades td:nth-child(2),
-        #tablaActividades td:nth-child(3) {
-            text-align: center;
+        /* Ocultar columna de Frecuencia */
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            display: none;
         }
 
         .fila-diario {
-            background-color: #A6D5FA;
+            background-color: var(--diario-color);
         }
 
         .fila-semanal {
-            background-color: #FFC0CB;
-        }
-
-        .simbologia {
-            margin-bottom: 10px;
-            font-size: 14px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .simbologia div {
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .simbologia .diario {
-            background-color: #A6D5FA;
-        }
-
-        .simbologia .semanal {
-            background-color: #FFC0CB;
-        }
-
-        #tablaActividades th:nth-child(2),
-        #tablaActividades td:nth-child(2) {
-            display: none;
+            background-color: var(--semanal-color);
         }
 
         /* Estilos para los botones de estado */
         .estado-container {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 8px;
         }
 
         .btn-estado {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 2px solid #ddd;
             background-color: white;
@@ -367,8 +306,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
+            transition: all 0.2s ease;
         }
 
         .btn-estado:hover {
@@ -383,6 +323,7 @@
         .btn-bueno.seleccionado {
             background-color: #28a745 !important;
             color: white !important;
+            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
         }
 
         .btn-malo {
@@ -393,435 +334,1216 @@
         .btn-malo.seleccionado {
             background-color: #dc3545 !important;
             color: white !important;
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
         }
 
-        #tablaActividades td {
-            padding: 8px;
+        /* Estilo para el contenedor de la semana */
+        #semanaContainer {
+            margin: 20px 0 30px 0;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: var(--shadow);
         }
 
-        #cargarActividadesBtn {
-            margin-top: 15px;
+        #semanaContainer h3 {
+            margin-top: 0;
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .semana-grid {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            gap: 5px;
+        }
+
+        .dia-item {
+            text-align: center;
+            flex: 1;
+            padding: 10px 5px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .dia-item .dia-nombre {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--dark-color);
+        }
+
+        .dia-item .dia-fecha {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        .dia-item .dia-status {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .dia-item.dia-actual {
+            background-color: #e6f7ff;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .dia-item.dia-otro-mes {
+            opacity: 0.5;
+            background-color: #f0f0f0;
+        }
+
+        .dia-item .check-completado { color: #2ecc71; }
+        .dia-item .check-pendiente { color: #e74c3c; }
+
+        .botones-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .botones-container button {
+            flex: 1;
+            margin: 0;
+            border: none;
+            font-weight: 600;
+            padding: 12px 25px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            transition: var(--transition);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-width: 130px;
+        }
+
+        #reiniciarBtn {
+            background: linear-gradient(45deg, var(--dark-color), var(--primary-color));
+            color: white;
+            display: none;
+        }
+
+        #reiniciarBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        #enviarBtn {
+            background: linear-gradient(45deg, var(--secondary-color), #5dade2);
+            color: white;
+        }
+
+        #enviarBtn:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+            transform: none;
+        }
+
+        #enviarBtn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Badge de cambios no enviados */
+        .badge-cambios {
+            display: none;
+            background-color: var(--warning-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .badge-cambios.mostrar {
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Overlay de carga */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #loadingMessage {
+            text-align: center;
+            color: var(--dark-color);
+        }
+
+        #loadingMessage h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        /* Estilos para el modal de edición de semana */
+        .modal-semana {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-semana-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 95%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .modal-semana-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
-            background-color: #28a745;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
         }
 
-        #cargarActividadesBtn:hover {
-            background-color: #218838;
+        .modal-semana-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .modal-semana-header .btn-close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0 10px;
+            transition: var(--transition);
+            line-height: 1;
+        }
+
+        .modal-semana-header .btn-close-modal:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .modal-semana-scroll {
+            overflow: auto;
+            flex: 1;
+        }
+
+        .modal-semana-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .modal-semana-scroll th {
+            position: sticky;
+            top: 0;
+            background-color: #f4f4f4;
+            z-index: 10;
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .modal-semana-scroll td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .modal-semana-scroll td:first-child {
+            text-align: left;
+            min-width: 150px;
+        }
+
+        .modal-semana-scroll .estado-container-modal {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .modal-semana-scroll .btn-estado-modal {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .modal-semana-scroll .btn-estado-modal:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-semana-scroll .btn-bueno-modal {
+            color: #28a745;
+            border-color: #28a745;
+        }
+
+        .modal-semana-scroll .btn-bueno-modal.seleccionado {
+            background-color: #28a745 !important;
+            color: white !important;
+        }
+
+        .modal-semana-scroll .btn-malo-modal {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .modal-semana-scroll .btn-malo-modal.seleccionado {
+            background-color: #dc3545 !important;
+            color: white !important;
+        }
+
+        /* Colores para filas en el modal de semana */
+        .modal-semana-scroll .fila-diario-modal {
+            background-color: var(--diario-color);
+        }
+
+        .modal-semana-scroll .fila-semanal-modal {
+            background-color: var(--semanal-color);
+        }
+
+        .modal-semana-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .modal-semana-actions button {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: white;
+            background: linear-gradient(45deg, #28a745, #58d68d);
+        }
+
+        .modal-semana-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Estilos de mensajes SweetAlert2 */
+        .swal2-popup {
+            border-radius: 12px !important;
+            padding: 25px !important;
+        }
+
+        .swal2-actions {
+            gap: 12px !important;
+        }
+
+        .swal2-confirm {
+            border-radius: 50px !important;
+            padding: 10px 30px !important;
+            font-weight: 600 !important;
+            min-width: 120px !important;
+        }
+
+        .swal2-cancel {
+            border-radius: 50px !important;
+            padding: 10px 30px !important;
+            font-weight: 600 !important;
+            min-width: 120px !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .semana-grid {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 3px;
+            }
+
+            .dia-item {
+                min-width: 45px;
+                padding: 5px 3px;
+                font-size: 0.7rem;
+            }
+
+            .modal-semana-content {
+                max-width: 100%;
+                max-height: 95%;
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .modal-semana-scroll {
+                font-size: 0.75rem;
+            }
+
+            .modal-semana-scroll th,
+            .modal-semana-scroll td {
+                padding: 5px 3px;
+            }
+
+            .modal-semana-scroll td:first-child {
+                min-width: 100px;
+                font-size: 0.7rem;
+            }
+
+            .botones-container {
+                flex-direction: column;
+            }
+
+            .botones-container button {
+                width: 100%;
+            }
+
+            .modal-semana-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .modal-semana-header .btn-close-modal {
+                font-size: 1.5rem;
+            }
+
+            .estado-container {
+                gap: 4px;
+            }
+
+            .btn-estado {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                font-size: 1.2rem;
+                padding: 12px 0;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .container {
+                margin: 10px auto;
+                padding: 0 10px;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .question-container {
+                padding: 15px;
+            }
+
+            .tab-title h2 {
+                font-size: 1.2rem;
+                padding: 0 15px;
+            }
+
+            .badge-cambios {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+                margin-left: 5px;
+            }
+
+            .btn-estado {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        Pisos Brillantes
-    </div>
-    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    <div class="header">Pisos Brillantes</div>
+
     <div class="container">
-        <h1>Bitácora de Oficinas en Administración</h1>
-        <div class="form-container">
-            <form id="bitacoraForm">
-                <div class="question-container">
-                    <label for="fecha">Fecha:</label>
-                    <input type="date" id="fecha" name="fecha" required>
-                </div>
+        <h1>
+            Bitácora de Oficinas en Administración
+            <span class="badge-cambios" id="badgeCambios">
+                <i class="fas fa-exclamation-triangle me-1"></i>Cambios sin enviar
+            </span>
+        </h1>
 
-                <button type="button" id="cargarActividadesBtn" onclick="cargarActividades()">Cargar Resumen</button>
+        <div class="card">
+            <div class="card-body">
+                <form id="bitacoraForm">
+                    <!-- PÁGINA 1: UBICACIÓN -->
+                    <div id="pagina-1" class="pagina active">
+                        <div class="tab-title">
+                            <h2>Ubicación</h2>
+                        </div>
 
-                <div class="simbologia">
-                    <div class="diario">Diario</div>
-                    <div class="semanal">Semanal</div>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha" class="form-label">Fecha</label>
+                                <input type="date" class="form-control auto-save" id="fecha" required>
+                            </div>
+                        </div>
 
-                <table id="tablaActividades" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Actividad</th>
-                            <th>Frecuencia</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las actividades se generarán automáticamente aquí -->
-                    </tbody>
-                </table>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-primary btn-navegacion" data-pagina-actual="1" data-direccion="siguiente" id="btn-pag1-siguiente" disabled>
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="botones-container">
-                    <button type="button" id="reiniciarBtn" onclick="reiniciarFormulario()">Reiniciar</button>
-                    <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">Enviar</button>
-                </div>
-            </form>
+                    <!-- PÁGINA 2: ACTIVIDADES -->
+                    <div id="pagina-2" class="pagina">
+                        <div class="tab-title">
+                            <h2>Actividades</h2>
+                        </div>
 
-            <div id="overlay" style="display: none;">
-                <div id="loadingMessage">
-                    <p>Procesando...🥱</p>
-                </div>
+                        <!-- Pestañas para actividades -->
+                        <ul class="nav nav-tabs" id="actividadTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-diario" data-bs-toggle="tab" data-bs-target="#contenido-diario" type="button" role="tab">
+                                    <i class="fas fa-calendar-day me-2"></i>Diario
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-semanal" data-bs-toggle="tab" data-bs-target="#contenido-semanal" type="button" role="tab">
+                                    <i class="fas fa-calendar-week me-2"></i>Semanal
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="actividadTabsContent">
+                            <div class="tab-pane fade show active" id="contenido-diario" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaDiario">
+                                        <thead>
+                                            <tr>
+                                                <th>Actividad</th>
+                                                <th>Frecuencia</th>
+                                                <th style="width: 100px;">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaDiarioBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="contenido-semanal" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaSemanal">
+                                        <thead>
+                                            <tr>
+                                                <th>Actividad</th>
+                                                <th>Frecuencia</th>
+                                                <th style="width: 100px;">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaSemanalBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenedor para la semana -->
+                        <div id="semanaContainer" style="display: none;"></div>
+
+                        <div class="botones-container">
+                            <button type="button" id="reiniciarBtn" onclick="confirmarReinicio()">
+                                <i class="fas fa-undo me-2"></i>Reiniciar
+                            </button>
+                            <button type="button" id="enviarBtn" disabled onclick="confirmarEnvio()">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-<script>
-    // Función para volver al inicio
-    function goBack() {
-        window.location.href = "Bitácoras.html";
-    }
+    <!-- Overlay de carga -->
+    <div id="overlay">
+        <div class="spinner"></div>
+        <div id="loadingMessage">
+            <h4>Por favor espera un momento...</h4>
+        </div>
+    </div>
 
-    // Precargar la fecha actual
-    function prellenarFechaHora() {
-        let today = new Date();
-        let year = today.getFullYear();
-        let month = String(today.getMonth() + 1).padStart(2, "0");
-        let day = String(today.getDate()).padStart(2, "0");
-        document.getElementById("fecha").value = `${year}-${month}-${day}`;
-    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // =========================================================================
+        // CONFIGURACIÓN
+        // =========================================================================
 
-    // Llamar a la función para precargar la fecha al cargar la página
-    prellenarFechaHora();
+        const SESSION_KEY = 'bitacoraOficinasSessionData';
+        const DB_NAME = 'BitacoraOficinasImageDB';
+        const STORE_NAME = 'images';
 
-    // Arreglo COMPLETO de actividades para Áreas
-    const actividadesArea = [
-        { descripcion: "Biblioteca", frecuencia: "Semanal" },
-        { descripcion: "Compras", frecuencia: "Diario" },
-        { descripcion: "Contabilidad", frecuencia: "Diario" },
-        { descripcion: "Coordinación de Ejecución Eléctrica", frecuencia: "Diario" },
-        { descripcion: "Coordinación de Ejecución Mecánica", frecuencia: "Diario" },
-        { descripcion: "CRO", frecuencia: "Diario" },
-        { descripcion: "Educa", frecuencia: "Diario" },
-        { descripcion: "Ejecutores de Mantenimiento", frecuencia: "Diario" },
-        { descripcion: "Gerencia", frecuencia: "Diario" },
-        { descripcion: "Gerencia de Calidad", frecuencia: "Diario" },
-        { descripcion: "Gerencia de Mantenimiento", frecuencia: "Diario" },
-        { descripcion: "Gerencia de Materias Primas", frecuencia: "Diario" },
-        { descripcion: "Gerencia de Procesos", frecuencia: "Diario" },
-        { descripcion: "Informática", frecuencia: "Diario" },
-        { descripcion: "Inspectores de Mantenimiento", frecuencia: "Diario" },
-        { descripcion: "Materias Primas", frecuencia: "Diario" },
-        { descripcion: "Oficina 121", frecuencia: "Diario" },
-        { descripcion: "Oficina de Supervisión", frecuencia: "Diario" },
-        { descripcion: "Oficina de Visitas", frecuencia: "Diario" },
-        { descripcion: "Procesos", frecuencia: "Diario" },
-        { descripcion: "Producción", frecuencia: "Diario" },
-        { descripcion: "Profesionales Eléctricos", frecuencia: "Diario" },
-        { descripcion: "Proyectos", frecuencia: "Diario" },
-        { descripcion: "Recursos Humanos", frecuencia: "Diario" },
-        { descripcion: "Sala de Reuniones", frecuencia: "Diario" },
-        { descripcion: "Sala de Reuniones de Mantenimiento", frecuencia: "Diario" },
-        { descripcion: "SISO", frecuencia: "Diario" },
-        { descripcion: "Sub Gerencia", frecuencia: "Diario" }
-    ];
+        // Arreglo de actividades
+        const actividadesArea = [
+            { descripcion: "Biblioteca", frecuencia: "Semanal" },
+            { descripcion: "Compras", frecuencia: "Diario" },
+            { descripcion: "Contabilidad", frecuencia: "Diario" },
+            { descripcion: "Coordinación de Ejecución Eléctrica", frecuencia: "Diario" },
+            { descripcion: "Coordinación de Ejecución Mecánica", frecuencia: "Diario" },
+            { descripcion: "CRO", frecuencia: "Diario" },
+            { descripcion: "Educa", frecuencia: "Diario" },
+            { descripcion: "Ejecutores de Mantenimiento", frecuencia: "Diario" },
+            { descripcion: "Gerencia", frecuencia: "Diario" },
+            { descripcion: "Gerencia de Calidad", frecuencia: "Diario" },
+            { descripcion: "Gerencia de Mantenimiento", frecuencia: "Diario" },
+            { descripcion: "Gerencia de Materias Primas", frecuencia: "Diario" },
+            { descripcion: "Gerencia de Procesos", frecuencia: "Diario" },
+            { descripcion: "Informática", frecuencia: "Diario" },
+            { descripcion: "Inspectores de Mantenimiento", frecuencia: "Diario" },
+            { descripcion: "Materias Primas", frecuencia: "Diario" },
+            { descripcion: "Oficina 121", frecuencia: "Diario" },
+            { descripcion: "Oficina de Supervisión", frecuencia: "Diario" },
+            { descripcion: "Oficina de Visitas", frecuencia: "Diario" },
+            { descripcion: "Procesos", frecuencia: "Diario" },
+            { descripcion: "Producción", frecuencia: "Diario" },
+            { descripcion: "Profesionales Eléctricos", frecuencia: "Diario" },
+            { descripcion: "Proyectos", frecuencia: "Diario" },
+            { descripcion: "Recursos Humanos", frecuencia: "Diario" },
+            { descripcion: "Sala de Reuniones", frecuencia: "Diario" },
+            { descripcion: "Sala de Reuniones de Mantenimiento", frecuencia: "Diario" },
+            { descripcion: "SISO", frecuencia: "Diario" },
+            { descripcion: "Sub Gerencia", frecuencia: "Diario" }
+        ];
 
-    // Función para generar las filas de la tabla con los nuevos botones de estado
-function generarTablaActividades(actividades) {
-    const tbody = document.querySelector("#tablaActividades tbody");
-    tbody.innerHTML = "";
+        // =========================================================================
+        // VARIABLES GLOBALES
+        // =========================================================================
 
-    actividades.forEach((actividad) => {
-        const row = document.createElement("tr");
+        let db = null;
+        let $form, $fechaInput, $btnPag1Siguiente, $enviarBtn, $reiniciarBtn;
+        let $tablaDiarioBody, $tablaSemanalBody, $semanaContainer;
+        let semanaData = null;
+        let hayCambiosSinEnviar = false;
+        let estadoInicialActividades = [];
+        let actividadEnviada = false;
 
-        if (actividad.frecuencia === "Diario") {
-            row.classList.add("fila-diario");
-        } else if (actividad.frecuencia === "Semanal") {
-            row.classList.add("fila-semanal");
+        // =========================================================================
+        // FUNCIONES DE INICIALIZACIÓN
+        // =========================================================================
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initDB();
+                inicializarElementos();
+                prellenarFechaHora();
+                configurarEventos();
+                await verificarSesionGuardada();
+            } catch (error) {
+                console.error("Error en inicialización:", error);
+            }
+        });
+
+        function inicializarElementos() {
+            $form = $('#bitacoraForm');
+            $fechaInput = $('#fecha');
+            $btnPag1Siguiente = $('#btn-pag1-siguiente');
+            $enviarBtn = $('#enviarBtn');
+            $reiniciarBtn = $('#reiniciarBtn');
+            $tablaDiarioBody = $('#tablaDiarioBody');
+            $tablaSemanalBody = $('#tablaSemanalBody');
+            $semanaContainer = $('#semanaContainer');
         }
 
-        row.innerHTML = `
-            <td>${actividad.descripcion}</td>
-            <td>${actividad.frecuencia}</td>
-            <td>
-                <div class="estado-container">
-                    <button type="button" class="btn-estado btn-bueno" data-actividad="${actividad.descripcion}" data-estado="✓">✓</button>
-                    <button type="button" class="btn-estado btn-malo" data-actividad="${actividad.descripcion}" data-estado="C">C</button>
-                    <input type="hidden" name="actividad_estado" value="" data-actividad="${actividad.descripcion}">
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
+        function prellenarFechaHora() {
+            let today = new Date();
+            let year = today.getFullYear();
+            let month = String(today.getMonth() + 1).padStart(2, "0");
+            let day = String(today.getDate()).padStart(2, "0");
+            $fechaInput.val(`${year}-${month}-${day}`);
+            validarPagina1();
+        }
 
-    // Agregar event listeners a los botones de estado
-    document.querySelectorAll('.btn-estado').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const actividad = this.getAttribute('data-actividad');
-            const estado = this.getAttribute('data-estado');
-            const inputHidden = document.querySelector(`input[name="actividad_estado"][data-actividad="${actividad}"]`);
-            
-            // Si el botón ya está seleccionado, desmarcarlo
-            if (this.classList.contains('seleccionado')) {
-                this.classList.remove('seleccionado');
-                inputHidden.value = "";
-            } else {
-                // Resetear todos los botones para esta actividad
-                document.querySelectorAll(`.btn-estado[data-actividad="${actividad}"]`).forEach(b => {
-                    b.classList.remove('seleccionado');
-                });
+        function configurarEventos() {
+            // Eventos de página 1
+            $fechaInput.on('input change', function() {
+                validarPagina1();
+                guardarSesion();
+            });
+
+            $btnPag1Siguiente.on('click', async function() {
+                if (!validarPagina1()) {
+                    Swal.fire({
+                        text: "Debes seleccionar una fecha.",
+                        icon: "warning",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#3498db"
+                    });
+                    return;
+                }
+
+                const $btn = $(this);
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-2"></i> Cargando...');
+
+                try {
+                    await cargarActividades();
+                    navegarPagina('pagina-2');
+                } catch (error) {
+                    console.error("Error al cargar actividades:", error);
+                    Swal.fire({
+                        text: "Hubo un problema al cargar las actividades. Intenta nuevamente.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#e74c3c"
+                    });
+                    $btn.prop('disabled', false);
+                    $btn.html('Siguiente <i class="fas fa-arrow-right ms-2"></i>');
+                }
+            });
+
+            // Auto-save en todos los cambios
+            $('.auto-save').on('change input', function() {
+                guardarSesion();
+                if (!actividadEnviada) {
+                    verificarCambiosSinEnviar();
+                }
+            });
+
+            // Eventos de botones de estado
+            $(document).on('click', '.btn-estado', function() {
+                const actividad = $(this).data('actividad');
                 
-                // Marcar el botón seleccionado
-                this.classList.add('seleccionado');
-                inputHidden.value = estado;
-            }
-            
-            // Actualizar el botón de enviar y guardar respuestas
-            actualizarBotonEnviar();
-            guardarRespuestas();
-        });
-    });
-}
-
-
-    // Función para bloquear los campos del formulario
-    function bloquearCampos() {
-        document.getElementById('fecha').disabled = true;
-        document.getElementById('cargarActividadesBtn').disabled = true;
-        document.getElementById('reiniciarBtn').style.display = 'block';
-    }
-
-    // Función para reiniciar el formulario
-    function reiniciarFormulario() {
-        Swal.fire({
-            text: "¿Estás seguro de que deseas reiniciar el formulario?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Sí, reiniciar",
-            cancelButtonText: "Cancelar",
-            customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                cancelButton: "swal-button-cancel",
-                actions: "swal-actions",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                localStorage.removeItem('formData');
-                location.reload();
-            }
-        });
-    }
-
-    // Función para habilitar o deshabilitar el botón de Enviar
-    function actualizarBotonEnviar() {
-        const enviarBtn = document.getElementById("enviarBtn");
-        const actividadesConEstado = Array.from(document.querySelectorAll('input[name="actividad_estado"]'))
-            .some(input => input.value !== "");
-        enviarBtn.disabled = !actividadesConEstado;
-    }
-
-    // Función para mostrar los controles de la semana
-    function mostrarControlesSemana(semanaData) {
-        const semanaContainer = document.createElement('div');
-        semanaContainer.id = 'semanaContainer';
-        semanaContainer.style.margin = '20px 0';
-        semanaContainer.style.padding = '15px';
-        semanaContainer.style.border = '1px solid #ddd';
-        semanaContainer.style.borderRadius = '5px';
-        semanaContainer.style.backgroundColor = '#f9f9f9';
-        
-        const fechaSeleccionada = document.getElementById('fecha').value;
-        const mesSeleccionado = fechaSeleccionada.split('-')[1];
-        const diasOtroMes = semanaData.filter(dia => !dia.mismoMes).length;
-        
-        semanaContainer.innerHTML = `
-            <h3 style="margin-top: 0; text-align: center;">Semana del ${formatearFecha(semanaData[0].fecha)} al ${formatearFecha(semanaData[semanaData.length - 1].fecha)}</h3>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                ${semanaData.map((dia, index) => `
-                <div style="text-align: center; flex: 1; padding: 5px; 
-                            ${!dia.mismoMes ? 'opacity: 0.5; background-color: #f0f0f0;' : ''}
-                            ${dia.fecha === fechaSeleccionada ? 'background-color: #e6f7ff; border: 1px solid #007BFF;' : ''}">
-                    <div style="font-weight: bold;">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}</div>
-                    <div>${dia.fecha.split('-')[2]}/${dia.fecha.split('-')[1]}</div>
-                    <div style="font-size: 0.8em; color: ${dia.actividades.length > 0 ? 'green' : 'gray'}">
-                        ${dia.mismoMes ? (dia.actividades.length > 0 ? '✔' : '✖') : '—'}
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-            <div style="text-align: center;">
-                <button id="editarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Editar semana actual (${7 - diasOtroMes} días)
-                </button>
-            </div>
-            ${diasOtroMes > 0 ? `
-                <div style="text-align: center; margin-top: 10px; font-size: 0.8em; color: #666;">
-                    ${diasOtroMes} día(s) sombreado(s) pertenece(n) a otro mes
-                </div>
-            ` : ''}
-        `;
-        
-        const tabla = document.getElementById('tablaActividades');
-        tabla.parentNode.insertBefore(semanaContainer, tabla.nextSibling);
-        
-        document.getElementById('editarSemanaBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            mostrarModalSemana(semanaData.filter(dia => dia.mismoMes));
-        });
-    }
-
-    // Función para formatear fecha (DD/MM/YYYY)
-    function formatearFecha(fechaStr) {
-        const [year, month, day] = fechaStr.split('-');
-        return `${day}/${month}/${year}`;
-    }
-
-    // Función para mostrar el modal de edición semanal
-    function mostrarModalSemana(semanaData) {
-        const modal = document.createElement('div');
-        modal.id = 'semanaModal';
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.zIndex = '1000';
-        
-        const modalContent = document.createElement('div');
-        modalContent.style.backgroundColor = 'white';
-        modalContent.style.padding = '20px';
-        modalContent.style.borderRadius = '5px';
-        modalContent.style.maxWidth = '90%';
-        modalContent.style.maxHeight = '90%';
-        modalContent.style.display = 'flex';
-        modalContent.style.flexDirection = 'column';
-        
-        modalContent.innerHTML = `
-            <h2 style="margin-top: 0; text-align: center;">Editar Semana</h2>
-            <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
-                <div style="overflow: auto; flex: 1;">
-                    <table id="semanaModalTable" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4;">Actividad</th>
-                                ${semanaData.map(dia => `
-                                    <th style="padding: 8px; border: 1px solid #ddd; background-color: #f4f4f4; text-align: center;">
-                                        ${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][semanaData.indexOf(dia)]}<br>
-                                        ${dia.fecha.split('-')[2]}
-                                    </th>
-                                `).join('')}
-                            </tr>
-                        </thead>
-                        <tbody id="semanaModalBody">
-                            <!-- Las filas se generarán dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 15px;">
-                <button id="cancelarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Cancelar
-                </button>
-                <button id="guardarSemanaBtn" type="button" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Guardar Cambios
-                </button>
-            </div>
-        `;
-        
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-        
-        const actividades = semanaData[0].actividadesLista || [];
-        const tbody = document.getElementById('semanaModalBody');
-        
-        actividades.forEach((actividad, index) => {
-            const row = document.createElement('tr');
-            
-            if (actividad.frecuencia === "Diario") {
-                row.style.backgroundColor = '#A6D5FA';
-            } else if (actividad.frecuencia === "Semanal") {
-                row.style.backgroundColor = '#FFC0CB';
-            }
-            
-            const actividadCell = document.createElement('td');
-            actividadCell.textContent = actividad.descripcion;
-            actividadCell.style.padding = '8px';
-            actividadCell.style.border = '1px solid #ddd';
-            row.appendChild(actividadCell);
-            
-            semanaData.forEach(dia => {
-                const cell = document.createElement('td');
-                cell.style.padding = '8px';
-                cell.style.border = '1px solid #ddd';
-                cell.style.textAlign = 'center';
-                
-                const estadoContainer = document.createElement('div');
-                estadoContainer.className = 'estado-container';
-                estadoContainer.style.justifyContent = 'center';
-                
-            ['✓', 'C'].forEach(estado => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = `btn-estado ${estado === '✓' ? 'btn-bueno' : 'btn-malo'}`;
-                btn.setAttribute('data-fecha', dia.fecha);
-                btn.setAttribute('data-actividad', actividad.descripcion);
-                btn.setAttribute('data-estado', estado);
-                btn.textContent = estado;
-                
-                // Verificar si este estado está seleccionado
-                const estaSeleccionado = dia.actividades.some(a => 
-                    a.actividad === actividad.descripcion && a.estado === estado
-                );
-                
-                if (estaSeleccionado) {
-                    btn.classList.add('seleccionado');
-                    // Asegurar que las clases de color estén presentes
-                    if (estado === 'C') {
-                        btn.classList.add('btn-malo');
-                    } else {
-                        btn.classList.add('btn-bueno');
-                    }
+                // Si el botón ya está seleccionado, desmarcarlo
+                if ($(this).hasClass('seleccionado')) {
+                    $(this).removeClass('seleccionado');
+                } else {
+                    // Resetear todos los botones para esta actividad
+                    $(`.btn-estado[data-actividad="${actividad}"]`).removeClass('seleccionado');
+                    $(this).addClass('seleccionado');
                 }
                 
-                btn.addEventListener('click', function() {
-                    const fecha = this.getAttribute('data-fecha');
-                    const actividad = this.getAttribute('data-actividad');
-                    const estado = this.getAttribute('data-estado');
-                    
-                    // Si el botón ya está seleccionado, desmarcarlo
-                    if (this.classList.contains('seleccionado')) {
-                        this.classList.remove('seleccionado');
-                    } else {
-                        // Resetear todos los botones para esta actividad y fecha
-                        document.querySelectorAll(`.btn-estado[data-fecha="${fecha}"][data-actividad="${actividad}"]`).forEach(b => {
-                            b.classList.remove('seleccionado');
-                        });
-                        
-                        // Marcar el botón seleccionado
-                        this.classList.add('seleccionado');
-                    }
-                    
-                    // Asegurar que las clases de color estén presentes
-                    if (estado === 'C') {
-                        this.classList.add('btn-malo');
-                    } else {
-                        this.classList.add('btn-bueno');
-                    }
-                });
-                
-                estadoContainer.appendChild(btn);
+                guardarSesion();
+                if (!actividadEnviada) {
+                    verificarCambiosSinEnviar();
+                }
+                actualizarBotonEnviar();
             });
-            
-            cell.appendChild(estadoContainer);
-            row.appendChild(cell);
-        });
-        
-        tbody.appendChild(row);
-    });
-        
-        document.getElementById('cancelarSemanaBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.body.removeChild(modal);
-        });
-        
-        document.getElementById('guardarSemanaBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const checkboxes = document.querySelectorAll('#semanaModalBody .btn-estado.seleccionado');
-            const semanaActualizada = JSON.parse(JSON.stringify(semanaData));
-            
-            // Limpiar actividades de todos los días
+
+            // Eventos de cambios en el modal de semana
+            $(document).on('click', '.btn-estado-modal', function() {
+                const fecha = $(this).data('fecha');
+                const actividad = $(this).data('actividad');
+                
+                // Si el botón ya está seleccionado, desmarcarlo
+                if ($(this).hasClass('seleccionado')) {
+                    $(this).removeClass('seleccionado');
+                } else {
+                    // Resetear todos los botones para esta actividad y fecha
+                    $(`.btn-estado-modal[data-fecha="${fecha}"][data-actividad="${actividad}"]`).removeClass('seleccionado');
+                    $(this).addClass('seleccionado');
+                }
+            });
+        }
+
+        // =========================================================================
+        // FUNCIONES DE PÁGINA 1
+        // =========================================================================
+
+        function validarPagina1() {
+            const fechaValida = $fechaInput.val() !== '';
+            $btnPag1Siguiente.prop('disabled', !fechaValida);
+            return fechaValida;
+        }
+
+        // =========================================================================
+        // FUNCIONES DE NAVEGACIÓN
+        // =========================================================================
+
+        function navegarPagina(paginaId) {
+            $('.pagina').removeClass('active');
+            $(`#${paginaId}`).addClass('active');
+
+            if (paginaId === 'pagina-1') {
+                $btnPag1Siguiente.prop('disabled', !validarPagina1());
+            }
+
+            guardarSesion();
+        }
+
+        // =========================================================================
+        // FUNCIONES DE ACTIVIDADES
+        // =========================================================================
+
+        function generarTablasActividades(actividades) {
+            $tablaDiarioBody.empty();
+            $tablaSemanalBody.empty();
+
+            const diarias = actividades.filter(a => a.frecuencia === "Diario");
+            const semanales = actividades.filter(a => a.frecuencia === "Semanal");
+
+            diarias.forEach((actividad) => {
+                const row = document.createElement('tr');
+                row.className = 'fila-diario';
+                row.innerHTML = `
+                    <td>${actividad.descripcion}</td>
+                    <td>${actividad.frecuencia}</td>
+                    <td>
+                        <div class="estado-container">
+                            <button type="button" class="btn-estado btn-bueno" data-actividad="${actividad.descripcion}" data-estado="✓">✓</button>
+                            <button type="button" class="btn-estado btn-malo" data-actividad="${actividad.descripcion}" data-estado="C">C</button>
+                        </div>
+                    </td>
+                `;
+                $tablaDiarioBody.append(row);
+            });
+
+            semanales.forEach((actividad) => {
+                const row = document.createElement('tr');
+                row.className = 'fila-semanal';
+                row.innerHTML = `
+                    <td>${actividad.descripcion}</td>
+                    <td>${actividad.frecuencia}</td>
+                    <td>
+                        <div class="estado-container">
+                            <button type="button" class="btn-estado btn-bueno" data-actividad="${actividad.descripcion}" data-estado="✓">✓</button>
+                            <button type="button" class="btn-estado btn-malo" data-actividad="${actividad.descripcion}" data-estado="C">C</button>
+                        </div>
+                    </td>
+                `;
+                $tablaSemanalBody.append(row);
+            });
+
+            guardarEstadoInicial();
+            actualizarBotonEnviar();
+        }
+
+        function guardarEstadoInicial() {
+            estadoInicialActividades = [];
+            document.querySelectorAll('.btn-estado').forEach(btn => {
+                const actividad = btn.getAttribute('data-actividad');
+                const estado = btn.getAttribute('data-estado');
+                const seleccionado = btn.classList.contains('seleccionado');
+                estadoInicialActividades.push({
+                    actividad: actividad,
+                    estado: estado,
+                    seleccionado: seleccionado
+                });
+            });
+            verificarCambiosSinEnviar();
+        }
+
+        function obtenerEstadoActual() {
+            const estados = [];
+            document.querySelectorAll('.btn-estado').forEach(btn => {
+                const actividad = btn.getAttribute('data-actividad');
+                const estado = btn.getAttribute('data-estado');
+                const seleccionado = btn.classList.contains('seleccionado');
+                if (seleccionado) {
+                    estados.push({
+                        actividad: actividad,
+                        estado: estado
+                    });
+                }
+            });
+            return estados;
+        }
+
+        function actualizarBotonEnviar() {
+            const estados = obtenerEstadoActual();
+            const algunaSeleccionada = estados.length > 0;
+            $enviarBtn.prop('disabled', !algunaSeleccionada);
+        }
+
+        function verificarCambiosSinEnviar() {
+            if (actividadEnviada) {
+                hayCambiosSinEnviar = false;
+                actualizarBadgeCambios();
+                return;
+            }
+
+            const estadosActuales = [];
+            document.querySelectorAll('.btn-estado').forEach(btn => {
+                const actividad = btn.getAttribute('data-actividad');
+                const estado = btn.getAttribute('data-estado');
+                const seleccionado = btn.classList.contains('seleccionado');
+                estadosActuales.push({
+                    actividad: actividad,
+                    estado: estado,
+                    seleccionado: seleccionado
+                });
+            });
+
+            let cambios = false;
+            if (estadosActuales.length !== estadoInicialActividades.length) {
+                cambios = true;
+            } else {
+                for (let i = 0; i < estadosActuales.length; i++) {
+                    if (estadosActuales[i].seleccionado !== estadoInicialActividades[i].seleccionado) {
+                        cambios = true;
+                        break;
+                    }
+                }
+            }
+
+            // Verificar cambios en la semana
+            if (!cambios && semanaData) {
+                const sessionData = localStorage.getItem(SESSION_KEY);
+                if (sessionData) {
+                    try {
+                        const data = JSON.parse(sessionData);
+                        if (data.semanaData) {
+                            const semanaActual = JSON.stringify(semanaData);
+                            const semanaGuardada = JSON.stringify(data.semanaData);
+                            if (semanaActual !== semanaGuardada) {
+                                cambios = true;
+                            }
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            hayCambiosSinEnviar = cambios;
+            actualizarBadgeCambios();
+            guardarEstadoCambios();
+        }
+
+        function guardarEstadoCambios() {
+            try {
+                const sessionData = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+                sessionData.hayCambiosSinEnviar = hayCambiosSinEnviar;
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+            } catch (e) {
+                console.error("Error al guardar estado de cambios:", e);
+            }
+        }
+
+        function actualizarBadgeCambios() {
+            const $badge = $('#badgeCambios');
+            if (hayCambiosSinEnviar && !actividadEnviada) {
+                $badge.addClass('mostrar');
+            } else {
+                $badge.removeClass('mostrar');
+            }
+        }
+
+        function restaurarEstados(estados) {
+            // Resetear todos los botones
+            document.querySelectorAll('.btn-estado').forEach(btn => {
+                btn.classList.remove('seleccionado');
+            });
+
+            // Marcar los estados guardados
+            estados.forEach(item => {
+                const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${item.estado}"]`);
+                if (btn) {
+                    btn.classList.add('seleccionado');
+                }
+            });
+
+            actualizarBotonEnviar();
+            guardarEstadoInicial();
+            verificarCambiosSinEnviar();
+        }
+
+        async function cargarActividades() {
+            const fecha = $fechaInput.val();
+            if (!fecha) {
+                $btnPag1Siguiente.prop('disabled', false);
+                $btnPag1Siguiente.html('Siguiente <i class="fas fa-arrow-right ms-2"></i>');
+                return;
+            }
+
+            mostrarOverlay();
+
+            try {
+                generarTablasActividades(actividadesArea);
+
+                const response = await fetch("https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({
+                        fecha: fecha,
+                        tipo: "Área",
+                        area: "Administración",
+                        oficina: "Sección #1",
+                        accion: "consultarSemana"
+                    })
+                });
+
+                if (!response.ok) throw new Error("Error en la consulta");
+
+                const data = await response.json();
+
+                if (data.error) {
+                    console.error("Error del servidor:", data.message);
+                    return;
+                }
+
+                // Restaurar actividades del día
+                if (data.actividades && data.actividades.length > 0) {
+                    restaurarEstados(data.actividades);
+                }
+
+                // Mostrar controles de semana
+                if (data.semana && data.semana.length > 0) {
+                    semanaData = data.semana;
+                    semanaData.forEach(dia => {
+                        dia.actividadesLista = actividadesArea;
+                    });
+                    mostrarControlesSemana(semanaData);
+                } else {
+                    $semanaContainer.hide();
+                }
+
+                bloquearCampos();
+                actividadEnviada = false;
+                guardarSesion();
+
+            } catch (error) {
+                console.error("Error al cargar actividades:", error);
+                Swal.fire({
+                    text: "Error al cargar actividades existentes. Verifica tu conexión.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#e74c3c"
+                });
+            } finally {
+                ocultarOverlay();
+                $btnPag1Siguiente.prop('disabled', false);
+                $btnPag1Siguiente.html('Siguiente <i class="fas fa-arrow-right ms-2"></i>');
+            }
+        }
+
+        function bloquearCampos() {
+            $('#fecha').prop('disabled', true);
+            $reiniciarBtn.show();
+        }
+
+        // =========================================================================
+        // FUNCIONES DE SEMANA
+        // =========================================================================
+
+        function mostrarControlesSemana(semanaData) {
+            const $container = $semanaContainer;
+            $container.empty().show();
+
+            const fechaSeleccionada = $fechaInput.val();
+            const mesSeleccionado = fechaSeleccionada.split('-')[1];
+            const diasOtroMes = semanaData.filter(dia => !dia.mismoMes).length;
+
+            const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+            let html = `
+                <h3>Semana del ${formatearFecha(semanaData[0].fecha)} al ${formatearFecha(semanaData[semanaData.length - 1].fecha)}</h3>
+                <div class="semana-grid">
+            `;
+
+            semanaData.forEach((dia, index) => {
+                const esActual = dia.fecha === fechaSeleccionada;
+                const esOtroMes = !dia.mismoMes;
+                const tieneActividades = dia.actividades && dia.actividades.length > 0;
+
+                let statusIcon = '';
+                if (!esOtroMes) {
+                    statusIcon = tieneActividades ? 
+                        '<i class="fas fa-check-circle check-completado"></i>' : 
+                        '<i class="fas fa-times-circle check-pendiente"></i>';
+                } else {
+                    statusIcon = '<span style="color: #999;">—</span>';
+                }
+
+                html += `
+                    <div class="dia-item ${esActual ? 'dia-actual' : ''} ${esOtroMes ? 'dia-otro-mes' : ''}">
+                        <div class="dia-nombre">${diasSemana[index]}</div>
+                        <div class="dia-fecha">${dia.fecha.split('-')[2]}/${dia.fecha.split('-')[1]}</div>
+                        <div class="dia-status">${statusIcon}</div>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button type="button" class="btn btn-primary" id="editarSemanaBtn" style="border-radius: 50px; padding: 8px 25px;">
+                        <i class="fas fa-edit me-2"></i>Editar semana actual (${7 - diasOtroMes} días)
+                    </button>
+                </div>
+            `;
+
+            if (diasOtroMes > 0) {
+                html += `
+                    <div style="text-align: center; margin-top: 8px; font-size: 0.8em; color: #6c757d;">
+                        ${diasOtroMes} día(s) sombreado(s) pertenece(n) a otro mes
+                    </div>
+                `;
+            }
+
+            $container.html(html);
+
+            $('#editarSemanaBtn').on('click', function(e) {
+                e.preventDefault();
+                const diasMismoMes = semanaData.filter(dia => dia.mismoMes);
+                mostrarModalSemana(diasMismoMes);
+            });
+        }
+
+        function formatearFecha(fechaStr) {
+            const [year, month, day] = fechaStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function mostrarModalSemana(semanaData) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-semana';
+            modal.id = 'semanaModal';
+
+            const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+            let html = `
+                <div class="modal-semana-content">
+                    <div class="modal-semana-header">
+                        <h2><i class="fas fa-calendar-alt me-2"></i>Editar Semana</h2>
+                        <button class="btn-close-modal" onclick="cerrarModalSemana()" title="Cerrar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-semana-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 150px;">Actividad</th>
+                                    ${semanaData.map((dia, i) => `
+                                        <th style="min-width: 60px;">
+                                            ${diasSemana[i]}<br>
+                                            <small>${dia.fecha.split('-')[2]}</small>
+                                        </th>
+                                    `).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            const actividades = semanaData[0].actividadesLista || [];
+
+            actividades.forEach((actividad) => {
+                const claseFila = actividad.frecuencia === "Diario" ? "fila-diario-modal" : "fila-semanal-modal";
+                html += `<tr class="${claseFila}">`;
+                html += `<td style="text-align: left; font-size: 0.8rem;">${actividad.descripcion}</td>`;
+
+                semanaData.forEach(dia => {
+                    const estadoGuardado = dia.actividades.find(a => a.actividad === actividad.descripcion);
+                    const estado = estadoGuardado ? estadoGuardado.estado : null;
+                    
+                    html += `
+                        <td>
+                            <div class="estado-container-modal">
+                                <button type="button" class="btn-estado-modal btn-bueno-modal ${estado === '✓' ? 'seleccionado' : ''}" 
+                                        data-fecha="${dia.fecha}" 
+                                        data-actividad="${actividad.descripcion}" 
+                                        data-estado="✓">✓</button>
+                                <button type="button" class="btn-estado-modal btn-malo-modal ${estado === 'C' ? 'seleccionado' : ''}" 
+                                        data-fecha="${dia.fecha}" 
+                                        data-actividad="${actividad.descripcion}" 
+                                        data-estado="C">C</button>
+                            </div>
+                        </td>
+                    `;
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-semana-actions">
+                        <button onclick="guardarCambiosSemana()">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+
+            window.semanaModalData = semanaData;
+        }
+
+        function cerrarModalSemana() {
+            const modal = document.getElementById('semanaModal');
+            if (modal) modal.remove();
+        }
+
+        async function guardarCambiosSemana() {
+            const botonesSeleccionados = document.querySelectorAll('.btn-estado-modal.seleccionado');
+            const semanaActualizada = JSON.parse(JSON.stringify(window.semanaModalData));
+
             semanaActualizada.forEach(dia => {
                 dia.actividades = [];
             });
-            
-            checkboxes.forEach(btn => {
+
+            botonesSeleccionados.forEach(btn => {
                 const fecha = btn.getAttribute('data-fecha');
                 const actividad = btn.getAttribute('data-actividad');
                 const estado = btn.getAttribute('data-estado');
@@ -834,434 +1556,348 @@ function generarTablaActividades(actividades) {
                     });
                 }
             });
-            
-            guardarCambiosSemana(semanaActualizada);
-            document.body.removeChild(modal);
-        });
-    }
 
-    // Función para guardar los cambios de la semana
-    function guardarCambiosSemana(semanaActualizada) {
-        Swal.fire({
-            text: "¿Estás seguro de guardar los cambios para toda la semana?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí, guardar",
-            cancelButtonText: "Cancelar",
-            customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                cancelButton: "swal-button-cancel",
-                actions: "swal-actions",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const fecha = document.getElementById('fecha').value;
-                document.getElementById('overlay').style.display = 'flex';
-                
-                const url = "https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec";
-                
-                fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    body: new URLSearchParams({
-                        fecha: fecha,
-                        tipo: "Área",
-                        area: "Administración",
-                        oficina: "Sección #1",
-                        semana: JSON.stringify(semanaActualizada),
-                        actividades: JSON.stringify([]),
-                        accion: "guardarSemana"
-                    })
-                })
-                .then(response => response.text())
-                .then(response => {
-                    document.getElementById('overlay').style.display = 'none';
-                    
-                    if (response === 'Éxito') {
-                        localStorage.removeItem('formData');
-                        Swal.fire({
-                            text: '¡Semana actualizada correctamente!',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar',
-                            customClass: {
-                                popup: "swal-popup",
-                                confirmButton: "swal-button",
-                                actions: "swal-actions",
-                            },
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        throw new Error(response);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al guardar la semana:', error);
-                    document.getElementById('overlay').style.display = 'none';
-                    Swal.fire({
-                        text: 'Error al guardar los cambios de la semana',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                });
-            }
-        });
-    }
-
-    // Función cargarActividades
-    async function cargarActividades() {
-        const fecha = document.getElementById("fecha").value;
-        if (!fecha) {
             Swal.fire({
-                text: "Por favor selecciona una fecha",
-                icon: "warning",
-                confirmButtonText: "Aceptar"
+                text: "¿Estás seguro de guardar los cambios para toda la semana?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, guardar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#6c757d"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    mostrarOverlay();
+
+                    try {
+                        const fecha = $fechaInput.val();
+
+                        const response = await fetch("https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            body: new URLSearchParams({
+                                fecha: fecha,
+                                tipo: "Área",
+                                area: "Administración",
+                                oficina: "Sección #1",
+                                semana: JSON.stringify(semanaActualizada),
+                                actividades: JSON.stringify([]),
+                                accion: "guardarSemana"
+                            })
+                        });
+
+                        const resultText = await response.text();
+
+                        if (resultText === 'Éxito') {
+                            semanaData = semanaActualizada;
+                            cerrarModalSemana();
+                            ocultarOverlay();
+                            guardarSesion();
+                            verificarCambiosSinEnviar();
+
+                            Swal.fire({
+                                text: "¡Semana actualizada correctamente!",
+                                icon: "success",
+                                confirmButtonText: "Aceptar",
+                                confirmButtonColor: "#28a745"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(resultText);
+                        }
+                    } catch (error) {
+                        console.error("Error al guardar semana:", error);
+                        ocultarOverlay();
+                        Swal.fire({
+                            text: "Error al guardar los cambios de la semana. Intenta nuevamente.",
+                            icon: "error",
+                            confirmButtonText: "Aceptar",
+                            confirmButtonColor: "#e74c3c"
+                        });
+                    }
+                }
             });
-            return;
         }
 
-        document.getElementById("overlay").style.display = "flex";
+        // =========================================================================
+        // FUNCIONES DE ENVÍO
+        // =========================================================================
 
-        try {
-            generarTablaActividades(actividadesArea);
-            
-            const response = await fetch("https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
+        function confirmarEnvio() {
+            const estados = obtenerEstadoActual();
+            if (estados.length === 0) {
+                Swal.fire({
+                    text: "Debes seleccionar al menos una actividad.",
+                    icon: "warning",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#f39c12"
+                });
+                return;
+            }
+
+            Swal.fire({
+                text: "¿Estás seguro de continuar? 🤔",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí 🫡",
+                cancelButtonText: "No 😬",
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#e74c3c"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarDatos();
+                }
+            });
+        }
+
+        function enviarDatos() {
+            $enviarBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Enviando...');
+            actividadEnviada = true;
+            mostrarOverlay();
+
+            const fecha = $fechaInput.val();
+            const actividades = obtenerEstadoActual();
+
+            $.ajax({
+                url: "https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec",
+                type: "POST",
+                data: {
                     fecha: fecha,
                     tipo: "Área",
                     area: "Administración",
                     oficina: "Sección #1",
-                    accion: "consultarSemana"
-                })
-            });
-            
-            if (!response.ok) throw new Error("Error en la consulta");
-            
-            const data = await response.json();
-            
-            if (data.error) {
-                console.error("Error del servidor:", data.message);
-                return;
-            }
-            
-            if (data.actividades && data.actividades.length > 0) {
-                data.actividades.forEach(item => {
-                    // Mapear estados antiguos a los nuevos
-                    let estadoFrontend = item.estado;
-                    if (item.estado === "○" || item.estado === "✗") {
-                        estadoFrontend = "C";
-                    }
-                    
-                    const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${estadoFrontend}"]`);
-                    if (btn) {
-                        btn.classList.add('seleccionado');
-                        // Asegurarse de que se aplique el color correcto
-                        if (estadoFrontend === 'C') {
-                            btn.classList.add('btn-malo');
-                        } else {
-                            btn.classList.add('btn-bueno');
-                        }
-                        document.querySelector(`input[name="actividad_estado"][data-actividad="${item.actividad}"]`).value = estadoFrontend;
-                    }
-                });
-            }
-            
-            if (data.semana && data.semana.length > 0) {
-                data.semana.forEach(dia => {
-                    dia.actividadesLista = actividadesArea;
-                    // Mapear estados antiguos a nuevos para la semana
-                    dia.actividades = dia.actividades.map(act => {
-                        if (act.estado === "○" || act.estado === "✗") {
-                            return {...act, estado: "C"};
-                        }
-                        return act;
-                    });
-                });
-                
-                const existingContainer = document.getElementById('semanaContainer');
-                if (existingContainer) existingContainer.remove();
-                
-                mostrarControlesSemana(data.semana);
-            }
-            
-            bloquearCampos();
-            document.getElementById("tablaActividades").style.display = "table";
-            actualizarBotonEnviar();
-            
-        } catch (error) {
-            console.error("Error al cargar actividades:", error);
-            Swal.fire({
-                text: "Error al cargar actividades existentes",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
-        } finally {
-            document.getElementById("overlay").style.display = "none";
-        }
-    }
+                    actividades: JSON.stringify(actividades)
+                },
+                success: function(response) {
+                    ocultarOverlay();
+                    localStorage.removeItem(SESSION_KEY);
+                    hayCambiosSinEnviar = false;
+                    actualizarBadgeCambios();
 
-
-    // Función para confirmar el envío
-    function confirmarEnvio() {
-        Swal.fire({
-            text: "¿Estás seguro de continuar? 🤔",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí 🫡",
-            cancelButtonText: "No 😬",
-            customClass: {
-                popup: "swal-popup",
-                confirmButton: "swal-button",
-                cancelButton: "swal-button-cancel",
-                actions: "swal-actions",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById("overlay").style.display = "flex";
-                const fecha = $('#fecha').val();
-                enviarDatos(fecha);
-            }
-        });
-    }
-
-    // Función para enviar datos
-    function enviarDatos(fecha) {
-        let url = "https://script.google.com/macros/s/AKfycbxNAQIS_J2yBy9jJ-66Kh0s0fzFvzq1IXkRQGQ0Q3beQZLnQRbRIiKDyFLvWJRfqDpw/exec";
-
-        const actividades = [];
-        document.querySelectorAll('input[name="actividad_estado"]').forEach(input => {
-            if (input.value) {
-                actividades.push({
-                    actividad: input.getAttribute('data-actividad'),
-                    estado: input.value
-                });
-            }
-        });
-
-        if (actividades.length === 0) {
-            Swal.fire({
-                text: 'Debes seleccionar al menos una actividad.',
-                icon: 'warning',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {
-                fecha: fecha,
-                tipo: "Área",
-                area: "Administración",
-                oficina: "Sección #1",
-                actividades: JSON.stringify(actividades)
-            },
-            success: function(response) {
-                console.log("Respuesta del servidor:", response);
-                document.getElementById('overlay').style.display = 'none';
-                localStorage.removeItem('formData');
-
-                setTimeout(function() {
                     Swal.fire({
                         text: "¡Envío exitoso! 🥳🎉",
                         icon: "success",
-                        showCancelButton: false,
                         confirmButtonText: "Aceptar",
-                        customClass: {
-                            content: "swal-content",
-                            confirmButton: "swal-button",
-                            popup: "swal-popup",
-                        },
+                        confirmButtonColor: "#28a745"
                     }).then(() => {
                         location.reload();
                     });
-                }, 500);
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al enviar los datos:", xhr.responseText);
-                document.getElementById("overlay").style.display = "none";
-                Swal.fire({
-                    text: 'Hubo un problema al enviar los datos. Intenta nuevamente. 😢',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
-    }
-
-    // Función para guardar las respuestas en localStorage
-    function guardarRespuestas() {
-        const formData = {
-            fecha: document.getElementById('fecha').value,
-            actividades: []
-        };
-
-        // Guardar los estados de las actividades
-        document.querySelectorAll('input[name="actividad_estado"]').forEach(input => {
-            if (input.value) {
-                formData.actividades.push({
-                    actividad: input.getAttribute('data-actividad'),
-                    estado: input.value
-                });
-            }
-        });
-
-        // Guardar en localStorage
-        localStorage.setItem('formData', JSON.stringify(formData));
-    }
-
-    // Función para cargar las respuestas guardadas
-    function cargarRespuestas() {
-        const savedData = localStorage.getItem('formData');
-        if (savedData) {
-            const formData = JSON.parse(savedData);
-
-            // Primero generar la tabla si no existe
-            if (!document.querySelector("#tablaActividades tbody").innerHTML) {
-                generarTablaActividades(actividadesArea);
-                document.getElementById("tablaActividades").style.display = "table";
-            }
-
-            // Cargar los valores de los campos
-            Object.keys(formData).forEach(key => {
-                const input = document.getElementById(key);
-                if (input && key !== 'actividades') {
-                    input.value = formData[key];
-                }
-            });
-
-            // Cargar los estados de las actividades
-            if (formData.actividades && formData.actividades.length > 0) {
-                formData.actividades.forEach(item => {
-                    const btn = document.querySelector(`.btn-estado[data-actividad="${item.actividad}"][data-estado="${item.estado}"]`);
-                    if (btn) {
-                        btn.classList.add('seleccionado');
-                        // Asegurar que se aplique el color correcto
-                        if (item.estado === 'C') {
-                            btn.classList.add('btn-malo');
-                        } else {
-                            btn.classList.add('btn-bueno');
-                        }
-                        const input = document.querySelector(`input[name="actividad_estado"][data-actividad="${item.actividad}"]`);
-                        if (input) {
-                            input.value = item.estado;
-                        }
-                    }
-                });
-            }
-
-            actualizarBotonEnviar();
-            bloquearCampos();
-        }
-    }
-
-    // Función para preguntar al usuario si desea continuar con las respuestas guardadas
-    function preguntarContinuar() {
-        const savedData = localStorage.getItem('formData');
-        if (savedData) {
-            // Generar la tabla primero
-            generarTablaActividades(actividadesArea);
-            document.getElementById("tablaActividades").style.display = "table";
-            
-            Swal.fire({
-                text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
-                iconHtml: "🫵🏻",
-                showCancelButton: true,
-                confirmButtonText: "Sí, continuar 😎",
-                cancelButtonText: "No, reiniciar 🤓",
-                allowOutsideClick: false,
-                customClass: {
-                    popup: "swal-popup",
-                    confirmButton: "swal-button",
-                    cancelButton: "swal-button-cancel",
-                    actions: "swal-actions",
-                    icon: "no-border-icon",
                 },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    cargarRespuestas();
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                error: function(xhr, status, error) {
+                    console.error("Error al enviar:", error);
+                    ocultarOverlay();
+                    $enviarBtn.prop('disabled', false).html('<i class="fas fa-paper-plane me-2"></i>Enviar');
+                    actividadEnviada = false;
                     Swal.fire({
-                        text: "¿Estás seguro de que deseas perder todo tu progreso?",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "Sí, reiniciar",
-                        cancelButtonText: "No, recuperar progreso",
-                        allowOutsideClick: false,
-                        customClass: {
-                            popup: "swal-popup",
-                            confirmButton: "swal-button",
-                            cancelButton: "swal-button-cancel",
-                            actions: "swal-actions",
-                        },
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            localStorage.removeItem('formData');
-                            location.reload();
-                        } else {
-                            cargarRespuestas();
-                        }
+                        text: "Hubo un problema al enviar los datos. Intenta nuevamente. 😢",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                        confirmButtonColor: "#e74c3c"
                     });
                 }
             });
         }
-    }
 
-    // Limpiar respuestas guardadas al enviar el formulario
-    function limpiarRespuestasGuardadas() {
-        localStorage.removeItem('formData');
-    }
+        // =========================================================================
+        // FUNCIONES DE REINICIO
+        // =========================================================================
 
-    // Escuchar cambios en los campos del formulario
-    document.querySelectorAll('input, select, textarea').forEach(input => {
-        input.addEventListener('input', guardarRespuestas);
-        input.addEventListener('change', guardarRespuestas);
-    });
-
-    // Llamar a la función al cargar la página
-    window.onload = function() {
-        prellenarFechaHora(); // Primero precargar fecha
-        preguntarContinuar(); // Luego preguntar por continuar
-    };
-
-    let backPressCount = 0;
-    history.pushState(null, null, document.URL);
-
-    window.addEventListener("popstate", function (event) {
-        if (backPressCount === 0) {
+        function confirmarReinicio() {
             Swal.fire({
-                text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
+                text: "¿Estás seguro de que deseas reiniciar el formulario?",
                 icon: "warning",
-                showCancelButton: false,
-                confirmButtonText: "Quedarme",
-                allowOutsideClick: false,
-                customClass: {
-                    popup: "swal-popup",
-                    confirmButton: "swal-button",
-                    actions: "swal-actions",
-                    icon: "swal-icon-circle",
-                },
+                showCancelButton: true,
+                confirmButtonText: "Sí, reiniciar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#e74c3c",
+                cancelButtonColor: "#6c757d"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    history.pushState(null, null, document.URL);
-                    backPressCount = 0;
+                    reiniciarFormulario();
                 }
             });
-
-            backPressCount++;
-        } else {
-            backPressCount = 0;
-            history.back();
         }
-    });
-</script>
+
+        function reiniciarFormulario() {
+            localStorage.removeItem(SESSION_KEY);
+            location.reload();
+        }
+
+        // =========================================================================
+        // FUNCIONES DE SESIÓN
+        // =========================================================================
+
+        function guardarSesion() {
+            if (actividadEnviada) return;
+
+            const sessionData = {
+                paginaActual: $('.pagina.active').attr('id') || 'pagina-1',
+                fecha: $fechaInput.val(),
+                actividades: obtenerEstadoActual(),
+                semanaData: semanaData,
+                hayCambiosSinEnviar: hayCambiosSinEnviar
+            };
+
+            localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+        }
+
+        async function cargarSesion() {
+            const dataString = localStorage.getItem(SESSION_KEY);
+            if (!dataString) return;
+
+            try {
+                const data = JSON.parse(dataString);
+
+                $fechaInput.val(data.fecha || '');
+                validarPagina1();
+
+                if (data.fecha) {
+                    await cargarActividades();
+
+                    if (data.actividades && data.actividades.length > 0) {
+                        restaurarEstados(data.actividades);
+                    }
+
+                    if (data.semanaData) {
+                        semanaData = data.semanaData;
+                        semanaData.forEach(dia => {
+                            dia.actividadesLista = actividadesArea;
+                        });
+                        mostrarControlesSemana(semanaData);
+                    }
+
+                    bloquearCampos();
+
+                    if (data.hayCambiosSinEnviar !== undefined) {
+                        hayCambiosSinEnviar = data.hayCambiosSinEnviar;
+                        actualizarBadgeCambios();
+                    } else {
+                        verificarCambiosSinEnviar();
+                    }
+                }
+
+                if (data.paginaActual && data.paginaActual !== 'pagina-1') {
+                    navegarPagina(data.paginaActual);
+                }
+
+            } catch (error) {
+                console.error("Error al cargar sesión:", error);
+            }
+        }
+
+        async function verificarSesionGuardada() {
+            if (localStorage.getItem(SESSION_KEY)) {
+                Swal.fire({
+                    text: "Tienes un progreso guardado. ¿Te gustaría retomarlo?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, continuar 😎",
+                    cancelButtonText: "No, reiniciar 🤓",
+                    confirmButtonColor: "#3498db",
+                    cancelButtonColor: "#e74c3c",
+                    allowOutsideClick: false
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await cargarSesion();
+                        Swal.fire({
+                            text: "¡Progreso restaurado!",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                            confirmButtonColor: "#28a745",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            text: "¿Estás seguro de que deseas perder todo tu progreso?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Sí, reiniciar",
+                            cancelButtonText: "No, recuperar progreso",
+                            confirmButtonColor: "#e74c3c",
+                            cancelButtonColor: "#3498db",
+                            allowOutsideClick: false
+                        }).then(async (result) => {
+                            if (result.isConfirmed) {
+                                localStorage.removeItem(SESSION_KEY);
+                                location.reload();
+                            } else {
+                                await cargarSesion();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // =========================================================================
+        // FUNCIONES DE OVERLAY
+        // =========================================================================
+
+        function mostrarOverlay() {
+            document.getElementById('overlay').style.display = 'flex';
+        }
+
+        function ocultarOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // =========================================================================
+        // FUNCIONES DE INDEXEDDB
+        // =========================================================================
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+
+                request.onupgradeneeded = function(event) {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+
+                request.onsuccess = function(event) {
+                    db = event.target.result;
+                    console.log('IndexedDB abierta correctamente');
+                    resolve(db);
+                };
+
+                request.onerror = function(event) {
+                    console.error('Error DB:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // =========================================================================
+        // CONTROL DE BOTÓN ATRÁS
+        // =========================================================================
+
+        let backPressCount = 0;
+        history.pushState(null, null, document.URL);
+
+        window.addEventListener("popstate", function(event) {
+            if (backPressCount === 0) {
+                Swal.fire({
+                    text: "Si presionas el botón atrás nuevamente, saldrás del formulario.",
+                    icon: "warning",
+                    confirmButtonText: "Quedarme",
+                    confirmButtonColor: "#3498db",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        history.pushState(null, null, document.URL);
+                        backPressCount = 0;
+                    }
+                });
+                backPressCount++;
+            } else {
+                backPressCount = 0;
+                history.back();
+            }
+        });
+    </script>
 </body>
 </html>
