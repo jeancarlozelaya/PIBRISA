@@ -4,591 +4,739 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Resumen Semanal de Actividades</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Evita el desplazamiento horizontal y asegura que el body ocupe el 100% del viewport */
-        body, html {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+        /* --- ESTILOS BASE --- */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #2ecc71;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --light-yellow: #fff9e6;
+            --insumos-primary: #3f7b57;
+            --insumos-accent: #2196F3;
+            --insumos-light-gray: #f0f2f5;
+            --insumos-danger: #ef5350;
+            --diario-color: #A6D5FA;
+            --semanal-color: #FFC0CB;
         }
 
-        /* Header */
+        html, body {
+            touch-action: manipulation;
+            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--insumos-light-gray);
+            color: var(--dark-color);
+            line-height: 1.6;
+            -webkit-user-scalable: no;
+            -moz-user-scalable: no;
+            -ms-user-scalable: no;
+            user-scalable: no;
+        }
+
+        * {
+            touch-action: pan-x pan-y;
+        }
+
         .header {
-            background-color: #007BFF;
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
             text-align: center;
-            padding: 15px;
-            width: 100%;
-            font-size: 1.5em;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
-        }
-
-        /* Contenedor del formulario */
-        .container {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 1000px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            text-align: center;
-            margin: 40px auto;
-            grid-row: 2;
-            height: auto;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 100;
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            margin: 0 0 20px 0; /* Ajusta el margen inferior */
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
             font-weight: bold;
         }
 
-        input[type="date"],
-        input[type="time"],
-        input[type="text"],
-        textarea,
-        select,
-        #oficina,
-        button {
-            width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
         }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
+        .container {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: var(--shadow);
             border: none;
-            cursor: pointer;
-            padding: 12px 0;
+            margin-bottom: 25px;
+            border-top: 5px solid var(--insumos-primary);
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .card-body {
+            padding: 2.5rem;
         }
 
-        /* Estilo para el botón "Volver al Inicio" */
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
+        .tab-title {
             text-align: center;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
-            position: fixed;
-            top: 80px;
-            left: 0px;
-            z-index: 1001;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding: 20px 0;
+            position: relative;
         }
 
-        .back-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+        .tab-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            display: inline-block;
+            padding: 0 25px;
+            position: relative;
         }
 
-        /* Estilo para los contenedores de preguntas */
+        .tab-title h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            border-radius: 2px;
+        }
+
+        .tab-title h2:before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
         .question-container {
+            background-color: #fdfdfd;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
-            text-align: left;
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            border-left: 4px solid var(--secondary-color);
             transition: border-color 0.3s;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
         }
 
         .question-container:hover {
-            border-color: #007BFF;
+            border-color: var(--secondary-color);
         }
 
-        .question-container input[type="date"],
-        .question-container input[type="time"],
-        .question-container input[type="text"],
-        .question-container textarea,
-        .question-container select {
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            color: #333;
-            transition: border-color 0.3s;
-            box-sizing: border-box; /* Incluye el padding en el ancho total */
-            margin-top: 5px;
+        .question-container label {
+            font-weight: 600;
+            color: var(--dark-color);
         }
 
-        .question-container input[type="date"]:focus,
-        .question-container input[type="time"]:focus,
-        .question-container input[type="text"]:focus,
-        .question-container textarea:focus,
-        .question-container select:focus {
-            border-color: #007BFF;
-            outline: none;
+        /* Estilos de tabla */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            background: white;
         }
 
-        /* Estilo del overlay (pantalla bloqueada) */
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-color: #dee2e6;
+            text-align: center;
+            padding: 12px 8px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table td {
+            padding: 10px 8px;
+            border-color: #dee2e6;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .completada {
+            background-color: #d4edda !important;
+            color: #155724;
+        }
+
+        .pendiente {
+            background-color: #f8d7da !important;
+            color: #721c24;
+        }
+
+        .completada i {
+            color: #28a745;
+        }
+
+        .pendiente i {
+            color: #dc3545;
+        }
+
+        /* Estilo para la simbología */
+        .simbologia {
+            margin: 20px 0;
+            font-size: 14px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .simbologia div {
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .simbologia .completada {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .simbologia .pendiente {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Información de la semana */
+        .semana-info {
+            margin: 15px 0 25px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #e8f4fd, #d1ecf9);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .semana-info i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            padding: 40px 20px;
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Overlay de carga */
         #overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         #loadingMessage {
-            color: white;
-            font-size: 24px;
-            font-family: 'Times New Roman', Times, serif;
             text-align: center;
-            padding: 20px;
+            color: var(--dark-color);
         }
 
-        /* Estilo para la tabla de resultados */
-        .scrollable-table {
-            max-height: 600px;
-            overflow-y: auto;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        
-        th {
-            background-color: #f4f4f4;
-            position: sticky;
-            top: 0;
-        }
-
-        /* Centrar los encabezados de la tabla */
-        #tablaResultados th {
-            text-align: center;
-        }
-
-        /* Color para celdas completadas */
-        .completada {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        /* Color para celdas pendientes */
-        .pendiente {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Estilo para la simbología */
-        .simbologia {
-            margin-bottom: 10px;
-            font-size: 14px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .simbologia div {
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .simbologia .completada {
-            background-color: #d4edda;
-        }
-
-        .simbologia .pendiente {
-            background-color: #f8d7da;
-        }
-
-        /* Información de la semana */
-        .semana-info {
-            margin: 15px 0;
+        #loadingMessage h4 {
+            margin: 0;
+            font-size: 1.3rem;
             font-weight: bold;
-            font-size: 16px;
-            padding: 10px;
-            background-color: #e9f5ff;
-            border-radius: 5px;
         }
 
-        /* Estilos responsivos */
+        /* Estilos de mensajes SweetAlert2 */
+        .swal2-popup {
+            border-radius: 12px !important;
+            padding: 25px !important;
+        }
+
+        .swal2-actions {
+            gap: 12px !important;
+        }
+
+        .swal2-confirm {
+            border-radius: 50px !important;
+            padding: 10px 30px !important;
+            font-weight: 600 !important;
+            min-width: 120px !important;
+        }
+
+        .swal2-cancel {
+            border-radius: 50px !important;
+            padding: 10px 30px !important;
+            font-weight: 600 !important;
+            min-width: 120px !important;
+        }
+
+        /* Estilos para los días de la semana en el encabezado */
+        .dia-header {
+            display: block;
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 400;
+        }
+
+        .dia-header .dia-numero {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                width: 95%;
-                padding: 15px;
+            .card-body {
+                padding: 1.5rem;
             }
-            
-            .back-button {
-                top: 70px;
-                padding: 8px 15px;
-                font-size: 0.9em;
+
+            .table {
+                font-size: 0.75rem;
             }
-            
-            table {
+
+            .table th {
+                padding: 8px 4px;
+            }
+
+            .table td {
+                padding: 6px 4px;
+            }
+
+            .simbologia {
+                gap: 10px;
                 font-size: 12px;
             }
-            
-            th, td {
-                padding: 8px;
+
+            .simbologia div {
+                padding: 4px 12px;
+            }
+
+            .semana-info {
+                font-size: 0.85rem;
+                padding: 12px;
+            }
+
+            .question-container {
+                padding: 15px;
             }
         }
 
         @media (max-width: 480px) {
             .header {
-                font-size: 1.2em;
-                padding: 10px;
+                font-size: 1.2rem;
+                padding: 12px 0;
             }
-            
+
             h1 {
-                font-size: 1.3em;
+                font-size: 1.3rem;
             }
-            
-            .question-container {
-                padding: 8px;
+
+            .container {
+                margin: 10px auto;
+                padding: 0 10px;
             }
-            
-            input[type="date"],
-            select {
-                padding: 8px;
-                font-size: 14px;
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .tab-title h2 {
+                font-size: 1.2rem;
+                padding: 0 15px;
+            }
+
+            .table {
+                font-size: 0.65rem;
+            }
+
+            .table th {
+                padding: 6px 2px;
+            }
+
+            .table td {
+                padding: 4px 2px;
+            }
+
+            .semana-info {
+                font-size: 0.75rem;
+                padding: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        Pisos Brillantes
-    </div>
-    <a href="javascript:void(0);" class="back-button" onclick="goBack()">Volver al Inicio</a>
+    <div class="header">Pisos Brillantes</div>
+
     <div class="container">
         <h1>Resumen Semanal de Actividades</h1>
-        <div class="form-container">
-            <form id="consultaForm">
-                <div class="question-container">
-                    <label for="fechaConsulta">Fecha:</label>
-                    <input type="date" id="fechaConsulta" name="fechaConsulta" required>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="consultaForm">
+                    <div class="tab-title">
+                        <h2>Filtros de Búsqueda</h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="question-container">
+                                <label for="fechaConsulta" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="fechaConsulta" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="question-container">
+                                <label for="tipoConsulta" class="form-label">Tipo de Actividad</label>
+                                <select class="form-select" id="tipoConsulta" required>
+                                    <option value="">Selecciona una opción</option>
+                                    <option value="Área">Área</option>
+                                    <option value="Baño">Baño</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="simbologia">
+                    <div class="completada"><i class="fas fa-check-circle"></i> Completada</div>
+                    <div class="pendiente"><i class="fas fa-times-circle"></i> Pendiente</div>
                 </div>
 
-                <div class="question-container">
-                    <label for="tipoConsulta">Tipo de Actividad:</label>
-                    <select id="tipoConsulta" name="tipoConsulta" required>
-                        <option value="">Selecciona una opción</option>
-                        <option value="Área">Área</option>
-                        <option value="Baño">Baño</option>
-                    </select>
+                <div id="semanaInfo" class="semana-info" style="display: none;"></div>
+
+                <div class="table-container">
+                    <div id="resultadoConsulta">
+                        <div class="no-data">
+                            <i class="fas fa-search"></i>
+                            <p>Seleccione una fecha y tipo de actividad para ver el resumen semanal</p>
+                        </div>
+                    </div>
                 </div>
-            </form>
-
-            <div class="simbologia">
-                <div class="completada"><i class="fas fa-check"></i> Completada</div>
-                <div class="pendiente"><i class="fas fa-times"></i> Pendiente</div>
-            </div>
-
-            <div id="semanaInfo" class="semana-info"></div>
-            
-            <div class="scrollable-table">
-                <div id="resultadoConsulta">
-                    <p style="text-align: center; color: #666; padding: 20px;">
-                        Seleccione una fecha y tipo de actividad para ver el resumen semanal
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div id="overlay" style="display: none;">
-            <div id="loadingMessage">
-                <p><i class="fas fa-spinner fa-spin"></i> Cargando datos...</p>
             </div>
         </div>
     </div>
 
-<script>
-    // URL de tu Google Apps Script desplegado
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrSY_nR4o4DUXzmfkrIriC6vtIm6oXMab1yBtl9zHxC8-qTmP3Izfyyi8VMYXo8seKgQ/exec";
-    
-    // Función para volver al inicio
-    function goBack() {
-        window.location.href = "Bitácoras.html";
-    }
+    <!-- Overlay de carga -->
+    <div id="overlay">
+        <div class="spinner"></div>
+        <div id="loadingMessage">
+            <h4>Por favor espera un momento...</h4>
+        </div>
+    </div>
 
-    // Precargar la fecha actual al cargar la página
-    function prellenarFecha() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, "0");
-        const day = String(today.getDate()).padStart(2, "0");
-        document.getElementById("fechaConsulta").value = `${year}-${month}-${day}`;
-    }
+    <script>
+        // URL de tu Google Apps Script desplegado
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrSY_nR4o4DUXzmfkrIriC6vtIm6oXMab1yBtl9zHxC8-qTmP3Izfyyi8VMYXo8seKgQ/exec";
+        
+        // Variables globales
+        let $fechaInput, $tipoSelect;
 
-// Función para obtener los días de la semana (Lunes a Domingo)
-function getWeekDays(selectedDate) {
-    const date = new Date(selectedDate);
-    const dayOfWeek = date.getDay(); // 0 (domingo) a 6 (sábado)
-    
-    // Calculamos el lunes de la semana seleccionada
-    const monday = new Date(date);
-    if (dayOfWeek === 0) {
-        // Si es domingo, el lunes es el día siguiente
-        monday.setDate(date.getDate() + 1);
-    } else if (dayOfWeek !== 1) {
-        // Si no es lunes, retrocedemos hasta el lunes
-        monday.setDate(date.getDate() - (dayOfWeek - 1));
-    }
-    
-    // Generamos los 7 días de la semana (Lunes a Domingo)
-    const weekDays = [new Date(monday)];
-    for (let i = 1; i < 7; i++) {
-        const nextDay = new Date(monday);
-        nextDay.setDate(monday.getDate() + i);
-        weekDays.push(nextDay);
-    }
-    
-    return weekDays;
-}
-
-// Función para obtener el número de semana ISO
-function getWeekNumber(date) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
-    const week1 = new Date(d.getFullYear(), 0, 4);
-    return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-
-    // Formatear fecha como DD/MM/YYYY
-    function formatDate(date) {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-
-    // Formatear fecha como DD/MM para mostrar
-    function formatDateShort(date) {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        return `${day}/${month}`;
-    }
-
-    // Función principal para consultar datos
-    async function consultarDatos() {
-        const fecha = document.getElementById("fechaConsulta").value;
-        const tipo = document.getElementById("tipoConsulta").value;
-
-        // Validar campos
-        if (!fecha || !tipo) {
-            return;
+        // Precargar la fecha actual al cargar la página
+        function prellenarFecha() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const day = String(today.getDate()).padStart(2, "0");
+            $fechaInput.val(`${year}-${month}-${day}`);
         }
 
-        // Mostrar overlay de carga
-        document.getElementById("overlay").style.display = "flex";
+        // Función para obtener los días de la semana (Lunes a Domingo)
+        function getWeekDays(selectedDate) {
+            const date = new Date(selectedDate);
+            const dayOfWeek = date.getDay();
+            
+            const monday = new Date(date);
+            if (dayOfWeek === 0) {
+                monday.setDate(date.getDate() + 1);
+            } else if (dayOfWeek !== 1) {
+                monday.setDate(date.getDate() - (dayOfWeek - 1));
+            }
+            
+            const weekDays = [new Date(monday)];
+            for (let i = 1; i < 7; i++) {
+                const nextDay = new Date(monday);
+                nextDay.setDate(monday.getDate() + i);
+                weekDays.push(nextDay);
+            }
+            
+            return weekDays;
+        }
 
-        try {
-            // Realizar la consulta al servidor
-            const response = await fetch(`${SCRIPT_URL}?fecha=${encodeURIComponent(fecha)}&tipo=${encodeURIComponent(tipo)}`);
-            
-            if (!response.ok) {
-                throw new Error(`Error en la consulta: ${response.status}`);
+        // Función para obtener el número de semana ISO
+        function getWeekNumber(date) {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+            const week1 = new Date(d.getFullYear(), 0, 4);
+            return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+        }
+
+        // Formatear fecha como DD/MM/YYYY
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Formatear fecha como DD/MM para mostrar
+        function formatDateShort(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${day}/${month}`;
+        }
+
+        // Función principal para consultar datos
+        async function consultarDatos() {
+            const fecha = $fechaInput.val();
+            const tipo = $tipoSelect.val();
+
+            // Validar campos
+            if (!fecha || !tipo) {
+                return;
             }
-            
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.message);
-            }
-            
-            // Mostrar información de la semana
-            const weekDays = getWeekDays(new Date(fecha));
-            document.getElementById("semanaInfo").innerHTML = `
-                <i class="fas fa-calendar-week"></i> Semana ${getWeekNumber(new Date(fecha))} del año: 
-                ${formatDateShort(weekDays[0])} (Lun) al ${formatDateShort(weekDays[6])} (Dom)
-            `;
-            
-            // Generar tabla con los resultados
-            generarTablaResumen(tipo, data.datos, weekDays);
-            
-        } catch (error) {
-            console.error("Error al consultar datos:", error);
-            
-            // Mostrar mensaje de error
-            Swal.fire({
-                title: 'Error',
-                html: `No se pudieron cargar los datos.<br><br>
-                      <small>${error.message || 'Error desconocido'}</small>`,
-                icon: "error",
-                confirmButtonText: "Aceptar",
-                customClass: {
-                    popup: 'swal-popup',
-                    confirmButton: 'swal-button'
+
+            // Mostrar overlay de carga
+            mostrarOverlay();
+
+            try {
+                // Realizar la consulta al servidor
+                const response = await fetch(`${SCRIPT_URL}?fecha=${encodeURIComponent(fecha)}&tipo=${encodeURIComponent(tipo)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error en la consulta: ${response.status}`);
                 }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.message);
+                }
+                
+                // Mostrar información de la semana
+                const weekDays = getWeekDays(new Date(fecha));
+                const $semanaInfo = $('#semanaInfo');
+                $semanaInfo.html(`
+                    <i class="fas fa-calendar-week"></i> Semana ${getWeekNumber(new Date(fecha))} del año: 
+                    ${formatDateShort(weekDays[0])} (Lun) al ${formatDateShort(weekDays[6])} (Dom)
+                `).show();
+                
+                // Generar tabla con los resultados
+                generarTablaResumen(tipo, data.datos, weekDays);
+                
+            } catch (error) {
+                console.error("Error al consultar datos:", error);
+                
+                Swal.fire({
+                    text: "No se pudieron cargar los datos. Verifica tu conexión.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#e74c3c"
+                });
+                
+                // Limpiar resultados en caso de error
+                $('#resultadoConsulta').html(`
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                        <p style="color: #e74c3c;">No se pudieron cargar los datos</p>
+                    </div>
+                `);
+                $('#semanaInfo').hide();
+            } finally {
+                ocultarOverlay();
+            }
+        }
+
+        // Función para generar la tabla de resultados
+        function generarTablaResumen(tipo, datos, weekDays) {
+            const $resultado = $('#resultadoConsulta');
+            
+            // Si no hay datos, mostrar mensaje
+            if (!datos || datos.length === 0) {
+                $resultado.html(`
+                    <div class="no-data">
+                        <i class="fas fa-inbox"></i>
+                        <p>No se encontraron registros para los criterios seleccionados</p>
+                    </div>
+                `);
+                return;
+            }
+            
+            const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+            
+            // Construir tabla
+            let html = `<table class="table table-bordered">`;
+            
+            // Encabezados
+            html += `<thead><tr>`;
+            html += `<th style="min-width: 120px;">${tipo === "Área" ? "Área" : "Baño"}</th>`;
+            
+            if (tipo === "Área") {
+                html += `<th style="min-width: 100px;">Oficina</th>`;
+            }
+            
+            for (let i = 0; i < 7; i++) {
+                const fecha = weekDays[i];
+                html += `<th>
+                    <span class="dia-header">
+                        <span class="dia-numero">${fecha.getDate()}</span>
+                        <br>${diasSemana[i]}
+                    </span>
+                </th>`;
+            }
+            
+            html += `</tr></thead>`;
+            
+            // Cuerpo
+            html += `<tbody>`;
+            
+            // Ordenar datos
+            if (tipo === "Área") {
+                datos.sort((a, b) => {
+                    if (a.area === "Administración" && b.area !== "Administración") return -1;
+                    if (b.area === "Administración" && a.area !== "Administración") return 1;
+                    const areaCompare = a.area.localeCompare(b.area);
+                    if (areaCompare !== 0) return areaCompare;
+                    return (a.oficina || "").localeCompare(b.oficina || "");
+                });
+            } else {
+                datos.sort((a, b) => a.baño.localeCompare(b.baño));
+            }
+            
+            datos.forEach(item => {
+                html += `<tr>`;
+                html += `<td>${tipo === "Área" ? item.area : item.baño}</td>`;
+                
+                if (tipo === "Área") {
+                    html += `<td>${item.oficina || "-"}</td>`;
+                }
+                
+                for (let i = 0; i < 7; i++) {
+                    const dia = item.dias[i];
+                    const estado = dia ? dia.estado === "Completada" : false;
+                    html += `
+                        <td class="${estado ? "completada" : "pendiente"}">
+                            <i class="fas fa-${estado ? "check-circle" : "times-circle"}"></i>
+                        </td>
+                    `;
+                }
+                
+                html += `</tr>`;
             });
             
-            // Limpiar resultados en caso de error
-            document.getElementById("resultadoConsulta").innerHTML = `
-                <p style="text-align: center; color: #d9534f; padding: 20px;">
-                    <i class="fas fa-exclamation-triangle"></i> No se pudieron cargar los datos
-                </p>
-            `;
-        } finally {
-            // Ocultar overlay
-            document.getElementById("overlay").style.display = "none";
+            html += `</tbody></table>`;
+            
+            $resultado.html(html);
         }
-    }
 
-    // Función para generar la tabla de resultados
-// Función para generar la tabla de resultados
-function generarTablaResumen(tipo, datos, weekDays) {
-    const resultadoDiv = document.getElementById("resultadoConsulta");
-    
-    // Si no hay datos, mostrar mensaje
-    if (!datos || datos.length === 0) {
-        resultadoDiv.innerHTML = `
-            <p style="text-align: center; color: #666; padding: 20px;">
-                No se encontraron registros para los criterios seleccionados
-            </p>
-        `;
-        return;
-    }
-    
-    // Crear tabla
-    const tabla = document.createElement("table");
-    tabla.id = "tablaResultados";
-    
-    // Crear encabezados
-    let thead = `<thead><tr><th style="width: 25%;">${tipo === "Área" ? "Área" : "Baño"}</th>`;
-    
-    // Agregar columna de Oficina si es Área
-    if (tipo === "Área") {
-        thead += `<th style="width: 20%;">Oficina</th>`;
-    }
-    
-    // Generar encabezados de días (Lunes a Domingo)
-    const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-    
-    for (let i = 0; i < 7; i++) {
-        const fecha = weekDays[i];
-        thead += `<th title="${formatDate(fecha)}">${fecha.getDate()}<br>${diasSemana[i]}</th>`;
-    }
-    
-    thead += `</tr></thead>`;
-    tabla.innerHTML = thead;
-    
-    // Crear cuerpo de la tabla
-    const tbody = document.createElement("tbody");
-    
-    // Ordenar datos: áreas de administración primero y luego por oficina
-    if (tipo === "Área") {
-        datos.sort((a, b) => {
-            // Primero ordenar por área (Administración primero)
-            if (a.area === "Administración" && b.area !== "Administración") return -1;
-            if (b.area === "Administración" && a.area !== "Administración") return 1;
+        // Funciones de overlay
+        function mostrarOverlay() {
+            document.getElementById('overlay').style.display = 'flex';
+        }
+
+        function ocultarOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Inicializar la página al cargar
+        $(document).ready(function() {
+            $fechaInput = $('#fechaConsulta');
+            $tipoSelect = $('#tipoConsulta');
             
-            // Luego ordenar alfabéticamente por área
-            const areaCompare = a.area.localeCompare(b.area);
-            if (areaCompare !== 0) return areaCompare;
+            prellenarFecha();
             
-            // Finalmente ordenar alfabéticamente por oficina
-            return (a.oficina || "").localeCompare(b.oficina || "");
+            // Configurar eventos para consultar automáticamente al cambiar los filtros
+            $fechaInput.on('change', consultarDatos);
+            $tipoSelect.on('change', consultarDatos);
+            
+            // Realizar consulta inicial si hay valores seleccionados
+            if ($fechaInput.val() && $tipoSelect.val()) {
+                setTimeout(consultarDatos, 300);
+            }
         });
-    } else {
-        datos.sort((a, b) => a.baño.localeCompare(b.baño));
-    }
-    
-    // Llenar tabla con los datos
-    datos.forEach(item => {
-        const fila = document.createElement("tr");
-        let celdas = `<td>${tipo === "Área" ? item.area : item.baño}</td>`;
-        
-        // Agregar columna de oficina si es Área
-        if (tipo === "Área") {
-            celdas += `<td>${item.oficina || "-"}</td>`;
-        }
-        
-        // Agregar columnas de días (asegurando el orden Lunes a Domingo)
-for (let i = 0; i < 7; i++) {
-    const dia = item.dias[i]; // Usamos el índice directamente ya que sabemos que son 7 días
-    
-    // Verificamos si existe el día y tiene estado
-    const estado = dia ? dia.estado === "Completada" : false;
-    celdas += `
-        <td class="${estado ? "completada" : "pendiente"}">
-            ${estado ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>'}
-        </td>
-    `;
-}
-        
-        fila.innerHTML = celdas;
-        tbody.appendChild(fila);
-    });
-    
-    tabla.appendChild(tbody);
-    
-    // Limpiar y mostrar resultados
-    resultadoDiv.innerHTML = "";
-    resultadoDiv.appendChild(tabla);
-}
-
-
-    // Inicializar la página al cargar
-    window.onload = function() {
-        prellenarFecha();
-        
-        // Configurar eventos para consultar automáticamente al cambiar los filtros
-        document.getElementById("fechaConsulta").addEventListener("change", consultarDatos);
-        document.getElementById("tipoConsulta").addEventListener("change", consultarDatos);
-        
-        // Realizar consulta inicial si hay valores seleccionados
-        if (document.getElementById("fechaConsulta").value && document.getElementById("tipoConsulta").value) {
-            setTimeout(consultarDatos, 300);
-        }
-    };
-</script>
+    </script>
 </body>
 </html>
