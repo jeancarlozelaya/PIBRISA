@@ -2831,7 +2831,7 @@ let graficoHorasExtras = null; // NUEVA: Gráfico de horas extras
                 allowEscapeKey: false,
                 backdrop: `rgba(43, 62, 80, 0.8)`,
                 preConfirm: (password) => {
-                    if (password !== '123argos123') {
+                    if (password !== 'macdel1') {
                         Swal.showValidationMessage('Contraseña incorrecta');
                         return false;
                     }
@@ -10520,7 +10520,7 @@ function mostrarHistorialAsistencia(datos) {
     const datosAMostrar = datos || asistencia;
     const tabla = $('#tabla-asistencia').empty();
     
-    const META_ASISTENCIA = 9;
+    const META_ASISTENCIA = 8;
     
     if (!datosAMostrar || datosAMostrar.length === 0) {
         tabla.append('<tr><td colspan="8" class="text-center">No hay registros de asistencia.</td></tr>');
@@ -10617,7 +10617,7 @@ function calcularPromediosAsistencia() {
     const anoActual = hoy.getFullYear();
     
     // META DE ASISTENCIA (constante)
-    const META_ASISTENCIA = 9;
+    const META_ASISTENCIA = 8;
     
     // --- % Asistencia del Mes (en base a la meta de 87) ---
     const datosMes = asistencia.filter(reg => {
@@ -10681,7 +10681,7 @@ function crearGraficoAsistenciaMensual(ano, mes) {
     const ctx = document.getElementById('graficoAsistenciaMensual').getContext('2d');
     
     // META DE ASISTENCIA (constante)
-    const META_ASISTENCIA = 9;
+    const META_ASISTENCIA = 8;
     
     // Filtrar datos del mes seleccionado
     const datosMes = asistencia.filter(reg => {
