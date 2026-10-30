@@ -1,16 +1,32 @@
 {
   "name": "Pisos Brillantes",
   "short_name": "Pisos Brillantes",
-  "description": "Accede a la página web de Pisos Brillantes como una app.",
+  "description": "Accede a la página web de PIBRISA como una app.",
   "start_url": "/PIBRISA/",
-  "display": "standalone",
+  "scope": "/PIBRISA/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#f4f4f4",
   "theme_color": "#007BFF",
   "icons": [
     {
       "src": "Imágenes/Icono.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "Imágenes/Icono.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "Imágenes/Icono.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
