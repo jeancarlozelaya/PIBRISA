@@ -13,6 +13,7 @@ const urlsToCacheIndex = [
     './Imágenes/Icono.png',
 
     './Registro de Asistencia Diaria.html',
+    './Requisiciones de Bodega.html',
     './SUPARGOS.html',
         
     'https://raw.githubusercontent.com/jeancarlozelaya/CCG/refs/heads/main/Im%C3%A1genes/Otros/HojadeLiberaci%C3%B3n.jpg', 
