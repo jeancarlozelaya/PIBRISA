@@ -2388,34 +2388,38 @@ function inicializarMapaGPS() {
     const contenedor = document.getElementById('mapa-gps');
     if (!contenedor) return;
 
-    if (!mapaGPS) {
-        mapaGPS = L.map('mapa-gps', {
-            zoomControl: true,
-            attributionControl: false
-        }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
-
-        L.tileLayer('https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=8583cb8c813242e8b1c1832272d20839', {
-            maxZoom: 20,
-            attribution: 'Powered by Geoapify | © OpenStreetMap contributors'
-        }).addTo(mapaGPS);
-
-        L.marker([PROYECTO_LAT, PROYECTO_LNG], {
-            title: 'Proyecto'
-        }).addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
-
-        circuloRadio = L.circle([PROYECTO_LAT, PROYECTO_LNG], {
-            color: '#3498db',
-            fillColor: '#3498db',
-            fillOpacity: 0.15,
-            radius: RADIO_METROS_PERMITIDO,
-            weight: 2
-        }).addTo(mapaGPS);
-
-        contenedor.classList.add('visible');
+    // Si ya existe un mapa en este contenedor, reutilizarlo (NO recrearlo)
+    if (mapaGPS) {
+        setTimeout(function() { mapaGPS.invalidateSize(); }, 200);
+        return;
     }
 
+    mapaGPS = L.map('mapa-gps', {
+        zoomControl: true,
+        attributionControl: false
+    }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
+
+    L.tileLayer('https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=8583cb8c813242e8b1c1832272d20839', {
+        maxZoom: 20,
+        attribution: 'Powered by Geoapify | © OpenStreetMap contributors'
+    }).addTo(mapaGPS);
+
+    L.marker([PROYECTO_LAT, PROYECTO_LNG], {
+        title: 'Proyecto'
+    }).addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
+
+    circuloRadio = L.circle([PROYECTO_LAT, PROYECTO_LNG], {
+        color: '#3498db',
+        fillColor: '#3498db',
+        fillOpacity: 0.15,
+        radius: RADIO_METROS_PERMITIDO,
+        weight: 2
+    }).addTo(mapaGPS);
+
+    contenedor.classList.add('visible');
     setTimeout(function() { mapaGPS.invalidateSize(); }, 200);
 }
+
 
 function actualizarMarcadorUsuario(lat, lng, dentroRango) {
     if (!mapaGPS) return;
@@ -2554,7 +2558,7 @@ function openCameraModal() {
     const loadingEl = document.getElementById('camera-loading-overlay');
     if (loadingEl) {
         loadingEl.classList.remove('hidden');
-        loadingEl.style.display = 'flex';
+        loadingEl.style.display = '';
     }
     const msgEl = document.getElementById('camera-message');
     if (msgEl) msgEl.style.display = 'none';
@@ -2587,17 +2591,31 @@ function openCameraModal() {
         document.documentElement.classList.remove('camera-active-html');
         removeTouchZoomEvents();
         const lEl = document.getElementById('camera-loading-overlay');
-        if (lEl) lEl.classList.add('hidden');
+        if (lEl) {
+            lEl.classList.add('hidden');
+            lEl.style.display = '';
+        }
         modalEl.removeEventListener('hidden.bs.modal', handler);
     });
 
     cameraModal.show();
 
-    setTimeout(async () => {
+    let camaraIniciada = false;
+    const arrancarCamara = async () => {
+        if (camaraIniciada) return;
+        camaraIniciada = true;
         await initializeCamera();
         addTouchZoomEvents();
-    }, 0);
+    };
+
+    modalEl.addEventListener('shown.bs.modal', function onShown() {
+        modalEl.removeEventListener('shown.bs.modal', onShown);
+        setTimeout(arrancarCamara, 120);
+    });
+
+    setTimeout(arrancarCamara, 400);
 }
+
 
 async function initializeCamera() {
     const loadingEl = document.getElementById('camera-loading-overlay');
@@ -2605,13 +2623,16 @@ async function initializeCamera() {
     if (msgEl) msgEl.style.display = 'none';
     if (loadingEl) {
         loadingEl.classList.remove('hidden');
-        loadingEl.style.display = 'flex';
+        loadingEl.style.display = '';
     }
 
     try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             showCameraError('Tu navegador no soporta el acceso a la cámara.');
-            if (loadingEl) loadingEl.classList.add('hidden');
+            if (loadingEl) {
+                loadingEl.classList.add('hidden');
+                loadingEl.style.display = '';
+            }
             return;
         }
 
@@ -2631,13 +2652,34 @@ async function initializeCamera() {
         videoElement.srcObject = cameraStream;
         videoElement.style.transform = isMobileDevice ? 'scale(1)' : 'scaleX(-1)';
 
+        try { await videoElement.play(); } catch (e) { /* silencioso */ }
+
         await new Promise((resolve) => {
-            let resolved = false;
-            const done = () => { if (!resolved) { resolved = true; resolve(); } };
-            videoElement.onloadeddata = done;
-            videoElement.oncanplay = done;
-            videoElement.play().then(done).catch(done);
-            setTimeout(done, 1500);
+            let resuelto = false;
+            const terminar = () => {
+                if (resuelto) return;
+                resuelto = true;
+                cleanup();
+                resolve();
+            };
+            const checkReady = () => {
+                if (videoElement.videoWidth > 0 && videoElement.readyState >= 2) {
+                    terminar();
+                }
+            };
+            const intervalId = setInterval(checkReady, 80);
+            const timeoutId = setTimeout(terminar, 4000);
+            const cleanup = () => {
+                clearInterval(intervalId);
+                clearTimeout(timeoutId);
+                videoElement.removeEventListener('loadeddata', checkReady);
+                videoElement.removeEventListener('canplay', checkReady);
+                videoElement.removeEventListener('playing', checkReady);
+            };
+            videoElement.addEventListener('loadeddata', checkReady);
+            videoElement.addEventListener('canplay', checkReady);
+            videoElement.addEventListener('playing', checkReady);
+            checkReady();
         });
 
         try {
@@ -2655,13 +2697,20 @@ async function initializeCamera() {
         applyZoom();
         const container = document.querySelector('.camera-container');
         if (container) container.classList.remove('no-camera');
-        if (loadingEl) loadingEl.classList.add('hidden');
+        if (loadingEl) {
+            loadingEl.classList.add('hidden');
+            loadingEl.style.display = '';
+        }
     } catch (error) {
         console.error('Error al acceder a la cámara:', error);
         showCameraError('No se pudo acceder a la cámara. Verifica los permisos.');
-        if (loadingEl) loadingEl.classList.add('hidden');
+        if (loadingEl) {
+            loadingEl.classList.add('hidden');
+            loadingEl.style.display = '';
+        }
     }
 }
+
 
 function showCameraError(message) {
     const msgEl = document.getElementById('camera-message');
