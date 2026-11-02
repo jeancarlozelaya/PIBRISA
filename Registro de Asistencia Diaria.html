@@ -805,10 +805,6 @@
             color: inherit !important;
         }
 
-        .fila-historial-ausencia-fila {
-            font-weight: 600;
-        }
-
         .gps-status {
             padding: 12px 14px;
             border-radius: 8px;
@@ -965,6 +961,21 @@
 
         .kpi-total-global.negativo {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .hora-warning {
+            font-size: 0.8rem;
+            color: #856404;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .hora-warning.visible {
+            display: block;
         }
 
         @media (max-width: 576px) {
@@ -1362,6 +1373,12 @@
             color: #94a3b8;
         }
 
+        body.modo-oscuro .hora-warning {
+            background: #78350f;
+            color: #fef3c7;
+            border-color: #f59e0b;
+        }
+
         .btn-close,
         .btn-close-white {
             filter: invert(1) grayscale(1) brightness(2) !important;
@@ -1723,6 +1740,21 @@
                     </div>
 
                     <div class="question-container">
+                        <label for="hora" class="form-label">
+                            <i class="fas fa-clock me-1"></i>Hora
+                        </label>
+                        <input type="time" id="hora" class="form-control">
+                        <div id="hora-warning" class="hora-warning">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            <span id="hora-warning-text"></span>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Se prellena con la hora actual. Si tu reloj está desfasado, puedes ajustarla.
+                        </small>
+                    </div>
+
+                    <div class="question-container">
                         <label for="colaborador" class="form-label">Colaborador</label>
                         <select id="colaborador" class="form-select" required>
                             <option value="">Por favor seleccione</option>
@@ -1800,10 +1832,10 @@
                             <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
                             <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
                             <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Maryi Salome Guzmán Moltalvan">Maryi Salome Guzmán Moltalvan</option>
                             <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
                             <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
                             <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
+                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
                             <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                         </select>
                     </div>
@@ -1841,10 +1873,10 @@
                             <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
                             <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
                             <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Maryi Salome Guzmán Moltalvan">Maryi Salome Guzmán Moltalvan</option>
                             <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
                             <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
                             <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
+                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
                             <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                         </select>
                     </div>
@@ -2055,7 +2087,6 @@
                     Registra horas a favor del colaborador (positivas) o a favor de la empresa (negativas). <b>El balance se acumula entre meses.</b>
                 </div>
 
-                <!-- Resumen global (solo admin) -->
                 <div id="ajustes-resumen-global" style="display:none;">
                     <div class="kpi-total-global mb-4" id="kpi-global-container">
                         <div class="kpi-total-label">
@@ -2098,7 +2129,6 @@
                     </div>
                 </div>
 
-                <!-- Selector individual -->
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Colaborador</label>
@@ -2108,10 +2138,10 @@
                             <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
                             <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
                             <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Maryi Salome Guzmán Moltalvan">Maryi Salome Guzmán Moltalvan</option>
                             <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
                             <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
                             <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
+                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
                             <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                         </select>
                     </div>
@@ -2253,9 +2283,9 @@ const STORE_SYNCED = 'synced_records';
 
 const PROYECTO_LAT = 14.514168906326542;
 const PROYECTO_LNG = -87.65237283481956;
-
-
 const RADIO_METROS_PERMITIDO = 150;
+
+const DIFERENCIA_HORA_MAX_MIN = 15;
 
 const TIPOS_ESPECIALES = {
     "DIA_LIBRE":           { label: "Día Libre",           esAusencia: false },
@@ -2282,6 +2312,8 @@ let gpsState = { lat: null, lng: null, distancia: null, ok: false };
 let fotoCapturaActual = null;
 let cameraStream = null;
 let cameraFacingMode = 'environment';
+
+let enviandoRegistro = false;
 
 // =========================================================================
 // HELPERS GENERALES
@@ -2652,7 +2684,6 @@ function aplicarEstadoAdminUI() {
         if (formAjuste) formAjuste.style.display = 'none';
         if (tabDashboardLink) tabDashboardLink.style.display = 'none';
         if (ajustesGlobal) ajustesGlobal.style.display = 'none';
-        // Si estaba en Dashboard, mover a Registro
         const tabActiva = document.querySelector('#mainTabs .nav-link.active');
         if (tabActiva && tabActiva.dataset.tab === 'tab-dashboard') {
             cambiarTabPrincipal('tab-registro');
@@ -2660,7 +2691,6 @@ function aplicarEstadoAdminUI() {
         cambiarTipoRegistro('asistencia');
     }
 
-    // Re-renderizar historial si hay datos
     if (_historialActual.length > 0 && _historialContext.colaborador) {
         const mapa = {};
         _historialActual.forEach(function(r) { mapa[r.fecha] = r; });
@@ -2791,6 +2821,11 @@ async function abrirModalCamara() {
     await iniciarCamara();
 }
 
+/**
+ * Captura la foto actual del video.
+ * Compresión agresiva: JPEG 0.65 con máximo 1000 px de ancho.
+ * Esto genera fotos de ~80-150 KB → base64 ~110-200 KB (seguro para móvil).
+ */
 function capturarFoto() {
     const video = document.getElementById('cameraVideoPreview');
     const canvas = document.getElementById('cameraCanvas');
@@ -2801,12 +2836,23 @@ function capturarFoto() {
         return;
     }
 
-    const ctx = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const MAX_ANCHO = 1000;
+    let w = video.videoWidth;
+    let h = video.videoHeight;
+    if (w > MAX_ANCHO) {
+        const ratio = MAX_ANCHO / w;
+        w = MAX_ANCHO;
+        h = Math.round(h * ratio);
+    }
 
-    const base64 = canvas.toDataURL('image/jpeg', 0.85);
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(video, 0, 0, w, h);
+
+    const base64 = canvas.toDataURL('image/jpeg', 0.65);
     fotoCapturaActual = { base64: base64, fechaHora: fechaHoraActualString() };
 
     snapshot.src = base64;
@@ -2939,6 +2985,40 @@ function onSelectTipoRegistroChange() {
     cambiarTipoRegistro(val);
 }
 
+/**
+ * Actualiza el aviso de hora cuando el usuario modifica el campo.
+ * Si difiere > 15 min de la hora real, muestra advertencia amarilla.
+ */
+function actualizarAvisoHora() {
+    const input = document.getElementById('hora');
+    const warning = document.getElementById('hora-warning');
+    const warningText = document.getElementById('hora-warning-text');
+    if (!input || !warning || !warningText) return;
+
+    const horaUsuario = input.value;
+    if (!horaUsuario) {
+        warning.classList.remove('visible');
+        return;
+    }
+
+    const minUsuario = parseHoraAMinutos(horaUsuario);
+    const minActual = parseHoraAMinutos(horaActualHHMM());
+    if (minUsuario === null || minActual === null) {
+        warning.classList.remove('visible');
+        return;
+    }
+
+    let diff = Math.abs(minUsuario - minActual);
+    if (diff > 12 * 60) diff = 24 * 60 - diff;
+
+    if (diff > DIFERENCIA_HORA_MAX_MIN) {
+        warningText.textContent = 'La hora ingresada difiere ' + diff + ' minutos de la hora actual del dispositivo. Asegúrate de que sea correcta.';
+        warning.classList.add('visible');
+    } else {
+        warning.classList.remove('visible');
+    }
+}
+
 function validarCamposRegistro() {
     const selTipo = document.getElementById('select-tipo-registro');
     const tipoVal = selTipo ? selTipo.value : 'asistencia';
@@ -2947,10 +3027,11 @@ function validarCamposRegistro() {
     if (tipoRegistroActual === 'asistencia') {
         const fecha = document.getElementById('fecha').value;
         const estado = document.getElementById('estado').value;
+        const hora = document.getElementById('hora').value;
         const colab = document.getElementById('colaborador').value;
         const gpsOk = gpsState.ok;
         const fotoOk = !!fotoCapturaActual;
-        valido = !!(fecha && estado && colab) && !esFechaFutura(fecha) && gpsOk && fotoOk;
+        valido = !!(fecha && estado && hora && colab) && !esFechaFutura(fecha) && gpsOk && fotoOk;
     } else if (tipoRegistroActual === 'dia_libre') {
         const fecha = document.getElementById('fecha').value;
         const seleccionados = $$('#lista-colabs-dia-libre input[type="checkbox"]:checked').length;
@@ -2962,7 +3043,7 @@ function validarCamposRegistro() {
         valido = !!(desde && hasta && colab) && !esFechaFutura(desde) && !esFechaFutura(hasta);
     }
 
-    document.getElementById('enviarBtn').disabled = !valido;
+    document.getElementById('enviarBtn').disabled = !valido || enviandoRegistro;
 
     if (tipoRegistroActual === 'rango') {
         const desde = document.getElementById('rango-desde').value;
@@ -2991,10 +3072,10 @@ function poblarListaDiaLibre() {
         "Gertrudis Yamileth Acosta Hernandez",
         "Grevil Isaac Flores Meza",
         "Llanari Clarisa Maldonado Martínez",
-        "Maryi Salome Guzmán Moltalvan",
         "Mayra Consuelo Nicolás Hernandez",
         "Melvin Josue Lopez Rodriguez",
         "Reina Emerita Sanchez Garcia",
+        "Saul Enrique Santos Maldonado",
         "Vanessa Lizeth Romero Hernández"
     ];
     const cont = document.getElementById('lista-colabs-dia-libre');
@@ -3013,6 +3094,8 @@ function prellenarFechaHora() {
     document.getElementById('fecha').value = hoy;
     document.getElementById('rango-desde').value = hoy;
     document.getElementById('rango-hasta').value = hoy;
+    const inputHora = document.getElementById('hora');
+    if (inputHora) inputHora.value = horaActualHHMM();
     const ajFecha = document.getElementById('aju-nueva-fecha');
     if (ajFecha) ajFecha.value = hoy;
 
@@ -3023,10 +3106,12 @@ function prellenarFechaHora() {
 }
 
 // =========================================================================
-// CONFIRMAR ENVÍO (con validación anti-duplicado)
+// CONFIRMAR ENVÍO (con anti-duplicado + protección doble-tap)
 // =========================================================================
 
 async function confirmarEnvio() {
+    if (enviandoRegistro) return;
+
     const tipoVal = document.getElementById('select-tipo-registro').value;
     if (tipoVal === 'asistencia') return enviarAsistencia();
     if (tipoVal === 'DIA_LIBRE') return enviarDiaLibre();
@@ -3034,12 +3119,19 @@ async function confirmarEnvio() {
 }
 
 async function enviarAsistencia() {
+    if (enviandoRegistro) return;
+
     const fecha = document.getElementById('fecha').value;
     const estado = document.getElementById('estado').value;
+    const hora = document.getElementById('hora').value;
     const colaborador = document.getElementById('colaborador').value;
 
     if (esFechaFutura(fecha)) {
         Swal.fire('Fecha inválida', 'No puedes registrar asistencia para fechas futuras.', 'warning');
+        return;
+    }
+    if (!hora) {
+        Swal.fire('Hora requerida', 'Debes ingresar la hora.', 'warning');
         return;
     }
     if (!gpsState.ok) {
@@ -3051,9 +3143,7 @@ async function enviarAsistencia() {
         return;
     }
 
-    const hora = horaActualHHMM();
-
-    // ===== VALIDACIÓN ANTI-DUPLICADO (solo si NO es admin) =====
+    // Validación anti-duplicado (solo si NO es admin)
     if (!appConfig.modoAdmin) {
         const pendientes = await getPendientes();
         const pendientesMismoDia = pendientes.filter(function(p) {
@@ -3141,7 +3231,7 @@ async function enviarAsistencia() {
         }
     }
 
-    // ===== ADMIN: warning si ya existe algo =====
+    // Admin: warning si ya existe
     if (appConfig.modoAdmin) {
         const pendientes = await getPendientes();
         const pendientesMismoDia = pendientes.filter(function(p) {
@@ -3184,6 +3274,13 @@ async function enviarAsistencia() {
     });
     if (!confirm.isConfirmed) return;
 
+    // Bloqueo anti-doble-tap
+    enviandoRegistro = true;
+    const btn = document.getElementById('enviarBtn');
+    const originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
     try {
         await addPendiente({
             tipoOperacion: 'asistencia',
@@ -3214,13 +3311,18 @@ async function enviarAsistencia() {
         descartarFoto();
         await obtenerUbicacionGPS();
         prellenarFechaHora();
-        validarCamposRegistro();
     } catch (err) {
         Swal.fire('Error', 'No se pudo guardar: ' + err.message, 'error');
+    } finally {
+        enviandoRegistro = false;
+        btn.innerHTML = originalBtn;
+        validarCamposRegistro();
     }
 }
 
 async function enviarDiaLibre() {
+    if (enviandoRegistro) return;
+
     const fecha = document.getElementById('fecha').value;
     const seleccionados = Array.from($$('#lista-colabs-dia-libre input[type="checkbox"]:checked')).map(function(c) { return c.value; });
 
@@ -3246,6 +3348,12 @@ async function enviarDiaLibre() {
     });
     if (!confirm.isConfirmed) return;
 
+    enviandoRegistro = true;
+    const btn = document.getElementById('enviarBtn');
+    const originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
     try {
         await addPendiente({
             tipoOperacion: 'dia_libre_multiple',
@@ -3263,13 +3371,18 @@ async function enviarDiaLibre() {
         });
         $$('#lista-colabs-dia-libre input[type="checkbox"]').forEach(function(c) { c.checked = false; });
         prellenarFechaHora();
-        validarCamposRegistro();
     } catch (err) {
         Swal.fire('Error', 'No se pudo guardar: ' + err.message, 'error');
+    } finally {
+        enviandoRegistro = false;
+        btn.innerHTML = originalBtn;
+        validarCamposRegistro();
     }
 }
 
 async function enviarRango(tipoKey) {
+    if (enviandoRegistro) return;
+
     const desde = document.getElementById('rango-desde').value;
     const hasta = document.getElementById('rango-hasta').value;
     const colaborador = document.getElementById('rango-colaborador').value;
@@ -3307,6 +3420,12 @@ async function enviarRango(tipoKey) {
     });
     if (!confirm.isConfirmed) return;
 
+    enviandoRegistro = true;
+    const btn = document.getElementById('enviarBtn');
+    const originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
     try {
         await addPendiente({
             tipoOperacion: 'ausencia_rango',
@@ -3328,9 +3447,12 @@ async function enviarRango(tipoKey) {
             showConfirmButton: false
         });
         prellenarFechaHora();
-        validarCamposRegistro();
     } catch (err) {
         Swal.fire('Error', 'No se pudo guardar: ' + err.message, 'error');
+    } finally {
+        enviandoRegistro = false;
+        btn.innerHTML = originalBtn;
+        validarCamposRegistro();
     }
 }
 
@@ -3497,12 +3619,6 @@ function combinarRegistrosConPendientes(registrosServer, pendientes, colaborador
     return registros;
 }
 
-/**
- * Renderiza el historial completo del mes.
- * - Días sin registro: muestra "Sin registro" (coloreado en la fila completa).
- * - Domingos: se muestran como días normales (con "Sin registro" si no hay datos).
- * - Ausencias: toda la fila toma el color y el texto del estado.
- */
 function renderCalendarioHistorial(mapa, anio, mes) {
     const tbody = document.getElementById('historial-tbody');
     const admin = appConfig.modoAdmin;
@@ -3601,7 +3717,6 @@ function renderCalendarioHistorial(mapa, anio, mes) {
                 colF = '<span class="text-muted" style="display:none;">—</span>';
                 colU = '<span class="text-muted" style="display:none;">—</span>';
             } else {
-                // Cualquier día pasado sin registro (incluyendo domingo) → "Sin registro"
                 colE = '<span><i class="fas fa-exclamation-triangle text-warning me-1"></i>Sin registro</span>';
                 colS = '<span>—</span>';
                 colH = '<span>—</span>';
@@ -4016,7 +4131,6 @@ function renderAjustesGlobales(ajustes, totales) {
     const tbody = document.getElementById('ajustes-global-tbody');
     if (!tbody) return;
 
-    // KPI global
     const kpiContenedor = document.getElementById('kpi-global-container');
     const kpiBalance = document.getElementById('kpi-global-balance');
     const kpiDetalle = document.getElementById('kpi-global-detalle');
@@ -4071,7 +4185,6 @@ function seleccionarColaboradorGlobal(colaborador) {
     const sel = document.getElementById('aju-colaborador');
     if (sel) sel.value = colaborador;
 
-    // Marcar fila como activa
     $$('#ajustes-global-tbody tr').forEach(function(tr) {
         tr.classList.remove('activo');
     });
@@ -4080,7 +4193,6 @@ function seleccionarColaboradorGlobal(colaborador) {
 
     consultarAjustes();
 
-    // Scroll hacia el detalle
     const detalle = document.getElementById('aju-resumen');
     if (detalle) {
         setTimeout(function() {
@@ -4378,7 +4490,7 @@ async function toggleModoAdmin(activar) {
 }
 
 // =========================================================================
-// SYNC MANAGER
+// SYNC MANAGER (con reintentos y manejo de error robusto)
 // =========================================================================
 
 async function actualizarContadorPendientes() {
@@ -4515,6 +4627,91 @@ function actualizarBotonesSeleccion() {
     if (b3) b3.disabled = sinc === 0;
 }
 
+/**
+ * Envía un pendiente al servidor con reintentos y timeout.
+ * Retorna { ok: true } o { ok: false, error: "mensaje" }.
+ */
+async function enviarPendienteAlServidor(p, intentos) {
+    intentos = intentos || 1;
+    let body = null;
+
+    if (p.tipoOperacion === 'dia_libre_multiple') {
+        body = { action: 'registrarDiaLibreMultiple', colaboradores: p.colaboradores, fecha: p.fecha };
+    } else if (p.tipoOperacion === 'ausencia_rango') {
+        body = { action: 'registrarAusenciaRango', colaborador: p.colaborador, fechaDesde: p.fechaDesde, fechaHasta: p.fechaHasta, tipoKey: p.tipoKey };
+    } else if (p.tipoOperacion === 'editar') {
+        body = {
+            action: 'editarRegistro',
+            password: passwordAdmin,
+            colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber,
+            fecha: p.fecha, horaEntrada: p.horaEntrada || '', horaSalida: p.horaSalida || ''
+        };
+    } else if (p.tipoOperacion === 'eliminar') {
+        body = {
+            action: 'eliminarRegistro',
+            password: passwordAdmin,
+            colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber
+        };
+    } else if (p.tipoOperacion === 'ajuste_horas') {
+        body = {
+            action: 'registrarAjusteHoras',
+            password: passwordAdmin,
+            colaborador: p.colaborador,
+            fecha: p.fecha,
+            horas: p.horas,
+            observaciones: p.observaciones || '',
+            registradoPor: p.registradoPor || 'Admin'
+        };
+    } else {
+        const horaParaEnviar = p.horaOriginal || p.hora;
+        body = {
+            action: 'registrarAsistencia',
+            colaborador: p.colaborador, fecha: p.fecha,
+            hora: horaParaEnviar, estado: p.estado,
+            fotoBase64: p.fotoBase64 || '',
+            fotoFechaHora: p.fotoFechaHora || '',
+            lat: p.lat, lng: p.lng,
+            distanciaMetros: p.distanciaMetros,
+            esAdmin: false
+        };
+    }
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(function() { controller.abort(); }, 60000);
+
+        const resp = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(body),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        const data = await resp.json();
+
+        if (data.status === 'success') {
+            return { ok: true, data: data.data };
+        } else {
+            // Error del servidor (validación, etc.). No reintentar.
+            return { ok: false, error: data.message || 'Error del servidor', noReintentar: true };
+        }
+    } catch (err) {
+        console.error('Error enviando pendiente (intento ' + intentos + '):', err);
+
+        // Reintentar 2 veces si es error de red/timeout
+        if (intentos < 2) {
+            await new Promise(function(r) { setTimeout(r, 1500); });
+            return enviarPendienteAlServidor(p, intentos + 1);
+        }
+
+        let msg = 'Error de red';
+        if (err.name === 'AbortError') msg = 'Tiempo de espera agotado (servidor lento o sin conexión)';
+        else if (err.message) msg = err.message;
+        return { ok: false, error: msg };
+    }
+}
+
 async function sincronizarSeleccionados() {
     const ids = [];
     $$('.check-pendiente:checked').forEach(function(cb) { ids.push(parseInt(cb.value, 10)); });
@@ -4529,77 +4726,41 @@ async function sincronizarSeleccionados() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
 
     let ok = 0, err = 0, conflictos = 0;
+    const erroresDetalle = [];
 
-    for (const p of aEnviar) {
-        try {
-            let body = null;
+    for (let i = 0; i < aEnviar.length; i++) {
+        const p = aEnviar[i];
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + (i + 1) + '/' + aEnviar.length;
 
-            if (p.tipoOperacion === 'dia_libre_multiple') {
-                body = { action: 'registrarDiaLibreMultiple', colaboradores: p.colaboradores, fecha: p.fecha };
-            } else if (p.tipoOperacion === 'ausencia_rango') {
-                body = { action: 'registrarAusenciaRango', colaborador: p.colaborador, fechaDesde: p.fechaDesde, fechaHasta: p.fechaHasta, tipoKey: p.tipoKey };
-            } else if (p.tipoOperacion === 'editar') {
-                body = {
-                    action: 'editarRegistro',
-                    password: passwordAdmin,
-                    colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber,
-                    fecha: p.fecha, horaEntrada: p.horaEntrada || '', horaSalida: p.horaSalida || ''
-                };
-            } else if (p.tipoOperacion === 'eliminar') {
-                body = {
-                    action: 'eliminarRegistro',
-                    password: passwordAdmin,
-                    colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber
-                };
-            } else if (p.tipoOperacion === 'ajuste_horas') {
-                body = {
-                    action: 'registrarAjusteHoras',
-                    password: passwordAdmin,
-                    colaborador: p.colaborador,
-                    fecha: p.fecha,
-                    horas: p.horas,
-                    observaciones: p.observaciones || '',
-                    registradoPor: p.registradoPor || 'Admin'
-                };
-            } else {
-                const horaParaEnviar = p.horaOriginal || p.hora;
-                body = {
-                    action: 'registrarAsistencia',
-                    colaborador: p.colaborador, fecha: p.fecha,
-                    hora: horaParaEnviar, estado: p.estado,
-                    fotoBase64: p.fotoBase64 || '',
-                    fotoFechaHora: p.fotoFechaHora || '',
-                    lat: p.lat, lng: p.lng,
-                    distanciaMetros: p.distanciaMetros,
-                    esAdmin: false
-                };
-            }
+        const resultado = await enviarPendienteAlServidor(p, 1);
 
-            const resp = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(body)
-            }).then(function(r) { return r.json(); });
-
-            if (resp.status === 'success') {
-                if (resp.data.accion === 'conflicto_entrada_abierta') conflictos++;
+        if (resultado.ok) {
+            if (resultado.data.accion === 'conflicto_entrada_abierta') conflictos++;
+            try {
                 await addSincronizado(Object.assign({}, p, {
-                    accion: resp.data.accion || 'ok',
-                    message: resp.data.message || 'Sincronizado',
-                    fotoUrl: resp.data.fotoUrl || '',
+                    accion: resultado.data.accion || 'ok',
+                    message: resultado.data.message || 'Sincronizado',
+                    fotoUrl: resultado.data.fotoUrl || '',
                     fechaSync: new Date().toISOString()
                 }));
                 await deletePendiente(p.id);
                 ok++;
-            } else {
+            } catch (e) {
+                console.error('Error moviendo a sincronizados:', e);
                 err++;
-                console.error('Error sync', p, resp);
+                erroresDetalle.push(p.colaborador + ': ' + e.message);
             }
-        } catch (e) {
-            console.error('sync error:', e, p);
+        } else {
             err++;
+            const desc = (p.colaborador || 'Día Libre') + ' (' + p.tipoOperacion + '): ' + resultado.error;
+            erroresDetalle.push(desc);
+            console.error('Error sync', p, resultado.error);
         }
-        await new Promise(function(r) { setTimeout(r, 300); });
+
+        // Pausa más generosa entre registros (móvil)
+        if (i < aEnviar.length - 1) {
+            await new Promise(function(r) { setTimeout(r, 800); });
+        }
     }
 
     btn.innerHTML = original;
@@ -4610,13 +4771,17 @@ async function sincronizarSeleccionados() {
     if (err === 0 && conflictos === 0) {
         Swal.fire({ icon: 'success', title: 'Sincronización completa', text: ok + ' operación(es) sincronizadas.', timer: 1800, showConfirmButton: false });
     } else {
-        let texto = 'Exitosas: ' + ok + '.';
-        if (conflictos > 0) texto += ' Con conflictos: ' + conflictos + '.';
-        if (err > 0) texto += ' Errores: ' + err + '.';
-        Swal.fire({ icon: 'warning', title: 'Sincronización parcial', text: texto });
+        let html = '<p><b>Exitosas:</b> ' + ok + '</p>';
+        if (conflictos > 0) html += '<p><b>Con conflictos:</b> ' + conflictos + '</p>';
+        if (err > 0) html += '<p><b>Errores:</b> ' + err + '</p>';
+        if (erroresDetalle.length > 0) {
+            html += '<hr><div class="text-start small"><b>Detalle:</b><ul class="mb-0" style="max-height:200px;overflow-y:auto;font-size:0.75rem;">';
+            erroresDetalle.forEach(function(e) { html += '<li>' + e + '</li>'; });
+            html += '</ul></div>';
+        }
+        Swal.fire({ icon: 'warning', title: 'Sincronización parcial', html: html, width: 600 });
     }
 
-    // Refrescar vistas afectadas
     const tabActiva = document.querySelector('#mainTabs .nav-link.active');
     if (tabActiva) {
         if (tabActiva.dataset.tab === 'tab-historial' && _historialContext.colaborador) consultarHistorial();
@@ -4657,7 +4822,6 @@ async function eliminarSeleccionados(tipo) {
 // =========================================================================
 
 function cambiarTabPrincipal(tabId) {
-    // Si es dashboard y no es admin, bloquear
     if (tabId === 'tab-dashboard' && !appConfig.modoAdmin) {
         Swal.fire('Acceso restringido', 'El dashboard solo está disponible en modo administrador.', 'warning');
         return;
@@ -4670,16 +4834,14 @@ function cambiarTabPrincipal(tabId) {
         link.classList.toggle('active', link.dataset.tab === tabId);
     });
 
-    // Al entrar a ajustes en modo admin, cargar resumen global
     if (tabId === 'tab-ajustes' && appConfig.modoAdmin) {
         cargarAjustesGlobales();
     }
 }
 
 /**
- * Puebla selects de mes/año dinámicamente.
- * - Año desde 2026 hasta (año actual + 3). Se ajusta automáticamente al pasar el año.
- * - Si el año actual es menor a 2026, el mínimo será 2026.
+ * Puebla los selects de mes y año.
+ * Años dinámicos: desde 2026 hasta (año actual + 3). Se ajusta automáticamente.
  */
 function poblarSelectsMesAnio() {
     const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
@@ -4740,18 +4902,23 @@ window.addEventListener('DOMContentLoaded', async function() {
     await actualizarContadorPendientes();
     await obtenerUbicacionGPS();
 
-    // Si ya hay admin activo desde antes, cargar resumen global
     if (appConfig.modoAdmin) {
         await cargarAjustesGlobales();
     }
 
-    ['fecha', 'estado', 'colaborador', 'rango-desde', 'rango-hasta', 'rango-colaborador'].forEach(function(id) {
+    ['fecha', 'estado', 'colaborador', 'hora', 'rango-desde', 'rango-hasta', 'rango-colaborador'].forEach(function(id) {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('change', validarCamposRegistro);
             el.addEventListener('input', validarCamposRegistro);
         }
     });
+
+    const inputHora = document.getElementById('hora');
+    if (inputHora) {
+        inputHora.addEventListener('input', actualizarAvisoHora);
+        inputHora.addEventListener('change', actualizarAvisoHora);
+    }
 
     const enviarBtn = document.getElementById('enviarBtn');
     if (enviarBtn) enviarBtn.addEventListener('click', confirmarEnvio);
