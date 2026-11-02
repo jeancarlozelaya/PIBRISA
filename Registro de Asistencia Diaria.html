@@ -4946,27 +4946,22 @@ function poblarSelectsMesAnio() {
 // =========================================================================
 
 window.addEventListener('DOMContentLoaded', async function() {
+    // ============================================================
+    // FASE 1: Síncrono — rápida, sin awaits. UI lista al instante.
+    // ============================================================
     cargarConfiguracion();
-
-    try {
-        await initDB();
-    } catch (e) {
-        console.error('Error initDB:', e);
-        Swal.fire('Error de base de datos', 'No se pudo inicializar IndexedDB. Recarga la página.', 'error');
-    }
-
     prellenarFechaHora();
     poblarListaDiaLibre();
     poblarSelectsMesAnio();
     cambiarTipoRegistro('asistencia');
     validarCamposRegistro();
-    await actualizarContadorPendientes();
-    await obtenerUbicacionGPS();
 
-    if (appConfig.modoAdmin) {
-        await cargarAjustesGlobales();
-    }
+    // ============================================================
+    // FASE 2: REGISTRAR TODOS LOS LISTENERS ANTES DE CUALQUIER AWAIT
+    // Así los botones responden desde el segundo 0.
+    // ============================================================
 
+    // Listeners de campos del formulario
     ['fecha', 'estado', 'colaborador', 'hora', 'rango-desde', 'rango-hasta', 'rango-colaborador'].forEach(function(id) {
         const el = document.getElementById(id);
         if (el) {
@@ -5005,7 +5000,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnRetomar = document.getElementById('btn-retomar-foto');
     if (btnRetomar) btnRetomar.addEventListener('click', descartarFoto);
 
-    // Botones del modal cámara
     const btnCapture = document.getElementById('capture-btn');
     if (btnCapture) btnCapture.addEventListener('click', capturePhoto);
 
@@ -5024,6 +5018,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnZoomOut = document.getElementById('zoom-out');
     if (btnZoomOut) btnZoomOut.addEventListener('click', zoomOut);
 
+    // Tabs principales
     $$('#mainTabs .nav-link').forEach(function(link) {
         link.addEventListener('click', function() { cambiarTabPrincipal(link.dataset.tab); });
     });
@@ -5067,8 +5062,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     const togAdmin = document.getElementById('toggle-modo-admin');
     if (togAdmin) togAdmin.addEventListener('change', function() { toggleModoAdmin(this.checked); });
 
-
-
     const btnSync = document.getElementById('btn-sync-manager');
     if (btnSync) {
         btnSync.addEventListener('click', async function() {
@@ -5099,7 +5092,32 @@ window.addEventListener('DOMContentLoaded', async function() {
     if (btnDelSinc) btnDelSinc.addEventListener('click', function() { eliminarSeleccionados('sinc'); });
 
     window.addEventListener('focus', function() { actualizarContadorPendientes(); });
+
+    // ============================================================
+    // FASE 3: Asíncrono — lento. Ahora sí, después de que la UI ya responde.
+    // Nota: el GPS NO se espera (sin await) para que no bloquee nada.
+    // ============================================================
+
+    try {
+        await initDB();
+    } catch (e) {
+        console.error('Error initDB:', e);
+        Swal.fire('Error de base de datos', 'No se pudo inicializar IndexedDB. Recarga la página.', 'error');
+    }
+
+    // Contador de pendientes: rápido (IndexedDB local)
+    await actualizarContadorPendientes();
+
+    // GPS: se dispara en segundo plano, NO se espera.
+    // La UI ya está lista y responde desde el primer clic.
+    obtenerUbicacionGPS();
+
+    // Carga de admin: si aplica, en background
+    if (appConfig.modoAdmin) {
+        cargarAjustesGlobales();
+    }
 });
+
 </script>
 
 </body>
