@@ -1,7 +1,7 @@
 // Archivo: sw-index.js
 
 // ⚠️ IMPORTANTE: Cambia esta versión CADA VEZ que hagas cambios
-const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.5'; 
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.7'; 
 
 const APP_VERSION = CACHE_NAME_INDEX.replace('pibrisa-index-', '');
 
@@ -13,7 +13,11 @@ const urlsToCacheIndex = [
     './Imágenes/Icono.png',
 
     './Registro de Asistencia Diaria.html',
+    
+    './Requisiciones.html',
     './Requisiciones de Bodega.html',
+
+    './Supervisión.html',
     './SUPARGOS.html',
         
     'https://raw.githubusercontent.com/jeancarlozelaya/CCG/refs/heads/main/Im%C3%A1genes/Otros/HojadeLiberaci%C3%B3n.jpg', 
