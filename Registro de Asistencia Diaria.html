@@ -7,10 +7,12 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
         :root {
@@ -43,9 +45,7 @@
             padding-bottom: 40px;
         }
 
-        * {
-            touch-action: pan-x pan-y;
-        }
+        * { touch-action: pan-x pan-y; }
 
         .header {
             background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
@@ -62,45 +62,24 @@
             gap: 10px;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 42px;
-        }
-
-        .header-title {
-            flex: 1;
-            text-align: center;
-            padding: 0 10px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+        .header-left { display: flex; align-items: center; gap: 10px; min-width: 42px; }
+        .header-title { flex: 1; text-align: center; padding: 0 10px; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
 
         .header-btn {
             background-color: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.25);
             color: white;
-            width: 42px;
-            height: 42px;
+            width: 42px; height: 42px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem;
             cursor: pointer;
             transition: var(--transition);
             position: relative;
         }
 
-        .header-btn:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
+        .header-btn:hover { background-color: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
 
         .header-btn.admin-active {
             background-color: rgba(46, 204, 113, 0.35);
@@ -108,691 +87,344 @@
         }
 
         .header-btn .badge-pendientes-header {
-            position: absolute;
-            top: -3px;
-            right: -3px;
-            font-size: 0.65rem;
-            padding: 0.25em 0.5em;
+            position: absolute; top: -3px; right: -3px;
+            font-size: 0.65rem; padding: 0.25em 0.5em;
         }
 
         .modo-indicador {
             display: none;
-            width: 42px;
-            height: 42px;
+            width: 42px; height: 42px;
             border-radius: 50%;
             background-color: rgba(46, 204, 113, 0.25);
             border: 1px solid rgba(46, 204, 113, 0.6);
             color: #2ecc71;
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
             font-size: 1.1rem;
             animation: pulse 2s infinite;
         }
 
-        .modo-indicador.active {
-            display: flex;
-        }
+        .modo-indicador.active { display: flex; }
 
         @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 0 6px rgba(46, 204, 113, 0);
-            }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.5); }
+            50% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 25px auto;
-            padding: 0 15px;
-            position: relative;
-            z-index: 1;
-        }
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; position: relative; z-index: 1; }
 
         .card {
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            border: none;
-            margin-bottom: 25px;
+            border-radius: 12px; box-shadow: var(--shadow);
+            border: none; margin-bottom: 25px;
             border-top: 5px solid var(--insumos-primary);
         }
 
-        .card-body {
-            padding: 2.5rem;
-        }
+        .card-body { padding: 2.5rem; }
 
         h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            position: relative;
-            padding-bottom: 10px;
-            font-weight: bold;
+            text-align: center; color: var(--primary-color);
+            margin-bottom: 25px; font-size: 1.8rem;
+            position: relative; padding-bottom: 10px; font-weight: bold;
         }
 
         h1:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
+            content: ''; position: absolute; bottom: 0; left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--secondary-color);
-            border-radius: 2px;
+            width: 80px; height: 4px;
+            background-color: var(--secondary-color); border-radius: 2px;
         }
 
         .section-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0 0 20px 0;
-            padding-bottom: 10px;
+            font-size: 1.2rem; font-weight: 700; color: var(--primary-color);
+            margin: 0 0 20px 0; padding-bottom: 10px;
             border-bottom: 2px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .section-title i {
-            color: var(--secondary-color);
-        }
+        .section-title i { color: var(--secondary-color); }
 
-        .form-label {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 8px;
-        }
+        .form-label { font-weight: 600; color: var(--dark-color); margin-bottom: 8px; }
 
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-            padding: 10px 15px;
+        .form-control, .form-select {
+            border-radius: 8px; padding: 10px 15px;
             border: 1px solid var(--border-color);
             font-size: 16px;
         }
 
-        .form-control:focus,
-        .form-select:focus {
+        .form-control:focus, .form-select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
         }
 
         .question-container {
-            margin-bottom: 20px;
-            padding: 14px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
+            margin-bottom: 20px; padding: 14px;
+            border: 2px solid #e9ecef; border-radius: 8px;
             background-color: #fafbfc;
             transition: var(--transition);
         }
 
-        .question-container:hover {
-            border-color: var(--secondary-color);
-        }
+        .question-container:hover { border-color: var(--secondary-color); }
+        .question-container label { margin-bottom: 6px; display: block; }
 
-        .question-container label {
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .btn-primary,
-        .btn-success,
-        .btn-secondary,
-        .btn-danger,
-        .btn-warning,
-        .btn-info {
-            border: none;
-            font-weight: 600;
-            padding: 10px 25px;
-            font-size: 0.95rem;
-            border-radius: 50px;
-            min-width: 130px;
-            transition: var(--transition);
-            color: white !important;
+        .btn-primary, .btn-success, .btn-secondary, .btn-danger, .btn-warning, .btn-info {
+            border: none; font-weight: 600; padding: 10px 25px; font-size: 0.95rem;
+            border-radius: 50px; min-width: 130px;
+            transition: var(--transition); color: white !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, var(--secondary-color), #5dade2);
+        .btn-primary { background: linear-gradient(45deg, var(--secondary-color), #5dade2); }
+        .btn-success { background: linear-gradient(45deg, #2ecc71, #58d68d); }
+        .btn-secondary { background: linear-gradient(45deg, var(--dark-color), var(--primary-color)); }
+        .btn-danger { background: linear-gradient(45deg, var(--accent-color), #e74c3c); }
+        .btn-warning { background: linear-gradient(45deg, #f39c12, #f1c40f); }
+        .btn-info { background: linear-gradient(45deg, #17a2b8, #5bc0de); }
+
+        .btn-primary:hover, .btn-success:hover, .btn-secondary:hover,
+        .btn-danger:hover, .btn-warning:hover, .btn-info:hover {
+            transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-success {
-            background: linear-gradient(45deg, #2ecc71, #58d68d);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(45deg, var(--dark-color), var(--primary-color));
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, var(--accent-color), #e74c3c);
-        }
-
-        .btn-warning {
-            background: linear-gradient(45deg, #f39c12, #f1c40f);
-        }
-
-        .btn-info {
-            background: linear-gradient(45deg, #17a2b8, #5bc0de);
-        }
-
-        .btn-primary:hover,
-        .btn-success:hover,
-        .btn-secondary:hover,
-        .btn-danger:hover,
-        .btn-warning:hover,
-        .btn-info:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-primary:disabled,
-        .btn-success:disabled {
-            background: #ccc;
-            box-shadow: none;
-            transform: none;
+        .btn-primary:disabled, .btn-success:disabled {
+            background: #ccc; box-shadow: none; transform: none;
             cursor: not-allowed;
         }
 
         .btn-action {
-            border: none;
-            border-radius: 50px;
-            width: 35px;
-            height: 35px;
-            font-size: 0.85rem;
-            margin: 0 2px;
+            border: none; border-radius: 50px;
+            width: 35px; height: 35px;
+            font-size: 0.85rem; margin: 0 2px;
             transition: var(--transition);
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
+            display: inline-flex; justify-content: center; align-items: center;
             color: white;
         }
 
-        .btn-action:hover {
-            transform: translateY(-2px);
-            color: white;
-        }
+        .btn-action:hover { transform: translateY(-2px); color: white; }
+        .btn-edit-reg { background: linear-gradient(45deg, #f39c12, #e67e22); }
+        .btn-delete-reg { background: #7f8c8d; }
+        .btn-delete-reg:hover { background-color: #c0392b; }
+        .btn-ver-detalle { background: linear-gradient(45deg, #3498db, #2980b9); }
 
-        .btn-edit-reg {
-            background: linear-gradient(45deg, #f39c12, #e67e22);
-        }
-
-        .btn-delete-reg {
-            background: #7f8c8d;
-        }
-
-        .btn-delete-reg:hover {
-            background-color: #c0392b;
-        }
-
-        .table-responsive {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .table thead {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
+        .table-responsive { border-radius: 8px; overflow: hidden; }
+        .table thead { background-color: var(--primary-color); color: white; }
         .table thead th {
             border-color: rgba(255, 255, 255, 0.1);
-            font-weight: 600;
-            font-size: 0.9rem;
-            vertical-align: middle;
+            font-weight: 600; font-size: 0.9rem; vertical-align: middle;
         }
-
-        .table td {
-            font-size: 0.9rem;
-            vertical-align: middle;
-        }
+        .table td { font-size: 0.9rem; vertical-align: middle; }
 
         .nav-tabs-custom {
             border-bottom: 2px solid var(--border-color);
             margin-bottom: 20px;
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
+            display: flex; gap: 4px; flex-wrap: wrap;
         }
 
         .nav-tabs-custom .nav-link {
             border: 1px solid var(--border-color);
             border-bottom: none;
             border-radius: 8px 8px 0 0;
-            color: var(--dark-color);
-            font-weight: 600;
-            padding: 12px 16px;
-            background-color: #e9ecef;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.85rem;
+            color: var(--dark-color); font-weight: 600;
+            padding: 12px 16px; background-color: #e9ecef;
+            cursor: pointer; transition: var(--transition);
+            font-size: 0.85rem; touch-action: manipulation;
         }
 
-        .nav-tabs-custom .nav-link:hover {
-            background-color: #dde1e3;
-        }
-
+        .nav-tabs-custom .nav-link:hover { background-color: #dde1e3; }
         .nav-tabs-custom .nav-link.active {
-            background-color: #fff;
-            color: var(--primary-color);
+            background-color: #fff; color: var(--primary-color);
             border-top: 4px solid var(--secondary-color);
             transform: translateY(1px);
         }
 
         .setting-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            background-color: #fafbfc;
-            margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px; border: 1px solid #e9ecef; border-radius: 10px;
+            background-color: #fafbfc; margin-bottom: 12px;
             transition: var(--transition);
         }
 
-        .setting-item:hover {
-            background-color: #f0f4f8;
-            border-color: #cbd5e0;
-        }
-
-        .setting-info {
-            flex: 1;
-            padding-right: 15px;
-        }
+        .setting-item:hover { background-color: #f0f4f8; border-color: #cbd5e0; }
+        .setting-info { flex: 1; padding-right: 15px; }
 
         .setting-info .setting-title {
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 4px;
-            font-size: 1rem;
+            font-weight: 700; color: var(--primary-color);
+            display: flex; align-items: center; gap: 6px;
+            margin-bottom: 4px; font-size: 1rem;
         }
 
-        .setting-info .setting-title i {
-            color: var(--secondary-color);
-        }
+        .setting-info .setting-title i { color: var(--secondary-color); }
 
         .setting-info .setting-description {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            margin: 0;
-            line-height: 1.4;
+            font-size: 0.85rem; color: #7f8c8d; margin: 0; line-height: 1.4;
         }
 
-        .form-switch .form-check-input {
-            width: 3em;
-            height: 1.5em;
-            cursor: pointer;
-        }
-
+        .form-switch .form-check-input { width: 3em; height: 1.5em; cursor: pointer; }
         .form-switch .form-check-input:checked {
-            background-color: var(--success-color);
-            border-color: var(--success-color);
+            background-color: var(--success-color); border-color: var(--success-color);
         }
 
         .config-section-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #95a5a6;
-            font-weight: 700;
-            margin: 0 0 10px 0;
-            padding-bottom: 6px;
+            font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 1px; color: #95a5a6; font-weight: 700;
+            margin: 0 0 10px 0; padding-bottom: 6px;
             border-bottom: 1px solid #ecf0f1;
         }
 
         .lista-scrollable {
-            max-height: 350px;
-            overflow-y: auto;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
+            max-height: 350px; overflow-y: auto;
+            border: 1px solid #dee2e6; border-radius: 0.25rem;
             background-color: #fff;
         }
 
         .toolbar-lista {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border: 1px solid #dee2e6;
-            border-bottom: none;
-            border-top-left-radius: 0.25rem;
-            border-top-right-radius: 0.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: #f8f9fa; padding: 10px;
+            border: 1px solid #dee2e6; border-bottom: none;
+            border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
         #syncTabs .nav-link {
-            background-color: #e9ecef;
-            color: #7f8c8d;
+            background-color: #e9ecef; color: #7f8c8d;
             border: 1px solid #dee2e6;
-            margin-right: 4px;
-            border-radius: 8px 8px 0 0;
+            margin-right: 4px; border-radius: 8px 8px 0 0;
         }
 
-        #syncTabs .nav-link:hover {
-            background-color: #dde1e3;
-            color: #2c3e50;
-        }
-
+        #syncTabs .nav-link:hover { background-color: #dde1e3; color: #2c3e50; }
         #syncTabs .nav-link.active {
-            background-color: #ffffff !important;
-            color: #2c3e50 !important;
-            font-weight: bold;
-            border-top: 4px solid #3498db;
+            background-color: #ffffff !important; color: #2c3e50 !important;
+            font-weight: bold; border-top: 4px solid #3498db;
         }
-
-        #syncTabs {
-            border-bottom: 1px solid #dee2e6;
-            background-color: #f8f9fa;
-            padding: 10px 10px 0 10px;
-        }
+        #syncTabs { border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; padding: 10px 10px 0 10px; }
 
         #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(255, 255, 255, 0.95);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            flex-direction: column;
+            display: none; justify-content: center; align-items: center;
+            z-index: 9999; flex-direction: column;
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             border: 5px solid rgba(52, 152, 219, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--secondary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
+            border-radius: 50%; border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite; margin-bottom: 20px;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        #loadingMessage {
-            text-align: center;
-            color: var(--dark-color);
-        }
+        #loadingMessage { text-align: center; color: var(--dark-color); }
+        #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
+        #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
 
-        #loadingMessage h4 {
-            margin: 0 0 10px;
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-
-        #loadingMessage p {
-            margin: 0;
-            color: #7f8c8d;
-            font-weight: normal;
-        }
-
-        .chart-box {
-            position: relative;
-            height: 280px;
-            width: 100%;
-        }
+        .chart-box { position: relative; height: 280px; width: 100%; }
 
         .badge-info-custom {
-            background-color: #eaf2f8;
-            color: #2471a3;
-            border: 1px solid #aed6f1;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background-color: #eaf2f8; color: #2471a3;
+            border: 1px solid #aed6f1; font-weight: 500;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
         }
 
         .badge-warning-custom {
-            background-color: #fef5e7;
-            color: #b9770e;
-            border: 1px solid #f8c471;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background-color: #fef5e7; color: #b9770e;
+            border: 1px solid #f8c471; font-weight: 500;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
         }
 
         .badge-danger-custom {
-            background-color: #fdedec;
-            color: #c0392b;
-            border: 1px solid #f5b7b1;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background-color: #fdedec; color: #c0392b;
+            border: 1px solid #f5b7b1; font-weight: 500;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
         }
 
         .badge-success-custom {
-            background-color: #e8f8f5;
-            color: #27ae60;
-            border: 1px solid #a3e4d7;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background-color: #e8f8f5; color: #27ae60;
+            border: 1px solid #a3e4d7; font-weight: 500;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
         }
 
         .badge-pendiente-custom {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            background-color: #fff3cd; color: #856404;
+            border: 1px solid #ffeaa7; font-weight: 600;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;
         }
 
         .badge-positive {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background-color: #d4edda; color: #155724;
+            border: 1px solid #c3e6cb; font-weight: 600;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
         }
 
         .badge-negative {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background-color: #f8d7da; color: #721c24;
+            border: 1px solid #f5c6cb; font-weight: 600;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
         }
 
-        .tema-selector {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-        }
-
+        .tema-selector { display: flex; gap: 8px; width: 100%; }
         .tema-selector .tema-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px solid #e2e8f0;
-            background: #f8f9fa;
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            color: #4a5568;
+            flex: 1; padding: 10px; border-radius: 10px;
+            border: 2px solid #e2e8f0; background: #f8f9fa;
+            cursor: pointer; text-align: center;
+            font-size: 0.8rem; font-weight: 600;
+            transition: all 0.2s ease; color: #4a5568;
         }
-
-        .tema-selector .tema-btn i {
-            display: block;
-            font-size: 1.3rem;
-            margin-bottom: 4px;
-        }
-
-        .tema-selector .tema-btn:hover {
-            border-color: #3498db;
-        }
-
-        .tema-selector .tema-btn.active {
-            border-color: #3498db;
-            background: #ebf4ff;
-            color: #2c5282;
-        }
+        .tema-selector .tema-btn i { display: block; font-size: 1.3rem; margin-bottom: 4px; }
+        .tema-selector .tema-btn:hover { border-color: #3498db; }
+        .tema-selector .tema-btn.active { border-color: #3498db; background: #ebf4ff; color: #2c5282; }
+        body.modo-oscuro .tema-selector .tema-btn { background: #1e293b; color: #cbd5e1; border-color: #334155; }
+        body.modo-oscuro .tema-selector .tema-btn.active { background: #1e3a8a; color: #ffffff; border-color: #60a5fa; }
 
         .kpi-card {
-            border-radius: 10px;
-            padding: 16px;
-            border: 2px solid #e9ecef;
-            background: #fff;
+            border-radius: 10px; padding: 16px;
+            border: 2px solid #e9ecef; background: #fff;
             text-align: center;
         }
 
-        .kpi-card .kpi-label {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            margin-bottom: 4px;
-        }
-
-        .kpi-card .kpi-value {
-            font-size: 1.6rem;
-            font-weight: 700;
-        }
-
-        .kpi-card.kpi-primary .kpi-value {
-            color: var(--secondary-color);
-        }
-
-        .kpi-card.kpi-success .kpi-value {
-            color: var(--success-color);
-        }
-
-        .kpi-card.kpi-warning .kpi-value {
-            color: var(--warning-color);
-        }
-
-        .kpi-card.kpi-danger .kpi-value {
-            color: var(--accent-color);
-        }
+        .kpi-card .kpi-label { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 4px; }
+        .kpi-card .kpi-value { font-size: 1.6rem; font-weight: 700; }
+        .kpi-card.kpi-primary .kpi-value { color: var(--secondary-color); }
+        .kpi-card.kpi-success .kpi-value { color: var(--success-color); }
+        .kpi-card.kpi-warning .kpi-value { color: var(--warning-color); }
+        .kpi-card.kpi-danger .kpi-value { color: var(--accent-color); }
 
         .semana-card {
-            padding: 14px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            background: #fff;
+            padding: 14px; border-radius: 10px;
+            border: 2px solid #e9ecef; background: #fff;
             margin-bottom: 10px;
         }
 
-        .semana-card.cumple {
-            border-color: #2ecc71;
-            background: #e8f8f5;
-        }
-
-        .semana-card.no-cumple {
-            border-color: #e74c3c;
-            background: #fdedec;
-        }
-
-        .semana-card .semana-titulo {
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .semana-card .semana-totales {
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
+        .semana-card.cumple { border-color: #2ecc71; background: #e8f8f5; }
+        .semana-card.no-cumple { border-color: #e74c3c; background: #fdedec; }
+        .semana-card .semana-titulo { font-weight: 700; margin-bottom: 6px; }
+        .semana-card .semana-totales { font-size: 1.4rem; font-weight: 700; }
 
         .multi-select-list {
-            max-height: 280px;
-            overflow-y: auto;
+            max-height: 280px; overflow-y: auto;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px;
-            background: #fff;
+            border-radius: 8px; padding: 8px; background: #fff;
         }
 
         .multi-select-list .form-check {
-            padding: 8px 10px 8px 40px;
-            border-radius: 6px;
-            margin-bottom: 2px;
-            transition: background-color 0.15s;
+            padding: 8px 10px 8px 40px; border-radius: 6px;
+            margin-bottom: 2px; transition: background-color 0.15s;
         }
 
-        .multi-select-list .form-check:hover {
-            background: #f0f4f8;
-        }
+        .multi-select-list .form-check:hover { background: #f0f4f8; }
+        .multi-select-list .form-check-label { cursor: pointer; font-size: 0.9rem; }
 
-        .multi-select-list .form-check-label {
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .multi-select-toolbar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
+        .multi-select-toolbar { display: flex; gap: 8px; margin-bottom: 8px; }
         .multi-select-toolbar button {
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            border-radius: 20px;
+            font-size: 0.75rem; padding: 4px 12px; border-radius: 20px;
         }
 
-        .fila-historial-dia-libre {
-            background-color: #e8f8f5 !important;
-            color: #1e7e34 !important;
-        }
-
-        .fila-historial-vacaciones {
-            background-color: #eaf2f8 !important;
-            color: #1a5490 !important;
-        }
-
-        .fila-historial-incapacidad {
-            background-color: #fdedec !important;
-            color: #922b21 !important;
-        }
-
-        .fila-historial-permiso {
-            background-color: #fef5e7 !important;
-            color: #935900 !important;
-        }
-
-        .fila-historial-falta {
-            background-color: #f8d7da !important;
-            color: #721c24 !important;
-        }
-
-        .fila-historial-incompleto {
-            background-color: #fff3cd !important;
-            color: #856404 !important;
-            border-left: 4px solid #f39c12;
-        }
-
-        .fila-historial-pendiente {
-            background-color: #d1ecf1 !important;
-            color: #0c5460 !important;
-        }
-
-        .fila-historial-faltante {
-            background-color: #f8f9fa !important;
-            color: #6c757d !important;
-            font-style: italic;
-        }
+        .fila-historial-dia-libre { background-color: #e8f8f5 !important; color: #1e7e34 !important; }
+        .fila-historial-vacaciones { background-color: #eaf2f8 !important; color: #1a5490 !important; }
+        .fila-historial-incapacidad { background-color: #fdedec !important; color: #922b21 !important; }
+        .fila-historial-permiso { background-color: #fef5e7 !important; color: #935900 !important; }
+        .fila-historial-falta { background-color: #f8d7da !important; color: #721c24 !important; }
+        .fila-historial-incompleto { background-color: #fff3cd !important; color: #856404 !important; border-left: 4px solid #f39c12; }
+        .fila-historial-pendiente { background-color: #d1ecf1 !important; color: #0c5460 !important; }
+        .fila-historial-faltante { background-color: #f8f9fa !important; color: #6c757d !important; font-style: italic; }
 
         .fila-historial-dia-libre td,
         .fila-historial-vacaciones td,
@@ -801,9 +433,7 @@
         .fila-historial-falta td,
         .fila-historial-incompleto td,
         .fila-historial-pendiente td,
-        .fila-historial-faltante td {
-            color: inherit !important;
-        }
+        .fila-historial-faltante td { color: inherit !important; }
 
         .gps-status {
             padding: 12px 14px;
@@ -811,65 +441,58 @@
             border: 2px solid #e9ecef;
             background: #fafbfc;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .gps-status.ok {
-            border-color: #2ecc71;
-            background: #e8f8f5;
-            color: #155724;
-        }
+        .gps-status.ok { border-color: #2ecc71; background: #e8f8f5; color: #155724; }
+        .gps-status.error { border-color: #e74c3c; background: #fdedec; color: #721c24; }
+        .gps-status.loading { border-color: #f39c12; background: #fef5e7; color: #856404; }
 
-        .gps-status.error {
-            border-color: #e74c3c;
-            background: #fdedec;
-            color: #721c24;
-        }
-
-        .gps-status.loading {
-            border-color: #f39c12;
-            background: #fef5e7;
-            color: #856404;
-        }
-
-        .camara-preview {
+        #mapa-gps {
             width: 100%;
-            max-height: 300px;
-            object-fit: contain;
-            background: #000;
+            height: 200px;
             border-radius: 8px;
-            margin-top: 8px;
+            margin-top: 10px;
+            border: 2px solid #e9ecef;
             display: none;
         }
+        #mapa-gps.visible { display: block; }
+        .leaflet-container { background: #e9ecef; border-radius: 8px; }
 
-        .camara-preview.visible {
-            display: block;
+        /* ====================================================== */
+        /* PREVIEW DE FOTO EN EL FORMULARIO (chiquito, NO enorme) */
+        /* ====================================================== */
+        .foto-preview-mini {
+            max-width: 140px;
+            max-height: 140px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+            margin-top: 8px;
+            display: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            background: #000;
         }
 
+        .foto-preview-mini.visible { display: inline-block; }
+
+        /* =========================================================== */
+        /* LINK DE FOTO EN HISTORIAL: marco fijo con object-fit: contain */
+        /* =========================================================== */
         .foto-link-historial {
-            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
             color: #3498db;
             text-decoration: none;
             cursor: pointer;
+            padding: 2px 6px;
         }
 
-        .foto-link-historial:hover {
-            color: #2980b9;
-        }
-
-        #cameraCaptureModal .modal-dialog {
-            max-width: 700px;
-        }
-
-        #cameraVideoPreview {
-            width: 100%;
-            max-height: 60vh;
-            object-fit: contain;
-            background: #000;
-            border-radius: 8px;
-        }
+        .foto-link-historial:hover { color: #2980b9; }
 
         #fotoViewerModal .modal-content {
             background: rgba(0, 0, 0, 0.95);
@@ -885,48 +508,44 @@
         #fotoViewerModal .modal-body {
             text-align: center;
             padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
         }
 
+        /* La imagen del visor AHORA se ajusta correctamente al marco */
         #fotoViewerImg {
             max-width: 100%;
-            max-height: 80vh;
+            max-height: 75vh;
+            width: auto;
+            height: auto;
             object-fit: contain;
             border-radius: 6px;
+            background: #111;
+            display: block;
         }
 
-        #fotoViewerLoading {
-            color: white;
-            padding: 40px;
-        }
+        #fotoViewerLoading { color: white; padding: 40px; text-align: center; }
 
-        .tabla-colaborador-clickable {
-            cursor: pointer;
-            transition: background-color 0.15s;
-        }
-
-        .tabla-colaborador-clickable:hover {
-            background-color: #f0f4f8 !important;
-        }
-
+        .tabla-colaborador-clickable { cursor: pointer; transition: background-color 0.15s; }
+        .tabla-colaborador-clickable:hover { background-color: #f0f4f8 !important; }
         .tabla-colaborador-clickable.activo {
             background-color: #eaf2f8 !important;
             border-left: 4px solid var(--secondary-color);
         }
 
-        .balance-positivo {
-            color: #27ae60;
+        .balance-cell {
+            font-size: 1.05rem;
             font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
         }
 
-        .balance-negativo {
-            color: #e74c3c;
-            font-weight: 700;
-        }
-
-        .balance-cero {
-            color: #7f8c8d;
-            font-weight: 700;
-        }
+        .balance-cell.positivo { color: #155724; background: #d4edda; border: 1px solid #c3e6cb; }
+        .balance-cell.negativo { color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; }
+        .balance-cell.cero { color: #6c757d; background: #f8f9fa; border: 1px solid #dee2e6; }
 
         .kpi-total-global {
             background: linear-gradient(135deg, #2c3e50, #34495e);
@@ -937,88 +556,271 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .kpi-total-global .kpi-total-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 8px;
+        .kpi-total-global .kpi-total-label { font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px; }
+        .kpi-total-global .kpi-total-value { font-size: 2.2rem; font-weight: 700; line-height: 1.2; }
+        .kpi-total-global .kpi-total-detail { font-size: 0.8rem; opacity: 0.8; margin-top: 8px; }
+        .kpi-total-global.positivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .kpi-total-global.negativo { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+        .btn-nuevo-ajuste {
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 10px 20px;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
         }
 
-        .kpi-total-global .kpi-total-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            line-height: 1.2;
+        /* ============================================ */
+        /* ===== CÁMARA MODAL (igual que Supervisión) = */
+        /* ============================================ */
+
+        .camera-modal .modal-dialog {
+            max-width: 100%; height: 100vh; height: 100dvh;
+            margin: 0; padding: 0;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .kpi-total-global .kpi-total-detail {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 8px;
+        .camera-modal .modal-content {
+            height: 100vh; height: 100dvh;
+            width: 100vw;
+            border-radius: 0;
+            background-color: #000; border: none;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 10000;
+            transition: none !important;
+            overflow: hidden;
         }
 
-        .kpi-total-global.positivo {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        #cameraCaptureModal.fade .modal-dialog { transition: none !important; }
+        #cameraCaptureModal.fade { transition: none !important; }
+        #cameraCaptureModal { padding: 0 !important; }
+        #cameraCaptureModal .modal-dialog { margin: 0 !important; }
+
+        .camera-modal .modal-header {
+            border-bottom: 1px solid #333;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: white; z-index: 10001;
+            position: absolute; top: 0; left: 0; right: 0;
+            padding: 10px 14px; height: 48px;
+            display: flex; align-items: center;
+            padding-top: max(10px, env(safe-area-inset-top, 10px));
+            height: calc(48px + env(safe-area-inset-top, 0px));
         }
 
-        .kpi-total-global.negativo {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        .camera-modal .modal-body {
+            padding: 0;
+            display: flex; align-items: center; justify-content: center;
+            background-color: #000; overflow: hidden;
+            height: 100vh; height: 100dvh;
+            width: 100vw;
+            touch-action: pinch-zoom pan-x pan-y;
         }
 
-        .hora-warning {
-            font-size: 0.8rem;
-            color: #856404;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 6px 10px;
-            margin-top: 6px;
+        .camera-container {
+            width: 100vw;
+            height: 100vh; height: 100dvh;
+            position: relative;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        .camera-view {
+            position: absolute; inset: 0;
+            background-color: #000;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #camera-video {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.15s ease-out;
+            transform-origin: center center;
+            pointer-events: none;
+        }
+
+        #foto-capturada-preview {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+            background-color: #000;
             display: none;
+            z-index: 10002;
+            pointer-events: none;
         }
 
-        .hora-warning.visible {
-            display: block;
+        #camera-loading-overlay {
+            position: absolute; inset: 0;
+            background: #000;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 14px;
+            color: #fff; font-size: 15px;
+            z-index: 10003;
+            pointer-events: none;
+        }
+
+        #camera-loading-overlay .spinner-border { width: 46px; height: 46px; border-width: 4px; }
+        #camera-loading-overlay.hidden { display: none; }
+
+        .camera-controls {
+            position: absolute;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            left: 0; right: 0;
+            display: flex; justify-content: center; gap: 30px;
+            z-index: 10005;
+            pointer-events: none;
+        }
+
+        .camera-controls > * { pointer-events: auto; }
+
+        .camera-btn {
+            width: 72px; height: 72px; border-radius: 50%;
+            border: 3px solid white; background-color: rgba(0, 0, 0, 0.3);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; cursor: pointer; transition: all 0.2s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .camera-btn:active { transform: scale(0.94); background-color: rgba(255, 255, 255, 0.25); }
+        .camera-btn.capture {
+            width: 84px; height: 84px; background-color: #fff;
+            color: #333; font-size: 32px;
+        }
+
+        #fotoPreviewControls {
+            position: absolute;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            left: 0; right: 0;
+            display: none; justify-content: center; gap: 14px;
+            z-index: 10006; padding: 0 20px;
+            pointer-events: none;
+        }
+
+        #fotoPreviewControls > * { pointer-events: auto; }
+
+        #fotoPreviewControls .btn-preview-foto {
+            padding: 14px 26px; border-radius: 30px; border: 2px solid white;
+            background-color: rgba(0, 0, 0, 0.7); color: white;
+            font-weight: 700; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+            cursor: pointer; transition: transform 0.15s ease;
+            backdrop-filter: blur(4px);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        #fotoPreviewControls .btn-preview-foto:active { transform: scale(0.95); }
+        #fotoPreviewControls .btn-preview-foto.aceptar { background-color: rgba(46, 204, 113, 0.92); border-color: #2ecc71; }
+        #fotoPreviewControls .btn-preview-foto.reintentar { background-color: rgba(239, 83, 80, 0.92); border-color: #ef5350; }
+
+        .zoom-controls {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px;
+            z-index: 10005;
+            pointer-events: none;
+            margin-top: calc(env(safe-area-inset-top, 0px) / 2);
+        }
+
+        .zoom-controls > * { pointer-events: auto; }
+
+        .zoom-btn {
+            width: 52px; height: 52px; border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.55); color: white;
+            border: 2px solid white; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+
+        .zoom-btn:active { transform: scale(0.92); background-color: rgba(255, 255, 255, 0.3); }
+
+        .zoom-level-display {
+            background-color: rgba(0, 0, 0, 0.7); color: white;
+            padding: 4px 8px; border-radius: 12px;
+            font-size: 11px; font-weight: bold;
+            min-width: 40px; text-align: center;
+            pointer-events: none;
+        }
+
+        .flash-control {
+            position: absolute;
+            left: 14px;
+            top: calc(60px + env(safe-area-inset-top, 0px));
+            z-index: 10005;
+            pointer-events: none;
+        }
+
+        .flash-control > * { pointer-events: auto; }
+
+        .flash-btn {
+            background-color: rgba(0, 0, 0, 0.55); color: white;
+            border: 2px solid white; border-radius: 25px;
+            padding: 8px 14px; display: flex; align-items: center; gap: 6px;
+            cursor: pointer; font-size: 13px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .flash-btn.active { background-color: #f39c12; color: #000; }
+        .flash-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .camera-message {
+            position: absolute; top: 50%; left: 0; right: 0;
+            transform: translateY(-50%);
+            text-align: center; color: white; font-size: 16px;
+            padding: 20px; background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10007;
+        }
+
+        .no-camera .camera-controls,
+        .no-camera .zoom-controls,
+        .no-camera .flash-control,
+        .no-camera #fotoPreviewControls { display: none; }
+
+        body.camera-active { overflow: hidden !important; }
+        body.camera-active .btn-flotante { display: none !important; }
+        html.camera-active-html { overflow: hidden !important; height: 100% !important; }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .camera-modal .modal-header { height: calc(40px + env(safe-area-inset-top, 0px)); padding: 6px 12px; }
+            .camera-modal .modal-header h5 { font-size: 0.95rem; }
+            .zoom-controls { gap: 6px; }
+            .zoom-btn { width: 44px; height: 44px; font-size: 17px; }
+            .camera-controls { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+            .camera-btn.capture { width: 64px; height: 64px; font-size: 24px; }
+            .camera-btn { width: 54px; height: 54px; font-size: 20px; }
+            #fotoPreviewControls { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+            #fotoPreviewControls .btn-preview-foto { padding: 10px 18px; font-size: 0.85rem; }
+            .flash-control { top: calc(46px + env(safe-area-inset-top, 0px)); }
         }
 
         @media (max-width: 576px) {
-            .header-title {
-                font-size: 1.1rem;
+            .header-title { font-size: 1.1rem; }
+            .header-btn, .modo-indicador { width: 38px; height: 38px; font-size: 0.95rem; }
+            .card-body { padding: 1.2rem; }
+            h1 { font-size: 1.4rem; }
+            .btn-primary, .btn-success, .btn-secondary, .btn-danger, .btn-warning, .btn-info {
+                padding: 10px 18px; font-size: 0.9rem; min-width: 110px;
             }
-            .header-btn,
-            .modo-indicador {
-                width: 38px;
-                height: 38px;
-                font-size: 0.95rem;
-            }
-            .card-body {
-                padding: 1.2rem;
-            }
-            h1 {
-                font-size: 1.4rem;
-            }
-            .btn-primary,
-            .btn-success,
-            .btn-secondary,
-            .btn-danger,
-            .btn-warning,
-            .btn-info {
-                padding: 10px 18px;
-                font-size: 0.9rem;
-                min-width: 110px;
-            }
-            .nav-tabs-custom .nav-link {
-                padding: 10px 10px;
-                font-size: 0.72rem;
-            }
-            .chart-box {
-                height: 240px;
-            }
-            .kpi-card .kpi-value {
-                font-size: 1.3rem;
-            }
-            .kpi-total-global .kpi-total-value {
-                font-size: 1.6rem;
-            }
+            .nav-tabs-custom .nav-link { padding: 10px 10px; font-size: 0.72rem; }
+            .chart-box { height: 240px; }
+            .kpi-card .kpi-value { font-size: 1.3rem; }
+            .kpi-total-global .kpi-total-value { font-size: 1.6rem; }
+            #mapa-gps { height: 160px; }
+            .foto-preview-mini { max-width: 110px; max-height: 110px; }
         }
 
+        /* ========== MODO OSCURO ========== */
         body.modo-oscuro {
             --primary-color: #63b3ed;
             --secondary-color: #4299e1;
@@ -1041,22 +843,10 @@
             color: #f1f5f9;
         }
 
-        body.modo-oscuro .header-btn:hover {
-            background-color: rgba(96, 165, 250, 0.35);
-        }
-
-        body.modo-oscuro h1,
-        body.modo-oscuro .section-title {
-            color: #93c5fd !important;
-        }
-
-        body.modo-oscuro .section-title {
-            border-bottom-color: #334155;
-        }
-
-        body.modo-oscuro h1:after {
-            background-color: #60a5fa;
-        }
+        body.modo-oscuro .header-btn:hover { background-color: rgba(96, 165, 250, 0.35); }
+        body.modo-oscuro h1, body.modo-oscuro .section-title { color: #93c5fd !important; }
+        body.modo-oscuro .section-title { border-bottom-color: #334155; }
+        body.modo-oscuro h1:after { background-color: #60a5fa; }
 
         body.modo-oscuro .card,
         body.modo-oscuro .question-container,
@@ -1070,58 +860,28 @@
             border-color: #334155 !important;
         }
 
-        body.modo-oscuro .card {
-            border-top-color: #10b981 !important;
-        }
+        body.modo-oscuro .card { border-top-color: #10b981 !important; }
+        body.modo-oscuro .question-container { background-color: #0f172a !important; }
+        body.modo-oscuro .question-container:hover { border-color: #60a5fa !important; }
+        body.modo-oscuro .gps-status.ok { background: #064e3b !important; color: #d1fae5 !important; border-color: #10b981 !important; }
+        body.modo-oscuro .gps-status.error { background: #7f1d1d !important; color: #fee2e2 !important; border-color: #ef4444 !important; }
+        body.modo-oscuro .gps-status.loading { background: #78350f !important; color: #fef3c7 !important; border-color: #f59e0b !important; }
 
-        body.modo-oscuro .question-container {
-            background-color: #0f172a !important;
-        }
-
-        body.modo-oscuro .question-container:hover {
-            border-color: #60a5fa !important;
-        }
-
-        body.modo-oscuro .gps-status.ok {
-            background: #064e3b !important;
-            color: #d1fae5 !important;
-            border-color: #10b981 !important;
-        }
-
-        body.modo-oscuro .gps-status.error {
-            background: #7f1d1d !important;
-            color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-        }
-
-        body.modo-oscuro .gps-status.loading {
-            background: #78350f !important;
-            color: #fef3c7 !important;
-            border-color: #f59e0b !important;
-        }
-
-        body.modo-oscuro .form-control,
-        body.modo-oscuro .form-select {
+        body.modo-oscuro .form-control, body.modo-oscuro .form-select {
             background-color: #0f172a !important;
             color: #e2e8f0 !important;
             border-color: #334155 !important;
         }
 
-        body.modo-oscuro .form-control::placeholder {
-            color: #94a3b8;
-        }
-
-        body.modo-oscuro .form-control:focus,
-        body.modo-oscuro .form-select:focus {
+        body.modo-oscuro .form-control::placeholder { color: #94a3b8; }
+        body.modo-oscuro .form-control:focus, body.modo-oscuro .form-select:focus {
             background-color: #0f172a !important;
             color: #e2e8f0 !important;
             border-color: #60a5fa !important;
             box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.2);
         }
 
-        body.modo-oscuro .form-label {
-            color: #cbd5e1;
-        }
+        body.modo-oscuro .form-label { color: #cbd5e1; }
 
         body.modo-oscuro .btn-secondary {
             background: linear-gradient(45deg, #475569, #334155) !important;
@@ -1129,48 +889,17 @@
             border: 1px solid #60a5fa !important;
         }
 
-        body.modo-oscuro .btn-primary {
-            background: linear-gradient(45deg, #3b82f6, #2563eb) !important;
-        }
+        body.modo-oscuro .btn-primary { background: linear-gradient(45deg, #3b82f6, #2563eb) !important; }
+        body.modo-oscuro .btn-success { background: linear-gradient(45deg, #10b981, #059669) !important; }
+        body.modo-oscuro .btn-warning { background: linear-gradient(45deg, #f59e0b, #d97706) !important; color: #0f172a !important; }
+        body.modo-oscuro .btn-danger { background: linear-gradient(45deg, #ef4444, #dc2626) !important; }
+        body.modo-oscuro .btn-info { background: linear-gradient(45deg, #0ea5e9, #0284c7) !important; }
 
-        body.modo-oscuro .btn-success {
-            background: linear-gradient(45deg, #10b981, #059669) !important;
-        }
-
-        body.modo-oscuro .btn-warning {
-            background: linear-gradient(45deg, #f59e0b, #d97706) !important;
-            color: #0f172a !important;
-        }
-
-        body.modo-oscuro .btn-danger {
-            background: linear-gradient(45deg, #ef4444, #dc2626) !important;
-        }
-
-        body.modo-oscuro .btn-info {
-            background: linear-gradient(45deg, #0ea5e9, #0284c7) !important;
-        }
-
-        body.modo-oscuro .table thead {
-            background-color: #0f172a;
-            color: #93c5fd;
-        }
-
-        body.modo-oscuro .table thead th {
-            border-color: #334155;
-        }
-
-        body.modo-oscuro .table tbody tr {
-            border-color: #334155;
-        }
-
-        body.modo-oscuro .table tbody td {
-            color: #e2e8f0;
-            border-color: #334155;
-        }
-
-        body.modo-oscuro .table-responsive {
-            background-color: #1e293b;
-        }
+        body.modo-oscuro .table thead { background-color: #0f172a; color: #93c5fd; }
+        body.modo-oscuro .table thead th { border-color: #334155; }
+        body.modo-oscuro .table tbody tr { border-color: #334155; }
+        body.modo-oscuro .table tbody td { color: #e2e8f0; border-color: #334155; }
+        body.modo-oscuro .table-responsive { background-color: #1e293b; }
 
         body.modo-oscuro .list-group-item {
             background-color: #1e293b !important;
@@ -1178,217 +907,69 @@
             border-color: #334155 !important;
         }
 
-        body.modo-oscuro .setting-item {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-        }
+        body.modo-oscuro .setting-item { background-color: #1e293b !important; border-color: #334155 !important; }
+        body.modo-oscuro .setting-info .setting-title { color: #93c5fd; }
+        body.modo-oscuro .setting-info .setting-description { color: #94a3b8; }
+        body.modo-oscuro .config-section-title { color: #94a3b8; border-bottom-color: #334155; }
+        body.modo-oscuro .form-check-input { background-color: #334155; border-color: #475569; }
+        body.modo-oscuro .form-check-input:checked { background-color: #10b981; border-color: #10b981; }
 
-        body.modo-oscuro .setting-info .setting-title {
-            color: #93c5fd;
-        }
+        body.modo-oscuro .nav-tabs-custom { border-bottom-color: #334155; }
+        body.modo-oscuro .nav-tabs-custom .nav-link { background-color: #1e293b; color: #94a3b8; border-color: #334155; }
+        body.modo-oscuro .nav-tabs-custom .nav-link.active { background-color: #1e293b; color: #f1f5f9; border-top-color: #60a5fa; border-bottom-color: #1e293b; }
 
-        body.modo-oscuro .setting-info .setting-description {
-            color: #94a3b8;
-        }
+        body.modo-oscuro #syncTabs { background-color: #0f172a !important; border-bottom-color: #334155 !important; }
+        body.modo-oscuro #syncTabs .nav-link { background-color: #1e293b !important; color: #94a3b8 !important; border-color: #334155 !important; }
+        body.modo-oscuro #syncTabs .nav-link.active { background-color: #1e293b !important; color: #f1f5f9 !important; border-top-color: #60a5fa !important; }
+        body.modo-oscuro .toolbar-lista { background-color: #0f172a !important; border-color: #334155 !important; color: #e2e8f0; }
+        body.modo-oscuro .lista-scrollable { background-color: #0f172a !important; border-color: #334155 !important; }
 
-        body.modo-oscuro .config-section-title {
-            color: #94a3b8;
-            border-bottom-color: #334155;
-        }
+        body.modo-oscuro .alert-info { background-color: #1e3a8a !important; color: #dbeafe !important; border-color: #3b82f6 !important; }
+        body.modo-oscuro .alert-warning { background-color: #78350f !important; color: #fef3c7 !important; border-color: #f59e0b !important; }
+        body.modo-oscuro .alert-danger { background-color: #7f1d1d !important; color: #fee2e2 !important; border-color: #ef4444 !important; }
+        body.modo-oscuro .alert-success { background-color: #064e3b !important; color: #d1fae5 !important; border-color: #10b981 !important; }
 
-        body.modo-oscuro .form-check-input {
-            background-color: #334155;
-            border-color: #475569;
-        }
+        body.modo-oscuro .text-muted { color: #94a3b8 !important; }
+        body.modo-oscuro .text-dark { color: #e2e8f0 !important; }
+        body.modo-oscuro .text-secondary { color: #93c5fd !important; }
 
-        body.modo-oscuro .form-check-input:checked {
-            background-color: #10b981;
-            border-color: #10b981;
-        }
+        body.modo-oscuro #overlay { background-color: rgba(15, 23, 42, 0.96) !important; }
+        body.modo-oscuro #overlay .spinner { border: 5px solid rgba(96, 165, 250, 0.25) !important; border-top-color: #60a5fa !important; }
+        body.modo-oscuro #loadingMessage h4 { color: #93c5fd !important; }
+        body.modo-oscuro #loadingMessage p { color: #cbd5e1 !important; }
 
-        body.modo-oscuro .nav-tabs-custom {
-            border-bottom-color: #334155;
-        }
+        body.modo-oscuro .modal-header.bg-dark, body.modo-oscuro .modal-header.bg-secondary { background-color: #0f172a !important; }
+        body.modo-oscuro .modal-body.bg-light { background-color: #1e293b !important; }
 
-        body.modo-oscuro .nav-tabs-custom .nav-link {
-            background-color: #1e293b;
-            color: #94a3b8;
-            border-color: #334155;
-        }
+        body.modo-oscuro .fila-historial-dia-libre { background-color: #064e3b !important; color: #d1fae5 !important; }
+        body.modo-oscuro .fila-historial-vacaciones { background-color: #1e3a8a !important; color: #dbeafe !important; }
+        body.modo-oscuro .fila-historial-incapacidad { background-color: #7f1d1d !important; color: #fee2e2 !important; }
+        body.modo-oscuro .fila-historial-permiso { background-color: #78350f !important; color: #fef3c7 !important; }
+        body.modo-oscuro .fila-historial-falta { background-color: #7f1d1d !important; color: #fee2e2 !important; }
+        body.modo-oscuro .fila-historial-incompleto { background-color: #78350f !important; color: #fef3c7 !important; }
+        body.modo-oscuro .fila-historial-pendiente { background-color: #0c4a6e !important; color: #e0f2fe !important; }
+        body.modo-oscuro .fila-historial-faltante { background-color: #1e293b !important; color: #94a3b8 !important; }
 
-        body.modo-oscuro .nav-tabs-custom .nav-link.active {
-            background-color: #1e293b;
-            color: #f1f5f9;
-            border-top-color: #60a5fa;
-            border-bottom-color: #1e293b;
-        }
+        body.modo-oscuro .tabla-colaborador-clickable:hover { background-color: #334155 !important; }
+        body.modo-oscuro .tabla-colaborador-clickable.activo { background-color: #1e3a8a !important; }
 
-        body.modo-oscuro #syncTabs {
-            background-color: #0f172a !important;
-            border-bottom-color: #334155 !important;
-        }
+        body.modo-oscuro .balance-cell.positivo { color: #d1fae5; background: #065f46; border-color: #10b981; }
+        body.modo-oscuro .balance-cell.negativo { color: #fee2e2; background: #7f1d1d; border-color: #ef4444; }
+        body.modo-oscuro .balance-cell.cero { color: #cbd5e1; background: #1e293b; border-color: #334155; }
 
-        body.modo-oscuro #syncTabs .nav-link {
-            background-color: #1e293b !important;
-            color: #94a3b8 !important;
-            border-color: #334155 !important;
-        }
+        body.modo-oscuro #mapa-gps { border-color: #334155; }
+        body.modo-oscuro .leaflet-container { background: #1e293b; }
+        body.modo-oscuro .leaflet-tile { filter: brightness(0.7) contrast(1.1); }
 
-        body.modo-oscuro #syncTabs .nav-link.active {
-            background-color: #1e293b !important;
-            color: #f1f5f9 !important;
-            border-top-color: #60a5fa !important;
-        }
+        body.modo-oscuro #fotoViewerModal .modal-content { background: rgba(0, 0, 0, 0.97) !important; }
+        body.modo-oscuro #fotoViewerImg { background: #0a0f1a; }
 
-        body.modo-oscuro .toolbar-lista {
-            background-color: #0f172a !important;
-            border-color: #334155 !important;
-            color: #e2e8f0;
-        }
-
-        body.modo-oscuro .lista-scrollable {
-            background-color: #0f172a !important;
-            border-color: #334155 !important;
-        }
-
-        body.modo-oscuro .alert-info {
-            background-color: #1e3a8a !important;
-            color: #dbeafe !important;
-            border-color: #3b82f6 !important;
-        }
-
-        body.modo-oscuro .alert-warning {
-            background-color: #78350f !important;
-            color: #fef3c7 !important;
-            border-color: #f59e0b !important;
-        }
-
-        body.modo-oscuro .alert-danger {
-            background-color: #7f1d1d !important;
-            color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-        }
-
-        body.modo-oscuro .alert-success {
-            background-color: #064e3b !important;
-            color: #d1fae5 !important;
-            border-color: #10b981 !important;
-        }
-
-        body.modo-oscuro .text-muted {
-            color: #94a3b8 !important;
-        }
-
-        body.modo-oscuro .text-dark {
-            color: #e2e8f0 !important;
-        }
-
-        body.modo-oscuro .text-secondary {
-            color: #93c5fd !important;
-        }
-
-        body.modo-oscuro #overlay {
-            background-color: rgba(15, 23, 42, 0.96) !important;
-        }
-
-        body.modo-oscuro #overlay .spinner {
-            border: 5px solid rgba(96, 165, 250, 0.25) !important;
-            border-top-color: #60a5fa !important;
-        }
-
-        body.modo-oscuro #loadingMessage h4 {
-            color: #93c5fd !important;
-        }
-
-        body.modo-oscuro #loadingMessage p {
-            color: #cbd5e1 !important;
-        }
-
-        body.modo-oscuro .modal-header.bg-dark,
-        body.modo-oscuro .modal-header.bg-secondary {
-            background-color: #0f172a !important;
-        }
-
-        body.modo-oscuro .modal-body.bg-light {
-            background-color: #1e293b !important;
-        }
-
-        body.modo-oscuro .fila-historial-dia-libre {
-            background-color: #064e3b !important;
-            color: #d1fae5 !important;
-        }
-
-        body.modo-oscuro .fila-historial-vacaciones {
-            background-color: #1e3a8a !important;
-            color: #dbeafe !important;
-        }
-
-        body.modo-oscuro .fila-historial-incapacidad {
-            background-color: #7f1d1d !important;
-            color: #fee2e2 !important;
-        }
-
-        body.modo-oscuro .fila-historial-permiso {
-            background-color: #78350f !important;
-            color: #fef3c7 !important;
-        }
-
-        body.modo-oscuro .fila-historial-falta {
-            background-color: #7f1d1d !important;
-            color: #fee2e2 !important;
-        }
-
-        body.modo-oscuro .fila-historial-incompleto {
-            background-color: #78350f !important;
-            color: #fef3c7 !important;
-        }
-
-        body.modo-oscuro .fila-historial-pendiente {
-            background-color: #0c4a6e !important;
-            color: #e0f2fe !important;
-        }
-
-        body.modo-oscuro .fila-historial-faltante {
-            background-color: #1e293b !important;
-            color: #94a3b8 !important;
-        }
-
-        body.modo-oscuro .tabla-colaborador-clickable:hover {
-            background-color: #334155 !important;
-        }
-
-        body.modo-oscuro .tabla-colaborador-clickable.activo {
-            background-color: #1e3a8a !important;
-        }
-
-        body.modo-oscuro .balance-positivo {
-            color: #6ee7b7;
-        }
-
-        body.modo-oscuro .balance-negativo {
-            color: #fca5a5;
-        }
-
-        body.modo-oscuro .balance-cero {
-            color: #94a3b8;
-        }
-
-        body.modo-oscuro .hora-warning {
-            background: #78350f;
-            color: #fef3c7;
-            border-color: #f59e0b;
-        }
-
-        .btn-close,
-        .btn-close-white {
+        .btn-close, .btn-close-white {
             filter: invert(1) grayscale(1) brightness(2) !important;
             opacity: 1 !important;
         }
 
-        .btn-close:hover,
-        .btn-close-white:hover {
-            opacity: 0.75 !important;
-        }
+        .btn-close:hover, .btn-close-white:hover { opacity: 0.75 !important; }
     </style>
 </head>
 
@@ -1401,9 +982,7 @@
             <i class="fas fa-user-shield"></i>
         </div>
     </div>
-    <div class="header-title">
-        Pisos Brillantes
-    </div>
+    <div class="header-title">Pisos Brillantes</div>
     <div class="header-actions">
         <button id="btn-sync-manager" class="header-btn" title="Sincronizar">
             <i class="fas fa-cloud-upload-alt"></i>
@@ -1454,6 +1033,7 @@
                         </button>
                     </div>
                 </div>
+
 
                 <div class="config-section-title mt-3">Modo de Revisión</div>
 
@@ -1612,39 +1192,59 @@
     </div>
 </div>
 
-<!-- ========== MODAL CÁMARA ========== -->
-<div class="modal fade" id="cameraCaptureModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-dark text-white">
+<!-- ========== MODAL CÁMARA (idéntico a Reporte de Supervisión) ========== -->
+<div class="modal camera-modal" id="cameraCaptureModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-camera me-2"></i>Tomar Fotografía
+                    <i class="fas fa-camera me-2"></i>Cámara
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-light text-center">
-                <video id="cameraVideoPreview" autoplay playsinline muted style="display:none;"></video>
-                <div id="cameraLoadingMsg" class="text-muted py-5">
-                    <i class="fas fa-spinner fa-spin fa-2x mb-3"></i><br>
-                    Iniciando cámara...
+            <div class="modal-body">
+                <div class="camera-container">
+                    <div class="camera-view">
+                        <video id="camera-video" autoplay playsinline muted></video>
+                        <canvas id="camera-canvas" style="display:none;"></canvas>
+                        <img id="foto-capturada-preview" src="" alt="Foto capturada">
+                        <div id="camera-loading-overlay">
+                            <div class="spinner-border text-light" role="status"></div>
+                            <span>Iniciando cámara...</span>
+                        </div>
+                        <div id="camera-message" class="camera-message" style="display:none;">
+                            No se pudo acceder a la cámara
+                        </div>
+                    </div>
+                    <div class="flash-control">
+                        <button class="flash-btn" id="flash-toggle" type="button">
+                            <i class="fas fa-bolt"></i>
+                            <span>Flash</span>
+                        </button>
+                    </div>
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" id="zoom-in" type="button" aria-label="Acercar">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <div class="zoom-level-display" id="zoom-level-display">1.0x</div>
+                        <button class="zoom-btn" id="zoom-out" type="button" aria-label="Alejar">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                    </div>
+                    <div class="camera-controls" id="camera-controls-captura">
+                        <button class="camera-btn capture" id="capture-btn" type="button" title="Tomar foto">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <div id="fotoPreviewControls">
+                        <button type="button" class="btn-preview-foto reintentar" id="btn-reintentar-foto">
+                            <i class="fas fa-redo"></i> Reintentar
+                        </button>
+                        <button type="button" class="btn-preview-foto aceptar" id="btn-aceptar-foto">
+                            <i class="fas fa-check"></i> Usar foto
+                        </button>
+                    </div>
                 </div>
-                <div id="cameraErrorMsg" class="alert alert-danger py-2 small mt-2" style="display:none;"></div>
-                <canvas id="cameraCanvas" style="display:none;"></canvas>
-                <img id="cameraSnapshot" style="display:none; width:100%; border-radius:8px; max-height:60vh; object-fit:contain;" alt="Captura">
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary rounded-pill" id="btn-camera-switch" title="Cambiar cámara">
-                    <i class="fas fa-sync-alt me-1"></i>Cambiar
-                </button>
-                <button type="button" class="btn btn-primary rounded-pill" id="btn-camera-snap">
-                    <i class="fas fa-camera me-1"></i>Capturar
-                </button>
-                <button type="button" class="btn btn-success rounded-pill" id="btn-camera-accept" style="display:none;">
-                    <i class="fas fa-check me-1"></i>Usar Foto
-                </button>
-                <button type="button" class="btn btn-warning rounded-pill" id="btn-camera-retry" style="display:none;">
-                    <i class="fas fa-redo me-1"></i>Reintentar
-                </button>
             </div>
         </div>
     </div>
@@ -1666,6 +1266,128 @@
                     Cargando foto...
                 </div>
                 <img id="fotoViewerImg" style="display:none;" alt="Foto">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MODAL NUEVO AJUSTE ========== -->
+<div class="modal fade" id="modalNuevoAjuste" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus-circle me-2"></i>Registrar Nuevo Ajuste de Horas
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="question-container">
+                    <label for="ajuste-modal-colaborador" class="form-label">Colaborador</label>
+                    <select id="ajuste-modal-colaborador" class="form-select">
+                        <option value="">Seleccione colaborador...</option>
+                        <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
+                        <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
+                        <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
+                        <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
+                        <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+                        <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
+                        <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
+                        <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
+                        <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
+                    </select>
+                </div>
+
+                <div class="question-container">
+                    <label for="ajuste-modal-fecha" class="form-label">Fecha</label>
+                    <input type="date" class="form-control" id="ajuste-modal-fecha">
+                </div>
+
+                <div class="question-container">
+                    <label for="ajuste-modal-horas" class="form-label">
+                        Horas <small class="text-muted">(positivas = a favor del colaborador, negativas = a favor de la empresa)</small>
+                    </label>
+                    <input type="number" class="form-control" id="ajuste-modal-horas" step="0.25" placeholder="Ej: 2.5 o -1.5">
+                </div>
+
+                <div class="question-container">
+                    <label for="ajuste-modal-obs" class="form-label">Observaciones</label>
+                    <input type="text" class="form-control" id="ajuste-modal-obs" placeholder="Motivo del ajuste (opcional)">
+                </div>
+
+                <div class="alert alert-info py-2 mb-0 small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    El ajuste se guardará como <b>pendiente</b> hasta que sincronices.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success rounded-pill" id="btn-guardar-ajuste-modal">
+                    <i class="fas fa-save me-2"></i>Guardar Ajuste
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MODAL DETALLE COLABORADOR ========== -->
+<div class="modal fade" id="modalDetalleColaborador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-clock me-2"></i>
+                    <span id="detalle-nombre-colaborador">Historial de Ajustes</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <div class="kpi-card kpi-success">
+                            <div class="kpi-label">Total Positivas</div>
+                            <div class="kpi-value" id="detalle-total-pos">0.00</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="kpi-card kpi-danger">
+                            <div class="kpi-label">Total Negativas</div>
+                            <div class="kpi-value" id="detalle-total-neg">0.00</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="kpi-card kpi-primary">
+                            <div class="kpi-label">Balance Total</div>
+                            <div class="kpi-value" id="detalle-balance">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="sticky-top">
+                            <tr>
+                                <th>Fecha</th>
+                                <th class="text-center">Horas</th>
+                                <th>Observaciones</th>
+                                <th>Registrado Por</th>
+                                <th class="text-center" id="th-detalle-acciones" style="width: 60px; display:none;">Acc.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detalle-tabla">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted p-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Cargando...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -1744,14 +1466,6 @@
                             <i class="fas fa-clock me-1"></i>Hora
                         </label>
                         <input type="time" id="hora" class="form-control">
-                        <div id="hora-warning" class="hora-warning">
-                            <i class="fas fa-exclamation-triangle me-1"></i>
-                            <span id="hora-warning-text"></span>
-                        </div>
-                        <small class="text-muted d-block mt-2">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Se prellena con la hora actual. Si tu reloj está desfasado, puedes ajustarla.
-                        </small>
                     </div>
 
                     <div class="question-container">
@@ -1778,6 +1492,7 @@
                             <i class="fas fa-spinner fa-spin"></i>
                             <span id="gps-status-text">Obteniendo ubicación...</span>
                         </div>
+                        <div id="mapa-gps"></div>
                         <div class="mt-2">
                             <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" id="btn-refrescar-gps">
                                 <i class="fas fa-crosshairs me-1"></i>Volver a obtener ubicación
@@ -1797,7 +1512,7 @@
                             <button type="button" class="btn btn-info rounded-pill" id="btn-tomar-foto">
                                 <i class="fas fa-camera me-1"></i>Tomar Fotografía
                             </button>
-                            <img id="foto-preview" class="camara-preview visible" style="display:none;" alt="Foto capturada">
+                            <img id="foto-preview" class="foto-preview-mini" alt="Foto capturada">
                             <div id="foto-info" class="mt-2 small text-muted" style="display:none;"></div>
                             <div class="mt-2">
                                 <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" id="btn-retomar-foto" style="display:none;">
@@ -1850,7 +1565,7 @@
                     <div class="alert alert-info small mb-2" id="rango-info"></div>
                 </div>
 
-                <div class="d-grid gap-2 mt-4">
+                <div class="d-grid gap-2 mt-4" id="btn-enviar-container">
                     <button type="button" id="enviarBtn" class="btn btn-primary" disabled>
                         <i class="fas fa-paper-plane me-2"></i>Enviar Registro
                     </button>
@@ -2087,6 +1802,7 @@
                     Registra horas a favor del colaborador (positivas) o a favor de la empresa (negativas). <b>El balance se acumula entre meses.</b>
                 </div>
 
+                <!-- ============ MODO ADMIN: Resumen global ============ -->
                 <div id="ajustes-resumen-global" style="display:none;">
                     <div class="kpi-total-global mb-4" id="kpi-global-container">
                         <div class="kpi-total-label">
@@ -2103,9 +1819,14 @@
                             <div class="fw-bold">
                                 <i class="fas fa-users me-2"></i>Resumen por Colaborador
                             </div>
-                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" id="btn-refrescar-global">
-                                <i class="fas fa-sync me-1"></i>Refrescar
-                            </button>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" id="btn-refrescar-global">
+                                    <i class="fas fa-sync me-1"></i>Refrescar
+                                </button>
+                                <button type="button" class="btn btn-success btn-nuevo-ajuste" id="btn-abrir-nuevo-ajuste">
+                                    <i class="fas fa-plus-circle me-1"></i>Nuevo Ajuste
+                                </button>
+                            </div>
                         </div>
                         <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                             <table class="table table-hover align-middle mb-0">
@@ -2115,7 +1836,6 @@
                                         <th class="text-center">Positivas</th>
                                         <th class="text-center">Negativas</th>
                                         <th class="text-center">Balance</th>
-                                        <th class="text-center">Ajustes</th>
                                         <th class="text-center" style="width: 80px;">Ver</th>
                                     </tr>
                                 </thead>
@@ -2124,141 +1844,42 @@
                         </div>
                         <small class="text-muted d-block mt-2">
                             <i class="fas fa-info-circle me-1"></i>
-                            Haz clic en un colaborador para ver su historial individual de ajustes.
+                            Haz clic en "Ver" para ver el historial completo del colaborador.
                         </small>
                     </div>
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Colaborador</label>
-                        <select id="aju-colaborador" class="form-select">
-                            <option value="">Seleccione colaborador...</option>
-                            <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                            <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                            <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
-                            <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                            <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
-                            <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
-                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
-                            <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Mes</label>
-                        <select id="aju-mes" class="form-select"></select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Año</label>
-                        <select id="aju-anio" class="form-select"></select>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" id="btn-consultar-ajustes" class="btn btn-primary w-100">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="bloque-form-ajuste" style="display:none;">
-                    <div class="question-container">
-                        <div class="fw-bold mb-2">
-                            <i class="fas fa-plus-circle me-2"></i>Registrar Nuevo Ajuste
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Fecha</label>
-                                <input type="date" id="aju-nueva-fecha" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Horas (+ o -)</label>
-                                <input type="number" id="aju-nueva-horas" class="form-control" step="0.25" placeholder="Ej: 2.5 o -1.5">
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label">Observaciones</label>
-                                <input type="text" id="aju-nueva-obs" class="form-control" placeholder="Motivo del ajuste">
-                            </div>
-                        </div>
-                        <div class="d-grid gap-2 mt-3">
-                            <button type="button" id="btn-agregar-ajuste" class="btn btn-success">
-                                <i class="fas fa-save me-2"></i>Registrar Ajuste
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="aju-resumen" style="display:none;">
-                    <div class="question-container mb-3">
-                        <div class="fw-bold mb-2">
-                            <i class="fas fa-wallet me-2"></i>Balance Acumulado Histórico (todos los meses)
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="kpi-card kpi-success">
-                                    <div class="kpi-label">Total Positivas</div>
-                                    <div class="kpi-value" id="aju-total-pos">0.00</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="kpi-card kpi-danger">
-                                    <div class="kpi-label">Total Negativas</div>
-                                    <div class="kpi-value" id="aju-total-neg">0.00</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="kpi-card kpi-primary">
-                                    <div class="kpi-label">Balance Total</div>
-                                    <div class="kpi-value" id="aju-balance">0.00</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <!-- ============ MODO NORMAL: Selector simple ============ -->
+                <div id="ajustes-modo-normal" style="display:none;">
                     <div class="question-container mb-4">
                         <div class="fw-bold mb-2">
-                            <i class="fas fa-calendar-alt me-2"></i>Movimientos del Mes Consultados
+                            <i class="fas fa-user me-2"></i>Consultar historial de un colaborador
                         </div>
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="kpi-card kpi-success">
-                                    <div class="kpi-label">Positivas del Mes</div>
-                                    <div class="kpi-value" id="aju-pos-mes">0.00</div>
-                                </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Colaborador</label>
+                                <select id="aju-colaborador-normal" class="form-select">
+                                    <option value="">Seleccione colaborador...</option>
+                                    <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
+                                    <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
+                                    <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
+                                    <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
+                                    <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
+                                    <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
+                                    <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
+                                    <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
+                                    <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <div class="kpi-card kpi-danger">
-                                    <div class="kpi-label">Negativas del Mes</div>
-                                    <div class="kpi-value" id="aju-neg-mes">0.00</div>
-                                </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="button" id="btn-ver-ajustes-normal" class="btn btn-primary w-100">
+                                    <i class="fas fa-eye me-2"></i>Ver Historial
+                                </button>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="question-container">
-                        <div class="fw-bold mb-2">
-                            <i class="fas fa-list me-2"></i>Ajustes del Mes
-                        </div>
-                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="sticky-top">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th class="text-center">Horas</th>
-                                        <th>Observaciones</th>
-                                        <th>Registrado Por</th>
-                                        <th class="text-center" id="th-acciones-ajustes" style="display:none; width: 80px;">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="aju-tabla"></tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
 
-                <div id="aju-sin-datos" class="alert alert-warning text-center mt-3">
-                    <i class="fas fa-info-circle me-2"></i>
-                    No hay ajustes registrados para el colaborador y mes seleccionados.
-                </div>
             </div>
 
         </div>
@@ -2285,8 +1906,6 @@ const PROYECTO_LAT = 14.514168906326542;
 const PROYECTO_LNG = -87.65237283481956;
 const RADIO_METROS_PERMITIDO = 150;
 
-const DIFERENCIA_HORA_MAX_MIN = 15;
-
 const TIPOS_ESPECIALES = {
     "DIA_LIBRE":           { label: "Día Libre",           esAusencia: false },
     "VACACIONES":          { label: "Vacaciones",          esAusencia: true },
@@ -2297,7 +1916,7 @@ const TIPOS_ESPECIALES = {
 const PREFIJO_AUSENCIA = "AUSENCIA: ";
 
 let db = null;
-let appConfig = { tema: 'auto', modoAdmin: false };
+let appConfig = { tema: 'auto', modoAdmin: false, camaraApp: true };
 let passwordAdmin = null;
 let chartDias = null;
 let chartColaboradores = null;
@@ -2311,9 +1930,26 @@ let tipoRegistroActual = 'asistencia';
 let gpsState = { lat: null, lng: null, distancia: null, ok: false };
 let fotoCapturaActual = null;
 let cameraStream = null;
-let cameraFacingMode = 'environment';
+let currentFacingMode = 'environment';
+let zoomLevel = 1;
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 5;
+let flashOn = false;
+let torchSupported = false;
+let isMobileDevice = false;
+let initialPinchDistance = 0;
+let lastZoomLevel = 1;
+let lastTapTs = 0;
+let fotoPendientePreview = null;
+let currentPreviewId = null;
 
 let enviandoRegistro = false;
+let mapaGPS = null;
+let marcadorUsuario = null;
+let circuloRadio = null;
+
+let _pendientesCache = null;
+let _pendientesCacheTime = 0;
 
 // =========================================================================
 // HELPERS GENERALES
@@ -2321,6 +1957,22 @@ let enviandoRegistro = false;
 
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
+
+function esDispositivoMovil() {
+    const ua = navigator.userAgent.toLowerCase();
+    return /android|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua);
+}
+
+function esIOS() {
+    const ua = navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function estaEnPWAInstalada() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches ||
+           window.navigator.standalone === true;
+}
 
 function showLoading(msg, sub) {
     msg = msg || "Por favor espera un momento...";
@@ -2452,10 +2104,6 @@ function horaActualHHMM() {
     return h + ":" + m;
 }
 
-function fechaHoraActualString() {
-    return new Date().toLocaleString('es-HN');
-}
-
 function calcularDistanciaMetros(lat1, lng1, lat2, lng2) {
     const R = 6371000;
     const toRad = function (deg) { return deg * Math.PI / 180; };
@@ -2471,6 +2119,12 @@ function calcularDistanciaMetros(lat1, lng1, lat2, lng2) {
 function formatearBalance(valor) {
     if (valor === 0) return "0.00 h";
     return (valor > 0 ? "+" : "") + valor.toFixed(2) + " h";
+}
+
+function getPinchDistance(t1, t2) {
+    const dx = t1.clientX - t2.clientX;
+    const dy = t1.clientY - t2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
 // =========================================================================
@@ -2515,18 +2169,31 @@ function addPendiente(obj) {
         if (!db) return reject(new Error('DB no inicializada'));
         const tx = db.transaction([STORE_PENDING], 'readwrite');
         const request = tx.objectStore(STORE_PENDING).add(obj);
-        request.onsuccess = function() { resolve(request.result); };
+        request.onsuccess = function() {
+            _pendientesCache = null;
+            _pendientesCacheTime = 0;
+            resolve(request.result);
+        };
         request.onerror = function(e) { reject(e.target.error); };
     });
 }
 
-function getPendientes() {
+function getPendientes(usarCache) {
+    const ahora = Date.now();
+    if (usarCache !== false && _pendientesCache && (ahora - _pendientesCacheTime < 5000)) {
+        return Promise.resolve(_pendientesCache.slice());
+    }
+
     return new Promise(function(resolve) {
         if (!db || !db.objectStoreNames.contains(STORE_PENDING)) return resolve([]);
         try {
             const tx = db.transaction([STORE_PENDING], 'readonly');
             const request = tx.objectStore(STORE_PENDING).getAll();
-            request.onsuccess = function() { resolve(request.result || []); };
+            request.onsuccess = function() {
+                _pendientesCache = request.result || [];
+                _pendientesCacheTime = Date.now();
+                resolve(_pendientesCache.slice());
+            };
             request.onerror = function() { resolve([]); };
         } catch (e) { resolve([]); }
     });
@@ -2537,7 +2204,11 @@ function deletePendiente(id) {
         if (!db) return reject(new Error('DB no inicializada'));
         const tx = db.transaction([STORE_PENDING], 'readwrite');
         const request = tx.objectStore(STORE_PENDING).delete(id);
-        request.onsuccess = function() { resolve(); };
+        request.onsuccess = function() {
+            _pendientesCache = null;
+            _pendientesCacheTime = 0;
+            resolve();
+        };
         request.onerror = function(e) { reject(e.target.error); };
     });
 }
@@ -2647,6 +2318,8 @@ function setTema(nuevo) {
     });
 }
 
+
+
 function aplicarEstadoAdminUI() {
     const ind = document.getElementById('indicador-admin');
     const btn = document.getElementById('btn-config-manager');
@@ -2654,11 +2327,10 @@ function aplicarEstadoAdminUI() {
     const thFotos = document.getElementById('th-fotos-hist');
     const thUbic = document.getElementById('th-ubic-hist');
     const thAcc = document.getElementById('th-acciones-historial');
-    const thAj = document.getElementById('th-acciones-ajustes');
     const wrapper = document.getElementById('tipo-registro-wrapper');
-    const formAjuste = document.getElementById('bloque-form-ajuste');
     const tabDashboardLink = document.getElementById('tab-dashboard-link');
     const ajustesGlobal = document.getElementById('ajustes-resumen-global');
+    const ajustesNormal = document.getElementById('ajustes-modo-normal');
 
     if (appConfig.modoAdmin) {
         if (ind) ind.classList.add('active');
@@ -2667,11 +2339,10 @@ function aplicarEstadoAdminUI() {
         if (thFotos) thFotos.style.display = '';
         if (thUbic) thUbic.style.display = '';
         if (thAcc) thAcc.style.display = '';
-        if (thAj) thAj.style.display = '';
         if (wrapper) wrapper.style.display = 'block';
-        if (formAjuste) formAjuste.style.display = 'block';
         if (tabDashboardLink) tabDashboardLink.style.display = '';
         if (ajustesGlobal) ajustesGlobal.style.display = 'block';
+        if (ajustesNormal) ajustesNormal.style.display = 'none';
     } else {
         if (ind) ind.classList.remove('active');
         if (btn) btn.classList.remove('admin-active');
@@ -2679,11 +2350,10 @@ function aplicarEstadoAdminUI() {
         if (thFotos) thFotos.style.display = 'none';
         if (thUbic) thUbic.style.display = 'none';
         if (thAcc) thAcc.style.display = 'none';
-        if (thAj) thAj.style.display = 'none';
         if (wrapper) wrapper.style.display = 'none';
-        if (formAjuste) formAjuste.style.display = 'none';
         if (tabDashboardLink) tabDashboardLink.style.display = 'none';
         if (ajustesGlobal) ajustesGlobal.style.display = 'none';
+        if (ajustesNormal) ajustesNormal.style.display = 'block';
         const tabActiva = document.querySelector('#mainTabs .nav-link.active');
         if (tabActiva && tabActiva.dataset.tab === 'tab-dashboard') {
             cambiarTabPrincipal('tab-registro');
@@ -2696,12 +2366,11 @@ function aplicarEstadoAdminUI() {
         _historialActual.forEach(function(r) { mapa[r.fecha] = r; });
         renderCalendarioHistorial(mapa, _historialContext.anio, _historialContext.mes);
     }
-    if (_ajustesActual.length > 0) renderAjustesTabla(_ajustesActual);
     if (_ajustesGlobales.length > 0) renderAjustesGlobales(_ajustesGlobales);
 }
 
 // =========================================================================
-// GPS
+// GPS CON MAPA
 // =========================================================================
 
 function actualizarEstadoGPS(estado, texto) {
@@ -2715,6 +2384,66 @@ function actualizarEstadoGPS(estado, texto) {
     cont.innerHTML = '<i class="fas ' + icono + '"></i><span>' + texto + '</span>';
 }
 
+function inicializarMapaGPS() {
+    const contenedor = document.getElementById('mapa-gps');
+    if (!contenedor) return;
+
+    if (!mapaGPS) {
+        mapaGPS = L.map('mapa-gps', {
+            zoomControl: true,
+            attributionControl: false
+        }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
+
+        L.tileLayer('https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=8583cb8c813242e8b1c1832272d20839', {
+            maxZoom: 20,
+            attribution: 'Powered by Geoapify | © OpenStreetMap contributors'
+        }).addTo(mapaGPS);
+
+        L.marker([PROYECTO_LAT, PROYECTO_LNG], {
+            title: 'Proyecto'
+        }).addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
+
+        circuloRadio = L.circle([PROYECTO_LAT, PROYECTO_LNG], {
+            color: '#3498db',
+            fillColor: '#3498db',
+            fillOpacity: 0.15,
+            radius: RADIO_METROS_PERMITIDO,
+            weight: 2
+        }).addTo(mapaGPS);
+
+        contenedor.classList.add('visible');
+    }
+
+    setTimeout(function() { mapaGPS.invalidateSize(); }, 200);
+}
+
+function actualizarMarcadorUsuario(lat, lng, dentroRango) {
+    if (!mapaGPS) return;
+
+    if (marcadorUsuario) {
+        mapaGPS.removeLayer(marcadorUsuario);
+        marcadorUsuario = null;
+    }
+
+    const color = dentroRango ? '#2ecc71' : '#e74c3c';
+
+    marcadorUsuario = L.circleMarker([lat, lng], {
+        radius: 10,
+        color: '#fff',
+        fillColor: color,
+        fillOpacity: 1,
+        weight: 3
+    }).addTo(mapaGPS);
+
+    marcadorUsuario.bindPopup('<b>Tu ubicación</b>').openPopup();
+
+    const bounds = L.latLngBounds([
+        [PROYECTO_LAT, PROYECTO_LNG],
+        [lat, lng]
+    ]);
+    mapaGPS.fitBounds(bounds, { padding: [40, 40], maxZoom: 18 });
+}
+
 function obtenerUbicacionGPS() {
     return new Promise(function(resolve) {
         if (!navigator.geolocation) {
@@ -2723,17 +2452,23 @@ function obtenerUbicacionGPS() {
             return;
         }
         actualizarEstadoGPS('loading', 'Obteniendo ubicación...');
+        inicializarMapaGPS();
+
         navigator.geolocation.getCurrentPosition(
             function(pos) {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
                 const dist = calcularDistanciaMetros(lat, lng, PROYECTO_LAT, PROYECTO_LNG);
-                gpsState = { lat: lat, lng: lng, distancia: dist, ok: dist <= RADIO_METROS_PERMITIDO };
-                if (dist <= RADIO_METROS_PERMITIDO) {
+                const dentroRango = dist <= RADIO_METROS_PERMITIDO;
+                gpsState = { lat: lat, lng: lng, distancia: dist, ok: dentroRango };
+
+                if (dentroRango) {
                     actualizarEstadoGPS('ok', 'Ubicación OK · ' + dist.toFixed(0) + ' m del proyecto');
                 } else {
                     actualizarEstadoGPS('error', 'Fuera de rango · ' + dist.toFixed(0) + ' m (máx ' + RADIO_METROS_PERMITIDO + ' m)');
                 }
+
+                actualizarMarcadorUsuario(lat, lng, dentroRango);
                 validarCamposRegistro();
                 resolve(true);
             },
@@ -2753,157 +2488,571 @@ function obtenerUbicacionGPS() {
 }
 
 // =========================================================================
-// CÁMARA
+// CÁMARA (usa querySelector nativo, sin jQuery)
 // =========================================================================
 
-async function iniciarCamara() {
-    const video = document.getElementById('cameraVideoPreview');
-    const loadingMsg = document.getElementById('cameraLoadingMsg');
-    const errorMsg = document.getElementById('cameraErrorMsg');
-    const snapshot = document.getElementById('cameraSnapshot');
+function openCamera(previewId) {
+    currentPreviewId = previewId;
+    isMobileDevice = esDispositivoMovil();
 
-    loadingMsg.style.display = 'block';
-    errorMsg.style.display = 'none';
-    snapshot.style.display = 'none';
-    video.style.display = 'none';
+    // iOS PWA no soporta getUserMedia → fallback a input file nativo (limitación de Apple)
+    if (esIOS() && estaEnPWAInstalada()) {
+        dispararInputFotoEstatico(previewId);
+        return;
+    }
+
+    // SIEMPRE usar la cámara de la app
+    openCameraModal();
+}
+
+function dispararInputFotoEstatico(previewId) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    input.onchange = function(ev) {
+        const file = ev.target.files && ev.target.files[0];
+        if (file) {
+            currentPreviewId = previewId;
+            procesarArchivoFoto(file);
+        }
+    };
+    input.click();
+}
+
+async function procesarArchivoFoto(file) {
+    try {
+        const base64Data = await compressImage(file, 0.65, 1000);
+        fotoCapturaActual = { base64: base64Data, fechaHora: new Date().toLocaleString('es-HN') };
+
+        const img = document.getElementById('foto-preview');
+        const info = document.getElementById('foto-info');
+        const btnRetomar = document.getElementById('btn-retomar-foto');
+
+        img.src = base64Data;
+        img.classList.add('visible');
+        info.textContent = 'Foto capturada el ' + fotoCapturaActual.fechaHora;
+        info.style.display = 'block';
+        btnRetomar.style.display = 'inline-block';
+        document.getElementById('btn-tomar-foto').style.display = 'none';
+
+        validarCamposRegistro();
+    } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo procesar la foto.', 'error');
+    }
+}
+
+function openCameraModal() {
+    fotoPendientePreview = null;
+    zoomLevel = 1;
+    flashOn = false;
+    torchSupported = false;
+    isMobileDevice = esDispositivoMovil();
+    currentFacingMode = 'environment';
+
+    const loadingEl = document.getElementById('camera-loading-overlay');
+    if (loadingEl) {
+        loadingEl.classList.remove('hidden');
+        loadingEl.style.display = 'flex';
+    }
+    const msgEl = document.getElementById('camera-message');
+    if (msgEl) msgEl.style.display = 'none';
+    const previewEl = document.getElementById('foto-capturada-preview');
+    if (previewEl) previewEl.style.display = 'none';
+    const controlsEl = document.getElementById('camera-controls-captura');
+    if (controlsEl) controlsEl.style.display = 'flex';
+    const fotoPrevControls = document.getElementById('fotoPreviewControls');
+    if (fotoPrevControls) fotoPrevControls.style.display = 'none';
+    const flashBtn = document.getElementById('flash-toggle');
+    if (flashBtn) {
+        flashBtn.classList.remove('active');
+        flashBtn.disabled = false;
+    }
+
+    document.body.classList.add('camera-active');
+    document.documentElement.classList.add('camera-active-html');
+
+    const modalEl = document.getElementById('cameraCaptureModal');
+    const cameraModal = bootstrap.Modal.getOrCreateInstance(modalEl, {
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function handler() {
+        stopCamera();
+        resetCameraControls();
+        resetFotoPreviewState();
+        document.body.classList.remove('camera-active');
+        document.documentElement.classList.remove('camera-active-html');
+        removeTouchZoomEvents();
+        const lEl = document.getElementById('camera-loading-overlay');
+        if (lEl) lEl.classList.add('hidden');
+        modalEl.removeEventListener('hidden.bs.modal', handler);
+    });
+
+    cameraModal.show();
+
+    setTimeout(async () => {
+        await initializeCamera();
+        addTouchZoomEvents();
+    }, 0);
+}
+
+async function initializeCamera() {
+    const loadingEl = document.getElementById('camera-loading-overlay');
+    const msgEl = document.getElementById('camera-message');
+    if (msgEl) msgEl.style.display = 'none';
+    if (loadingEl) {
+        loadingEl.classList.remove('hidden');
+        loadingEl.style.display = 'flex';
+    }
 
     try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            throw new Error('Tu navegador no soporta el acceso a la cámara.');
+            showCameraError('Tu navegador no soporta el acceso a la cámara.');
+            if (loadingEl) loadingEl.classList.add('hidden');
+            return;
         }
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(function(t) { t.stop(); });
-            cameraStream = null;
-        }
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: cameraFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+
+        const constraints = {
+            video: {
+                facingMode: { ideal: currentFacingMode },
+                width:  { ideal: 4096 },
+                height: { ideal: 2160 },
+                frameRate: { ideal: 30, max: 30 }
+            },
             audio: false
+        };
+
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        const videoElement = document.getElementById('camera-video');
+        videoElement.srcObject = cameraStream;
+        videoElement.style.transform = isMobileDevice ? 'scale(1)' : 'scaleX(-1)';
+
+        await new Promise((resolve) => {
+            let resolved = false;
+            const done = () => { if (!resolved) { resolved = true; resolve(); } };
+            videoElement.onloadeddata = done;
+            videoElement.oncanplay = done;
+            videoElement.play().then(done).catch(done);
+            setTimeout(done, 1500);
         });
-        video.srcObject = cameraStream;
-        video.style.display = 'block';
-        await video.play();
-        loadingMsg.style.display = 'none';
-    } catch (err) {
-        console.error(err);
-        loadingMsg.style.display = 'none';
-        errorMsg.textContent = 'No se pudo acceder a la cámara: ' + err.message;
-        errorMsg.style.display = 'block';
+
+        try {
+            const track = cameraStream.getVideoTracks()[0];
+            const caps = track.getCapabilities ? track.getCapabilities() : {};
+            torchSupported = !!caps.torch;
+            const flashBtn = document.getElementById('flash-toggle');
+            if (flashBtn) {
+                flashBtn.disabled = !torchSupported;
+                if (!torchSupported) flashBtn.title = 'Tu cámara no soporta linterna';
+                else flashBtn.title = 'Encender/Apagar linterna';
+            }
+        } catch (e) { torchSupported = false; }
+
+        applyZoom();
+        const container = document.querySelector('.camera-container');
+        if (container) container.classList.remove('no-camera');
+        if (loadingEl) loadingEl.classList.add('hidden');
+    } catch (error) {
+        console.error('Error al acceder a la cámara:', error);
+        showCameraError('No se pudo acceder a la cámara. Verifica los permisos.');
+        if (loadingEl) loadingEl.classList.add('hidden');
     }
 }
 
-function detenerCamara() {
+function showCameraError(message) {
+    const msgEl = document.getElementById('camera-message');
+    if (msgEl) {
+        msgEl.textContent = message;
+        msgEl.style.display = 'block';
+    }
+    const container = document.querySelector('.camera-container');
+    if (container) container.classList.add('no-camera');
+}
+
+function stopCamera() {
     if (cameraStream) {
-        cameraStream.getTracks().forEach(function(t) { t.stop(); });
+        cameraStream.getTracks().forEach(function(track) { track.stop(); });
         cameraStream = null;
     }
-    const video = document.getElementById('cameraVideoPreview');
-    if (video) video.srcObject = null;
+    const v = document.getElementById('camera-video');
+    if (v) v.srcObject = null;
 }
 
-async function abrirModalCamara() {
-    const modalEl = document.getElementById('cameraCaptureModal');
-    const modal = new bootstrap.Modal(modalEl);
+function resetCameraControls() {
+    zoomLevel = ZOOM_MIN;
+    flashOn = false;
+    torchSupported = false;
+    currentFacingMode = 'environment';
+    const flashBtn = document.getElementById('flash-toggle');
+    if (flashBtn) flashBtn.classList.remove('active');
+    applyZoom();
+    updateZoomDisplay();
+}
 
-    document.getElementById('btn-camera-snap').style.display = '';
-    document.getElementById('btn-camera-accept').style.display = 'none';
-    document.getElementById('btn-camera-retry').style.display = 'none';
-    document.getElementById('cameraSnapshot').style.display = 'none';
-    document.getElementById('cameraVideoPreview').style.display = 'none';
-    document.getElementById('cameraErrorMsg').style.display = 'none';
+function applyZoom() {
+    const v = document.getElementById('camera-video');
+    if (!v) return;
+    const base = isMobileDevice ? '' : 'scaleX(-1) ';
+    v.style.transform = base + 'scale(' + zoomLevel + ')';
+    updateZoomDisplay();
+}
 
-    modal.show();
+function updateZoomDisplay() {
+    const el = document.getElementById('zoom-level-display');
+    if (el) el.textContent = zoomLevel.toFixed(1) + 'x';
+}
 
-    modalEl.addEventListener('hidden.bs.modal', function handler() {
-        detenerCamara();
-        this.removeEventListener('hidden.bs.modal', handler);
+async function capturePhoto() {
+    if (!cameraStream) return;
+
+    const videoElement = document.getElementById('camera-video');
+    const canvas = document.getElementById('camera-canvas');
+    const context = canvas.getContext('2d', { alpha: false });
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+
+    const vw = videoElement.videoWidth;
+    const vh = videoElement.videoHeight;
+    if (!vw || !vh) return;
+
+    let dataUrl = null;
+
+    if (typeof window.ImageCapture === 'function' && cameraStream) {
+        try {
+            const track = cameraStream.getVideoTracks()[0];
+            if (track) {
+                const imageCapture = new ImageCapture(track);
+                const blob = await imageCapture.takePhoto();
+                dataUrl = await new Promise((res, rej) => {
+                    const fr = new FileReader();
+                    fr.onload = () => res(fr.result);
+                    fr.onerror = rej;
+                    fr.readAsDataURL(blob);
+                });
+                if (zoomLevel > 1 && dataUrl) {
+                    dataUrl = await recortarImagenConZoom(dataUrl, zoomLevel);
+                }
+            }
+        } catch (e) {
+            dataUrl = null;
+        }
+    }
+
+    if (!dataUrl) {
+        canvas.width = vw;
+        canvas.height = vh;
+
+        const cropW = vw / zoomLevel;
+        const cropH = vh / zoomLevel;
+        const cropX = (vw - cropW) / 2;
+        const cropY = (vh - cropH) / 2;
+
+        if (!isMobileDevice) {
+            context.save();
+            context.translate(canvas.width, 0);
+            context.scale(-1, 1);
+            context.drawImage(videoElement, cropX, cropY, cropW, cropH, 0, 0, vw, vh);
+            context.restore();
+        } else {
+            context.drawImage(videoElement, cropX, cropY, cropW, cropH, 0, 0, vw, vh);
+        }
+
+        dataUrl = canvas.toDataURL('image/jpeg', 1.0);
+        canvas.width = 0; canvas.height = 0;
+    }
+
+    stopCamera();
+
+    if (dataUrl && !dataUrl.startsWith('data:image/jpeg')) {
+        dataUrl = await normalizarAJPEG(dataUrl);
+    }
+
+    fotoPendientePreview = { base64: dataUrl };
+    const imgPreview = document.getElementById('foto-capturada-preview');
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        imgPreview.style.display = 'block';
+    }
+    const controlsEl = document.getElementById('camera-controls-captura');
+    if (controlsEl) controlsEl.style.display = 'none';
+    const fotoPrevControls = document.getElementById('fotoPreviewControls');
+    if (fotoPrevControls) fotoPrevControls.style.display = 'flex';
+
+    visualCaptureEffect();
+}
+
+function recortarImagenConZoom(dataUrl, factor) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const w = img.width, h = img.height;
+            const cropW = w / factor;
+            const cropH = h / factor;
+            const cropX = (w - cropW) / 2;
+            const cropY = (h - cropH) / 2;
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, w, h);
+            const out = canvas.toDataURL('image/jpeg', 1.0);
+            canvas.width = 0; canvas.height = 0;
+            img.src = '';
+            resolve(out);
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
     });
-
-    await iniciarCamara();
 }
 
-/**
- * Captura la foto actual del video.
- * Compresión agresiva: JPEG 0.65 con máximo 1000 px de ancho.
- * Esto genera fotos de ~80-150 KB → base64 ~110-200 KB (seguro para móvil).
- */
-function capturarFoto() {
-    const video = document.getElementById('cameraVideoPreview');
-    const canvas = document.getElementById('cameraCanvas');
-    const snapshot = document.getElementById('cameraSnapshot');
+function normalizarAJPEG(dataUrl) {
+    return new Promise((resolve) => {
+        if (!dataUrl || typeof dataUrl !== 'string') { resolve(dataUrl); return; }
+        if (dataUrl.startsWith('data:image/jpeg')) { resolve(dataUrl); return; }
+        const img = new Image();
+        img.onload = () => {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d', { alpha: false });
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                const out = canvas.toDataURL('image/jpeg', 0.95);
+                canvas.width = 0; canvas.height = 0;
+                img.src = '';
+                resolve(out);
+            } catch (e) {
+                resolve(dataUrl);
+            }
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+    });
+}
 
-    if (!video.videoWidth) {
-        Swal.fire('Error', 'La cámara aún no está lista.', 'warning');
+function visualCaptureEffect() {
+    const cameraView = document.querySelector('.camera-view');
+    if (!cameraView) return;
+    cameraView.style.backgroundColor = 'white';
+    setTimeout(() => { cameraView.style.backgroundColor = 'transparent'; }, 100);
+}
+
+function resetFotoPreviewState() {
+    fotoPendientePreview = null;
+    const imgPreview = document.getElementById('foto-capturada-preview');
+    if (imgPreview) { imgPreview.src = ''; imgPreview.style.display = 'none'; }
+    const fotoPrevControls = document.getElementById('fotoPreviewControls');
+    if (fotoPrevControls) fotoPrevControls.style.display = 'none';
+    const controlsEl = document.getElementById('camera-controls-captura');
+    if (controlsEl) controlsEl.style.display = 'flex';
+}
+
+async function aceptarFotoCapturada() {
+    if (!fotoPendientePreview || !fotoPendientePreview.base64) return;
+    const base64Captura = fotoPendientePreview.base64;
+    fotoPendientePreview = null;
+    const imgPreview = document.getElementById('foto-capturada-preview');
+    if (imgPreview) { imgPreview.src = ''; imgPreview.style.display = 'none'; }
+
+    const camModal = bootstrap.Modal.getInstance(document.getElementById('cameraCaptureModal'));
+    if (camModal) camModal.hide();
+
+    try {
+        const base64Data = await compressImage(base64Captura, 0.65, 1000);
+        fotoCapturaActual = { base64: base64Data, fechaHora: new Date().toLocaleString('es-HN') };
+
+        const img = document.getElementById('foto-preview');
+        const info = document.getElementById('foto-info');
+        const btnRetomar = document.getElementById('btn-retomar-foto');
+
+        img.src = base64Data;
+        img.classList.add('visible');
+        info.textContent = 'Foto capturada el ' + fotoCapturaActual.fechaHora;
+        info.style.display = 'block';
+        btnRetomar.style.display = 'inline-block';
+        document.getElementById('btn-tomar-foto').style.display = 'none';
+
+        validarCamposRegistro();
+    } catch (err) {
+        console.error('Error aceptando foto:', err);
+        Swal.fire('Error', 'No se pudo guardar la foto capturada.', 'error');
+    }
+}
+
+async function reintentarFotoCapturada() {
+    fotoPendientePreview = null;
+    const imgPreview = document.getElementById('foto-capturada-preview');
+    if (imgPreview) { imgPreview.src = ''; imgPreview.style.display = 'none'; }
+    const fotoPrevControls = document.getElementById('fotoPreviewControls');
+    if (fotoPrevControls) fotoPrevControls.style.display = 'none';
+
+    const loadingEl = document.getElementById('camera-loading-overlay');
+    if (loadingEl) {
+        loadingEl.classList.remove('hidden');
+        loadingEl.style.display = 'flex';
+    }
+    await initializeCamera();
+    const controlsEl = document.getElementById('camera-controls-captura');
+    if (controlsEl) controlsEl.style.display = 'flex';
+}
+
+async function toggleFlash() {
+    if (!torchSupported || !cameraStream) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Linterna no disponible',
+            text: 'Tu dispositivo o navegador no permite encender la linterna desde la web.',
+            toast: true, position: 'top-end', showConfirmButton: false, timer: 2500
+        });
         return;
     }
+    flashOn = !flashOn;
+    const flashBtn = document.getElementById('flash-toggle');
+    try {
+        const track = cameraStream.getVideoTracks()[0];
+        await track.applyConstraints({ advanced: [{ torch: flashOn }] });
+        if (flashOn) flashBtn.classList.add('active');
+        else flashBtn.classList.remove('active');
+    } catch (e) {
+        flashOn = false;
+        flashBtn.classList.remove('active');
+        Swal.fire({
+            icon: 'error',
+            title: 'No se pudo activar la linterna',
+            toast: true, position: 'top-end', showConfirmButton: false, timer: 2500
+        });
+    }
+}
 
-    const MAX_ANCHO = 1000;
-    let w = video.videoWidth;
-    let h = video.videoHeight;
-    if (w > MAX_ANCHO) {
-        const ratio = MAX_ANCHO / w;
-        w = MAX_ANCHO;
-        h = Math.round(h * ratio);
+function zoomIn() {
+    if (zoomLevel < ZOOM_MAX) {
+        zoomLevel = Math.min(ZOOM_MAX, zoomLevel + 0.5);
+        applyZoom();
+    }
+}
+
+function zoomOut() {
+    if (zoomLevel > ZOOM_MIN) {
+        zoomLevel = Math.max(ZOOM_MIN, zoomLevel - 0.5);
+        applyZoom();
+    }
+}
+
+function addTouchZoomEvents() {
+    const v = document.querySelector('.camera-view');
+    if (!v) return;
+    v.addEventListener('touchstart', handleTouchStart, { passive: false });
+    v.addEventListener('touchmove', handleTouchMove, { passive: false });
+    v.addEventListener('touchend', handleTouchEnd, { passive: false });
+}
+
+function removeTouchZoomEvents() {
+    const v = document.querySelector('.camera-view');
+    if (!v) return;
+    v.removeEventListener('touchstart', handleTouchStart);
+    v.removeEventListener('touchmove', handleTouchMove);
+    v.removeEventListener('touchend', handleTouchEnd);
+}
+
+function handleTouchStart(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        initialPinchDistance = getPinchDistance(e.touches[0], e.touches[1]);
+        lastZoomLevel = zoomLevel;
+    } else if (e.touches.length === 1) {
+        const fotoPrevControls = document.getElementById('fotoPreviewControls');
+        if (fotoPrevControls && fotoPrevControls.style.display === 'flex') return;
+        const now = Date.now();
+        if (now - lastTapTs < 300) {
+            zoomLevel = (zoomLevel > 1) ? 1 : 2;
+            applyZoom();
+            lastTapTs = 0;
+        } else {
+            lastTapTs = now;
+        }
+    }
+}
+
+function handleTouchMove(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        const d = getPinchDistance(e.touches[0], e.touches[1]);
+        const r = d / initialPinchDistance;
+        zoomLevel = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, lastZoomLevel * r));
+        applyZoom();
+    }
+}
+
+function handleTouchEnd(e) {
+    if (e.touches.length < 2) initialPinchDistance = 0;
+}
+
+async function compressImage(file, quality = 0.65, maxWidth = 1000) {
+    if (typeof file === 'string' && file.startsWith('data:image/')) {
+        return file;
+    }
+    if (typeof file === 'string') return file;
+
+    if (typeof createImageBitmap === 'function') {
+        try {
+            const bitmap = await createImageBitmap(file);
+            let w = bitmap.width, h = bitmap.height;
+            if (w > maxWidth) { const r = maxWidth / w; w = maxWidth; h = Math.round(h * r); }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(bitmap, 0, 0, w, h);
+            if (bitmap.close) bitmap.close();
+            const result = canvas.toDataURL('image/jpeg', quality);
+            canvas.width = 0; canvas.height = 0;
+            return result;
+        } catch (e) {}
     }
 
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(video, 0, 0, w, h);
-
-    const base64 = canvas.toDataURL('image/jpeg', 0.65);
-    fotoCapturaActual = { base64: base64, fechaHora: fechaHoraActualString() };
-
-    snapshot.src = base64;
-    snapshot.style.display = 'block';
-    video.style.display = 'none';
-    document.getElementById('btn-camera-snap').style.display = 'none';
-    document.getElementById('btn-camera-accept').style.display = '';
-    document.getElementById('btn-camera-retry').style.display = '';
-}
-
-async function reintentarFoto() {
-    fotoCapturaActual = null;
-    document.getElementById('cameraSnapshot').style.display = 'none';
-    document.getElementById('btn-camera-snap').style.display = '';
-    document.getElementById('btn-camera-accept').style.display = 'none';
-    document.getElementById('btn-camera-retry').style.display = 'none';
-    await iniciarCamara();
-}
-
-async function cambiarCamara() {
-    cameraFacingMode = (cameraFacingMode === 'environment') ? 'user' : 'environment';
-    await iniciarCamara();
-}
-
-function aceptarFotoCapturada() {
-    if (!fotoCapturaActual) {
-        Swal.fire('Atención', 'No hay foto capturada.', 'warning');
-        return;
-    }
-
-    const img = document.getElementById('foto-preview');
-    const info = document.getElementById('foto-info');
-    const btnRetomar = document.getElementById('btn-retomar-foto');
-
-    img.src = fotoCapturaActual.base64;
-    img.style.display = 'block';
-    info.textContent = 'Foto capturada el ' + fotoCapturaActual.fechaHora;
-    info.style.display = 'block';
-    btnRetomar.style.display = 'inline-block';
-    document.getElementById('btn-tomar-foto').style.display = 'none';
-
-    const modal = bootstrap.Modal.getInstance(document.getElementById('cameraCaptureModal'));
-    if (modal) modal.hide();
-
-    validarCamposRegistro();
+    return new Promise((resolve, reject) => {
+        if (!(file instanceof Blob)) { reject(new TypeError('El parámetro no es un Blob válido')); return; }
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    let width = img.width, height = img.height;
+                    if (width > maxWidth) { const ratio = maxWidth / width; width = maxWidth; height = Math.round(height * ratio); }
+                    canvas.width = width; canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    canvas.width = 0; canvas.height = 0;
+                    img.src = '';
+                    resolve(compressedBase64);
+                } catch (e) { resolve(event.target.result); }
+            };
+            img.onerror = () => resolve(event.target.result);
+            img.src = event.target.result;
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
 }
 
 function descartarFoto() {
     fotoCapturaActual = null;
-    document.getElementById('foto-preview').style.display = 'none';
-    document.getElementById('foto-preview').src = '';
+    const img = document.getElementById('foto-preview');
+    img.classList.remove('visible');
+    img.src = '';
     document.getElementById('foto-info').style.display = 'none';
     document.getElementById('btn-retomar-foto').style.display = 'none';
     document.getElementById('btn-tomar-foto').style.display = 'inline-block';
@@ -2911,7 +3060,7 @@ function descartarFoto() {
 }
 
 // =========================================================================
-// VER FOTO (modal interno)
+// VER FOTO MODAL
 // =========================================================================
 
 async function verFotoModal(url, titulo) {
@@ -2932,8 +3081,9 @@ async function verFotoModal(url, titulo) {
         }).then(function(r) { return r.json(); });
 
         if (resp.status !== 'success') throw new Error(resp.message || 'Error');
-        document.getElementById('fotoViewerImg').src = resp.data.base64;
-        document.getElementById('fotoViewerImg').style.display = 'block';
+        const img = document.getElementById('fotoViewerImg');
+        img.src = resp.data.base64;
+        img.style.display = 'block';
         document.getElementById('fotoViewerLoading').style.display = 'none';
     } catch (e) {
         document.getElementById('fotoViewerLoading').innerHTML = '<div class="alert alert-danger">' + e.message + '</div>';
@@ -2944,8 +3094,9 @@ function verFotoPendienteBase64(b64, titulo) {
     if (!b64) return;
     document.getElementById('fotoViewerTitulo').textContent = titulo || 'Foto pendiente';
     document.getElementById('fotoViewerLoading').style.display = 'none';
-    document.getElementById('fotoViewerImg').src = b64;
-    document.getElementById('fotoViewerImg').style.display = 'block';
+    const img = document.getElementById('fotoViewerImg');
+    img.src = b64;
+    img.style.display = 'block';
     new bootstrap.Modal(document.getElementById('fotoViewerModal')).show();
 }
 
@@ -2983,40 +3134,6 @@ function cambiarTipoRegistro(tipoValor) {
 function onSelectTipoRegistroChange() {
     const val = document.getElementById('select-tipo-registro').value;
     cambiarTipoRegistro(val);
-}
-
-/**
- * Actualiza el aviso de hora cuando el usuario modifica el campo.
- * Si difiere > 15 min de la hora real, muestra advertencia amarilla.
- */
-function actualizarAvisoHora() {
-    const input = document.getElementById('hora');
-    const warning = document.getElementById('hora-warning');
-    const warningText = document.getElementById('hora-warning-text');
-    if (!input || !warning || !warningText) return;
-
-    const horaUsuario = input.value;
-    if (!horaUsuario) {
-        warning.classList.remove('visible');
-        return;
-    }
-
-    const minUsuario = parseHoraAMinutos(horaUsuario);
-    const minActual = parseHoraAMinutos(horaActualHHMM());
-    if (minUsuario === null || minActual === null) {
-        warning.classList.remove('visible');
-        return;
-    }
-
-    let diff = Math.abs(minUsuario - minActual);
-    if (diff > 12 * 60) diff = 24 * 60 - diff;
-
-    if (diff > DIFERENCIA_HORA_MAX_MIN) {
-        warningText.textContent = 'La hora ingresada difiere ' + diff + ' minutos de la hora actual del dispositivo. Asegúrate de que sea correcta.';
-        warning.classList.add('visible');
-    } else {
-        warning.classList.remove('visible');
-    }
 }
 
 function validarCamposRegistro() {
@@ -3096,17 +3213,17 @@ function prellenarFechaHora() {
     document.getElementById('rango-hasta').value = hoy;
     const inputHora = document.getElementById('hora');
     if (inputHora) inputHora.value = horaActualHHMM();
-    const ajFecha = document.getElementById('aju-nueva-fecha');
+    const ajFecha = document.getElementById('ajuste-modal-fecha');
     if (ajFecha) ajFecha.value = hoy;
 
-    ['fecha', 'rango-desde', 'rango-hasta', 'edit-fecha', 'aju-nueva-fecha'].forEach(function(id) {
+    ['fecha', 'rango-desde', 'rango-hasta', 'edit-fecha', 'ajuste-modal-fecha'].forEach(function(id) {
         const el = document.getElementById(id);
         if (el) el.setAttribute('max', hoy);
     });
 }
 
 // =========================================================================
-// CONFIRMAR ENVÍO (con anti-duplicado + protección doble-tap)
+// ENVÍO DE REGISTRO
 // =========================================================================
 
 async function confirmarEnvio() {
@@ -3143,116 +3260,98 @@ async function enviarAsistencia() {
         return;
     }
 
+    enviandoRegistro = true;
+    const btn = document.getElementById('enviarBtn');
+    const originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando...';
+
     // Validación anti-duplicado (solo si NO es admin)
     if (!appConfig.modoAdmin) {
-        const pendientes = await getPendientes();
-        const pendientesMismoDia = pendientes.filter(function(p) {
-            return p.tipoOperacion === 'asistencia' &&
-                   p.colaborador === colaborador &&
-                   p.fecha === fecha;
-        });
-
-        const yaHayEntradaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Entrada'; });
-        const yaHaySalidaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Salida'; });
-
-        let registrosServidor = [];
         try {
-            const partes = fecha.split('-');
-            const anio = partes[0];
-            const mes = partes[1];
-            const resp = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'obtenerRegistros', colaborador: colaborador, anio: anio, mes: mes })
-            }).then(function(r) { return r.json(); });
-            if (resp.status === 'success') registrosServidor = resp.data.registros || [];
-        } catch (e) {
-            console.warn('No se pudo consultar servidor para validación:', e);
-        }
+            const pendientes = await getPendientes();
+            const pendientesMismoDia = pendientes.filter(function(p) {
+                return p.tipoOperacion === 'asistencia' && p.colaborador === colaborador && p.fecha === fecha;
+            });
 
-        const regDelDia = registrosServidor.find(function(r) { return r.fecha === fecha; });
-        const yaHayEntradaServidor = regDelDia && regDelDia.horaEntrada && !esMarcadorAusencia(regDelDia.horaEntrada);
-        const yaHaySalidaServidor = regDelDia && regDelDia.horaSalida;
-        const esAusenciaServidor = regDelDia && esMarcadorAusencia(regDelDia.horaEntrada);
+            const yaHayEntradaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Entrada'; });
+            const yaHaySalidaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Salida'; });
 
-        const yaHayEntrada = yaHayEntradaPendiente || yaHayEntradaServidor;
-        const yaHaySalida = yaHaySalidaPendiente || yaHaySalidaServidor;
+            let registrosServidor = [];
+            try {
+                const partes = fecha.split('-');
+                const resp = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'obtenerRegistros', colaborador: colaborador, anio: partes[0], mes: partes[1] })
+                }).then(function(r) { return r.json(); });
+                if (resp.status === 'success') registrosServidor = resp.data.registros || [];
+            } catch (e) {}
 
-        if (estado === 'Entrada' && yaHayEntrada) {
-            let horaTexto = 'antes';
-            if (yaHayEntradaServidor && regDelDia.horaEntrada) {
-                horaTexto = 'a las ' + regDelDia.horaEntrada;
-            } else if (yaHayEntradaPendiente) {
-                const pendEnt = pendientesMismoDia.find(function(p) { return p.estado === 'Entrada'; });
-                if (pendEnt) horaTexto = 'a las ' + pendEnt.hora + ' (pendiente de sincronizar)';
+            const regDelDia = registrosServidor.find(function(r) { return r.fecha === fecha; });
+            const yaHayEntradaServidor = regDelDia && regDelDia.horaEntrada && !esMarcadorAusencia(regDelDia.horaEntrada);
+            const yaHaySalidaServidor = regDelDia && regDelDia.horaSalida;
+            const esAusenciaServidor = regDelDia && esMarcadorAusencia(regDelDia.horaEntrada);
+
+            const yaHayEntrada = yaHayEntradaPendiente || yaHayEntradaServidor;
+            const yaHaySalida = yaHaySalidaPendiente || yaHaySalidaServidor;
+
+            if (estado === 'Entrada' && yaHayEntrada) {
+                let horaTexto = 'antes';
+                if (yaHayEntradaServidor && regDelDia.horaEntrada) horaTexto = 'a las ' + regDelDia.horaEntrada;
+                else if (yaHayEntradaPendiente) {
+                    const pendEnt = pendientesMismoDia.find(function(p) { return p.estado === 'Entrada'; });
+                    if (pendEnt) horaTexto = 'a las ' + pendEnt.hora + ' (pendiente)';
+                }
+                Swal.fire({ icon: 'warning', title: 'Ya registraste tu entrada', html: '<p>Ya registraste tu <b>ENTRADA</b> hoy ' + horaTexto + '.</p><p class="text-muted small">Si te equivocaste, pide al administrador que edite el registro.</p>' });
+                return;
             }
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ya registraste tu entrada',
-                html: '<p>Ya registraste tu <b>ENTRADA</b> hoy ' + horaTexto + '.</p>' +
-                      '<p class="text-muted small">Si te equivocaste con la hora, pide al administrador que edite el registro.</p>'
-            });
-            return;
-        }
 
-        if (yaHayEntrada && yaHaySalida) {
-            let detalle = '';
-            if (regDelDia && regDelDia.horaEntrada && regDelDia.horaSalida) {
-                detalle = '<p>Entrada: <b>' + regDelDia.horaEntrada + '</b> · Salida: <b>' + regDelDia.horaSalida + '</b></p>';
-            } else {
-                detalle = '<p>Ya tienes entrada y salida registradas hoy.</p>';
+            if (yaHayEntrada && yaHaySalida) {
+                let detalle = (regDelDia && regDelDia.horaEntrada && regDelDia.horaSalida)
+                    ? '<p>Entrada: <b>' + regDelDia.horaEntrada + '</b> · Salida: <b>' + regDelDia.horaSalida + '</b></p>'
+                    : '<p>Ya tienes entrada y salida registradas hoy.</p>';
+                Swal.fire({ icon: 'warning', title: 'Ya completaste tu jornada', html: detalle + '<p class="text-muted small">Si necesitas corregir algo, pide al administrador que edite el registro.</p>' });
+                return;
             }
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ya completaste tu jornada',
-                html: detalle + '<p class="text-muted small">Si necesitas corregir algo, pide al administrador que edite el registro.</p>'
-            });
-            return;
-        }
 
-        if (estado === 'Salida' && yaHaySalida) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ya registraste tu salida',
-                html: '<p>Ya registraste tu <b>SALIDA</b> hoy.</p>' +
-                      '<p class="text-muted small">Si te equivocaste, pide al administrador que edite el registro.</p>'
-            });
-            return;
-        }
+            if (estado === 'Salida' && yaHaySalida) {
+                Swal.fire({ icon: 'warning', title: 'Ya registraste tu salida', html: '<p>Ya registraste tu <b>SALIDA</b> hoy.</p><p class="text-muted small">Si te equivocaste, pide al administrador que edite el registro.</p>' });
+                return;
+            }
 
-        if (esAusenciaServidor) {
-            Swal.fire({
-                icon: 'info',
-                title: 'Ya tienes un registro especial hoy',
-                html: '<p>Ya tienes registrado: <b>' + regDelDia.estado + '</b> para el ' + formatearFechaVisual(fecha) + '.</p>' +
-                      '<p class="text-muted small">No puedes registrar asistencia sobre un día que ya tiene ausencia/día libre. Pide al administrador si necesitas cambiar el tipo.</p>'
-            });
-            return;
-        }
+            if (esAusenciaServidor) {
+                Swal.fire({ icon: 'info', title: 'Ya tienes un registro especial hoy', html: '<p>Ya tienes: <b>' + regDelDia.estado + '</b> para el ' + formatearFechaVisual(fecha) + '.</p><p class="text-muted small">Pide al administrador si necesitas cambiar el tipo.</p>' });
+                return;
+            }
+        } catch (e) {}
     }
 
-    // Admin: warning si ya existe
     if (appConfig.modoAdmin) {
         const pendientes = await getPendientes();
         const pendientesMismoDia = pendientes.filter(function(p) {
-            return p.tipoOperacion === 'asistencia' &&
-                   p.colaborador === colaborador &&
-                   p.fecha === fecha;
+            return p.tipoOperacion === 'asistencia' && p.colaborador === colaborador && p.fecha === fecha;
         });
         if (pendientesMismoDia.length > 0) {
             const warning = await Swal.fire({
                 icon: 'warning',
                 title: 'Registro existente detectado',
-                html: '<p>Ya existe(n) ' + pendientesMismoDia.length + ' registro(s) pendiente(s) para este colaborador y fecha.</p>' +
-                      '<p class="small text-muted">Si continúas, se agregará otro registro adicional. ¿Deseas continuar?</p>',
+                html: '<p>Ya existe(n) ' + pendientesMismoDia.length + ' registro(s) pendiente(s) para este colaborador y fecha.</p><p class="small text-muted">Si continúas, se agregará otro registro. ¿Deseas continuar?</p>',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, continuar',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#f39c12'
             });
-            if (!warning.isConfirmed) return;
+            if (!warning.isConfirmed) {
+                enviandoRegistro = false;
+                btn.innerHTML = originalBtn;
+                validarCamposRegistro();
+                return;
+            }
         }
     }
+
+    btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Confirmar';
 
     const confirm = await Swal.fire({
         title: '¿Guardar registro?',
@@ -3272,13 +3371,14 @@ async function enviarAsistencia() {
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#28a745'
     });
-    if (!confirm.isConfirmed) return;
 
-    // Bloqueo anti-doble-tap
-    enviandoRegistro = true;
-    const btn = document.getElementById('enviarBtn');
-    const originalBtn = btn.innerHTML;
-    btn.disabled = true;
+    if (!confirm.isConfirmed) {
+        enviandoRegistro = false;
+        btn.innerHTML = originalBtn;
+        validarCamposRegistro();
+        return;
+    }
+
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
 
     try {
@@ -3331,6 +3431,12 @@ async function enviarDiaLibre() {
         return;
     }
 
+    enviandoRegistro = true;
+    const btn = document.getElementById('enviarBtn');
+    const originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+
     const confirm = await Swal.fire({
         title: '¿Registrar Día Libre?',
         html:
@@ -3339,20 +3445,20 @@ async function enviarDiaLibre() {
             '<b>Colaboradores (' + seleccionados.length + '):</b>' +
             '<ul class="small mt-1 mb-0">' + seleccionados.map(function(c) { return '<li>' + c + '</li>'; }).join('') + '</ul>' +
             '</div>' +
-            '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente. Día Libre cuenta como presente.</p>',
+            '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Sí, registrar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#28a745'
     });
-    if (!confirm.isConfirmed) return;
 
-    enviandoRegistro = true;
-    const btn = document.getElementById('enviarBtn');
-    const originalBtn = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+    if (!confirm.isConfirmed) {
+        enviandoRegistro = false;
+        btn.innerHTML = originalBtn;
+        validarCamposRegistro();
+        return;
+    }
 
     try {
         await addPendiente({
@@ -3401,6 +3507,12 @@ async function enviarRango(tipoKey) {
     const dias = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
     const tipoInfo = TIPOS_ESPECIALES[tipoKey];
 
+    enviandoRegistro = true;
+    const btn = document.getElementById('enviarBtn');
+    const originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+
     const confirm = await Swal.fire({
         title: '¿Registrar ' + tipoInfo.label + '?',
         html:
@@ -3418,13 +3530,13 @@ async function enviarRango(tipoKey) {
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#f39c12'
     });
-    if (!confirm.isConfirmed) return;
 
-    enviandoRegistro = true;
-    const btn = document.getElementById('enviarBtn');
-    const originalBtn = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+    if (!confirm.isConfirmed) {
+        enviandoRegistro = false;
+        btn.innerHTML = originalBtn;
+        validarCamposRegistro();
+        return;
+    }
 
     try {
         await addPendiente({
@@ -3458,7 +3570,7 @@ async function enviarRango(tipoKey) {
 
 
 // =========================================================================
-// HISTORIAL — CARGA COMPLETA
+// HISTORIAL
 // =========================================================================
 
 async function consultarHistorial() {
@@ -3532,17 +3644,12 @@ function combinarRegistrosConPendientes(registrosServer, pendientes, colaborador
     }).forEach(function(p) {
         if (!registros.some(function(r) { return r.fecha === p.fecha; })) {
             registros.push({
-                rowNumber: -1,
-                fecha: p.fecha,
-                horaEntrada: PREFIJO_AUSENCIA + "Día Libre",
-                horaSalida: '',
+                rowNumber: -1, fecha: p.fecha,
+                horaEntrada: PREFIJO_AUSENCIA + "Día Libre", horaSalida: '',
                 estado: 'Día Libre',
-                fotoEntradaUrl: '',
-                ubicacionEntrada: '',
-                fotoSalidaUrl: '',
-                ubicacionSalida: '',
-                _pendienteNuevo: true,
-                _pendienteId: p.id
+                fotoEntradaUrl: '', ubicacionEntrada: '',
+                fotoSalidaUrl: '', ubicacionSalida: '',
+                _pendienteNuevo: true, _pendienteId: p.id
             });
         }
     });
@@ -3560,17 +3667,12 @@ function combinarRegistrosConPendientes(registrosServer, pendientes, colaborador
             const fecha = yyyy + '-' + mm + '-' + dd;
             if (fecha.startsWith(prefijoMes) && !registros.some(function(r) { return r.fecha === fecha; })) {
                 registros.push({
-                    rowNumber: -1,
-                    fecha: fecha,
-                    horaEntrada: PREFIJO_AUSENCIA + p.tipoLabel,
-                    horaSalida: '',
+                    rowNumber: -1, fecha: fecha,
+                    horaEntrada: PREFIJO_AUSENCIA + p.tipoLabel, horaSalida: '',
                     estado: p.tipoLabel,
-                    fotoEntradaUrl: '',
-                    ubicacionEntrada: '',
-                    fotoSalidaUrl: '',
-                    ubicacionSalida: '',
-                    _pendienteNuevo: true,
-                    _pendienteId: p.id
+                    fotoEntradaUrl: '', ubicacionEntrada: '',
+                    fotoSalidaUrl: '', ubicacionSalida: '',
+                    _pendienteNuevo: true, _pendienteId: p.id
                 });
             }
             cur.setDate(cur.getDate() + 1);
@@ -3596,17 +3698,13 @@ function combinarRegistrosConPendientes(registrosServer, pendientes, colaborador
             }
         } else {
             registros.push({
-                rowNumber: -1,
-                fecha: p.fecha,
+                rowNumber: -1, fecha: p.fecha,
                 horaEntrada: p.estado === 'Entrada' ? p.hora : '',
                 horaSalida: p.estado === 'Salida' ? p.hora : '',
                 estado: p.estado,
-                fotoEntradaUrl: '',
-                ubicacionEntrada: '',
-                fotoSalidaUrl: '',
-                ubicacionSalida: '',
-                _pendienteNuevo: true,
-                _pendienteId: p.id,
+                fotoEntradaUrl: '', ubicacionEntrada: '',
+                fotoSalidaUrl: '', ubicacionSalida: '',
+                _pendienteNuevo: true, _pendienteId: p.id,
                 _fotoEntradaPendiente: p.estado === 'Entrada' ? p.fotoBase64 : null,
                 _ubicEntradaPendiente: p.estado === 'Entrada' ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : null,
                 _fotoSalidaPendiente: p.estado === 'Salida' ? p.fotoBase64 : null,
@@ -3688,14 +3786,14 @@ function renderCalendarioHistorial(mapa, anio, mes) {
             if (admin) {
                 colF = '';
                 if (reg.fotoEntradaUrl) {
-                    colF += '<a onclick="verFotoModal(\'' + reg.fotoEntradaUrl + '\',\'Foto Entrada ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto entrada" style="margin-right:6px;"><i class="fas fa-camera"></i>E</a>';
+                    colF += '<a onclick="verFotoModal(\'' + reg.fotoEntradaUrl + '\',\'Foto Entrada ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto entrada" style="margin-right:6px;"><i class="fas fa-camera"></i> E</a>';
                 } else if (reg._fotoEntradaPendiente) {
-                    colF += '<a onclick="verFotoPendienteBase64(' + JSON.stringify(reg._fotoEntradaPendiente).replace(/"/g, '&quot;') + ',\'Foto Entrada ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto entrada pend." style="margin-right:6px;color:#f39c12;"><i class="fas fa-camera"></i>E</a>';
+                    colF += '<a onclick="verFotoPendienteBase64(' + JSON.stringify(reg._fotoEntradaPendiente).replace(/"/g, '&quot;') + ',\'Foto Entrada ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto entrada pend." style="margin-right:6px;color:#f39c12;"><i class="fas fa-camera"></i> E</a>';
                 }
                 if (reg.fotoSalidaUrl) {
-                    colF += '<a onclick="verFotoModal(\'' + reg.fotoSalidaUrl + '\',\'Foto Salida ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto salida"><i class="fas fa-camera"></i>S</a>';
+                    colF += '<a onclick="verFotoModal(\'' + reg.fotoSalidaUrl + '\',\'Foto Salida ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto salida"><i class="fas fa-camera"></i> S</a>';
                 } else if (reg._fotoSalidaPendiente) {
-                    colF += '<a onclick="verFotoPendienteBase64(' + JSON.stringify(reg._fotoSalidaPendiente).replace(/"/g, '&quot;') + ',\'Foto Salida ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto salida pend." style="color:#f39c12;"><i class="fas fa-camera"></i>S</a>';
+                    colF += '<a onclick="verFotoPendienteBase64(' + JSON.stringify(reg._fotoSalidaPendiente).replace(/"/g, '&quot;') + ',\'Foto Salida ' + formatearFechaVisual(fechaStr) + '\')" class="foto-link-historial" title="Ver foto salida pend." style="color:#f39c12;"><i class="fas fa-camera"></i> S</a>';
                 }
                 if (!colF) colF = '<span class="text-muted">—</span>';
 
@@ -3802,7 +3900,7 @@ async function cargarSemanalesAutomatico(colaborador, anio, mes) {
 }
 
 // =========================================================================
-// EDITAR (offline)
+// EDITAR / ELIMINAR
 // =========================================================================
 
 function abrirEditar(rowNumber) {
@@ -3898,13 +3996,8 @@ async function guardarEdicion() {
     try {
         await addPendiente({
             tipoOperacion: 'editar',
-            colaborador: col,
-            anio: anio,
-            mes: mes,
-            rowNumber: rn,
-            fecha: fecha,
-            horaEntrada: he,
-            horaSalida: hs,
+            colaborador: col, anio: anio, mes: mes, rowNumber: rn,
+            fecha: fecha, horaEntrada: he, horaSalida: hs,
             creadoEn: new Date().toISOString()
         });
         await actualizarContadorPendientes();
@@ -3916,25 +4009,16 @@ async function guardarEdicion() {
     }
 }
 
-// =========================================================================
-// ELIMINAR (offline)
-// =========================================================================
-
 async function eliminarRegistro(rowNumber) {
-    if (!appConfig.modoAdmin) {
-        Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning');
-        return;
-    }
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
     const ctx = _historialContext;
     if (!ctx.colaborador) return;
 
     const conf = await Swal.fire({
         title: '¿Eliminar registro?',
         html: '<p>Se eliminará el registro del libro de <b>' + ctx.colaborador + '</b>.</p><p class="small text-muted">El cambio se guardará como pendiente.</p>',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+        icon: 'warning', showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#e74c3c'
     });
     if (!conf.isConfirmed) return;
@@ -3942,9 +4026,7 @@ async function eliminarRegistro(rowNumber) {
     try {
         await addPendiente({
             tipoOperacion: 'eliminar',
-            colaborador: ctx.colaborador,
-            anio: ctx.anio,
-            mes: ctx.mes,
+            colaborador: ctx.colaborador, anio: ctx.anio, mes: ctx.mes,
             rowNumber: rowNumber,
             creadoEn: new Date().toISOString()
         });
@@ -3959,11 +4041,9 @@ async function eliminarRegistro(rowNumber) {
 async function eliminarPendienteNuevo(idPendiente) {
     const conf = await Swal.fire({
         title: '¿Quitar este registro pendiente?',
-        html: '<p>El registro aún no se ha sincronizado y se eliminará de la cola local.</p>',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+        text: 'El registro aún no se ha sincronizado y se eliminará de la cola local.',
+        icon: 'warning', showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#e74c3c'
     });
     if (!conf.isConfirmed) return;
@@ -4034,8 +4114,7 @@ async function consultarDashboard() {
                 datasets: [{ label: 'Horas', data: d.graficoDias.data, backgroundColor: '#3498db', borderRadius: 4 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
                     title: { display: true, text: 'Horas por día — ' + getMesNombre(mes) + ' ' + anio }
@@ -4061,9 +4140,7 @@ async function consultarDashboard() {
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
+                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
                 plugins: {
                     legend: { display: false },
                     title: { display: true, text: 'Comparativa de Horas — ' + getMesNombre(mes) + ' ' + anio }
@@ -4149,251 +4226,150 @@ function renderAjustesGlobales(ajustes, totales) {
 
     tbody.innerHTML = '';
     if (!ajustes || ajustes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted p-3">No hay datos de ajustes.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-3">No hay datos de ajustes.</td></tr>';
         return;
     }
 
-    const colaboradorActual = document.getElementById('aju-colaborador').value;
-
     ajustes.forEach(function(a) {
         const tr = document.createElement('tr');
-        tr.className = 'tabla-colaborador-clickable';
-        if (colaboradorActual === a.colaborador) tr.classList.add('activo');
-        tr.setAttribute('data-colaborador', a.colaborador);
 
-        let claseBalance = 'balance-cero';
-        if (a.balance > 0) claseBalance = 'balance-positivo';
-        else if (a.balance < 0) claseBalance = 'balance-negativo';
+        let claseBalance = 'cero';
+        if (a.balance > 0) claseBalance = 'positivo';
+        else if (a.balance < 0) claseBalance = 'negativo';
 
         tr.innerHTML =
             '<td><i class="fas fa-user-circle me-1 text-muted"></i>' + a.colaborador + '</td>' +
             '<td class="text-center"><span class="badge-positive">+' + (a.totalPositivas || 0).toFixed(2) + ' h</span></td>' +
             '<td class="text-center"><span class="badge-negative">-' + (a.totalNegativas || 0).toFixed(2) + ' h</span></td>' +
-            '<td class="text-center ' + claseBalance + '">' + formatearBalance(a.balance || 0) + '</td>' +
-            '<td class="text-center text-muted">' + (a.cantidadAjustes || 0) + '</td>' +
-            '<td class="text-center"><button type="button" class="btn-action btn-edit-reg" title="Ver historial"><i class="fas fa-eye"></i></button></td>';
-
-        tr.addEventListener('click', function() {
-            seleccionarColaboradorGlobal(a.colaborador);
-        });
+            '<td class="text-center"><span class="balance-cell ' + claseBalance + '">' + formatearBalance(a.balance || 0) + '</span></td>' +
+            '<td class="text-center"><button type="button" class="btn-action btn-ver-detalle" title="Ver historial completo" onclick="verDetalleColaborador(\'' + a.colaborador.replace(/'/g, "\\'") + '\')"><i class="fas fa-eye"></i></button></td>';
 
         tbody.appendChild(tr);
     });
 }
 
-function seleccionarColaboradorGlobal(colaborador) {
-    const sel = document.getElementById('aju-colaborador');
-    if (sel) sel.value = colaborador;
+async function verDetalleColaborador(colaborador) {
+    if (!colaborador) return;
 
-    $$('#ajustes-global-tbody tr').forEach(function(tr) {
-        tr.classList.remove('activo');
-    });
-    const filaActiva = document.querySelector('#ajustes-global-tbody tr[data-colaborador="' + colaborador + '"]');
-    if (filaActiva) filaActiva.classList.add('activo');
+    document.getElementById('detalle-nombre-colaborador').textContent = colaborador;
+    document.getElementById('detalle-tabla').innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando historial...</td></tr>';
+    document.getElementById('detalle-total-pos').textContent = '0.00';
+    document.getElementById('detalle-total-neg').textContent = '0.00';
+    document.getElementById('detalle-balance').textContent = '0.00';
 
-    consultarAjustes();
+    const thAcc = document.getElementById('th-detalle-acciones');
+    if (thAcc) thAcc.style.display = appConfig.modoAdmin ? '' : 'none';
 
-    const detalle = document.getElementById('aju-resumen');
-    if (detalle) {
-        setTimeout(function() {
-            detalle.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 300);
-    }
-}
-
-// =========================================================================
-// AJUSTES — DETALLE INDIVIDUAL
-// =========================================================================
-
-async function consultarAjustes() {
-    const col = document.getElementById('aju-colaborador').value;
-    const mes = document.getElementById('aju-mes').value;
-    const anio = document.getElementById('aju-anio').value;
-    if (!col) { Swal.fire('Atención', 'Selecciona un colaborador.', 'warning'); return; }
-
-    const resumen = document.getElementById('aju-resumen');
-    const sinDatos = document.getElementById('aju-sin-datos');
-    resumen.style.display = 'none';
-    sinDatos.style.display = 'none';
-
-    showLoading('Consultando ajustes...');
+    const modal = new bootstrap.Modal(document.getElementById('modalDetalleColaborador'));
+    modal.show();
 
     try {
         const resp = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'obtenerAjustesHoras', colaborador: col, anio: anio, mes: mes })
+            body: JSON.stringify({ action: 'obtenerAjustesHorasTodos', colaborador: colaborador })
         }).then(function(r) { return r.json(); });
 
-        hideLoading();
         if (resp.status !== 'success') throw new Error(resp.message || 'Error');
         const d = resp.data;
 
-        const pendientes = (await getPendientes()).filter(function(p) {
-            return p.tipoOperacion === 'ajuste_horas' && p.colaborador === col;
+        const pendientesLocales = (await getPendientes()).filter(function(p) {
+            return p.tipoOperacion === 'ajuste_horas' && p.colaborador === colaborador;
         });
 
-        let posHist = d.totalPositivas || 0;
-        let negHist = d.totalNegativas || 0;
-        let balHist = d.balance || 0;
-
-        pendientes.forEach(function(p) {
-            if (p.horas > 0) posHist += p.horas;
-            else if (p.horas < 0) negHist += Math.abs(p.horas);
-            balHist += p.horas;
-        });
-
-        document.getElementById('aju-total-pos').textContent = posHist.toFixed(2);
-        document.getElementById('aju-total-neg').textContent = negHist.toFixed(2);
-        const balEl = document.getElementById('aju-balance');
-        balEl.textContent = (balHist > 0 ? '+' : '') + balHist.toFixed(2);
-        balEl.style.color = balHist > 0 ? '#2ecc71' : (balHist < 0 ? '#e74c3c' : '#3498db');
-
-        let posMes = d.totalPositivasMes || 0;
-        let negMes = d.totalNegativasMes || 0;
-        const prefijoMes = anio + '-' + String(mes).padStart(2, '0');
-        pendientes.filter(function(p) { return p.fecha.startsWith(prefijoMes); }).forEach(function(p) {
-            if (p.horas > 0) posMes += p.horas;
-            else if (p.horas < 0) negMes += Math.abs(p.horas);
-        });
-        document.getElementById('aju-pos-mes').textContent = posMes.toFixed(2);
-        document.getElementById('aju-neg-mes').textContent = negMes.toFixed(2);
+        let posTotal = d.totalPositivas || 0;
+        let negTotal = d.totalNegativas || 0;
+        let balTotal = d.balance || 0;
 
         const ajustesCombinados = (d.ajustes || []).slice();
-        pendientes.filter(function(p) { return p.fecha.startsWith(prefijoMes); }).forEach(function(p) {
+
+        pendientesLocales.forEach(function(p) {
+            if (p.horas > 0) posTotal += p.horas;
+            else if (p.horas < 0) negTotal += Math.abs(p.horas);
+            balTotal += p.horas;
+
             ajustesCombinados.push({
-                rowNumber: -1,
-                fecha: p.fecha,
-                horas: p.horas,
+                rowNumber: -1, fecha: p.fecha, horas: p.horas,
                 observaciones: p.observaciones || '',
                 registradoPor: p.registradoPor || 'Admin (pendiente)',
-                _pendiente: true,
-                _pendienteId: p.id
+                _pendiente: true, _pendienteId: p.id
             });
         });
 
         ajustesCombinados.sort(function(a, b) { return b.fecha.localeCompare(a.fecha); });
-        _ajustesActual = ajustesCombinados;
+
+        document.getElementById('detalle-total-pos').textContent = posTotal.toFixed(2);
+        document.getElementById('detalle-total-neg').textContent = negTotal.toFixed(2);
+        const balEl = document.getElementById('detalle-balance');
+        balEl.textContent = (balTotal > 0 ? '+' : '') + balTotal.toFixed(2);
+        balEl.style.color = balTotal > 0 ? '#2ecc71' : (balTotal < 0 ? '#e74c3c' : '#3498db');
+
+        const tbody = document.getElementById('detalle-tabla');
+        tbody.innerHTML = '';
 
         if (ajustesCombinados.length === 0) {
-            document.getElementById('aju-tabla').innerHTML = '<tr><td colspan="5" class="text-center text-muted p-3">Sin ajustes este mes.</td></tr>';
-        } else {
-            renderAjustesTabla(ajustesCombinados);
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-3">Este colaborador no tiene ajustes registrados.</td></tr>';
+            return;
         }
 
-        resumen.style.display = 'block';
-    } catch (e) {
-        hideLoading();
-        console.error(e);
-        Swal.fire('Error', e.message, 'error');
-    }
-}
+        ajustesCombinados.forEach(function(a) {
+            const tr = document.createElement('tr');
+            if (a._pendiente) tr.className = 'fila-historial-pendiente';
+            const signo = a.horas > 0 ? '+' : '';
+            const claseBadge = a.horas > 0 ? 'badge-positive' : 'badge-negative';
+            const badgePend = a._pendiente ? ' <span class="badge-pendiente-custom"><i class="fas fa-clock me-1"></i>Pend.</span>' : '';
 
-function renderAjustesTabla(ajustes) {
-    const tbody = document.getElementById('aju-tabla');
-    const admin = appConfig.modoAdmin;
-    const th = document.getElementById('th-acciones-ajustes');
-    if (th) th.style.display = admin ? '' : 'none';
-
-    tbody.innerHTML = '';
-    if (ajustes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="' + (admin ? 5 : 4) + '" class="text-center text-muted p-3">Sin ajustes.</td></tr>';
-        return;
-    }
-
-    ajustes.forEach(function(a) {
-        const tr = document.createElement('tr');
-        if (a._pendiente) tr.className = 'fila-historial-pendiente';
-        const s = a.horas > 0 ? '+' : '';
-        const claseBadge = a.horas > 0 ? 'badge-positive' : 'badge-negative';
-        const badgePend = a._pendiente ? ' <span class="badge-pendiente-custom"><i class="fas fa-clock me-1"></i>Pend.</span>' : '';
-
-        let acc = '';
-        if (admin) {
-            if (a._pendiente) {
-                acc = '<td class="text-center"><button class="btn-action btn-delete-reg" onclick="eliminarAjustePendiente(' + a._pendienteId + ')" title="Quitar pendiente"><i class="fas fa-trash-alt"></i></button></td>';
-            } else {
-                acc = '<td class="text-center"><button class="btn-action btn-delete-reg" onclick="eliminarAjusteServidor(' + a.rowNumber + ')" title="Eliminar"><i class="fas fa-trash-alt"></i></button></td>';
+            let acc = '';
+            if (appConfig.modoAdmin) {
+                if (a._pendiente) {
+                    acc = '<td class="text-center"><button class="btn-action btn-delete-reg" onclick="eliminarAjustePendienteDetalle(' + a._pendienteId + ')" title="Quitar pendiente"><i class="fas fa-trash-alt"></i></button></td>';
+                } else {
+                    acc = '<td class="text-center"><button class="btn-action btn-delete-reg" onclick="eliminarAjusteServidorDetalle(' + a.rowNumber + ',\'' + colaborador.replace(/'/g, "\\'") + '\')" title="Eliminar"><i class="fas fa-trash-alt"></i></button></td>';
+                }
             }
-        }
 
-        tr.innerHTML =
-            '<td class="fw-bold">' + formatearFechaVisual(a.fecha) + '</td>' +
-            '<td class="text-center"><span class="' + claseBadge + '">' + s + a.horas + ' h</span>' + badgePend + '</td>' +
-            '<td>' + (a.observaciones || '<span class="text-muted">—</span>') + '</td>' +
-            '<td>' + (a.registradoPor || '<span class="text-muted">—</span>') + '</td>' +
-            acc;
-        tbody.appendChild(tr);
-    });
-}
-
-async function agregarAjuste() {
-    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
-
-    const col = document.getElementById('aju-colaborador').value;
-    const fecha = document.getElementById('aju-nueva-fecha').value;
-    const horas = document.getElementById('aju-nueva-horas').value;
-    const obs = document.getElementById('aju-nueva-obs').value;
-
-    if (!col) { Swal.fire('Atención', 'Selecciona un colaborador.', 'warning'); return; }
-    if (!fecha) { Swal.fire('Atención', 'Ingresa la fecha.', 'warning'); return; }
-    if (esFechaFutura(fecha)) { Swal.fire('Fecha inválida', 'No puedes registrar ajustes con fecha futura.', 'warning'); return; }
-    const horasNum = parseFloat(horas);
-    if (isNaN(horasNum) || horasNum === 0) { Swal.fire('Atención', 'Ingresa un número de horas distinto de cero.', 'warning'); return; }
-
-    try {
-        await addPendiente({
-            tipoOperacion: 'ajuste_horas',
-            colaborador: col,
-            fecha: fecha,
-            horas: horasNum,
-            observaciones: obs || '',
-            registradoPor: 'Admin',
-            creadoEn: new Date().toISOString()
+            tr.innerHTML =
+                '<td class="fw-bold">' + formatearFechaVisual(a.fecha) + '</td>' +
+                '<td class="text-center"><span class="' + claseBadge + '">' + signo + a.horas + ' h</span>' + badgePend + '</td>' +
+                '<td>' + (a.observaciones || '<span class="text-muted">—</span>') + '</td>' +
+                '<td>' + (a.registradoPor || '<span class="text-muted">—</span>') + '</td>' +
+                acc;
+            tbody.appendChild(tr);
         });
-        await actualizarContadorPendientes();
-        await Swal.fire({ icon: 'success', title: 'Ajuste pendiente', html: '<p>Se guardó en la cola de pendientes.</p>', timer: 1800, showConfirmButton: false });
-        document.getElementById('aju-nueva-horas').value = '';
-        document.getElementById('aju-nueva-obs').value = '';
-        consultarAjustes();
     } catch (e) {
-        Swal.fire('Error', 'No se pudo guardar: ' + e.message, 'error');
+        console.error(e);
+        document.getElementById('detalle-tabla').innerHTML = '<tr><td colspan="5" class="text-center text-danger p-3">Error: ' + e.message + '</td></tr>';
     }
 }
 
-async function eliminarAjustePendiente(idPendiente) {
+async function eliminarAjustePendienteDetalle(idPendiente) {
     const conf = await Swal.fire({
         title: '¿Quitar ajuste pendiente?',
         text: 'El ajuste aún no se ha sincronizado y se eliminará de la cola local.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+        icon: 'warning', showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#e74c3c'
     });
     if (!conf.isConfirmed) return;
     try {
         await deletePendiente(idPendiente);
         await actualizarContadorPendientes();
-        consultarAjustes();
+        bootstrap.Modal.getInstance(document.getElementById('modalDetalleColaborador')).hide();
+        cargarAjustesGlobales();
+        Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false });
     } catch (e) { console.error(e); }
 }
 
-async function eliminarAjusteServidor(rowNumber) {
-    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
+async function eliminarAjusteServidorDetalle(rowNumber, colaborador) {
+    if (!appConfig.modoAdmin) return;
     if (!passwordAdmin) { try { passwordAdmin = sessionStorage.getItem(PASSWORD_SESSION_KEY); } catch (e) {} }
     if (!passwordAdmin) { Swal.fire('Sesión expirada', 'Vuelve a activar el Modo Administrador.', 'warning'); return; }
-
-    const col = document.getElementById('aju-colaborador').value;
-    if (!col) return;
 
     const conf = await Swal.fire({
         title: '¿Eliminar ajuste?',
         text: 'Se eliminará permanentemente este ajuste del servidor.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+        icon: 'warning', showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#e74c3c'
     });
     if (!conf.isConfirmed) return;
@@ -4403,12 +4379,12 @@ async function eliminarAjusteServidor(rowNumber) {
         const resp = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'eliminarAjusteHoras', password: passwordAdmin, colaborador: col, rowNumber: rowNumber })
+            body: JSON.stringify({ action: 'eliminarAjusteHoras', password: passwordAdmin, colaborador: colaborador, rowNumber: rowNumber })
         }).then(function(r) { return r.json(); });
         hideLoading();
         if (resp.status === 'success') {
+            bootstrap.Modal.getInstance(document.getElementById('modalDetalleColaborador')).hide();
             await Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1500, showConfirmButton: false });
-            consultarAjustes();
             cargarAjustesGlobales();
         } else {
             throw new Error(resp.message || 'Error');
@@ -4416,6 +4392,88 @@ async function eliminarAjusteServidor(rowNumber) {
     } catch (e) {
         hideLoading();
         Swal.fire('Error', e.message, 'error');
+    }
+}
+
+// =========================================================================
+// MODO NORMAL — Ver historial
+// =========================================================================
+
+async function verAjustesModoNormal() {
+    const col = document.getElementById('aju-colaborador-normal').value;
+    if (!col) {
+        Swal.fire('Atención', 'Selecciona un colaborador.', 'warning');
+        return;
+    }
+    verDetalleColaborador(col);
+}
+
+// =========================================================================
+// NUEVO AJUSTE — Modal
+// =========================================================================
+
+function abrirModalNuevoAjuste() {
+    if (!appConfig.modoAdmin) {
+        Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning');
+        return;
+    }
+    document.getElementById('ajuste-modal-colaborador').value = '';
+    document.getElementById('ajuste-modal-fecha').value = hoyYMD();
+    document.getElementById('ajuste-modal-fecha').setAttribute('max', hoyYMD());
+    document.getElementById('ajuste-modal-horas').value = '';
+    document.getElementById('ajuste-modal-obs').value = '';
+
+    new bootstrap.Modal(document.getElementById('modalNuevoAjuste')).show();
+}
+
+async function guardarNuevoAjusteModal() {
+    if (!appConfig.modoAdmin) {
+        Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning');
+        return;
+    }
+
+    const col = document.getElementById('ajuste-modal-colaborador').value;
+    const fecha = document.getElementById('ajuste-modal-fecha').value;
+    const horas = document.getElementById('ajuste-modal-horas').value;
+    const obs = document.getElementById('ajuste-modal-obs').value;
+
+    if (!col) { Swal.fire('Atención', 'Selecciona un colaborador.', 'warning'); return; }
+    if (!fecha) { Swal.fire('Atención', 'Ingresa la fecha.', 'warning'); return; }
+    if (esFechaFutura(fecha)) { Swal.fire('Fecha inválida', 'No puedes registrar ajustes con fecha futura.', 'warning'); return; }
+    const horasNum = parseFloat(horas);
+    if (isNaN(horasNum) || horasNum === 0) { Swal.fire('Atención', 'Ingresa un número de horas distinto de cero.', 'warning'); return; }
+
+    const btn = document.getElementById('btn-guardar-ajuste-modal');
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
+    try {
+        await addPendiente({
+            tipoOperacion: 'ajuste_horas',
+            colaborador: col, fecha: fecha, horas: horasNum,
+            observaciones: obs || '',
+            registradoPor: 'Admin',
+            creadoEn: new Date().toISOString()
+        });
+        await actualizarContadorPendientes();
+
+        bootstrap.Modal.getInstance(document.getElementById('modalNuevoAjuste')).hide();
+
+        await Swal.fire({
+            icon: 'success',
+            title: 'Ajuste pendiente',
+            html: '<p>Se guardó en la cola de pendientes.</p>',
+            timer: 1800,
+            showConfirmButton: false
+        });
+
+        cargarAjustesGlobales();
+    } catch (e) {
+        Swal.fire('Error', 'No se pudo guardar: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
     }
 }
 
@@ -4490,20 +4548,16 @@ async function toggleModoAdmin(activar) {
 }
 
 // =========================================================================
-// SYNC MANAGER (con reintentos y manejo de error robusto)
+// SYNC MANAGER
 // =========================================================================
 
 async function actualizarContadorPendientes() {
     try {
-        const pend = await getPendientes();
+        const pend = await getPendientes(false);
         const badge = document.getElementById('badge-pendientes');
         if (!badge) return;
-        if (pend.length > 0) {
-            badge.textContent = pend.length;
-            badge.style.display = '';
-        } else {
-            badge.style.display = 'none';
-        }
+        if (pend.length > 0) { badge.textContent = pend.length; badge.style.display = ''; }
+        else { badge.style.display = 'none'; }
     } catch (e) {}
 }
 
@@ -4538,7 +4592,7 @@ function descripcionFecha(p) {
 }
 
 async function renderizarModalPendientes() {
-    const pendientes = (await getPendientes()).sort(function(a, b) { return new Date(b.creadoEn) - new Date(a.creadoEn); });
+    const pendientes = (await getPendientes(false)).sort(function(a, b) { return new Date(b.creadoEn) - new Date(a.creadoEn); });
     const sincronizados = (await getSincronizados()).sort(function(a, b) { return new Date(b.fechaSync) - new Date(a.fechaSync); });
 
     const $pend = document.getElementById('lista-pendientes');
@@ -4627,10 +4681,6 @@ function actualizarBotonesSeleccion() {
     if (b3) b3.disabled = sinc === 0;
 }
 
-/**
- * Envía un pendiente al servidor con reintentos y timeout.
- * Retorna { ok: true } o { ok: false, error: "mensaje" }.
- */
 async function enviarPendienteAlServidor(p, intentos) {
     intentos = intentos || 1;
     let body = null;
@@ -4640,28 +4690,11 @@ async function enviarPendienteAlServidor(p, intentos) {
     } else if (p.tipoOperacion === 'ausencia_rango') {
         body = { action: 'registrarAusenciaRango', colaborador: p.colaborador, fechaDesde: p.fechaDesde, fechaHasta: p.fechaHasta, tipoKey: p.tipoKey };
     } else if (p.tipoOperacion === 'editar') {
-        body = {
-            action: 'editarRegistro',
-            password: passwordAdmin,
-            colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber,
-            fecha: p.fecha, horaEntrada: p.horaEntrada || '', horaSalida: p.horaSalida || ''
-        };
+        body = { action: 'editarRegistro', password: passwordAdmin, colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber, fecha: p.fecha, horaEntrada: p.horaEntrada || '', horaSalida: p.horaSalida || '' };
     } else if (p.tipoOperacion === 'eliminar') {
-        body = {
-            action: 'eliminarRegistro',
-            password: passwordAdmin,
-            colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber
-        };
+        body = { action: 'eliminarRegistro', password: passwordAdmin, colaborador: p.colaborador, anio: p.anio, mes: p.mes, rowNumber: p.rowNumber };
     } else if (p.tipoOperacion === 'ajuste_horas') {
-        body = {
-            action: 'registrarAjusteHoras',
-            password: passwordAdmin,
-            colaborador: p.colaborador,
-            fecha: p.fecha,
-            horas: p.horas,
-            observaciones: p.observaciones || '',
-            registradoPor: p.registradoPor || 'Admin'
-        };
+        body = { action: 'registrarAjusteHoras', password: passwordAdmin, colaborador: p.colaborador, fecha: p.fecha, horas: p.horas, observaciones: p.observaciones || '', registradoPor: p.registradoPor || 'Admin' };
     } else {
         const horaParaEnviar = p.horaOriginal || p.hora;
         body = {
@@ -4693,20 +4726,15 @@ async function enviarPendienteAlServidor(p, intentos) {
         if (data.status === 'success') {
             return { ok: true, data: data.data };
         } else {
-            // Error del servidor (validación, etc.). No reintentar.
-            return { ok: false, error: data.message || 'Error del servidor', noReintentar: true };
+            return { ok: false, error: data.message || 'Error del servidor' };
         }
     } catch (err) {
-        console.error('Error enviando pendiente (intento ' + intentos + '):', err);
-
-        // Reintentar 2 veces si es error de red/timeout
         if (intentos < 2) {
             await new Promise(function(r) { setTimeout(r, 1500); });
             return enviarPendienteAlServidor(p, intentos + 1);
         }
-
         let msg = 'Error de red';
-        if (err.name === 'AbortError') msg = 'Tiempo de espera agotado (servidor lento o sin conexión)';
+        if (err.name === 'AbortError') msg = 'Tiempo de espera agotado';
         else if (err.message) msg = err.message;
         return { ok: false, error: msg };
     }
@@ -4717,7 +4745,7 @@ async function sincronizarSeleccionados() {
     $$('.check-pendiente:checked').forEach(function(cb) { ids.push(parseInt(cb.value, 10)); });
     if (ids.length === 0) return;
 
-    const pendientes = await getPendientes();
+    const pendientes = await getPendientes(false);
     const aEnviar = pendientes.filter(function(p) { return ids.includes(p.id); });
 
     const btn = document.getElementById('btn-sincronizar-seleccionados');
@@ -4745,19 +4773,12 @@ async function sincronizarSeleccionados() {
                 }));
                 await deletePendiente(p.id);
                 ok++;
-            } catch (e) {
-                console.error('Error moviendo a sincronizados:', e);
-                err++;
-                erroresDetalle.push(p.colaborador + ': ' + e.message);
-            }
+            } catch (e) { err++; }
         } else {
             err++;
-            const desc = (p.colaborador || 'Día Libre') + ' (' + p.tipoOperacion + '): ' + resultado.error;
-            erroresDetalle.push(desc);
-            console.error('Error sync', p, resultado.error);
+            erroresDetalle.push((p.colaborador || 'Día Libre') + ' (' + p.tipoOperacion + '): ' + resultado.error);
         }
 
-        // Pausa más generosa entre registros (móvil)
         if (i < aEnviar.length - 1) {
             await new Promise(function(r) { setTimeout(r, 800); });
         }
@@ -4785,10 +4806,7 @@ async function sincronizarSeleccionados() {
     const tabActiva = document.querySelector('#mainTabs .nav-link.active');
     if (tabActiva) {
         if (tabActiva.dataset.tab === 'tab-historial' && _historialContext.colaborador) consultarHistorial();
-        if (tabActiva.dataset.tab === 'tab-ajustes') {
-            if (document.getElementById('aju-colaborador').value) consultarAjustes();
-            cargarAjustesGlobales();
-        }
+        if (tabActiva.dataset.tab === 'tab-ajustes' && appConfig.modoAdmin) cargarAjustesGlobales();
     }
 }
 
@@ -4801,10 +4819,8 @@ async function eliminarSeleccionados(tipo) {
     const conf = await Swal.fire({
         title: '¿Eliminar seleccionados?',
         text: 'Se eliminarán ' + ids.length + ' registros.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+        icon: 'warning', showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#e74c3c'
     });
     if (!conf.isConfirmed) return;
@@ -4839,10 +4855,6 @@ function cambiarTabPrincipal(tabId) {
     }
 }
 
-/**
- * Puebla los selects de mes y año.
- * Años dinámicos: desde 2026 hasta (año actual + 3). Se ajusta automáticamente.
- */
 function poblarSelectsMesAnio() {
     const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
     const hoy = new Date();
@@ -4852,7 +4864,7 @@ function poblarSelectsMesAnio() {
     const anioMaximo = anioActual + 3;
     const anioInicial = (anioActual < anioMinimo) ? anioMinimo : anioActual;
 
-    ['hist-mes', 'dash-mes', 'aju-mes'].forEach(function(id) {
+    ['hist-mes', 'dash-mes'].forEach(function(id) {
         const sel = document.getElementById(id);
         if (!sel) return;
         sel.innerHTML = '';
@@ -4866,7 +4878,7 @@ function poblarSelectsMesAnio() {
         });
     });
 
-    ['hist-anio', 'dash-anio', 'aju-anio'].forEach(function(id) {
+    ['hist-anio', 'dash-anio'].forEach(function(id) {
         const sel = document.getElementById(id);
         if (!sel) return;
         sel.innerHTML = '';
@@ -4914,12 +4926,6 @@ window.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    const inputHora = document.getElementById('hora');
-    if (inputHora) {
-        inputHora.addEventListener('input', actualizarAvisoHora);
-        inputHora.addEventListener('change', actualizarAvisoHora);
-    }
-
     const enviarBtn = document.getElementById('enviarBtn');
     if (enviarBtn) enviarBtn.addEventListener('click', confirmarEnvio);
 
@@ -4941,23 +4947,33 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnRefrescarGPS = document.getElementById('btn-refrescar-gps');
     if (btnRefrescarGPS) btnRefrescarGPS.addEventListener('click', obtenerUbicacionGPS);
 
+    // Botones de cámara
     const btnTomarFoto = document.getElementById('btn-tomar-foto');
-    if (btnTomarFoto) btnTomarFoto.addEventListener('click', abrirModalCamara);
-
-    const btnSnap = document.getElementById('btn-camera-snap');
-    if (btnSnap) btnSnap.addEventListener('click', capturarFoto);
-
-    const btnAccept = document.getElementById('btn-camera-accept');
-    if (btnAccept) btnAccept.addEventListener('click', aceptarFotoCapturada);
-
-    const btnRetry = document.getElementById('btn-camera-retry');
-    if (btnRetry) btnRetry.addEventListener('click', reintentarFoto);
-
-    const btnSwitch = document.getElementById('btn-camera-switch');
-    if (btnSwitch) btnSwitch.addEventListener('click', cambiarCamara);
+    if (btnTomarFoto) btnTomarFoto.addEventListener('click', function() {
+        openCamera('foto-preview');
+    });
 
     const btnRetomar = document.getElementById('btn-retomar-foto');
     if (btnRetomar) btnRetomar.addEventListener('click', descartarFoto);
+
+    // Botones del modal cámara
+    const btnCapture = document.getElementById('capture-btn');
+    if (btnCapture) btnCapture.addEventListener('click', capturePhoto);
+
+    const btnAceptar = document.getElementById('btn-aceptar-foto');
+    if (btnAceptar) btnAceptar.addEventListener('click', aceptarFotoCapturada);
+
+    const btnReintentar = document.getElementById('btn-reintentar-foto');
+    if (btnReintentar) btnReintentar.addEventListener('click', reintentarFotoCapturada);
+
+    const btnFlash = document.getElementById('flash-toggle');
+    if (btnFlash) btnFlash.addEventListener('click', toggleFlash);
+
+    const btnZoomIn = document.getElementById('zoom-in');
+    if (btnZoomIn) btnZoomIn.addEventListener('click', zoomIn);
+
+    const btnZoomOut = document.getElementById('zoom-out');
+    if (btnZoomOut) btnZoomOut.addEventListener('click', zoomOut);
 
     $$('#mainTabs .nav-link').forEach(function(link) {
         link.addEventListener('click', function() { cambiarTabPrincipal(link.dataset.tab); });
@@ -4969,12 +4985,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnDash = document.getElementById('btn-consultar-dashboard');
     if (btnDash) btnDash.addEventListener('click', consultarDashboard);
 
-    const btnAju = document.getElementById('btn-consultar-ajustes');
-    if (btnAju) btnAju.addEventListener('click', consultarAjustes);
-
-    const btnAjuAdd = document.getElementById('btn-agregar-ajuste');
-    if (btnAjuAdd) btnAjuAdd.addEventListener('click', agregarAjuste);
-
     const btnRefrescarGlobal = document.getElementById('btn-refrescar-global');
     if (btnRefrescarGlobal) {
         btnRefrescarGlobal.addEventListener('click', async function() {
@@ -4982,6 +4992,15 @@ window.addEventListener('DOMContentLoaded', async function() {
             Swal.fire({ icon: 'success', title: 'Actualizado', timer: 1200, showConfirmButton: false });
         });
     }
+
+    const btnAbrirNuevoAjuste = document.getElementById('btn-abrir-nuevo-ajuste');
+    if (btnAbrirNuevoAjuste) btnAbrirNuevoAjuste.addEventListener('click', abrirModalNuevoAjuste);
+
+    const btnGuardarAjusteModal = document.getElementById('btn-guardar-ajuste-modal');
+    if (btnGuardarAjusteModal) btnGuardarAjusteModal.addEventListener('click', guardarNuevoAjusteModal);
+
+    const btnVerAjustesNormal = document.getElementById('btn-ver-ajustes-normal');
+    if (btnVerAjustesNormal) btnVerAjustesNormal.addEventListener('click', verAjustesModoNormal);
 
     const btnGEd = document.getElementById('btn-guardar-edicion');
     if (btnGEd) btnGEd.addEventListener('click', guardarEdicion);
@@ -4998,6 +5017,8 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     const togAdmin = document.getElementById('toggle-modo-admin');
     if (togAdmin) togAdmin.addEventListener('change', function() { toggleModoAdmin(this.checked); });
+
+
 
     const btnSync = document.getElementById('btn-sync-manager');
     if (btnSync) {
