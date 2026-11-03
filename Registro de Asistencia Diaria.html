@@ -1012,7 +1012,6 @@
         body.modo-oscuro #fotoViewerModal .modal-content { background: rgba(0, 0, 0, 0.97) !important; }
         body.modo-oscuro #fotoViewerImg { background: #0a0f1a; }
 
-        /* FIX MODO OSCURO: Tabla de detalle colaborador (Ajustes) */
         body.modo-oscuro #modalDetalleColaborador .modal-body.bg-light { background-color: #1e293b !important; }
         body.modo-oscuro #modalDetalleColaborador .table { color: #e2e8f0 !important; background-color: transparent !important; }
         body.modo-oscuro #modalDetalleColaborador .table thead.sticky-top { background-color: #0f172a !important; }
@@ -1021,7 +1020,6 @@
         body.modo-oscuro #modalDetalleColaborador .table tbody tr:hover td { background-color: #334155 !important; }
         body.modo-oscuro #modalDetalleColaborador .table tbody tr.fila-historial-pendiente td { background-color: #0c4a6e !important; color: #e0f2fe !important; }
 
-        /* FIX MODO OSCURO: Tabla Historial de Asistencia */
         body.modo-oscuro #tab-historial .table,
         body.modo-oscuro #tab-historial .table-responsive { background-color: #1e293b !important; color: #e2e8f0 !important; }
         body.modo-oscuro #tab-historial .table thead.sticky-top,
@@ -1038,7 +1036,6 @@
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-pendiente td { background-color: #0c4a6e !important; color: #e0f2fe !important; }
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-faltante td { background-color: #1e293b !important; color: #94a3b8 !important; }
 
-        /* FIX MODO OSCURO: Tabla Resumen por Colaborador (Dashboard) */
         body.modo-oscuro #dash-resumen .table,
         body.modo-oscuro #dash-resumen .table-responsive { background-color: #1e293b !important; color: #e2e8f0 !important; }
         body.modo-oscuro #dash-resumen .table thead,
@@ -1047,7 +1044,6 @@
         body.modo-oscuro #dash-resumen .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
         body.modo-oscuro #dash-resumen .table tbody tr:hover td { background-color: #334155 !important; }
 
-        /* REFUERZO GLOBAL: Cualquier tabla dentro de .card en oscuro */
         body.modo-oscuro .card .table { color: #e2e8f0 !important; }
         body.modo-oscuro .card .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
         body.modo-oscuro .card .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
@@ -1131,7 +1127,7 @@
                             <span>Modo Administrador</span>
                         </div>
                         <p class="setting-description">
-                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard y editar o eliminar registros. Requiere contraseña.
+                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard y editar o eliminar registros. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
                         </p>
                     </div>
                     <div class="form-check form-switch">
@@ -1341,15 +1337,6 @@
                     <label for="ajuste-modal-colaborador" class="form-label">Colaborador</label>
                     <select id="ajuste-modal-colaborador" class="form-select">
                         <option value="">Seleccione colaborador...</option>
-                        <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                        <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                        <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
-                        <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                        <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                        <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
-                        <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
-                        <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
-                        <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                     </select>
                 </div>
 
@@ -1385,7 +1372,7 @@
     </div>
 </div>
 
-<!-- ========== MODAL DETALLE COLABORADOR (SIN "REGISTRADO POR") ========== -->
+<!-- ========== MODAL DETALLE COLABORADOR ========== -->
 <div class="modal fade" id="modalDetalleColaborador" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
@@ -1526,21 +1513,12 @@
                         <label for="colaborador" class="form-label">Colaborador</label>
                         <select id="colaborador" class="form-select" required>
                             <option value="">Por favor seleccione</option>
-                            <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                            <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                            <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
-                            <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                            <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
-                            <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
-                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
-                            <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                         </select>
                     </div>
 
                     <div class="question-container">
                         <label class="form-label">
-                            <i class="fas fa-map-marker-alt me-1"></i>Ubicación GPS
+                            <i class="fas fa-map-marker-alt me-1"></i>Ubicación GPS <span id="gps-obligatorio-hint" class="text-danger">*</span>
                         </label>
                         <div id="gps-status" class="gps-status loading">
                             <i class="fas fa-spinner fa-spin"></i>
@@ -1560,7 +1538,7 @@
 
                     <div class="question-container">
                         <label class="form-label">
-                            <i class="fas fa-camera me-1"></i>Fotografía (obligatoria)
+                            <i class="fas fa-camera me-1"></i>Fotografía <span id="foto-obligatoria-hint" class="text-danger">(obligatoria)</span>
                         </label>
                         <div id="foto-preview-container" class="text-center">
                             <button type="button" class="btn btn-info rounded-pill" id="btn-tomar-foto">
@@ -1597,15 +1575,6 @@
                         <label for="rango-colaborador" class="form-label">Colaborador</label>
                         <select id="rango-colaborador" class="form-select">
                             <option value="">Por favor seleccione</option>
-                            <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                            <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                            <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
-                            <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                            <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
-                            <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
-                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
-                            <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                         </select>
                     </div>
                     <div class="question-container">
@@ -1640,26 +1609,17 @@
                 </div>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-4" id="hist-colab-select-container">
                         <label class="form-label">Colaborador</label>
                         <select id="hist-colaborador" class="form-select">
                             <option value="">Seleccione colaborador...</option>
-                            <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                            <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                            <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
-                            <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                            <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                            <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
-                            <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
-                            <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
-                            <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" id="hist-mes-col">
                         <label class="form-label">Mes</label>
                         <select id="hist-mes" class="form-select"></select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" id="hist-anio-col">
                         <label class="form-label">Año</label>
                         <select id="hist-anio" class="form-select"></select>
                     </div>
@@ -1799,8 +1759,8 @@
                         </div>
                         <div class="alert alert-info small mt-3 mb-0">
                             <i class="fas fa-info-circle me-1"></i>
-                            <b>% Asistencia</b> = (Trabajados + Día Libre) / Días Laborables. Día Libre NO penaliza.<br>
-                            <b>% Ausentismo</b> = (Incapacidad + Permiso + Falta + Vacaciones) / Días Laborables.
+                            <b>% Asistencia</b> = (Trabajados + Día Libre + Vacaciones) / Días Laborables. Ni Día Libre ni Vacaciones penalizan.<br>
+                            <b>% Ausentismo</b> = (Incapacidad + Permiso + Falta) / Días Laborables.
                         </div>
                     </div>
 
@@ -1862,7 +1822,6 @@
                     Registra horas a favor del colaborador (positivas) o a favor de la empresa (negativas). <b>El balance se acumula entre meses.</b>
                 </div>
 
-                <!-- ============ MODO ADMIN: Resumen global ============ -->
                 <div id="ajustes-resumen-global" style="display:none;">
                     <div class="kpi-total-global mb-4" id="kpi-global-container">
                         <div class="kpi-total-label">
@@ -1909,7 +1868,6 @@
                     </div>
                 </div>
 
-                <!-- ============ MODO NORMAL: Selector simple ============ -->
                 <div id="ajustes-modo-normal" style="display:none;">
                     <div class="question-container mb-4">
                         <div class="fw-bold mb-2">
@@ -1920,15 +1878,6 @@
                                 <label class="form-label">Colaborador</label>
                                 <select id="aju-colaborador-normal" class="form-select">
                                     <option value="">Seleccione colaborador...</option>
-                                    <option value="Cintia Yojana Dubon Machado">Cintia Yojana Dubon Machado</option>
-                                    <option value="Gertrudis Yamileth Acosta Hernandez">Gertrudis Yamileth Acosta Hernandez</option>
-                                    <option value="Grevil Isaac Flores Meza">Grevil Isaac Flores Meza</option>
-                                    <option value="Llanari Clarisa Maldonado Martínez">Llanari Clarisa Maldonado Martínez</option>
-                                    <option value="Mayra Consuelo Nicolás Hernandez">Mayra Consuelo Nicolás Hernandez</option>
-                                    <option value="Melvin Josue Lopez Rodriguez">Melvin Josue Lopez Rodriguez</option>
-                                    <option value="Reina Emerita Sanchez Garcia">Reina Emerita Sanchez Garcia</option>
-                                    <option value="Saul Enrique Santos Maldonado">Saul Enrique Santos Maldonado</option>
-                                    <option value="Vanessa Lizeth Romero Hernández">Vanessa Lizeth Romero Hernández</option>
                                 </select>
                             </div>
                             <div class="col-md-4 d-flex align-items-end">
@@ -1966,9 +1915,25 @@ const PROYECTO_LAT = 14.514168906326542;
 const PROYECTO_LNG = -87.65237283481956;
 const RADIO_METROS_PERMITIDO = 150;
 
+// =========================================================================
+// COLABORADORES — ÚNICA FUENTE DE VERDAD
+// Los <select> del HTML se llenan dinámicamente desde aquí
+// =========================================================================
+const COLABORADORES = [
+    "Cintia Yojana Dubon Machado",
+    "Gertrudis Yamileth Acosta Hernandez",
+    "Grevil Isaac Flores Meza",
+    "Llanari Clarisa Maldonado Martínez",
+    "Mayra Consuelo Nicolás Hernandez",
+    "Melvin Josue Lopez Rodriguez",
+    "Reina Emerita Sanchez Garcia",
+    "Saul Enrique Santos Maldonado",
+    "Vanessa Lizeth Romero Hernández"
+];
+
 const TIPOS_ESPECIALES = {
     "DIA_LIBRE":           { label: "Día Libre",           esAusencia: false },
-    "VACACIONES":          { label: "Vacaciones",          esAusencia: true },
+    "VACACIONES":          { label: "Vacaciones",          esAusencia: false },
     "INCAPACIDAD":         { label: "Incapacidad",         esAusencia: true },
     "PERMISO":             { label: "Permiso",             esAusencia: true },
     "FALTA_INJUSTIFICADA": { label: "Falta Injustificada", esAusencia: true }
@@ -2017,6 +1982,48 @@ let _pendientesCacheTime = 0;
 
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
+
+// Rellena todos los <select> de colaboradores con los nombres de la constante
+function poblarSelectsColaboradores() {
+    const selectores = [
+        { id: 'colaborador', placeholder: 'Por favor seleccione' },
+        { id: 'rango-colaborador', placeholder: 'Por favor seleccione' },
+        { id: 'hist-colaborador', placeholder: 'Seleccione colaborador...' },
+        { id: 'ajuste-modal-colaborador', placeholder: 'Seleccione colaborador...' },
+        { id: 'aju-colaborador-normal', placeholder: 'Seleccione colaborador...' }
+    ];
+
+    selectores.forEach(function(cfg) {
+        const sel = document.getElementById(cfg.id);
+        if (!sel) return;
+
+        const valorActual = sel.value;
+
+        // Limpiar manteniendo solo el placeholder (primer option)
+        while (sel.options.length > 1) {
+            sel.remove(1);
+        }
+
+        // Ajustar el texto del placeholder
+        if (sel.options.length === 1) {
+            sel.options[0].textContent = cfg.placeholder;
+            sel.options[0].value = '';
+        }
+
+        // Agregar colaboradores
+        COLABORADORES.forEach(function(colab) {
+            const opt = document.createElement('option');
+            opt.value = colab;
+            opt.textContent = colab;
+            sel.appendChild(opt);
+        });
+
+        // Restaurar valor si existía
+        if (valorActual && COLABORADORES.includes(valorActual)) {
+            sel.value = valorActual;
+        }
+    });
+}
 
 function esDispositivoMovil() {
     const ua = navigator.userAgent.toLowerCase();
@@ -2191,33 +2198,31 @@ function getPinchDistance(t1, t2) {
 // CHIPS RÁPIDOS DE COLABORADORES EN HISTORIAL
 // =========================================================================
 
-const COLABORADORES_HISTORIAL = [
-    "Cintia Yojana Dubon Machado",
-    "Gertrudis Yamileth Acosta Hernandez",
-    "Grevil Isaac Flores Meza",
-    "Llanari Clarisa Maldonado Martínez",
-    "Mayra Consuelo Nicolás Hernandez",
-    "Melvin Josue Lopez Rodriguez",
-    "Reina Emerita Sanchez Garcia",
-    "Saul Enrique Santos Maldonado",
-    "Vanessa Lizeth Romero Hernández"
-];
-
 function construirChipsColaboradores() {
     const contenedor = document.getElementById('hist-chips-colaboradores');
+    const selColabContainer = document.getElementById('hist-colab-select-container');
+    const colMes = document.getElementById('hist-mes-col');
+    const colAnio = document.getElementById('hist-anio-col');
     if (!contenedor) return;
 
     if (!appConfig.modoAdmin) {
         contenedor.style.display = 'none';
+        if (selColabContainer) selColabContainer.style.display = '';
+        if (colMes) colMes.className = 'col-md-3';
+        if (colAnio) colAnio.className = 'col-md-3';
         return;
     }
 
     contenedor.style.display = 'block';
+    if (selColabContainer) selColabContainer.style.display = 'none';
+    if (colMes) colMes.className = 'col-md-5';
+    if (colAnio) colAnio.className = 'col-md-5';
+
     const row = contenedor.querySelector('.d-flex');
     if (!row) return;
 
     if (row.children.length === 0) {
-        COLABORADORES_HISTORIAL.forEach(function(colab) {
+        COLABORADORES.forEach(function(colab) {
             const chip = document.createElement('button');
             chip.type = 'button';
             chip.className = 'hist-chip';
@@ -2469,6 +2474,8 @@ function aplicarEstadoAdminUI() {
     const tabDashboardLink = document.getElementById('tab-dashboard-link');
     const ajustesGlobal = document.getElementById('ajustes-resumen-global');
     const ajustesNormal = document.getElementById('ajustes-modo-normal');
+    const gpsHint = document.getElementById('gps-obligatorio-hint');
+    const fotoHint = document.getElementById('foto-obligatoria-hint');
 
     if (appConfig.modoAdmin) {
         if (ind) ind.classList.add('active');
@@ -2481,6 +2488,12 @@ function aplicarEstadoAdminUI() {
         if (tabDashboardLink) tabDashboardLink.style.display = '';
         if (ajustesGlobal) ajustesGlobal.style.display = 'block';
         if (ajustesNormal) ajustesNormal.style.display = 'none';
+        // En admin: GPS y foto son OPCIONALES
+        if (gpsHint) gpsHint.style.display = 'none';
+        if (fotoHint) {
+            fotoHint.textContent = '(opcional)';
+            fotoHint.className = 'text-muted';
+        }
     } else {
         if (ind) ind.classList.remove('active');
         if (btn) btn.classList.remove('admin-active');
@@ -2497,6 +2510,12 @@ function aplicarEstadoAdminUI() {
             cambiarTabPrincipal('tab-registro');
         }
         cambiarTipoRegistro('asistencia');
+        // En normal: GPS y foto son OBLIGATORIOS
+        if (gpsHint) gpsHint.style.display = '';
+        if (fotoHint) {
+            fotoHint.textContent = '(obligatoria)';
+            fotoHint.className = 'text-danger';
+        }
     }
 
     if (_historialActual.length > 0 && _historialContext.colaborador) {
@@ -2508,6 +2527,7 @@ function aplicarEstadoAdminUI() {
 
     try { construirChipsColaboradores(); } catch (e) {}
     try { actualizarChipsActivos(); } catch (e) {}
+    try { validarCamposRegistro(); } catch (e) {}
 }
 
 // =========================================================================
@@ -3050,7 +3070,6 @@ async function aceptarFotoCapturada() {
     try {
         const base64Data = await compressImage(base64Captura, 0.7, 1280);
 
-        // Verificación de peso: si aún pesa > 900 KB, recomprimir más agresivo
         let pesoKB = Math.round((base64Data.length * 3) / 4 / 1024);
         let finalBase64 = base64Data;
         if (pesoKB > 900) {
@@ -3189,7 +3208,6 @@ function handleTouchEnd(e) {
 }
 
 async function compressImage(file, quality = 0.7, maxWidth = 1280) {
-    // Si es un dataURL, lo comprimimos de verdad
     if (typeof file === 'string' && file.startsWith('data:image/')) {
         return new Promise((resolve) => {
             const img = new Image();
@@ -3369,6 +3387,7 @@ function onSelectTipoRegistroChange() {
 function validarCamposRegistro() {
     const selTipo = document.getElementById('select-tipo-registro');
     const tipoVal = selTipo ? selTipo.value : 'asistencia';
+    const esAdmin = appConfig.modoAdmin;
     let valido = false;
 
     if (tipoRegistroActual === 'asistencia') {
@@ -3378,7 +3397,12 @@ function validarCamposRegistro() {
         const colab = document.getElementById('colaborador').value;
         const gpsOk = gpsState.ok;
         const fotoOk = !!fotoCapturaActual;
-        valido = !!(fecha && estado && hora && colab) && !esFechaFutura(fecha) && gpsOk && fotoOk;
+
+        // En admin, GPS y foto son opcionales; en normal, obligatorios
+        const gpsRequerido = esAdmin ? true : gpsOk;
+        const fotoRequerida = esAdmin ? true : fotoOk;
+
+        valido = !!(fecha && estado && hora && colab) && !esFechaFutura(fecha) && gpsRequerido && fotoRequerida;
     } else if (tipoRegistroActual === 'dia_libre') {
         const fecha = document.getElementById('fecha').value;
         const seleccionados = $$('#lista-colabs-dia-libre input[type="checkbox"]:checked').length;
@@ -3414,20 +3438,9 @@ function validarCamposRegistro() {
 }
 
 function poblarListaDiaLibre() {
-    const cols = [
-        "Cintia Yojana Dubon Machado",
-        "Gertrudis Yamileth Acosta Hernandez",
-        "Grevil Isaac Flores Meza",
-        "Llanari Clarisa Maldonado Martínez",
-        "Mayra Consuelo Nicolás Hernandez",
-        "Melvin Josue Lopez Rodriguez",
-        "Reina Emerita Sanchez Garcia",
-        "Saul Enrique Santos Maldonado",
-        "Vanessa Lizeth Romero Hernández"
-    ];
     const cont = document.getElementById('lista-colabs-dia-libre');
     cont.innerHTML = '';
-    cols.forEach(function(col, i) {
+    COLABORADORES.forEach(function(col, i) {
         const div = document.createElement('div');
         div.className = 'form-check';
         div.innerHTML = '<input class="form-check-input" type="checkbox" value="' + col + '" id="dl-' + i + '"><label class="form-check-label" for="dl-' + i + '">' + col + '</label>';
@@ -3479,6 +3492,7 @@ async function enviarAsistencia() {
         const estado = document.getElementById('estado').value;
         const hora = document.getElementById('hora').value;
         const colaborador = document.getElementById('colaborador').value;
+        const esAdmin = appConfig.modoAdmin;
 
         if (esFechaFutura(fecha)) {
             await Swal.fire('Fecha inválida', 'No puedes registrar asistencia para fechas futuras.', 'warning');
@@ -3488,13 +3502,17 @@ async function enviarAsistencia() {
             await Swal.fire('Hora requerida', 'Debes ingresar la hora.', 'warning');
             return;
         }
-        if (!gpsState.ok) {
-            await Swal.fire('GPS requerido', 'Debes estar dentro del rango del proyecto.', 'warning');
-            return;
-        }
-        if (!fotoCapturaActual) {
-            await Swal.fire('Foto requerida', 'Debes tomar una fotografía.', 'warning');
-            return;
+
+        // Validaciones de GPS/foto: SOLO obligatorias en modo normal
+        if (!esAdmin) {
+            if (!gpsState.ok) {
+                await Swal.fire('GPS requerido', 'Debes estar dentro del rango del proyecto.', 'warning');
+                return;
+            }
+            if (!fotoCapturaActual) {
+                await Swal.fire('Foto requerida', 'Debes tomar una fotografía.', 'warning');
+                return;
+            }
         }
 
         let pendientes = [];
@@ -3549,6 +3567,21 @@ async function enviarAsistencia() {
             if (!conf.isConfirmed) return;
         }
 
+        // Construir el resumen (mostrar si GPS y foto están presentes o no)
+        let gpsLinea = '<b>Ubicación:</b> ';
+        if (gpsState.lat != null && gpsState.lng != null) {
+            gpsLinea += gpsState.lat.toFixed(6) + ', ' + gpsState.lng.toFixed(6) + ' (' + gpsState.distancia.toFixed(0) + ' m)';
+        } else {
+            gpsLinea += '<span class="text-muted">Sin GPS' + (esAdmin ? ' (opcional en admin)' : '') + '</span>';
+        }
+
+        let fotoLinea = '<b>Foto:</b> ';
+        if (fotoCapturaActual) {
+            fotoLinea += 'Sí (' + fotoCapturaActual.fechaHora + ')';
+        } else {
+            fotoLinea += '<span class="text-muted">Sin foto' + (esAdmin ? ' (opcional en admin)' : '') + '</span>';
+        }
+
         const confirm = await Swal.fire({
             title: '¿Guardar registro?',
             html:
@@ -3557,8 +3590,8 @@ async function enviarAsistencia() {
                 '<b>Fecha:</b> ' + formatearFechaVisual(fecha) + '<br>' +
                 '<b>Hora:</b> ' + hora24a12(hora) + '<br>' +
                 '<b>Estado:</b> ' + estado + '<br>' +
-                '<b>Ubicación:</b> ' + gpsState.lat.toFixed(6) + ', ' + gpsState.lng.toFixed(6) + ' (' + gpsState.distancia.toFixed(0) + ' m)<br>' +
-                '<b>Foto:</b> Sí (' + fotoCapturaActual.fechaHora + ')' +
+                gpsLinea + '<br>' +
+                fotoLinea +
                 '</div>' +
                 '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente. Se validará al sincronizar.</p>',
             icon: 'question',
@@ -3579,11 +3612,12 @@ async function enviarAsistencia() {
             hora: hora24a12(hora),
             horaOriginal: hora,
             estado: estado,
-            fotoBase64: fotoCapturaActual.base64,
-            fotoFechaHora: fotoCapturaActual.fechaHora,
+            fotoBase64: fotoCapturaActual ? fotoCapturaActual.base64 : '',
+            fotoFechaHora: fotoCapturaActual ? fotoCapturaActual.fechaHora : '',
             lat: gpsState.lat,
             lng: gpsState.lng,
             distanciaMetros: gpsState.distancia,
+            esAdmin: esAdmin,
             creadoEn: new Date().toISOString()
         });
 
@@ -3871,13 +3905,13 @@ function combinarRegistrosConPendientes(registrosServer, pendientes, colaborador
                 yaEx.horaEntrada = p.hora;
                 yaEx._pendienteEdicion = true;
                 yaEx._fotoEntradaPendiente = p.fotoBase64;
-                yaEx._ubicEntradaPendiente = p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)';
+                yaEx._ubicEntradaPendiente = (p.lat != null && p.lng != null) ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : '';
             }
             if (p.estado === 'Salida' && !yaEx.horaSalida) {
                 yaEx.horaSalida = p.hora;
                 yaEx._pendienteEdicion = true;
                 yaEx._fotoSalidaPendiente = p.fotoBase64;
-                yaEx._ubicSalidaPendiente = p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)';
+                yaEx._ubicSalidaPendiente = (p.lat != null && p.lng != null) ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : '';
             }
         } else {
             registros.push({
@@ -3889,9 +3923,9 @@ function combinarRegistrosConPendientes(registrosServer, pendientes, colaborador
                 fotoSalidaUrl: '', ubicacionSalida: '',
                 _pendienteNuevo: true, _pendienteId: p.id,
                 _fotoEntradaPendiente: p.estado === 'Entrada' ? p.fotoBase64 : null,
-                _ubicEntradaPendiente: p.estado === 'Entrada' ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : null,
+                _ubicEntradaPendiente: (p.estado === 'Entrada' && p.lat != null && p.lng != null) ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : null,
                 _fotoSalidaPendiente: p.estado === 'Salida' ? p.fotoBase64 : null,
-                _ubicSalidaPendiente: p.estado === 'Salida' ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : null
+                _ubicSalidaPendiente: (p.estado === 'Salida' && p.lat != null && p.lng != null) ? (p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' (' + (p.distanciaMetros || 0).toFixed(0) + ' m)') : null
             });
         }
     });
@@ -4864,49 +4898,32 @@ async function enviarPendienteAlServidor(p, intentos) {
 
                     if (p.estado === 'Entrada' && yaHayEntrada) {
                         return {
-                            ok: false,
-                            esDuplicado: true,
-                            error: 'Entrada ya registrada el ' + formatearFechaVisual(p.fecha) +
-                                   ' a las ' + regDelDia.horaEntrada +
-                                   '. Se descartó de pendientes.'
+                            ok: false, esDuplicado: true,
+                            error: 'Entrada ya registrada el ' + formatearFechaVisual(p.fecha) + ' a las ' + regDelDia.horaEntrada + '. Se descartó de pendientes.'
                         };
                     }
-
                     if (p.estado === 'Salida' && yaHaySalida) {
                         return {
-                            ok: false,
-                            esDuplicado: true,
-                            error: 'Salida ya registrada el ' + formatearFechaVisual(p.fecha) +
-                                   ' a las ' + regDelDia.horaSalida +
-                                   '. Se descartó de pendientes.'
+                            ok: false, esDuplicado: true,
+                            error: 'Salida ya registrada el ' + formatearFechaVisual(p.fecha) + ' a las ' + regDelDia.horaSalida + '. Se descartó de pendientes.'
                         };
                     }
-
                     if (yaHayEntrada && yaHaySalida) {
                         return {
-                            ok: false,
-                            esDuplicado: true,
-                            error: 'Jornada del ' + formatearFechaVisual(p.fecha) +
-                                   ' ya completa (Entrada: ' + regDelDia.horaEntrada +
-                                   ', Salida: ' + regDelDia.horaSalida + '). Se descartó de pendientes.'
+                            ok: false, esDuplicado: true,
+                            error: 'Jornada del ' + formatearFechaVisual(p.fecha) + ' ya completa. Se descartó de pendientes.'
                         };
                     }
-
                     if (esAusencia) {
                         return {
-                            ok: false,
-                            esDuplicado: true,
-                            error: 'El ' + formatearFechaVisual(p.fecha) +
-                                   ' ya tiene registro especial (' + regDelDia.estado + '). Se descartó de pendientes.'
+                            ok: false, esDuplicado: true,
+                            error: 'El ' + formatearFechaVisual(p.fecha) + ' ya tiene registro especial (' + regDelDia.estado + '). Se descartó de pendientes.'
                         };
                     }
-
                     if (p.estado === 'Salida' && !yaHayEntrada) {
                         return {
-                            ok: false,
-                            esDuplicado: true,
-                            error: 'No se puede registrar salida del ' + formatearFechaVisual(p.fecha) +
-                                   ': no existe entrada en el servidor. Se descartó de pendientes.'
+                            ok: false, esDuplicado: true,
+                            error: 'No se puede registrar salida del ' + formatearFechaVisual(p.fecha) + ': no existe entrada en el servidor.'
                         };
                     }
                 }
@@ -4936,7 +4953,7 @@ async function enviarPendienteAlServidor(p, intentos) {
             fotoFechaHora: p.fotoFechaHora || '',
             lat: p.lat, lng: p.lng,
             distanciaMetros: p.distanciaMetros,
-            esAdmin: false
+            esAdmin: !!p.esAdmin
         };
     }
 
@@ -5187,6 +5204,7 @@ function poblarSelectsMesAnio() {
 window.addEventListener('DOMContentLoaded', async function() {
     // FASE 1: Síncrono — UI lista al instante
     cargarConfiguracion();
+    poblarSelectsColaboradores();   // ← LLENA LOS SELECTS DESDE COLABORADORES
     prellenarFechaHora();
     poblarListaDiaLibre();
     poblarSelectsMesAnio();
