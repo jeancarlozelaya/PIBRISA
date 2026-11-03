@@ -283,19 +283,6 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        #syncTabs .nav-link {
-            background-color: #e9ecef; color: #7f8c8d;
-            border: 1px solid #dee2e6;
-            margin-right: 4px; border-radius: 8px 8px 0 0;
-        }
-
-        #syncTabs .nav-link:hover { background-color: #dde1e3; color: #2c3e50; }
-        #syncTabs .nav-link.active {
-            background-color: #ffffff !important; color: #2c3e50 !important;
-            font-weight: bold; border-top: 4px solid #3498db;
-        }
-        #syncTabs { border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; padding: 10px 10px 0 10px; }
-
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(255, 255, 255, 0.95);
@@ -459,9 +446,6 @@
         #mapa-gps.visible { display: block; }
         .leaflet-container { background: #e9ecef; border-radius: 8px; }
 
-        /* ====================================================== */
-        /* PREVIEW DE FOTO EN EL FORMULARIO (chiquito, NO enorme) */
-        /* ====================================================== */
         .foto-preview-mini {
             max-width: 140px;
             max-height: 140px;
@@ -478,9 +462,6 @@
 
         .foto-preview-mini.visible { display: inline-block; }
 
-        /* =========================================================== */
-        /* LINK DE FOTO EN HISTORIAL: marco fijo con object-fit: contain */
-        /* =========================================================== */
         .foto-link-historial {
             display: inline-flex;
             align-items: center;
@@ -514,7 +495,6 @@
             min-height: 60vh;
         }
 
-        /* La imagen del visor AHORA se ajusta correctamente al marco */
         #fotoViewerImg {
             max-width: 100%;
             max-height: 75vh;
@@ -568,10 +548,6 @@
             padding: 10px 20px;
             box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
         }
-
-        /* ============================================ */
-        /* ===== CÁMARA MODAL (igual que Supervisión) = */
-        /* ============================================ */
 
         .camera-modal .modal-dialog {
             max-width: 100%; height: 100vh; height: 100dvh;
@@ -918,9 +894,6 @@
         body.modo-oscuro .nav-tabs-custom .nav-link { background-color: #1e293b; color: #94a3b8; border-color: #334155; }
         body.modo-oscuro .nav-tabs-custom .nav-link.active { background-color: #1e293b; color: #f1f5f9; border-top-color: #60a5fa; border-bottom-color: #1e293b; }
 
-        body.modo-oscuro #syncTabs { background-color: #0f172a !important; border-bottom-color: #334155 !important; }
-        body.modo-oscuro #syncTabs .nav-link { background-color: #1e293b !important; color: #94a3b8 !important; border-color: #334155 !important; }
-        body.modo-oscuro #syncTabs .nav-link.active { background-color: #1e293b !important; color: #f1f5f9 !important; border-top-color: #60a5fa !important; }
         body.modo-oscuro .toolbar-lista { background-color: #0f172a !important; border-color: #334155 !important; color: #e2e8f0; }
         body.modo-oscuro .lista-scrollable { background-color: #0f172a !important; border-color: #334155 !important; }
 
@@ -964,12 +937,165 @@
         body.modo-oscuro #fotoViewerModal .modal-content { background: rgba(0, 0, 0, 0.97) !important; }
         body.modo-oscuro #fotoViewerImg { background: #0a0f1a; }
 
+        /* =========================================================== */
+        /* FIX MODO OSCURO: Tabla de detalle colaborador (Ajustes)      */
+        /* =========================================================== */
+        body.modo-oscuro #modalDetalleColaborador .modal-body.bg-light {
+            background-color: #1e293b !important;
+        }
+        body.modo-oscuro #modalDetalleColaborador .table {
+            color: #e2e8f0 !important;
+            background-color: transparent !important;
+        }
+        body.modo-oscuro #modalDetalleColaborador .table thead.sticky-top {
+            background-color: #0f172a !important;
+        }
+        body.modo-oscuro #modalDetalleColaborador .table thead th {
+            background-color: #0f172a !important;
+            color: #93c5fd !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #modalDetalleColaborador .table tbody td {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #modalDetalleColaborador .table tbody tr:hover td {
+            background-color: #334155 !important;
+        }
+        body.modo-oscuro #modalDetalleColaborador .table tbody tr.fila-historial-pendiente td {
+            background-color: #0c4a6e !important;
+            color: #e0f2fe !important;
+        }
+
+        /* =========================================================== */
+        /* FIX MODO OSCURO: Tabla resumen Dashboard                     */
+        /* =========================================================== */
+        body.modo-oscuro #dash-resumen .table { color: #e2e8f0 !important; }
+        body.modo-oscuro #dash-resumen .table thead th {
+            background-color: #0f172a !important;
+            color: #93c5fd !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #dash-resumen .table tbody td {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #dash-resumen .table tbody tr:hover td {
+            background-color: #334155 !important;
+        }
+
         .btn-close, .btn-close-white {
             filter: invert(1) grayscale(1) brightness(2) !important;
             opacity: 1 !important;
         }
 
         .btn-close:hover, .btn-close-white:hover { opacity: 0.75 !important; }
+
+        /* =========================================================== */
+        /* FIX MODO OSCURO: Tabla Historial de Asistencia               */
+        /* =========================================================== */
+        body.modo-oscuro #tab-historial .table,
+        body.modo-oscuro #tab-historial .table-responsive {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        body.modo-oscuro #tab-historial .table thead.sticky-top,
+        body.modo-oscuro #tab-historial .table thead {
+            background-color: #0f172a !important;
+        }
+        body.modo-oscuro #tab-historial .table thead th {
+            background-color: #0f172a !important;
+            color: #93c5fd !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody td {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr:hover td {
+            background-color: #334155 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-dia-libre td {
+            background-color: #064e3b !important;
+            color: #d1fae5 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-vacaciones td {
+            background-color: #1e3a8a !important;
+            color: #dbeafe !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incapacidad td {
+            background-color: #7f1d1d !important;
+            color: #fee2e2 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-permiso td {
+            background-color: #78350f !important;
+            color: #fef3c7 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-falta td {
+            background-color: #7f1d1d !important;
+            color: #fee2e2 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incompleto td {
+            background-color: #78350f !important;
+            color: #fef3c7 !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-pendiente td {
+            background-color: #0c4a6e !important;
+            color: #e0f2fe !important;
+        }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-faltante td {
+            background-color: #1e293b !important;
+            color: #94a3b8 !important;
+        }
+
+        /* =========================================================== */
+        /* FIX MODO OSCURO: Tabla Resumen por Colaborador (Dashboard)   */
+        /* =========================================================== */
+        body.modo-oscuro #dash-resumen .table,
+        body.modo-oscuro #dash-resumen .table-responsive {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        body.modo-oscuro #dash-resumen .table thead,
+        body.modo-oscuro #dash-resumen .table thead tr {
+            background-color: #0f172a !important;
+        }
+        body.modo-oscuro #dash-resumen .table thead th {
+            background-color: #0f172a !important;
+            color: #93c5fd !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #dash-resumen .table tbody td {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro #dash-resumen .table tbody tr:hover td {
+            background-color: #334155 !important;
+        }
+
+        /* =========================================================== */
+        /* REFUERZO GLOBAL: Cualquier tabla dentro de .card en oscuro   */
+        /* =========================================================== */
+        body.modo-oscuro .card .table {
+            color: #e2e8f0 !important;
+        }
+        body.modo-oscuro .card .table thead th {
+            background-color: #0f172a !important;
+            color: #93c5fd !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro .card .table tbody td {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+
+
+
     </style>
 </head>
 
@@ -1057,7 +1183,7 @@
     </div>
 </div>
 
-<!-- ========== MODAL GESTOR DE ENVÍOS ========== -->
+<!-- ========== MODAL GESTOR DE ENVÍOS (SOLO PENDIENTES) ========== -->
 <div class="modal fade" id="modalSync" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
@@ -1067,56 +1193,24 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-light p-0">
-                <ul class="nav nav-tabs nav-justified" id="syncTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active fw-bold py-3" id="tab-pendientes" data-bs-toggle="tab" data-bs-target="#content-pendientes" type="button" role="tab">
-                            <i class="fas fa-hourglass-half me-2 text-warning"></i>Pendientes
-                            <span class="badge bg-danger ms-1" id="badge-tab-pendientes" style="display:none">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-bold py-3 text-secondary" id="tab-sincronizados" data-bs-toggle="tab" data-bs-target="#content-sincronizados" type="button" role="tab">
-                            <i class="fas fa-check-circle me-2 text-success"></i>Sincronizados
-                        </button>
-                    </li>
-                </ul>
-                <div class="tab-content p-3" id="syncTabsContent">
-                    <div class="tab-pane fade show active" id="content-pendientes" role="tabpanel">
-                        <div class="alert alert-info border-0 shadow-sm py-2 mb-2">
-                            <small><i class="fas fa-info-circle me-1"></i> Selecciona los registros para sincronizar o eliminar.</small>
-                        </div>
-                        <div class="toolbar-lista">
-                            <div class="form-check mb-0">
-                                <input class="form-check-input" type="checkbox" id="check-all-pendientes">
-                                <label class="form-check-label small fw-bold" for="check-all-pendientes">Seleccionar Todos</label>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" id="btn-delete-pendientes-sel" disabled>
-                                <i class="fas fa-trash-alt me-1"></i> Eliminar Selección
-                            </button>
-                        </div>
-                        <div class="list-group list-group-flush lista-scrollable mb-2" id="lista-pendientes"></div>
-                        <div class="d-grid gap-2 mt-3">
-                            <button type="button" class="btn btn-primary rounded-pill" id="btn-sincronizar-seleccionados" disabled>
-                                <i class="fas fa-cloud-upload-alt me-2"></i>Sincronizar Seleccionados
-                            </button>
-                        </div>
+            <div class="modal-body bg-light p-3">
+                <div class="alert alert-info border-0 shadow-sm py-2 mb-2">
+                    <small><i class="fas fa-info-circle me-1"></i> Selecciona los registros para sincronizar o eliminar.</small>
+                </div>
+                <div class="toolbar-lista">
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" id="check-all-pendientes">
+                        <label class="form-check-label small fw-bold" for="check-all-pendientes">Seleccionar Todos</label>
                     </div>
-                    <div class="tab-pane fade" id="content-sincronizados" role="tabpanel">
-                        <div class="alert alert-light border shadow-sm text-muted py-2 mb-2">
-                            <small><i class="fas fa-check-double me-1"></i> Historial de envíos exitosos.</small>
-                        </div>
-                        <div class="toolbar-lista">
-                            <div class="form-check mb-0">
-                                <input class="form-check-input" type="checkbox" id="check-all-sincronizados">
-                                <label class="form-check-label small fw-bold" for="check-all-sincronizados">Seleccionar Todos</label>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" id="btn-delete-sincronizados-sel" disabled>
-                                <i class="fas fa-trash-alt me-1"></i> Eliminar Selección
-                            </button>
-                        </div>
-                        <div class="list-group list-group-flush lista-scrollable mb-2" id="lista-sincronizados"></div>
-                    </div>
+                    <button class="btn btn-outline-danger btn-sm" id="btn-delete-pendientes-sel" disabled>
+                        <i class="fas fa-trash-alt me-1"></i> Eliminar Selección
+                    </button>
+                </div>
+                <div class="list-group list-group-flush lista-scrollable mb-2" id="lista-pendientes"></div>
+                <div class="d-grid gap-2 mt-3">
+                    <button type="button" class="btn btn-primary rounded-pill" id="btn-sincronizar-seleccionados" disabled>
+                        <i class="fas fa-cloud-upload-alt me-2"></i>Sincronizar Seleccionados
+                    </button>
                 </div>
             </div>
         </div>
@@ -1192,7 +1286,7 @@
     </div>
 </div>
 
-<!-- ========== MODAL CÁMARA (idéntico a Reporte de Supervisión) ========== -->
+<!-- ========== MODAL CÁMARA ========== -->
 <div class="modal camera-modal" id="cameraCaptureModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1330,7 +1424,7 @@
     </div>
 </div>
 
-<!-- ========== MODAL DETALLE COLABORADOR ========== -->
+<!-- ========== MODAL DETALLE COLABORADOR (SIN COLUMNA "REGISTRADO POR") ========== -->
 <div class="modal fade" id="modalDetalleColaborador" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
@@ -1371,13 +1465,12 @@
                                 <th>Fecha</th>
                                 <th class="text-center">Horas</th>
                                 <th>Observaciones</th>
-                                <th>Registrado Por</th>
                                 <th class="text-center" id="th-detalle-acciones" style="width: 60px; display:none;">Acc.</th>
                             </tr>
                         </thead>
                         <tbody id="detalle-tabla">
                             <tr>
-                                <td colspan="5" class="text-center text-muted p-4">
+                                <td colspan="4" class="text-center text-muted p-4">
                                     <i class="fas fa-spinner fa-spin me-2"></i>Cargando...
                                 </td>
                             </tr>
@@ -2318,8 +2411,6 @@ function setTema(nuevo) {
     });
 }
 
-
-
 function aplicarEstadoAdminUI() {
     const ind = document.getElementById('indicador-admin');
     const btn = document.getElementById('btn-config-manager');
@@ -2388,38 +2479,34 @@ function inicializarMapaGPS() {
     const contenedor = document.getElementById('mapa-gps');
     if (!contenedor) return;
 
-    // Si ya existe un mapa en este contenedor, reutilizarlo (NO recrearlo)
-    if (mapaGPS) {
-        setTimeout(function() { mapaGPS.invalidateSize(); }, 200);
-        return;
+    if (!mapaGPS) {
+        mapaGPS = L.map('mapa-gps', {
+            zoomControl: true,
+            attributionControl: false
+        }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
+
+        L.tileLayer('https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=8583cb8c813242e8b1c1832272d20839', {
+            maxZoom: 20,
+            attribution: 'Powered by Geoapify | © OpenStreetMap contributors'
+        }).addTo(mapaGPS);
+
+        L.marker([PROYECTO_LAT, PROYECTO_LNG], {
+            title: 'Proyecto'
+        }).addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
+
+        circuloRadio = L.circle([PROYECTO_LAT, PROYECTO_LNG], {
+            color: '#3498db',
+            fillColor: '#3498db',
+            fillOpacity: 0.15,
+            radius: RADIO_METROS_PERMITIDO,
+            weight: 2
+        }).addTo(mapaGPS);
+
+        contenedor.classList.add('visible');
     }
 
-    mapaGPS = L.map('mapa-gps', {
-        zoomControl: true,
-        attributionControl: false
-    }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
-
-    L.tileLayer('https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=8583cb8c813242e8b1c1832272d20839', {
-        maxZoom: 20,
-        attribution: 'Powered by Geoapify | © OpenStreetMap contributors'
-    }).addTo(mapaGPS);
-
-    L.marker([PROYECTO_LAT, PROYECTO_LNG], {
-        title: 'Proyecto'
-    }).addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
-
-    circuloRadio = L.circle([PROYECTO_LAT, PROYECTO_LNG], {
-        color: '#3498db',
-        fillColor: '#3498db',
-        fillOpacity: 0.15,
-        radius: RADIO_METROS_PERMITIDO,
-        weight: 2
-    }).addTo(mapaGPS);
-
-    contenedor.classList.add('visible');
     setTimeout(function() { mapaGPS.invalidateSize(); }, 200);
 }
-
 
 function actualizarMarcadorUsuario(lat, lng, dentroRango) {
     if (!mapaGPS) return;
@@ -2492,20 +2579,18 @@ function obtenerUbicacionGPS() {
 }
 
 // =========================================================================
-// CÁMARA (usa querySelector nativo, sin jQuery)
+// CÁMARA
 // =========================================================================
 
 function openCamera(previewId) {
     currentPreviewId = previewId;
     isMobileDevice = esDispositivoMovil();
 
-    // iOS PWA no soporta getUserMedia → fallback a input file nativo (limitación de Apple)
     if (esIOS() && estaEnPWAInstalada()) {
         dispararInputFotoEstatico(previewId);
         return;
     }
 
-    // SIEMPRE usar la cámara de la app
     openCameraModal();
 }
 
@@ -2616,7 +2701,6 @@ function openCameraModal() {
     setTimeout(arrancarCamara, 400);
 }
 
-
 async function initializeCamera() {
     const loadingEl = document.getElementById('camera-loading-overlay');
     const msgEl = document.getElementById('camera-message');
@@ -2710,7 +2794,6 @@ async function initializeCamera() {
         }
     }
 }
-
 
 function showCameraError(message) {
     const msgEl = document.getElementById('camera-message');
@@ -2946,7 +3029,7 @@ async function reintentarFotoCapturada() {
     const loadingEl = document.getElementById('camera-loading-overlay');
     if (loadingEl) {
         loadingEl.classList.remove('hidden');
-        loadingEl.style.display = 'flex';
+        loadingEl.style.display = '';
     }
     await initializeCamera();
     const controlsEl = document.getElementById('camera-controls-captura');
@@ -3272,7 +3355,7 @@ function prellenarFechaHora() {
 }
 
 // =========================================================================
-// ENVÍO DE REGISTRO
+// ENVÍO DE REGISTRO — OFFLINE FIRST
 // =========================================================================
 
 async function confirmarEnvio() {
@@ -3287,150 +3370,110 @@ async function confirmarEnvio() {
 async function enviarAsistencia() {
     if (enviandoRegistro) return;
 
-    const fecha = document.getElementById('fecha').value;
-    const estado = document.getElementById('estado').value;
-    const hora = document.getElementById('hora').value;
-    const colaborador = document.getElementById('colaborador').value;
-
-    if (esFechaFutura(fecha)) {
-        Swal.fire('Fecha inválida', 'No puedes registrar asistencia para fechas futuras.', 'warning');
-        return;
-    }
-    if (!hora) {
-        Swal.fire('Hora requerida', 'Debes ingresar la hora.', 'warning');
-        return;
-    }
-    if (!gpsState.ok) {
-        Swal.fire('GPS requerido', 'Debes estar dentro del rango del proyecto.', 'warning');
-        return;
-    }
-    if (!fotoCapturaActual) {
-        Swal.fire('Foto requerida', 'Debes tomar una fotografía.', 'warning');
-        return;
-    }
-
-    enviandoRegistro = true;
     const btn = document.getElementById('enviarBtn');
     const originalBtn = btn.innerHTML;
+    enviandoRegistro = true;
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando...';
-
-    // Validación anti-duplicado (solo si NO es admin)
-    if (!appConfig.modoAdmin) {
-        try {
-            const pendientes = await getPendientes();
-            const pendientesMismoDia = pendientes.filter(function(p) {
-                return p.tipoOperacion === 'asistencia' && p.colaborador === colaborador && p.fecha === fecha;
-            });
-
-            const yaHayEntradaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Entrada'; });
-            const yaHaySalidaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Salida'; });
-
-            let registrosServidor = [];
-            try {
-                const partes = fecha.split('-');
-                const resp = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'obtenerRegistros', colaborador: colaborador, anio: partes[0], mes: partes[1] })
-                }).then(function(r) { return r.json(); });
-                if (resp.status === 'success') registrosServidor = resp.data.registros || [];
-            } catch (e) {}
-
-            const regDelDia = registrosServidor.find(function(r) { return r.fecha === fecha; });
-            const yaHayEntradaServidor = regDelDia && regDelDia.horaEntrada && !esMarcadorAusencia(regDelDia.horaEntrada);
-            const yaHaySalidaServidor = regDelDia && regDelDia.horaSalida;
-            const esAusenciaServidor = regDelDia && esMarcadorAusencia(regDelDia.horaEntrada);
-
-            const yaHayEntrada = yaHayEntradaPendiente || yaHayEntradaServidor;
-            const yaHaySalida = yaHaySalidaPendiente || yaHaySalidaServidor;
-
-            if (estado === 'Entrada' && yaHayEntrada) {
-                let horaTexto = 'antes';
-                if (yaHayEntradaServidor && regDelDia.horaEntrada) horaTexto = 'a las ' + regDelDia.horaEntrada;
-                else if (yaHayEntradaPendiente) {
-                    const pendEnt = pendientesMismoDia.find(function(p) { return p.estado === 'Entrada'; });
-                    if (pendEnt) horaTexto = 'a las ' + pendEnt.hora + ' (pendiente)';
-                }
-                Swal.fire({ icon: 'warning', title: 'Ya registraste tu entrada', html: '<p>Ya registraste tu <b>ENTRADA</b> hoy ' + horaTexto + '.</p><p class="text-muted small">Si te equivocaste, pide al administrador que edite el registro.</p>' });
-                return;
-            }
-
-            if (yaHayEntrada && yaHaySalida) {
-                let detalle = (regDelDia && regDelDia.horaEntrada && regDelDia.horaSalida)
-                    ? '<p>Entrada: <b>' + regDelDia.horaEntrada + '</b> · Salida: <b>' + regDelDia.horaSalida + '</b></p>'
-                    : '<p>Ya tienes entrada y salida registradas hoy.</p>';
-                Swal.fire({ icon: 'warning', title: 'Ya completaste tu jornada', html: detalle + '<p class="text-muted small">Si necesitas corregir algo, pide al administrador que edite el registro.</p>' });
-                return;
-            }
-
-            if (estado === 'Salida' && yaHaySalida) {
-                Swal.fire({ icon: 'warning', title: 'Ya registraste tu salida', html: '<p>Ya registraste tu <b>SALIDA</b> hoy.</p><p class="text-muted small">Si te equivocaste, pide al administrador que edite el registro.</p>' });
-                return;
-            }
-
-            if (esAusenciaServidor) {
-                Swal.fire({ icon: 'info', title: 'Ya tienes un registro especial hoy', html: '<p>Ya tienes: <b>' + regDelDia.estado + '</b> para el ' + formatearFechaVisual(fecha) + '.</p><p class="text-muted small">Pide al administrador si necesitas cambiar el tipo.</p>' });
-                return;
-            }
-        } catch (e) {}
-    }
-
-    if (appConfig.modoAdmin) {
-        const pendientes = await getPendientes();
-        const pendientesMismoDia = pendientes.filter(function(p) {
-            return p.tipoOperacion === 'asistencia' && p.colaborador === colaborador && p.fecha === fecha;
-        });
-        if (pendientesMismoDia.length > 0) {
-            const warning = await Swal.fire({
-                icon: 'warning',
-                title: 'Registro existente detectado',
-                html: '<p>Ya existe(n) ' + pendientesMismoDia.length + ' registro(s) pendiente(s) para este colaborador y fecha.</p><p class="small text-muted">Si continúas, se agregará otro registro. ¿Deseas continuar?</p>',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, continuar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#f39c12'
-            });
-            if (!warning.isConfirmed) {
-                enviandoRegistro = false;
-                btn.innerHTML = originalBtn;
-                validarCamposRegistro();
-                return;
-            }
-        }
-    }
-
-    btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Confirmar';
-
-    const confirm = await Swal.fire({
-        title: '¿Guardar registro?',
-        html:
-            '<div class="text-start">' +
-            '<b>Colaborador:</b> ' + colaborador + '<br>' +
-            '<b>Fecha:</b> ' + formatearFechaVisual(fecha) + '<br>' +
-            '<b>Hora:</b> ' + hora24a12(hora) + '<br>' +
-            '<b>Estado:</b> ' + estado + '<br>' +
-            '<b>Ubicación:</b> ' + gpsState.lat.toFixed(6) + ', ' + gpsState.lng.toFixed(6) + ' (' + gpsState.distancia.toFixed(0) + ' m)<br>' +
-            '<b>Foto:</b> Sí (' + fotoCapturaActual.fechaHora + ')' +
-            '</div>' +
-            '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, guardar',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#28a745'
-    });
-
-    if (!confirm.isConfirmed) {
-        enviandoRegistro = false;
-        btn.innerHTML = originalBtn;
-        validarCamposRegistro();
-        return;
-    }
-
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
 
     try {
+        const fecha = document.getElementById('fecha').value;
+        const estado = document.getElementById('estado').value;
+        const hora = document.getElementById('hora').value;
+        const colaborador = document.getElementById('colaborador').value;
+
+        if (esFechaFutura(fecha)) {
+            await Swal.fire('Fecha inválida', 'No puedes registrar asistencia para fechas futuras.', 'warning');
+            return;
+        }
+        if (!hora) {
+            await Swal.fire('Hora requerida', 'Debes ingresar la hora.', 'warning');
+            return;
+        }
+        if (!gpsState.ok) {
+            await Swal.fire('GPS requerido', 'Debes estar dentro del rango del proyecto.', 'warning');
+            return;
+        }
+        if (!fotoCapturaActual) {
+            await Swal.fire('Foto requerida', 'Debes tomar una fotografía.', 'warning');
+            return;
+        }
+
+        let pendientes = [];
+        try {
+            pendientes = await getPendientes();
+        } catch (e) {
+            console.warn('No se pudo leer pendientes locales:', e);
+        }
+
+        const pendientesMismoDia = pendientes.filter(function(p) {
+            return p.tipoOperacion === 'asistencia'
+                && p.colaborador === colaborador
+                && p.fecha === fecha;
+        });
+
+        const yaHayEntradaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Entrada'; });
+        const yaHaySalidaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Salida'; });
+
+        if (estado === 'Entrada' && yaHayEntradaPendiente) {
+            const pendEnt = pendientesMismoDia.find(function(p) { return p.estado === 'Entrada'; });
+            const horaTexto = pendEnt ? ('a las ' + pendEnt.hora + ' (pendiente)') : '';
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Entrada ya registrada localmente',
+                html: '<p>Ya tienes una <b>ENTRADA</b> pendiente hoy ' + horaTexto + '.</p>' +
+                      '<p class="text-muted small">Si fue un error, elimínala desde el Gestor de Envíos (botón de la nube).</p>'
+            });
+            return;
+        }
+
+        if (estado === 'Salida' && yaHaySalidaPendiente) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Salida ya registrada localmente',
+                html: '<p>Ya tienes una <b>SALIDA</b> pendiente hoy.</p>' +
+                      '<p class="text-muted small">Si fue un error, elimínala desde el Gestor de Envíos (botón de la nube).</p>'
+            });
+            return;
+        }
+
+        if (estado === 'Salida' && !yaHayEntradaPendiente) {
+            const conf = await Swal.fire({
+                icon: 'question',
+                title: 'No hay entrada pendiente',
+                html: '<p>No tienes una <b>ENTRADA</b> pendiente para hoy en este dispositivo.</p>' +
+                      '<p class="small text-muted">Puede que ya la hayas sincronizado. ¿Registrar la salida de todas formas?</p>',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, registrar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#28a745'
+            });
+            if (!conf.isConfirmed) return;
+        }
+
+        const confirm = await Swal.fire({
+            title: '¿Guardar registro?',
+            html:
+                '<div class="text-start">' +
+                '<b>Colaborador:</b> ' + colaborador + '<br>' +
+                '<b>Fecha:</b> ' + formatearFechaVisual(fecha) + '<br>' +
+                '<b>Hora:</b> ' + hora24a12(hora) + '<br>' +
+                '<b>Estado:</b> ' + estado + '<br>' +
+                '<b>Ubicación:</b> ' + gpsState.lat.toFixed(6) + ', ' + gpsState.lng.toFixed(6) + ' (' + gpsState.distancia.toFixed(0) + ' m)<br>' +
+                '<b>Foto:</b> Sí (' + fotoCapturaActual.fechaHora + ')' +
+                '</div>' +
+                '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente. Se validará al sincronizar.</p>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#28a745'
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
         await addPendiente({
             tipoOperacion: 'asistencia',
             colaborador: colaborador,
@@ -3446,26 +3489,28 @@ async function enviarAsistencia() {
             creadoEn: new Date().toISOString()
         });
 
-        await actualizarContadorPendientes();
+        try { await actualizarContadorPendientes(); } catch (e) { console.warn(e); }
 
         await Swal.fire({
             icon: 'success',
             title: '¡Guardado!',
-            html: '<p>El registro quedó en pendientes.</p><p class="small text-muted">Sincronízalo desde el botón de la nube.</p>',
+            html: '<p>El registro quedó en pendientes.</p><p class="small text-muted">Sincronízalo desde el botón de la nube cuando tengas internet.</p>',
             timer: 2000,
             showConfirmButton: false
         });
 
-        document.getElementById('estado').value = '';
-        descartarFoto();
-        await obtenerUbicacionGPS();
-        prellenarFechaHora();
+        try { document.getElementById('estado').value = ''; } catch (e) {}
+        try { descartarFoto(); } catch (e) {}
+        try { await obtenerUbicacionGPS(); } catch (e) {}
+        try { prellenarFechaHora(); } catch (e) {}
     } catch (err) {
-        Swal.fire('Error', 'No se pudo guardar: ' + err.message, 'error');
+        console.error('Error en enviarAsistencia:', err);
+        Swal.fire('Error', 'No se pudo guardar: ' + (err.message || err), 'error');
     } finally {
         enviandoRegistro = false;
         btn.innerHTML = originalBtn;
-        validarCamposRegistro();
+        btn.disabled = false;
+        try { validarCamposRegistro(); } catch (e) {}
     }
 }
 
@@ -3486,30 +3531,25 @@ async function enviarDiaLibre() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
 
-    const confirm = await Swal.fire({
-        title: '¿Registrar Día Libre?',
-        html:
-            '<div class="text-start">' +
-            '<b>Fecha:</b> ' + formatearFechaVisual(fecha) + '<br>' +
-            '<b>Colaboradores (' + seleccionados.length + '):</b>' +
-            '<ul class="small mt-1 mb-0">' + seleccionados.map(function(c) { return '<li>' + c + '</li>'; }).join('') + '</ul>' +
-            '</div>' +
-            '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, registrar',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#28a745'
-    });
-
-    if (!confirm.isConfirmed) {
-        enviandoRegistro = false;
-        btn.innerHTML = originalBtn;
-        validarCamposRegistro();
-        return;
-    }
-
     try {
+        const confirm = await Swal.fire({
+            title: '¿Registrar Día Libre?',
+            html:
+                '<div class="text-start">' +
+                '<b>Fecha:</b> ' + formatearFechaVisual(fecha) + '<br>' +
+                '<b>Colaboradores (' + seleccionados.length + '):</b>' +
+                '<ul class="small mt-1 mb-0">' + seleccionados.map(function(c) { return '<li>' + c + '</li>'; }).join('') + '</ul>' +
+                '</div>' +
+                '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#28a745'
+        });
+
+        if (!confirm.isConfirmed) return;
+
         await addPendiente({
             tipoOperacion: 'dia_libre_multiple',
             colaboradores: seleccionados,
@@ -3531,7 +3571,8 @@ async function enviarDiaLibre() {
     } finally {
         enviandoRegistro = false;
         btn.innerHTML = originalBtn;
-        validarCamposRegistro();
+        btn.disabled = false;
+        try { validarCamposRegistro(); } catch (e) {}
     }
 }
 
@@ -3562,32 +3603,27 @@ async function enviarRango(tipoKey) {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
 
-    const confirm = await Swal.fire({
-        title: '¿Registrar ' + tipoInfo.label + '?',
-        html:
-            '<div class="text-start">' +
-            '<b>Colaborador:</b> ' + colaborador + '<br>' +
-            '<b>Tipo:</b> ' + tipoInfo.label + '<br>' +
-            '<b>Rango:</b> ' + formatearFechaVisual(desde) + ' → ' + formatearFechaVisual(hasta) + '<br>' +
-            '<b>Total:</b> ' + dias + ' día(s)<br>' +
-            '<b>Cuenta como ausentismo:</b> ' + (tipoInfo.esAusencia ? 'Sí' : 'No') +
-            '</div>' +
-            '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, registrar',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#f39c12'
-    });
-
-    if (!confirm.isConfirmed) {
-        enviandoRegistro = false;
-        btn.innerHTML = originalBtn;
-        validarCamposRegistro();
-        return;
-    }
-
     try {
+        const confirm = await Swal.fire({
+            title: '¿Registrar ' + tipoInfo.label + '?',
+            html:
+                '<div class="text-start">' +
+                '<b>Colaborador:</b> ' + colaborador + '<br>' +
+                '<b>Tipo:</b> ' + tipoInfo.label + '<br>' +
+                '<b>Rango:</b> ' + formatearFechaVisual(desde) + ' → ' + formatearFechaVisual(hasta) + '<br>' +
+                '<b>Total:</b> ' + dias + ' día(s)<br>' +
+                '<b>Cuenta como ausentismo:</b> ' + (tipoInfo.esAusencia ? 'Sí' : 'No') +
+                '</div>' +
+                '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#f39c12'
+        });
+
+        if (!confirm.isConfirmed) return;
+
         await addPendiente({
             tipoOperacion: 'ausencia_rango',
             colaborador: colaborador,
@@ -3613,10 +3649,10 @@ async function enviarRango(tipoKey) {
     } finally {
         enviandoRegistro = false;
         btn.innerHTML = originalBtn;
-        validarCamposRegistro();
+        btn.disabled = false;
+        try { validarCamposRegistro(); } catch (e) {}
     }
 }
-
 
 // =========================================================================
 // HISTORIAL
@@ -4301,7 +4337,7 @@ async function verDetalleColaborador(colaborador) {
     if (!colaborador) return;
 
     document.getElementById('detalle-nombre-colaborador').textContent = colaborador;
-    document.getElementById('detalle-tabla').innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando historial...</td></tr>';
+    document.getElementById('detalle-tabla').innerHTML = '<tr><td colspan="4" class="text-center text-muted p-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando historial...</td></tr>';
     document.getElementById('detalle-total-pos').textContent = '0.00';
     document.getElementById('detalle-total-neg').textContent = '0.00';
     document.getElementById('detalle-balance').textContent = '0.00';
@@ -4357,7 +4393,7 @@ async function verDetalleColaborador(colaborador) {
         tbody.innerHTML = '';
 
         if (ajustesCombinados.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-3">Este colaborador no tiene ajustes registrados.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted p-3">Este colaborador no tiene ajustes registrados.</td></tr>';
             return;
         }
 
@@ -4381,13 +4417,12 @@ async function verDetalleColaborador(colaborador) {
                 '<td class="fw-bold">' + formatearFechaVisual(a.fecha) + '</td>' +
                 '<td class="text-center"><span class="' + claseBadge + '">' + signo + a.horas + ' h</span>' + badgePend + '</td>' +
                 '<td>' + (a.observaciones || '<span class="text-muted">—</span>') + '</td>' +
-                '<td>' + (a.registradoPor || '<span class="text-muted">—</span>') + '</td>' +
                 acc;
             tbody.appendChild(tr);
         });
     } catch (e) {
         console.error(e);
-        document.getElementById('detalle-tabla').innerHTML = '<tr><td colspan="5" class="text-center text-danger p-3">Error: ' + e.message + '</td></tr>';
+        document.getElementById('detalle-tabla').innerHTML = '<tr><td colspan="4" class="text-center text-danger p-3">Error: ' + e.message + '</td></tr>';
     }
 }
 
@@ -4641,65 +4676,41 @@ function descripcionFecha(p) {
 }
 
 async function renderizarModalPendientes() {
-    const pendientes = (await getPendientes(false)).sort(function(a, b) { return new Date(b.creadoEn) - new Date(a.creadoEn); });
-    const sincronizados = (await getSincronizados()).sort(function(a, b) { return new Date(b.fechaSync) - new Date(a.fechaSync); });
+    const pendientes = (await getPendientes(false))
+        .sort(function(a, b) { return new Date(b.creadoEn) - new Date(a.creadoEn); });
 
     const $pend = document.getElementById('lista-pendientes');
-    const $sinc = document.getElementById('lista-sincronizados');
-    const $badgeTab = document.getElementById('badge-tab-pendientes');
-
     $pend.innerHTML = '';
-    $sinc.innerHTML = '';
-    document.getElementById('check-all-pendientes').checked = false;
-    document.getElementById('check-all-sincronizados').checked = false;
-    actualizarBotonesSeleccion();
 
-    if (pendientes.length > 0) { $badgeTab.textContent = pendientes.length; $badgeTab.style.display = ''; }
-    else { $badgeTab.style.display = 'none'; }
+    const chkAll = document.getElementById('check-all-pendientes');
+    if (chkAll) chkAll.checked = false;
+    actualizarBotonesSeleccion();
 
     if (pendientes.length === 0) {
         $pend.innerHTML = '<div class="text-center p-4 text-muted small">No hay registros pendientes.</div>';
-    } else {
-        pendientes.forEach(function(p) {
-            const fechaObj = new Date(p.creadoEn);
-            const fechaStr = fechaObj.toLocaleDateString() + ' ' + fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const titulo = p.tipoOperacion === 'dia_libre_multiple' ? (p.colaboradores.length + ' colaboradores') : (p.colaborador || '—');
-            const div = document.createElement('div');
-            div.className = 'list-group-item d-flex align-items-center';
-            div.innerHTML =
-                '<input class="form-check-input check-pendiente me-2" type="checkbox" value="' + p.id + '">' +
-                '<div class="flex-grow-1 overflow-hidden me-2">' +
-                '<h6 class="mb-0 fw-bold text-dark text-truncate">' + titulo + '</h6>' +
-                '<small class="text-muted d-block">' + iconoOperacion(p.tipoOperacion) + labelOperacion(p) + '</small>' +
-                '<small class="text-muted d-block"><i class="fas fa-calendar-alt me-1"></i>' + descripcionFecha(p) + '</small>' +
-                '<small class="text-muted"><i class="fas fa-clock me-1"></i>Guardado: ' + fechaStr + '</small>' +
-                '</div>' +
-                '<button class="btn btn-sm btn-outline-danger btn-delete-pend" data-id="' + p.id + '"><i class="fas fa-trash"></i></button>';
-            $pend.appendChild(div);
-        });
+        return;
     }
 
-    if (sincronizados.length === 0) {
-        $sinc.innerHTML = '<div class="text-center p-4 text-muted small">Historial vacío.</div>';
-    } else {
-        sincronizados.slice(0, 100).forEach(function(s) {
-            const fechaObj = new Date(s.fechaSync);
-            const fechaStr = fechaObj.toLocaleDateString() + ' ' + fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const titulo = s.tipoOperacion === 'dia_libre_multiple' ? ((s.colaboradores ? s.colaboradores.length : 0) + ' colaboradores') : (s.colaborador || '—');
-            const div = document.createElement('div');
-            div.className = 'list-group-item d-flex align-items-center';
-            div.innerHTML =
-                '<input class="form-check-input check-sincronizado me-2" type="checkbox" value="' + s.id + '">' +
-                '<div class="flex-grow-1 overflow-hidden me-2">' +
-                '<h6 class="mb-0 text-dark text-truncate">' + titulo + '</h6>' +
-                '<small class="text-success d-block"><i class="fas fa-check-double me-1"></i>' + labelOperacion(s) + '</small>' +
-                '<small class="text-muted d-block"><i class="fas fa-calendar-alt me-1"></i>' + descripcionFecha(s) + '</small>' +
-                '<small class="text-muted"><i class="fas fa-clock me-1"></i>' + fechaStr + '</small>' +
-                '</div>' +
-                '<button class="btn btn-sm btn-outline-danger btn-delete-sinc" data-id="' + s.id + '"><i class="fas fa-trash"></i></button>';
-            $sinc.appendChild(div);
-        });
-    }
+    pendientes.forEach(function(p) {
+        const fechaObj = new Date(p.creadoEn);
+        const fechaStr = fechaObj.toLocaleDateString() + ' ' + fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const titulo = p.tipoOperacion === 'dia_libre_multiple'
+            ? (p.colaboradores.length + ' colaboradores')
+            : (p.colaborador || '—');
+
+        const div = document.createElement('div');
+        div.className = 'list-group-item d-flex align-items-center';
+        div.innerHTML =
+            '<input class="form-check-input check-pendiente me-2" type="checkbox" value="' + p.id + '">' +
+            '<div class="flex-grow-1 overflow-hidden me-2">' +
+            '<h6 class="mb-0 fw-bold text-dark text-truncate">' + titulo + '</h6>' +
+            '<small class="text-muted d-block">' + iconoOperacion(p.tipoOperacion) + labelOperacion(p) + '</small>' +
+            '<small class="text-muted d-block"><i class="fas fa-calendar-alt me-1"></i>' + descripcionFecha(p) + '</small>' +
+            '<small class="text-muted"><i class="fas fa-clock me-1"></i>Guardado: ' + fechaStr + '</small>' +
+            '</div>' +
+            '<button class="btn btn-sm btn-outline-danger btn-delete-pend" data-id="' + p.id + '"><i class="fas fa-trash"></i></button>';
+        $pend.appendChild(div);
+    });
 
     $pend.querySelectorAll('.btn-delete-pend').forEach(function(btn) {
         btn.onclick = async function() {
@@ -4709,30 +4720,103 @@ async function renderizarModalPendientes() {
             renderizarModalPendientes();
         };
     });
-    $sinc.querySelectorAll('.btn-delete-sinc').forEach(function(btn) {
-        btn.onclick = async function() {
-            const id = parseInt(btn.dataset.id, 10);
-            await deleteSincronizado(id);
-            renderizarModalPendientes();
-        };
+
+    $pend.querySelectorAll('.check-pendiente').forEach(function(cb) {
+        cb.onchange = actualizarBotonesSeleccion;
     });
-    $$('.check-pendiente, .check-sincronizado').forEach(function(cb) { cb.onchange = actualizarBotonesSeleccion; });
 }
 
 function actualizarBotonesSeleccion() {
     const pend = $$('.check-pendiente:checked').length;
-    const sinc = $$('.check-sincronizado:checked').length;
     const b1 = document.getElementById('btn-sincronizar-seleccionados');
     const b2 = document.getElementById('btn-delete-pendientes-sel');
-    const b3 = document.getElementById('btn-delete-sincronizados-sel');
     if (b1) b1.disabled = pend === 0;
     if (b2) b2.disabled = pend === 0;
-    if (b3) b3.disabled = sinc === 0;
 }
 
 async function enviarPendienteAlServidor(p, intentos) {
     intentos = intentos || 1;
     let body = null;
+
+    if (p.tipoOperacion === 'asistencia') {
+        try {
+            const partes = p.fecha.split('-');
+            const anio = partes[0];
+            const mes = partes[1];
+
+            const checkResp = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'obtenerRegistros',
+                    colaborador: p.colaborador,
+                    anio: anio,
+                    mes: mes
+                })
+            }).then(function(r) { return r.json(); });
+
+            if (checkResp.status === 'success') {
+                const regs = checkResp.data.registros || [];
+                const regDelDia = regs.find(function(r) { return r.fecha === p.fecha; });
+
+                if (regDelDia) {
+                    const esAusencia = esMarcadorAusencia(regDelDia.horaEntrada);
+                    const yaHayEntrada = regDelDia.horaEntrada && !esAusencia;
+                    const yaHaySalida = regDelDia.horaSalida && !esAusencia;
+
+                    if (p.estado === 'Entrada' && yaHayEntrada) {
+                        return {
+                            ok: false,
+                            esDuplicado: true,
+                            error: 'Entrada ya registrada el ' + formatearFechaVisual(p.fecha) +
+                                   ' a las ' + regDelDia.horaEntrada +
+                                   '. Se descartó de pendientes.'
+                        };
+                    }
+
+                    if (p.estado === 'Salida' && yaHaySalida) {
+                        return {
+                            ok: false,
+                            esDuplicado: true,
+                            error: 'Salida ya registrada el ' + formatearFechaVisual(p.fecha) +
+                                   ' a las ' + regDelDia.horaSalida +
+                                   '. Se descartó de pendientes.'
+                        };
+                    }
+
+                    if (yaHayEntrada && yaHaySalida) {
+                        return {
+                            ok: false,
+                            esDuplicado: true,
+                            error: 'Jornada del ' + formatearFechaVisual(p.fecha) +
+                                   ' ya completa (Entrada: ' + regDelDia.horaEntrada +
+                                   ', Salida: ' + regDelDia.horaSalida + '). Se descartó de pendientes.'
+                        };
+                    }
+
+                    if (esAusencia) {
+                        return {
+                            ok: false,
+                            esDuplicado: true,
+                            error: 'El ' + formatearFechaVisual(p.fecha) +
+                                   ' ya tiene registro especial (' + regDelDia.estado + '). Se descartó de pendientes.'
+                        };
+                    }
+
+                    if (p.estado === 'Salida' && !yaHayEntrada) {
+                        return {
+                            ok: false,
+                            esDuplicado: true,
+                            error: 'No se puede registrar salida del ' + formatearFechaVisual(p.fecha) +
+                                   ': no existe entrada en el servidor. Se descartó de pendientes.'
+                        };
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Validación previa falló, se intentará envío directo:', e);
+        }
+    }
 
     if (p.tipoOperacion === 'dia_libre_multiple') {
         body = { action: 'registrarDiaLibreMultiple', colaboradores: p.colaboradores, fecha: p.fecha };
@@ -4775,7 +4859,9 @@ async function enviarPendienteAlServidor(p, intentos) {
         if (data.status === 'success') {
             return { ok: true, data: data.data };
         } else {
-            return { ok: false, error: data.message || 'Error del servidor' };
+            const msg = data.message || 'Error del servidor';
+            const esDup = /ya registrad|ya completa|ya tiene registro|ya existe|no existe entrada/i.test(msg);
+            return { ok: false, esDuplicado: esDup, error: msg };
         }
     } catch (err) {
         if (intentos < 2) {
@@ -4785,7 +4871,7 @@ async function enviarPendienteAlServidor(p, intentos) {
         let msg = 'Error de red';
         if (err.name === 'AbortError') msg = 'Tiempo de espera agotado';
         else if (err.message) msg = err.message;
-        return { ok: false, error: msg };
+        return { ok: false, esDuplicado: false, error: msg };
     }
 }
 
@@ -4802,17 +4888,17 @@ async function sincronizarSeleccionados() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
 
-    let ok = 0, err = 0, conflictos = 0;
+    let ok = 0, err = 0, descartados = 0;
     const erroresDetalle = [];
+    const descartadosDetalle = [];
 
     for (let i = 0; i < aEnviar.length; i++) {
         const p = aEnviar[i];
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + (i + 1) + '/' + aEnviar.length;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
 
         const resultado = await enviarPendienteAlServidor(p, 1);
 
         if (resultado.ok) {
-            if (resultado.data.accion === 'conflicto_entrada_abierta') conflictos++;
             try {
                 await addSincronizado(Object.assign({}, p, {
                     accion: resultado.data.accion || 'ok',
@@ -4822,10 +4908,42 @@ async function sincronizarSeleccionados() {
                 }));
                 await deletePendiente(p.id);
                 ok++;
-            } catch (e) { err++; }
+            } catch (e) {
+                err++;
+                erroresDetalle.push((p.colaborador || 'Día Libre') + ' → Error guardando en sincronizados: ' + e.message);
+            }
+        } else if (resultado.esDuplicado) {
+            try {
+                await addSincronizado(Object.assign({}, p, {
+                    accion: 'descartado_duplicado',
+                    message: resultado.error || 'Ya existía en el servidor',
+                    fechaSync: new Date().toISOString()
+                }));
+                await deletePendiente(p.id);
+                descartados++;
+
+                let descripcion = p.colaborador || 'Día Libre';
+                if (p.tipoOperacion === 'asistencia') {
+                    descripcion += ' [' + p.estado + ' ' + p.hora + ' del ' + formatearFechaVisual(p.fecha) + ']';
+                }
+                descartadosDetalle.push(descripcion + ' → ' + resultado.error);
+            } catch (e) {
+                err++;
+                erroresDetalle.push((p.colaborador || 'Día Libre') + ' → Error descartando duplicado: ' + e.message);
+            }
         } else {
             err++;
-            erroresDetalle.push((p.colaborador || 'Día Libre') + ' (' + p.tipoOperacion + '): ' + resultado.error);
+            let descripcion = p.colaborador || 'Día Libre';
+            if (p.tipoOperacion === 'asistencia') {
+                descripcion += ' [' + p.estado + ' ' + p.hora + ' del ' + formatearFechaVisual(p.fecha) + ']';
+            } else if (p.tipoOperacion === 'ajuste_horas') {
+                descripcion += ' [ajuste ' + (p.horas > 0 ? '+' : '') + p.horas + 'h]';
+            } else if (p.tipoOperacion === 'dia_libre_multiple') {
+                descripcion += ' [día libre del ' + formatearFechaVisual(p.fecha) + ']';
+            } else if (p.tipoOperacion === 'ausencia_rango') {
+                descripcion += ' [' + p.tipoLabel + ']';
+            }
+            erroresDetalle.push(descripcion + ' → ' + resultado.error);
         }
 
         if (i < aEnviar.length - 1) {
@@ -4838,18 +4956,39 @@ async function sincronizarSeleccionados() {
     await actualizarContadorPendientes();
     await renderizarModalPendientes();
 
-    if (err === 0 && conflictos === 0) {
-        Swal.fire({ icon: 'success', title: 'Sincronización completa', text: ok + ' operación(es) sincronizadas.', timer: 1800, showConfirmButton: false });
+    if (err === 0 && descartados === 0) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Sincronización completa',
+            text: ok + ' operación(es) sincronizadas.',
+            timer: 1800,
+            showConfirmButton: false
+        });
     } else {
-        let html = '<p><b>Exitosas:</b> ' + ok + '</p>';
-        if (conflictos > 0) html += '<p><b>Con conflictos:</b> ' + conflictos + '</p>';
-        if (err > 0) html += '<p><b>Errores:</b> ' + err + '</p>';
+        let html = '<div class="text-start">';
+        if (ok > 0) html += '<p><b>✅ Sincronizadas:</b> ' + ok + '</p>';
+        if (descartados > 0) html += '<p><b>🗑️ Descartadas (ya existían):</b> ' + descartados + '</p>';
+        if (err > 0) html += '<p><b>❌ Errores:</b> ' + err + '</p>';
+        html += '</div>';
+
+        if (descartadosDetalle.length > 0) {
+            html += '<hr><div class="text-start small"><b>Descartadas por duplicado:</b><ul class="mb-0" style="max-height:150px;overflow-y:auto;font-size:0.75rem;">';
+            descartadosDetalle.forEach(function(d) { html += '<li>' + d + '</li>'; });
+            html += '</ul></div>';
+        }
+
         if (erroresDetalle.length > 0) {
-            html += '<hr><div class="text-start small"><b>Detalle:</b><ul class="mb-0" style="max-height:200px;overflow-y:auto;font-size:0.75rem;">';
+            html += '<hr><div class="text-start small"><b>Errores (quedan en pendientes):</b><ul class="mb-0" style="max-height:150px;overflow-y:auto;font-size:0.75rem;">';
             erroresDetalle.forEach(function(e) { html += '<li>' + e + '</li>'; });
             html += '</ul></div>';
         }
-        Swal.fire({ icon: 'warning', title: 'Sincronización parcial', html: html, width: 600 });
+
+        Swal.fire({
+            icon: err > 0 ? 'warning' : 'info',
+            title: 'Sincronización parcial',
+            html: html,
+            width: 600
+        });
     }
 
     const tabActiva = document.querySelector('#mainTabs .nav-link.active');
@@ -4860,14 +4999,13 @@ async function sincronizarSeleccionados() {
 }
 
 async function eliminarSeleccionados(tipo) {
-    const sel = tipo === 'pend' ? '.check-pendiente:checked' : '.check-sincronizado:checked';
     const ids = [];
-    $$(sel).forEach(function(cb) { ids.push(parseInt(cb.value, 10)); });
+    $$('.check-pendiente:checked').forEach(function(cb) { ids.push(parseInt(cb.value, 10)); });
     if (ids.length === 0) return;
 
     const conf = await Swal.fire({
         title: '¿Eliminar seleccionados?',
-        text: 'Se eliminarán ' + ids.length + ' registros.',
+        text: 'Se eliminarán ' + ids.length + ' registros locales.',
         icon: 'warning', showCancelButton: true,
         confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#e74c3c'
@@ -4875,8 +5013,7 @@ async function eliminarSeleccionados(tipo) {
     if (!conf.isConfirmed) return;
 
     for (const id of ids) {
-        if (tipo === 'pend') await deletePendiente(id);
-        else await deleteSincronizado(id);
+        await deletePendiente(id);
     }
     await actualizarContadorPendientes();
     await renderizarModalPendientes();
@@ -4946,9 +5083,7 @@ function poblarSelectsMesAnio() {
 // =========================================================================
 
 window.addEventListener('DOMContentLoaded', async function() {
-    // ============================================================
-    // FASE 1: Síncrono — rápida, sin awaits. UI lista al instante.
-    // ============================================================
+    // FASE 1: Síncrono — UI lista al instante
     cargarConfiguracion();
     prellenarFechaHora();
     poblarListaDiaLibre();
@@ -4956,12 +5091,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     cambiarTipoRegistro('asistencia');
     validarCamposRegistro();
 
-    // ============================================================
-    // FASE 2: REGISTRAR TODOS LOS LISTENERS ANTES DE CUALQUIER AWAIT
-    // Así los botones responden desde el segundo 0.
-    // ============================================================
-
-    // Listeners de campos del formulario
+    // FASE 2: Registrar TODOS los listeners ANTES de cualquier await
     ['fecha', 'estado', 'colaborador', 'hora', 'rango-desde', 'rango-hasta', 'rango-colaborador'].forEach(function(id) {
         const el = document.getElementById(id);
         if (el) {
@@ -4991,7 +5121,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnRefrescarGPS = document.getElementById('btn-refrescar-gps');
     if (btnRefrescarGPS) btnRefrescarGPS.addEventListener('click', obtenerUbicacionGPS);
 
-    // Botones de cámara
     const btnTomarFoto = document.getElementById('btn-tomar-foto');
     if (btnTomarFoto) btnTomarFoto.addEventListener('click', function() {
         openCamera('foto-preview');
@@ -5018,7 +5147,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnZoomOut = document.getElementById('zoom-out');
     if (btnZoomOut) btnZoomOut.addEventListener('click', zoomOut);
 
-    // Tabs principales
     $$('#mainTabs .nav-link').forEach(function(link) {
         link.addEventListener('click', function() { cambiarTabPrincipal(link.dataset.tab); });
     });
@@ -5076,28 +5204,15 @@ window.addEventListener('DOMContentLoaded', async function() {
         actualizarBotonesSeleccion();
     });
 
-    const chkAllSinc = document.getElementById('check-all-sincronizados');
-    if (chkAllSinc) chkAllSinc.addEventListener('change', function() {
-        $$('.check-sincronizado').forEach(function(cb) { cb.checked = this.checked; }.bind(this));
-        actualizarBotonesSeleccion();
-    });
-
     const btnSincSel = document.getElementById('btn-sincronizar-seleccionados');
     if (btnSincSel) btnSincSel.addEventListener('click', sincronizarSeleccionados);
 
     const btnDelPend = document.getElementById('btn-delete-pendientes-sel');
     if (btnDelPend) btnDelPend.addEventListener('click', function() { eliminarSeleccionados('pend'); });
 
-    const btnDelSinc = document.getElementById('btn-delete-sincronizados-sel');
-    if (btnDelSinc) btnDelSinc.addEventListener('click', function() { eliminarSeleccionados('sinc'); });
-
     window.addEventListener('focus', function() { actualizarContadorPendientes(); });
 
-    // ============================================================
-    // FASE 3: Asíncrono — lento. Ahora sí, después de que la UI ya responde.
-    // Nota: el GPS NO se espera (sin await) para que no bloquee nada.
-    // ============================================================
-
+    // FASE 3: Asíncrono — lento, en background
     try {
         await initDB();
     } catch (e) {
@@ -5105,19 +5220,14 @@ window.addEventListener('DOMContentLoaded', async function() {
         Swal.fire('Error de base de datos', 'No se pudo inicializar IndexedDB. Recarga la página.', 'error');
     }
 
-    // Contador de pendientes: rápido (IndexedDB local)
     await actualizarContadorPendientes();
 
-    // GPS: se dispara en segundo plano, NO se espera.
-    // La UI ya está lista y responde desde el primer clic.
     obtenerUbicacionGPS();
 
-    // Carga de admin: si aplica, en background
     if (appConfig.modoAdmin) {
         cargarAjustesGlobales();
     }
 });
-
 </script>
 
 </body>
