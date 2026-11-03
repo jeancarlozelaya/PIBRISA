@@ -13,6 +13,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -90,6 +91,47 @@
             position: absolute; top: -3px; right: -3px;
             font-size: 0.65rem; padding: 0.25em 0.5em;
         }
+
+        .conexion-indicator {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .conexion-indicator.online {
+            background-color: rgba(46, 204, 113, 0.25);
+            color: #fff;
+        }
+
+        .conexion-indicator.offline {
+            background-color: rgba(231, 76, 60, 0.35);
+            color: #fff;
+            animation: pulse-conexion 2s infinite;
+        }
+
+        @keyframes pulse-conexion {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .conexion-indicator .conexion-tooltip {
+            position: absolute; right: 0; top: 52px;
+            background-color: var(--dark-color);
+            color: white; padding: 6px 10px; border-radius: 6px;
+            font-size: 0.72rem; white-space: nowrap;
+            opacity: 0; pointer-events: none;
+            transition: var(--transition);
+            z-index: 1001;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .conexion-indicator:hover .conexion-tooltip { opacity: 1; }
 
         .modo-indicador {
             display: none;
@@ -857,7 +899,7 @@
 
         @media (max-width: 576px) {
             .header-title { font-size: 1.1rem; }
-            .header-btn, .modo-indicador { width: 38px; height: 38px; font-size: 0.95rem; }
+            .header-btn, .modo-indicador, .conexion-indicator { width: 38px; height: 38px; font-size: 0.95rem; }
             .card-body { padding: 1.2rem; }
             h1 { font-size: 1.4rem; }
             .btn-primary, .btn-success, .btn-secondary, .btn-danger, .btn-warning, .btn-info {
@@ -898,6 +940,19 @@
         body.modo-oscuro h1, body.modo-oscuro .section-title { color: #93c5fd !important; }
         body.modo-oscuro .section-title { border-bottom-color: #334155; }
         body.modo-oscuro h1:after { background-color: #60a5fa; }
+
+        body.modo-oscuro .conexion-indicator.online {
+            background-color: rgba(16, 185, 129, 0.3);
+            color: #d1fae5;
+        }
+        body.modo-oscuro .conexion-indicator.offline {
+            background-color: rgba(239, 68, 68, 0.4);
+            color: #fee2e2;
+        }
+        body.modo-oscuro .conexion-indicator .conexion-tooltip {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+        }
 
         body.modo-oscuro .card,
         body.modo-oscuro .question-container,
@@ -1059,7 +1114,7 @@
 
 <body>
 
-<!-- ========== HEADER ========== -->
+<!-- ========== HEADER con indicador de conexión ========== -->
 <div class="header">
     <div class="header-left">
         <div class="modo-indicador" id="indicador-admin" title="Modo Administrador activo">
@@ -1068,6 +1123,10 @@
     </div>
     <div class="header-title">Pisos Brillantes</div>
     <div class="header-actions">
+        <div class="conexion-indicator online" id="conexion-indicator">
+            <i class="fas fa-wifi" id="conexion-icon"></i>
+            <div class="conexion-tooltip" id="conexion-tooltip">Conectado</div>
+        </div>
         <button id="btn-sync-manager" class="header-btn" title="Sincronizar">
             <i class="fas fa-cloud-upload-alt"></i>
             <span id="badge-pendientes" class="badge rounded-pill bg-danger badge-pendientes-header" style="display: none;">0</span>
@@ -1127,7 +1186,7 @@
                             <span>Modo Administrador</span>
                         </div>
                         <p class="setting-description">
-                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard y editar o eliminar registros. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
+                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard, editar o eliminar registros y exportar a Excel. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
                         </p>
                     </div>
                     <div class="form-check form-switch">
@@ -1140,7 +1199,7 @@
     </div>
 </div>
 
-<!-- ========== MODAL GESTOR DE ENVÍOS (SOLO PENDIENTES) ========== -->
+<!-- ========== MODAL GESTOR DE ENVÍOS ========== -->
 <div class="modal fade" id="modalSync" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
@@ -1609,23 +1668,26 @@
                 </div>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4" id="hist-colab-select-container">
+                    <div class="col-md-3" id="hist-colab-select-container">
                         <label class="form-label">Colaborador</label>
                         <select id="hist-colaborador" class="form-select">
                             <option value="">Seleccione colaborador...</option>
                         </select>
                     </div>
-                    <div class="col-md-3" id="hist-mes-col">
+                    <div class="col-md-2" id="hist-mes-col">
                         <label class="form-label">Mes</label>
                         <select id="hist-mes" class="form-select"></select>
                     </div>
-                    <div class="col-md-3" id="hist-anio-col">
+                    <div class="col-md-2" id="hist-anio-col">
                         <label class="form-label">Año</label>
                         <select id="hist-anio" class="form-select"></select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" id="btn-consultar-historial" class="btn btn-primary w-100">
+                    <div class="col-md-5 d-flex align-items-end gap-2" id="hist-botones-col">
+                        <button type="button" id="btn-consultar-historial" class="btn btn-primary" style="flex: 1; min-width: 0;" title="Consultar historial">
                             <i class="fas fa-search"></i>
+                        </button>
+                        <button type="button" id="btn-exportar-excel" class="btn btn-success" style="flex: 1; min-width: 0; display:none;" title="Exportar a Excel (todos los colaboradores)">
+                            <i class="fas fa-file-excel"></i>
                         </button>
                     </div>
                 </div>
@@ -1917,7 +1979,6 @@ const RADIO_METROS_PERMITIDO = 150;
 
 // =========================================================================
 // COLABORADORES — ÚNICA FUENTE DE VERDAD
-// Los <select> del HTML se llenan dinámicamente desde aquí
 // =========================================================================
 const COLABORADORES = [
     "Cintia Yojana Dubon Machado",
@@ -1976,6 +2037,8 @@ let circuloRadio = null;
 let _pendientesCache = null;
 let _pendientesCacheTime = 0;
 
+let _isOnline = navigator.onLine;
+
 // =========================================================================
 // HELPERS GENERALES
 // =========================================================================
@@ -1983,7 +2046,6 @@ let _pendientesCacheTime = 0;
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
 
-// Rellena todos los <select> de colaboradores con los nombres de la constante
 function poblarSelectsColaboradores() {
     const selectores = [
         { id: 'colaborador', placeholder: 'Por favor seleccione' },
@@ -1999,18 +2061,15 @@ function poblarSelectsColaboradores() {
 
         const valorActual = sel.value;
 
-        // Limpiar manteniendo solo el placeholder (primer option)
         while (sel.options.length > 1) {
             sel.remove(1);
         }
 
-        // Ajustar el texto del placeholder
         if (sel.options.length === 1) {
             sel.options[0].textContent = cfg.placeholder;
             sel.options[0].value = '';
         }
 
-        // Agregar colaboradores
         COLABORADORES.forEach(function(colab) {
             const opt = document.createElement('option');
             opt.value = colab;
@@ -2018,7 +2077,6 @@ function poblarSelectsColaboradores() {
             sel.appendChild(opt);
         });
 
-        // Restaurar valor si existía
         if (valorActual && COLABORADORES.includes(valorActual)) {
             sel.value = valorActual;
         }
@@ -2195,6 +2253,45 @@ function getPinchDistance(t1, t2) {
 }
 
 // =========================================================================
+// ESTADO DE CONEXIÓN — Solo visual, NO hace auto-sync
+// =========================================================================
+
+function actualizarEstadoConexion() {
+    _isOnline = navigator.onLine;
+
+    const indicator = document.getElementById('conexion-indicator');
+    const icon = document.getElementById('conexion-icon');
+    const tooltip = document.getElementById('conexion-tooltip');
+    const btnSync = document.getElementById('btn-sync-manager');
+
+    if (indicator) {
+        indicator.classList.remove('online', 'offline');
+        indicator.classList.add(_isOnline ? 'online' : 'offline');
+    }
+
+    if (icon) {
+        icon.className = _isOnline ? 'fas fa-wifi' : 'fas fa-wifi-slash';
+    }
+
+    if (tooltip) {
+        tooltip.textContent = _isOnline ? 'Conectado a internet' : 'Sin conexión - Modo offline';
+    }
+
+    if (btnSync) {
+        btnSync.title = _isOnline
+            ? 'Revisar y sincronizar pendientes'
+            : 'Sin conexión - No se puede sincronizar';
+    }
+
+    const btnSincronizar = document.getElementById('btn-sincronizar-seleccionados');
+    if (btnSincronizar && !enviandoRegistro) {
+        const seleccionados = $$('.check-pendiente:checked').length;
+        btnSincronizar.disabled = seleccionados === 0 || !_isOnline;
+        btnSincronizar.title = !_isOnline ? 'Sin conexión - No se puede sincronizar' : 'Sincronizar pendientes';
+    }
+}
+
+// =========================================================================
 // CHIPS RÁPIDOS DE COLABORADORES EN HISTORIAL
 // =========================================================================
 
@@ -2205,18 +2302,25 @@ function construirChipsColaboradores() {
     const colAnio = document.getElementById('hist-anio-col');
     if (!contenedor) return;
 
+    const botonesCol = document.getElementById('hist-botones-col');
+
     if (!appConfig.modoAdmin) {
         contenedor.style.display = 'none';
-        if (selColabContainer) selColabContainer.style.display = '';
-        if (colMes) colMes.className = 'col-md-3';
-        if (colAnio) colAnio.className = 'col-md-3';
+        if (selColabContainer) {
+            selColabContainer.style.display = '';
+            selColabContainer.className = 'col-md-3';
+        }
+        if (colMes) colMes.className = 'col-md-2';
+        if (colAnio) colAnio.className = 'col-md-2';
+        if (botonesCol) botonesCol.className = 'col-md-5 d-flex align-items-end gap-2';
         return;
     }
 
     contenedor.style.display = 'block';
     if (selColabContainer) selColabContainer.style.display = 'none';
-    if (colMes) colMes.className = 'col-md-5';
-    if (colAnio) colAnio.className = 'col-md-5';
+    if (colMes) colMes.className = 'col-md-2';
+    if (colAnio) colAnio.className = 'col-md-2';
+    if (botonesCol) botonesCol.className = 'col-md-8 d-flex align-items-end gap-2';
 
     const row = contenedor.querySelector('.d-flex');
     if (!row) return;
@@ -2476,6 +2580,7 @@ function aplicarEstadoAdminUI() {
     const ajustesNormal = document.getElementById('ajustes-modo-normal');
     const gpsHint = document.getElementById('gps-obligatorio-hint');
     const fotoHint = document.getElementById('foto-obligatoria-hint');
+    const btnExcel = document.getElementById('btn-exportar-excel');
 
     if (appConfig.modoAdmin) {
         if (ind) ind.classList.add('active');
@@ -2488,12 +2593,12 @@ function aplicarEstadoAdminUI() {
         if (tabDashboardLink) tabDashboardLink.style.display = '';
         if (ajustesGlobal) ajustesGlobal.style.display = 'block';
         if (ajustesNormal) ajustesNormal.style.display = 'none';
-        // En admin: GPS y foto son OPCIONALES
         if (gpsHint) gpsHint.style.display = 'none';
         if (fotoHint) {
             fotoHint.textContent = '(opcional)';
             fotoHint.className = 'text-muted';
         }
+        if (btnExcel) btnExcel.style.display = '';
     } else {
         if (ind) ind.classList.remove('active');
         if (btn) btn.classList.remove('admin-active');
@@ -2510,12 +2615,12 @@ function aplicarEstadoAdminUI() {
             cambiarTabPrincipal('tab-registro');
         }
         cambiarTipoRegistro('asistencia');
-        // En normal: GPS y foto son OBLIGATORIOS
         if (gpsHint) gpsHint.style.display = '';
         if (fotoHint) {
             fotoHint.textContent = '(obligatoria)';
             fotoHint.className = 'text-danger';
         }
+        if (btnExcel) btnExcel.style.display = 'none';
     }
 
     if (_historialActual.length > 0 && _historialContext.colaborador) {
@@ -3398,7 +3503,6 @@ function validarCamposRegistro() {
         const gpsOk = gpsState.ok;
         const fotoOk = !!fotoCapturaActual;
 
-        // En admin, GPS y foto son opcionales; en normal, obligatorios
         const gpsRequerido = esAdmin ? true : gpsOk;
         const fotoRequerida = esAdmin ? true : fotoOk;
 
@@ -3503,7 +3607,6 @@ async function enviarAsistencia() {
             return;
         }
 
-        // Validaciones de GPS/foto: SOLO obligatorias en modo normal
         if (!esAdmin) {
             if (!gpsState.ok) {
                 await Swal.fire('GPS requerido', 'Debes estar dentro del rango del proyecto.', 'warning');
@@ -3567,7 +3670,6 @@ async function enviarAsistencia() {
             if (!conf.isConfirmed) return;
         }
 
-        // Construir el resumen (mostrar si GPS y foto están presentes o no)
         let gpsLinea = '<b>Ubicación:</b> ';
         if (gpsState.lat != null && gpsState.lng != null) {
             gpsLinea += gpsState.lat.toFixed(6) + ', ' + gpsState.lng.toFixed(6) + ' (' + gpsState.distancia.toFixed(0) + ' m)';
@@ -4066,6 +4168,236 @@ function renderCalendarioHistorial(mapa, anio, mes) {
             acc;
 
         tbody.appendChild(tr);
+    }
+}
+
+// =========================================================================
+// EXPORTAR HISTORIAL A EXCEL (todos los colaboradores, una hoja por cada uno)
+// =========================================================================
+
+async function exportarHistorialExcel() {
+    if (!appConfig.modoAdmin) {
+        Swal.fire('Acceso restringido', 'La exportación solo está disponible en modo administrador.', 'warning');
+        return;
+    }
+
+    if (typeof XLSX === 'undefined') {
+        Swal.fire('Error', 'La librería Excel no se cargó. Verifica tu conexión y recarga la página.', 'error');
+        return;
+    }
+
+    const mes = document.getElementById('hist-mes').value;
+    const anio = document.getElementById('hist-anio').value;
+
+    if (!mes || !anio) {
+        Swal.fire('Atención', 'Selecciona mes y año.', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('btn-exportar-excel');
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    showLoading('Exportando a Excel...', 'Consultando los ' + COLABORADORES.length + ' colaboradores...');
+
+    try {
+        const promesas = COLABORADORES.map(async function(colab) {
+            try {
+                const resp = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'obtenerRegistros',
+                        colaborador: colab,
+                        anio: anio,
+                        mes: mes
+                    })
+                }).then(function(r) { return r.json(); });
+
+                if (resp.status !== 'success') {
+                    return { colaborador: colab, registros: [], error: resp.message || 'Error' };
+                }
+                return { colaborador: colab, registros: resp.data.registros || [], error: null };
+            } catch (e) {
+                return { colaborador: colab, registros: [], error: e.message };
+            }
+        });
+
+        const resultados = await Promise.all(promesas);
+
+        const wb = XLSX.utils.book_new();
+
+        const y = parseInt(anio, 10);
+        const m = parseInt(mes, 10);
+        const diasEnMes = new Date(y, m, 0).getDate();
+        const hoy = hoyYMD();
+        const diasSemana = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+
+        resultados.forEach(function(r) {
+            const mapa = {};
+            (r.registros || []).forEach(function(reg) { mapa[reg.fecha] = reg; });
+
+            const datos = [];
+            datos.push(['Fecha', 'Día', 'Hora Entrada', 'Hora Salida', 'Horas', 'Estado', 'Foto Entrada', 'Foto Salida', 'Ubicación Entrada', 'Ubicación Salida']);
+
+            for (let d = 1; d <= diasEnMes; d++) {
+                const fechaObj = new Date(y, m - 1, d);
+                const dow = fechaObj.getDay();
+                const fechaStr = anio + '-' + String(mes).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                const reg = mapa[fechaStr];
+
+                let entrada = '';
+                let salida = '';
+                let horas = '';
+                let estado = '';
+                let fotoE = '';
+                let fotoS = '';
+                let ubE = '';
+                let ubS = '';
+
+                if (reg) {
+                    if (esMarcadorAusencia(reg.horaEntrada)) {
+                        const ti = extraerTipoAusencia(reg.horaEntrada);
+                        entrada = ti ? ti.label : 'Ausencia';
+                        salida = '';
+                        horas = '';
+                        estado = ti ? ti.label : 'Ausencia';
+                    } else {
+                        entrada = reg.horaEntrada || '';
+                        salida = reg.horaSalida || '';
+                        horas = calcularHoras(reg.horaEntrada, reg.horaSalida) || '';
+                        if (reg.horaEntrada && reg.horaSalida) estado = 'Completo';
+                        else if (reg.horaEntrada) estado = 'Incompleto';
+                        else estado = 'Sin registro';
+                    }
+                    fotoE = reg.fotoEntradaUrl || '';
+                    fotoS = reg.fotoSalidaUrl || '';
+                    ubE = reg.ubicacionEntrada || '';
+                    ubS = reg.ubicacionSalida || '';
+                } else if (fechaStr <= hoy) {
+                    estado = 'Sin registro';
+                }
+
+                // Crear celda con hipervínculo si hay foto
+                const celdaFotoE = fotoE
+                    ? { v: 'Ver foto entrada', t: 's', l: { Target: fotoE, Tooltip: 'Abrir foto de entrada' } }
+                    : { v: '', t: 's' };
+                const celdaFotoS = fotoS
+                    ? { v: 'Ver foto salida', t: 's', l: { Target: fotoS, Tooltip: 'Abrir foto de salida' } }
+                    : { v: '', t: 's' };
+
+                datos.push([
+                    formatearFechaVisual(fechaStr),
+                    diasSemana[dow],
+                    entrada,
+                    salida,
+                    horas,
+                    estado,
+                    celdaFotoE,
+                    celdaFotoS,
+                    ubE,
+                    ubS
+                ]);
+            }
+
+            // Crear hoja con opciones para manejar celdas tipo objeto (con hipervínculos)
+            const ws = XLSX.utils.aoa_to_sheet(datos);
+
+            // Convertir celdas con { v, t, l } a celdas con hipervínculo real
+            // Iterar sobre los datos originales para aplicar el formato correcto
+            for (let rowIdx = 1; rowIdx < datos.length; rowIdx++) {
+                const fila = datos[rowIdx];
+                // Columna 6 (índice G): Foto Entrada
+                const celdaG = fila[6];
+                if (celdaG && typeof celdaG === 'object' && celdaG.l) {
+                    const ref = XLSX.utils.encode_cell({ r: rowIdx, c: 6 });
+                    ws[ref] = {
+                        v: celdaG.v,
+                        t: 's',
+                        l: { Target: celdaG.l.Target, Tooltip: celdaG.l.Tooltip || '' },
+                        s: { font: { color: { rgb: '0563C1' }, underline: true } }
+                    };
+                }
+                // Columna 7 (índice H): Foto Salida
+                const celdaH = fila[7];
+                if (celdaH && typeof celdaH === 'object' && celdaH.l) {
+                    const ref = XLSX.utils.encode_cell({ r: rowIdx, c: 7 });
+                    ws[ref] = {
+                        v: celdaH.v,
+                        t: 's',
+                        l: { Target: celdaH.l.Target, Tooltip: celdaH.l.Tooltip || '' },
+                        s: { font: { color: { rgb: '0563C1' }, underline: true } }
+                    };
+                }
+            }
+
+            ws['!cols'] = [
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 14 },
+                { wch: 14 },
+                { wch: 8  },
+                { wch: 16 },
+                { wch: 45 },
+                { wch: 45 },
+                { wch: 30 },
+                { wch: 30 }
+            ];
+
+            let nombreHoja = String(r.colaborador)
+                .replace(/[\\\/\?\*\[\]:]/g, '')
+                .trim()
+                .substring(0, 31);
+            if (!nombreHoja) nombreHoja = 'Colaborador';
+
+            let nombreFinal = nombreHoja;
+            let contador = 1;
+            while (wb.SheetNames.includes(nombreFinal)) {
+                contador++;
+                nombreFinal = nombreHoja.substring(0, 28) + ' (' + contador + ')';
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, nombreFinal);
+        });
+
+        const mesNombre = getMesNombre(mes);
+        const nombreArchivo = 'Asistencia_' + anio + '-' + String(mes).padStart(2, '0') + '_' + mesNombre + '.xlsx';
+
+        XLSX.writeFile(wb, nombreArchivo);
+
+        hideLoading();
+
+        const conError = resultados.filter(function(r) { return r.error; });
+        if (conError.length > 0) {
+            let html = '<p>El archivo se descargó, pero algunos colaboradores no se pudieron consultar:</p>';
+            html += '<ul class="text-start small">';
+            conError.forEach(function(r) {
+                html += '<li><b>' + r.colaborador + '</b>: ' + r.error + '</li>';
+            });
+            html += '</ul>';
+            Swal.fire({
+                icon: 'warning',
+                title: 'Excel exportado con advertencias',
+                html: html
+            });
+        } else {
+            Swal.fire({
+                icon: 'success',
+                title: 'Excel exportado',
+                html: '<p>Archivo: <b>' + nombreArchivo + '</b></p>' +
+                      '<p class="small text-muted">' + COLABORADORES.length + ' hoja(s), una por colaborador.</p>',
+                timer: 2500,
+                showConfirmButton: false
+            });
+        }
+    } catch (e) {
+        hideLoading();
+        console.error('Error exportando Excel:', e);
+        Swal.fire('Error', 'No se pudo exportar el Excel: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
     }
 }
 
@@ -4862,7 +5194,10 @@ function actualizarBotonesSeleccion() {
     const pend = $$('.check-pendiente:checked').length;
     const b1 = document.getElementById('btn-sincronizar-seleccionados');
     const b2 = document.getElementById('btn-delete-pendientes-sel');
-    if (b1) b1.disabled = pend === 0;
+    if (b1) {
+        b1.disabled = pend === 0 || !_isOnline;
+        b1.title = !_isOnline ? 'Sin conexión - No se puede sincronizar' : 'Sincronizar pendientes';
+    }
     if (b2) b2.disabled = pend === 0;
 }
 
@@ -4991,6 +5326,16 @@ async function enviarPendienteAlServidor(p, intentos) {
 }
 
 async function sincronizarSeleccionados() {
+    if (!_isOnline) {
+        Swal.fire({
+            title: 'Sin conexión',
+            html: '<p>No hay conexión a internet.</p><p class="small text-muted mt-2">Los registros se mantienen guardados localmente. Intenta de nuevo cuando tengas red.</p>',
+            icon: 'warning',
+            confirmButtonColor: '#f39c12'
+        });
+        return;
+    }
+
     const ids = [];
     $$('.check-pendiente:checked').forEach(function(cb) { ids.push(parseInt(cb.value, 10)); });
     if (ids.length === 0) return;
@@ -5202,16 +5547,18 @@ function poblarSelectsMesAnio() {
 // =========================================================================
 
 window.addEventListener('DOMContentLoaded', async function() {
-    // FASE 1: Síncrono — UI lista al instante
     cargarConfiguracion();
-    poblarSelectsColaboradores();   // ← LLENA LOS SELECTS DESDE COLABORADORES
+    poblarSelectsColaboradores();
     prellenarFechaHora();
     poblarListaDiaLibre();
     poblarSelectsMesAnio();
     cambiarTipoRegistro('asistencia');
     validarCamposRegistro();
+    actualizarEstadoConexion();
 
-    // FASE 2: Registrar TODOS los listeners ANTES de cualquier await
+    window.addEventListener('online', actualizarEstadoConexion);
+    window.addEventListener('offline', actualizarEstadoConexion);
+
     ['fecha', 'estado', 'colaborador', 'hora', 'rango-desde', 'rango-hasta', 'rango-colaborador'].forEach(function(id) {
         const el = document.getElementById(id);
         if (el) {
@@ -5273,6 +5620,9 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     const btnHist = document.getElementById('btn-consultar-historial');
     if (btnHist) btnHist.addEventListener('click', consultarHistorial);
+
+    const btnExportExcel = document.getElementById('btn-exportar-excel');
+    if (btnExportExcel) btnExportExcel.addEventListener('click', exportarHistorialExcel);
 
     const selHistColab = document.getElementById('hist-colaborador');
     if (selHistColab) {
@@ -5337,11 +5687,13 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnDelPend = document.getElementById('btn-delete-pendientes-sel');
     if (btnDelPend) btnDelPend.addEventListener('click', function() { eliminarSeleccionados('pend'); });
 
-    window.addEventListener('focus', function() { actualizarContadorPendientes(); });
+    window.addEventListener('focus', function() {
+        actualizarContadorPendientes();
+        actualizarEstadoConexion();
+    });
 
     try { construirChipsColaboradores(); } catch (e) {}
 
-    // FASE 3: Asíncrono — lento, en background
     try {
         await initDB();
     } catch (e) {
@@ -5358,6 +5710,8 @@ window.addEventListener('DOMContentLoaded', async function() {
     }
 
     try { construirChipsColaboradores(); actualizarChipsActivos(); } catch (e) {}
+
+    actualizarEstadoConexion();
 });
 </script>
 
