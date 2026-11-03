@@ -236,6 +236,81 @@
             transform: translateY(1px);
         }
 
+        /* ===== Chips de colaboradores en Historial ===== */
+        .hist-chip {
+            background: #eaf2f8;
+            color: #2471a3;
+            border: 2px solid #aed6f1;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .hist-chip:hover {
+            background: #d4e6f1;
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .hist-chip.active {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border-color: #2980b9;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);
+        }
+
+        .hist-chip .chip-inicial {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .hist-chip.active .chip-inicial {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        body.modo-oscuro .hist-chip {
+            background: #1e293b;
+            color: #93c5fd;
+            border-color: #334155;
+        }
+
+        body.modo-oscuro .hist-chip:hover {
+            background: #334155;
+            border-color: #60a5fa;
+        }
+
+        body.modo-oscuro .hist-chip.active {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+            color: white;
+            border-color: #60a5fa;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.5);
+        }
+
+        @media (max-width: 576px) {
+            .hist-chip {
+                font-size: 0.72rem;
+                padding: 6px 10px;
+            }
+            .hist-chip .chip-inicial {
+                width: 18px; height: 18px;
+                font-size: 0.6rem;
+            }
+        }
+
         .setting-item {
             display: flex; align-items: center; justify-content: space-between;
             padding: 16px; border: 1px solid #e9ecef; border-radius: 10px;
@@ -937,54 +1012,45 @@
         body.modo-oscuro #fotoViewerModal .modal-content { background: rgba(0, 0, 0, 0.97) !important; }
         body.modo-oscuro #fotoViewerImg { background: #0a0f1a; }
 
-        /* =========================================================== */
-        /* FIX MODO OSCURO: Tabla de detalle colaborador (Ajustes)      */
-        /* =========================================================== */
-        body.modo-oscuro #modalDetalleColaborador .modal-body.bg-light {
-            background-color: #1e293b !important;
-        }
-        body.modo-oscuro #modalDetalleColaborador .table {
-            color: #e2e8f0 !important;
-            background-color: transparent !important;
-        }
-        body.modo-oscuro #modalDetalleColaborador .table thead.sticky-top {
-            background-color: #0f172a !important;
-        }
-        body.modo-oscuro #modalDetalleColaborador .table thead th {
-            background-color: #0f172a !important;
-            color: #93c5fd !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #modalDetalleColaborador .table tbody td {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #modalDetalleColaborador .table tbody tr:hover td {
-            background-color: #334155 !important;
-        }
-        body.modo-oscuro #modalDetalleColaborador .table tbody tr.fila-historial-pendiente td {
-            background-color: #0c4a6e !important;
-            color: #e0f2fe !important;
-        }
+        /* FIX MODO OSCURO: Tabla de detalle colaborador (Ajustes) */
+        body.modo-oscuro #modalDetalleColaborador .modal-body.bg-light { background-color: #1e293b !important; }
+        body.modo-oscuro #modalDetalleColaborador .table { color: #e2e8f0 !important; background-color: transparent !important; }
+        body.modo-oscuro #modalDetalleColaborador .table thead.sticky-top { background-color: #0f172a !important; }
+        body.modo-oscuro #modalDetalleColaborador .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
+        body.modo-oscuro #modalDetalleColaborador .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
+        body.modo-oscuro #modalDetalleColaborador .table tbody tr:hover td { background-color: #334155 !important; }
+        body.modo-oscuro #modalDetalleColaborador .table tbody tr.fila-historial-pendiente td { background-color: #0c4a6e !important; color: #e0f2fe !important; }
 
-        /* =========================================================== */
-        /* FIX MODO OSCURO: Tabla resumen Dashboard                     */
-        /* =========================================================== */
-        body.modo-oscuro #dash-resumen .table { color: #e2e8f0 !important; }
-        body.modo-oscuro #dash-resumen .table thead th {
-            background-color: #0f172a !important;
-            color: #93c5fd !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #dash-resumen .table tbody td {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #dash-resumen .table tbody tr:hover td {
-            background-color: #334155 !important;
-        }
+        /* FIX MODO OSCURO: Tabla Historial de Asistencia */
+        body.modo-oscuro #tab-historial .table,
+        body.modo-oscuro #tab-historial .table-responsive { background-color: #1e293b !important; color: #e2e8f0 !important; }
+        body.modo-oscuro #tab-historial .table thead.sticky-top,
+        body.modo-oscuro #tab-historial .table thead { background-color: #0f172a !important; }
+        body.modo-oscuro #tab-historial .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
+        body.modo-oscuro #tab-historial .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr:hover td { background-color: #334155 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-dia-libre td { background-color: #064e3b !important; color: #d1fae5 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-vacaciones td { background-color: #1e3a8a !important; color: #dbeafe !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incapacidad td { background-color: #7f1d1d !important; color: #fee2e2 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-permiso td { background-color: #78350f !important; color: #fef3c7 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-falta td { background-color: #7f1d1d !important; color: #fee2e2 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incompleto td { background-color: #78350f !important; color: #fef3c7 !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-pendiente td { background-color: #0c4a6e !important; color: #e0f2fe !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-faltante td { background-color: #1e293b !important; color: #94a3b8 !important; }
+
+        /* FIX MODO OSCURO: Tabla Resumen por Colaborador (Dashboard) */
+        body.modo-oscuro #dash-resumen .table,
+        body.modo-oscuro #dash-resumen .table-responsive { background-color: #1e293b !important; color: #e2e8f0 !important; }
+        body.modo-oscuro #dash-resumen .table thead,
+        body.modo-oscuro #dash-resumen .table thead tr { background-color: #0f172a !important; }
+        body.modo-oscuro #dash-resumen .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
+        body.modo-oscuro #dash-resumen .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
+        body.modo-oscuro #dash-resumen .table tbody tr:hover td { background-color: #334155 !important; }
+
+        /* REFUERZO GLOBAL: Cualquier tabla dentro de .card en oscuro */
+        body.modo-oscuro .card .table { color: #e2e8f0 !important; }
+        body.modo-oscuro .card .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
+        body.modo-oscuro .card .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
 
         .btn-close, .btn-close-white {
             filter: invert(1) grayscale(1) brightness(2) !important;
@@ -992,110 +1058,6 @@
         }
 
         .btn-close:hover, .btn-close-white:hover { opacity: 0.75 !important; }
-
-        /* =========================================================== */
-        /* FIX MODO OSCURO: Tabla Historial de Asistencia               */
-        /* =========================================================== */
-        body.modo-oscuro #tab-historial .table,
-        body.modo-oscuro #tab-historial .table-responsive {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-        }
-        body.modo-oscuro #tab-historial .table thead.sticky-top,
-        body.modo-oscuro #tab-historial .table thead {
-            background-color: #0f172a !important;
-        }
-        body.modo-oscuro #tab-historial .table thead th {
-            background-color: #0f172a !important;
-            color: #93c5fd !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody td {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr:hover td {
-            background-color: #334155 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-dia-libre td {
-            background-color: #064e3b !important;
-            color: #d1fae5 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-vacaciones td {
-            background-color: #1e3a8a !important;
-            color: #dbeafe !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incapacidad td {
-            background-color: #7f1d1d !important;
-            color: #fee2e2 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-permiso td {
-            background-color: #78350f !important;
-            color: #fef3c7 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-falta td {
-            background-color: #7f1d1d !important;
-            color: #fee2e2 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incompleto td {
-            background-color: #78350f !important;
-            color: #fef3c7 !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-pendiente td {
-            background-color: #0c4a6e !important;
-            color: #e0f2fe !important;
-        }
-        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-faltante td {
-            background-color: #1e293b !important;
-            color: #94a3b8 !important;
-        }
-
-        /* =========================================================== */
-        /* FIX MODO OSCURO: Tabla Resumen por Colaborador (Dashboard)   */
-        /* =========================================================== */
-        body.modo-oscuro #dash-resumen .table,
-        body.modo-oscuro #dash-resumen .table-responsive {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-        }
-        body.modo-oscuro #dash-resumen .table thead,
-        body.modo-oscuro #dash-resumen .table thead tr {
-            background-color: #0f172a !important;
-        }
-        body.modo-oscuro #dash-resumen .table thead th {
-            background-color: #0f172a !important;
-            color: #93c5fd !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #dash-resumen .table tbody td {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro #dash-resumen .table tbody tr:hover td {
-            background-color: #334155 !important;
-        }
-
-        /* =========================================================== */
-        /* REFUERZO GLOBAL: Cualquier tabla dentro de .card en oscuro   */
-        /* =========================================================== */
-        body.modo-oscuro .card .table {
-            color: #e2e8f0 !important;
-        }
-        body.modo-oscuro .card .table thead th {
-            background-color: #0f172a !important;
-            color: #93c5fd !important;
-            border-color: #334155 !important;
-        }
-        body.modo-oscuro .card .table tbody td {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-            border-color: #334155 !important;
-        }
-
-
-
     </style>
 </head>
 
@@ -1159,7 +1121,6 @@
                         </button>
                     </div>
                 </div>
-
 
                 <div class="config-section-title mt-3">Modo de Revisión</div>
 
@@ -1424,7 +1385,7 @@
     </div>
 </div>
 
-<!-- ========== MODAL DETALLE COLABORADOR (SIN COLUMNA "REGISTRADO POR") ========== -->
+<!-- ========== MODAL DETALLE COLABORADOR (SIN "REGISTRADO POR") ========== -->
 <div class="modal fade" id="modalDetalleColaborador" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
@@ -1672,6 +1633,12 @@
                 <div class="section-title">
                     <i class="fas fa-history"></i>Historial de Asistencia
                 </div>
+
+                <!-- Pestañas rápidas de colaboradores (solo admin) -->
+                <div id="hist-chips-colaboradores" class="mb-3" style="display:none;">
+                    <div class="d-flex flex-wrap gap-2"></div>
+                </div>
+
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Colaborador</label>
@@ -2221,6 +2188,86 @@ function getPinchDistance(t1, t2) {
 }
 
 // =========================================================================
+// CHIPS RÁPIDOS DE COLABORADORES EN HISTORIAL
+// =========================================================================
+
+const COLABORADORES_HISTORIAL = [
+    "Cintia Yojana Dubon Machado",
+    "Gertrudis Yamileth Acosta Hernandez",
+    "Grevil Isaac Flores Meza",
+    "Llanari Clarisa Maldonado Martínez",
+    "Mayra Consuelo Nicolás Hernandez",
+    "Melvin Josue Lopez Rodriguez",
+    "Reina Emerita Sanchez Garcia",
+    "Saul Enrique Santos Maldonado",
+    "Vanessa Lizeth Romero Hernández"
+];
+
+function construirChipsColaboradores() {
+    const contenedor = document.getElementById('hist-chips-colaboradores');
+    if (!contenedor) return;
+
+    if (!appConfig.modoAdmin) {
+        contenedor.style.display = 'none';
+        return;
+    }
+
+    contenedor.style.display = 'block';
+    const row = contenedor.querySelector('.d-flex');
+    if (!row) return;
+
+    if (row.children.length === 0) {
+        COLABORADORES_HISTORIAL.forEach(function(colab) {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'hist-chip';
+            chip.dataset.colaborador = colab;
+
+            const partes = colab.split(' ');
+            const inicial = (partes[0] ? partes[0][0] : '') + (partes[1] ? partes[1][0] : '');
+            const nombreCorto = partes.slice(0, 2).join(' ');
+
+            chip.innerHTML =
+                '<span class="chip-inicial">' + inicial.toUpperCase() + '</span>' +
+                '<span>' + nombreCorto + '</span>';
+
+            chip.title = colab;
+
+            chip.addEventListener('click', function() {
+                const seleccionado = chip.dataset.colaborador;
+
+                row.querySelectorAll('.hist-chip').forEach(function(c) { c.classList.remove('active'); });
+                chip.classList.add('active');
+
+                const sel = document.getElementById('hist-colaborador');
+                if (sel) sel.value = seleccionado;
+
+                consultarHistorial();
+            });
+
+            row.appendChild(chip);
+        });
+    }
+}
+
+function actualizarChipsActivos() {
+    const contenedor = document.getElementById('hist-chips-colaboradores');
+    if (!contenedor || !appConfig.modoAdmin) return;
+
+    const seleccionado = document.getElementById('hist-colaborador').value;
+    const row = contenedor.querySelector('.d-flex');
+    if (!row) return;
+
+    row.querySelectorAll('.hist-chip').forEach(function(chip) {
+        if (chip.dataset.colaborador === seleccionado) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+}
+
+// =========================================================================
 // INDEXEDDB
 // =========================================================================
 
@@ -2458,6 +2505,9 @@ function aplicarEstadoAdminUI() {
         renderCalendarioHistorial(mapa, _historialContext.anio, _historialContext.mes);
     }
     if (_ajustesGlobales.length > 0) renderAjustesGlobales(_ajustesGlobales);
+
+    try { construirChipsColaboradores(); } catch (e) {}
+    try { actualizarChipsActivos(); } catch (e) {}
 }
 
 // =========================================================================
@@ -2998,16 +3048,27 @@ async function aceptarFotoCapturada() {
     if (camModal) camModal.hide();
 
     try {
-        const base64Data = await compressImage(base64Captura, 0.65, 1080);
-        fotoCapturaActual = { base64: base64Data, fechaHora: new Date().toLocaleString('es-HN') };
+        const base64Data = await compressImage(base64Captura, 0.7, 1280);
+
+        // Verificación de peso: si aún pesa > 900 KB, recomprimir más agresivo
+        let pesoKB = Math.round((base64Data.length * 3) / 4 / 1024);
+        let finalBase64 = base64Data;
+        if (pesoKB > 900) {
+            console.warn('Foto aún pesa ' + pesoKB + ' KB, recomprimiendo...');
+            finalBase64 = await compressImage(base64Data, 0.55, 960);
+            pesoKB = Math.round((finalBase64.length * 3) / 4 / 1024);
+            console.log('Foto final: ' + pesoKB + ' KB');
+        }
+
+        fotoCapturaActual = { base64: finalBase64, fechaHora: new Date().toLocaleString('es-HN') };
 
         const img = document.getElementById('foto-preview');
         const info = document.getElementById('foto-info');
         const btnRetomar = document.getElementById('btn-retomar-foto');
 
-        img.src = base64Data;
+        img.src = finalBase64;
         img.classList.add('visible');
-        info.textContent = 'Foto capturada el ' + fotoCapturaActual.fechaHora;
+        info.textContent = 'Foto capturada el ' + fotoCapturaActual.fechaHora + ' · ' + pesoKB + ' KB';
         info.style.display = 'block';
         btnRetomar.style.display = 'inline-block';
         document.getElementById('btn-tomar-foto').style.display = 'none';
@@ -3127,8 +3188,8 @@ function handleTouchEnd(e) {
     if (e.touches.length < 2) initialPinchDistance = 0;
 }
 
-async function compressImage(file, quality = 0.65, maxWidth = 1000) {
-    // Si es un dataURL, lo comprimimos de verdad (no lo devolvemos tal cual)
+async function compressImage(file, quality = 0.7, maxWidth = 1280) {
+    // Si es un dataURL, lo comprimimos de verdad
     if (typeof file === 'string' && file.startsWith('data:image/')) {
         return new Promise((resolve) => {
             const img = new Image();
@@ -3216,7 +3277,6 @@ async function compressImage(file, quality = 0.65, maxWidth = 1000) {
         reader.readAsDataURL(file);
     });
 }
-
 
 function descartarFoto() {
     fotoCapturaActual = null;
@@ -5077,6 +5137,10 @@ function cambiarTabPrincipal(tabId) {
     if (tabId === 'tab-ajustes' && appConfig.modoAdmin) {
         cargarAjustesGlobales();
     }
+
+    if (tabId === 'tab-historial') {
+        try { construirChipsColaboradores(); actualizarChipsActivos(); } catch (e) {}
+    }
 }
 
 function poblarSelectsMesAnio() {
@@ -5192,6 +5256,13 @@ window.addEventListener('DOMContentLoaded', async function() {
     const btnHist = document.getElementById('btn-consultar-historial');
     if (btnHist) btnHist.addEventListener('click', consultarHistorial);
 
+    const selHistColab = document.getElementById('hist-colaborador');
+    if (selHistColab) {
+        selHistColab.addEventListener('change', function() {
+            actualizarChipsActivos();
+        });
+    }
+
     const btnDash = document.getElementById('btn-consultar-dashboard');
     if (btnDash) btnDash.addEventListener('click', consultarDashboard);
 
@@ -5250,6 +5321,8 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     window.addEventListener('focus', function() { actualizarContadorPendientes(); });
 
+    try { construirChipsColaboradores(); } catch (e) {}
+
     // FASE 3: Asíncrono — lento, en background
     try {
         await initDB();
@@ -5265,6 +5338,8 @@ window.addEventListener('DOMContentLoaded', async function() {
     if (appConfig.modoAdmin) {
         cargarAjustesGlobales();
     }
+
+    try { construirChipsColaboradores(); actualizarChipsActivos(); } catch (e) {}
 });
 </script>
 
