@@ -278,7 +278,6 @@
             transform: translateY(1px);
         }
 
-        /* ===== Chips de colaboradores en Historial ===== */
         .hist-chip {
             background: #eaf2f8;
             color: #2471a3;
@@ -523,21 +522,25 @@
 
         .fila-historial-dia-libre { background-color: #e8f8f5 !important; color: #1e7e34 !important; }
         .fila-historial-vacaciones { background-color: #eaf2f8 !important; color: #1a5490 !important; }
+        .fila-historial-compensacion { background-color: #f4ecf7 !important; color: #6c3483 !important; }
         .fila-historial-incapacidad { background-color: #fdedec !important; color: #922b21 !important; }
         .fila-historial-permiso { background-color: #fef5e7 !important; color: #935900 !important; }
         .fila-historial-falta { background-color: #f8d7da !important; color: #721c24 !important; }
         .fila-historial-incompleto { background-color: #fff3cd !important; color: #856404 !important; border-left: 4px solid #f39c12; }
         .fila-historial-pendiente { background-color: #d1ecf1 !important; color: #0c5460 !important; }
         .fila-historial-faltante { background-color: #f8f9fa !important; color: #6c757d !important; font-style: italic; }
+        .fila-feriado-pendiente { background-color: #fff3cd !important; color: #856404 !important; }
 
         .fila-historial-dia-libre td,
         .fila-historial-vacaciones td,
+        .fila-historial-compensacion td,
         .fila-historial-incapacidad td,
         .fila-historial-permiso td,
         .fila-historial-falta td,
         .fila-historial-incompleto td,
         .fila-historial-pendiente td,
-        .fila-historial-faltante td { color: inherit !important; }
+        .fila-historial-faltante td,
+        .fila-feriado-pendiente td { color: inherit !important; }
 
         .gps-status {
             padding: 12px 14px;
@@ -913,7 +916,6 @@
             .foto-preview-mini { max-width: 110px; max-height: 110px; }
         }
 
-        /* ========== MODO OSCURO ========== */
         body.modo-oscuro {
             --primary-color: #63b3ed;
             --secondary-color: #4299e1;
@@ -1046,12 +1048,14 @@
 
         body.modo-oscuro .fila-historial-dia-libre { background-color: #064e3b !important; color: #d1fae5 !important; }
         body.modo-oscuro .fila-historial-vacaciones { background-color: #1e3a8a !important; color: #dbeafe !important; }
+        body.modo-oscuro .fila-historial-compensacion { background-color: #4c1d95 !important; color: #ede9fe !important; }
         body.modo-oscuro .fila-historial-incapacidad { background-color: #7f1d1d !important; color: #fee2e2 !important; }
         body.modo-oscuro .fila-historial-permiso { background-color: #78350f !important; color: #fef3c7 !important; }
         body.modo-oscuro .fila-historial-falta { background-color: #7f1d1d !important; color: #fee2e2 !important; }
         body.modo-oscuro .fila-historial-incompleto { background-color: #78350f !important; color: #fef3c7 !important; }
         body.modo-oscuro .fila-historial-pendiente { background-color: #0c4a6e !important; color: #e0f2fe !important; }
         body.modo-oscuro .fila-historial-faltante { background-color: #1e293b !important; color: #94a3b8 !important; }
+        body.modo-oscuro .fila-feriado-pendiente { background-color: #78350f !important; color: #fef3c7 !important; }
 
         body.modo-oscuro .tabla-colaborador-clickable:hover { background-color: #334155 !important; }
         body.modo-oscuro .tabla-colaborador-clickable.activo { background-color: #1e3a8a !important; }
@@ -1084,6 +1088,7 @@
         body.modo-oscuro #tab-historial .table tbody tr:hover td { background-color: #334155 !important; }
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-dia-libre td { background-color: #064e3b !important; color: #d1fae5 !important; }
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-vacaciones td { background-color: #1e3a8a !important; color: #dbeafe !important; }
+        body.modo-oscuro #tab-historial .table tbody tr.fila-historial-compensacion td { background-color: #4c1d95 !important; color: #ede9fe !important; }
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-incapacidad td { background-color: #7f1d1d !important; color: #fee2e2 !important; }
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-permiso td { background-color: #78350f !important; color: #fef3c7 !important; }
         body.modo-oscuro #tab-historial .table tbody tr.fila-historial-falta td { background-color: #7f1d1d !important; color: #fee2e2 !important; }
@@ -1098,51 +1103,35 @@
         body.modo-oscuro #dash-resumen .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
         body.modo-oscuro #dash-resumen .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
         body.modo-oscuro #dash-resumen .table tbody tr:hover td { background-color: #334155 !important; }
+        body.modo-oscuro #dash-resumen .table tbody tr.fila-feriado-pendiente td { background-color: #78350f !important; color: #fef3c7 !important; }
+
+        body.modo-oscuro #modalFeriados .table,
+        body.modo-oscuro #modalFeriados .table-responsive { background-color: #1e293b !important; color: #e2e8f0 !important; }
+        body.modo-oscuro #modalFeriados .table thead { background-color: #0f172a !important; }
+        body.modo-oscuro #modalFeriados .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
+        body.modo-oscuro #modalFeriados .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
+        body.modo-oscuro #modalFeriados .table tbody tr:hover td { background-color: #334155 !important; }
+        body.modo-oscuro #modalFeriados .table tbody tr.fila-feriado-pendiente td { background-color: #78350f !important; color: #fef3c7 !important; }
 
         body.modo-oscuro .card .table { color: #e2e8f0 !important; }
         body.modo-oscuro .card .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
         body.modo-oscuro .card .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
 
-        /* =========================================================== */
-        /* FIX MODO OSCURO: Tabla de detección de incompletos (SweetAlert) */
-        /* =========================================================== */
         body.modo-oscuro .swal2-html-container table,
         body.modo-oscuro .swal2-html-container .table,
-        body.modo-oscuro .swal2-popup table {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-        }
+        body.modo-oscuro .swal2-popup table { background-color: #1e293b !important; color: #e2e8f0 !important; }
         body.modo-oscuro .swal2-html-container .table thead,
         body.modo-oscuro .swal2-html-container .table thead tr,
-        body.modo-oscuro .swal2-popup .table thead {
-            background-color: #0f172a !important;
-        }
+        body.modo-oscuro .swal2-popup .table thead { background-color: #0f172a !important; }
         body.modo-oscuro .swal2-html-container .table thead th,
-        body.modo-oscuro .swal2-popup .table thead th {
-            background-color: #0f172a !important;
-            color: #93c5fd !important;
-            border-color: #334155 !important;
-        }
+        body.modo-oscuro .swal2-popup .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
         body.modo-oscuro .swal2-html-container .table tbody td,
-        body.modo-oscuro .swal2-popup .table tbody td {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-            border-color: #334155 !important;
-        }
+        body.modo-oscuro .swal2-popup .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
         body.modo-oscuro .swal2-html-container .table tbody tr:hover td,
-        body.modo-oscuro .swal2-popup .table tbody tr:hover td {
-            background-color: #334155 !important;
-        }
-        body.modo-oscuro .swal2-popup {
-            background-color: #1e293b !important;
-            color: #e2e8f0 !important;
-        }
-        body.modo-oscuro .swal2-title {
-            color: #93c5fd !important;
-        }
-        body.modo-oscuro .swal2-html-container {
-            color: #e2e8f0 !important;
-        }
+        body.modo-oscuro .swal2-popup .table tbody tr:hover td { background-color: #334155 !important; }
+        body.modo-oscuro .swal2-popup { background-color: #1e293b !important; color: #e2e8f0 !important; }
+        body.modo-oscuro .swal2-title { color: #93c5fd !important; }
+        body.modo-oscuro .swal2-html-container { color: #e2e8f0 !important; }
 
         .btn-close, .btn-close-white {
             filter: invert(1) grayscale(1) brightness(2) !important;
@@ -1150,12 +1139,25 @@
         }
 
         .btn-close:hover, .btn-close-white:hover { opacity: 0.75 !important; }
+
+        /* ===== KPI Cumplimiento de Presencia ===== */
+        .kpi-presencia {
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .kpi-presencia .kpi-label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 6px; }
+        .kpi-presencia .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+        .kpi-presencia .kpi-detail { font-size: 0.75rem; opacity: 0.85; margin-top: 6px; }
     </style>
 </head>
 
 <body>
 
-<!-- ========== HEADER con indicador de conexión ========== -->
+<!-- ========== HEADER ========== -->
 <div class="header">
     <div class="header-left">
         <div class="modo-indicador" id="indicador-admin" title="Modo Administrador activo">
@@ -1227,7 +1229,7 @@
                             <span>Modo Administrador</span>
                         </div>
                         <p class="setting-description">
-                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard, editar o eliminar registros, exportar a Excel y detectar asistencias incompletas. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
+                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard, editar o eliminar registros, exportar a Excel, detectar asistencias incompletas y gestionar feriados. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
                         </p>
                     </div>
                     <div class="form-check form-switch">
@@ -1241,14 +1243,14 @@
 </div>
 
 <!-- ========== MODAL GESTOR DE ENVÍOS ========== -->
-<div class="modal fade" id="modalSync" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+<div class="modal fade" id="modalSync" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-dark text-white">
                 <h5 class="modal-title">
                     <i class="fas fa-sync me-2"></i>Gestor de Envíos
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" id="btn-cerrar-sync-x" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body bg-light p-3">
                 <div class="alert alert-info border-0 shadow-sm py-2 mb-2">
@@ -1268,6 +1270,44 @@
                     <button type="button" class="btn btn-primary rounded-pill" id="btn-sincronizar-seleccionados" disabled>
                         <i class="fas fa-cloud-upload-alt me-2"></i>Sincronizar Seleccionados
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MODAL GESTIÓN DE FERIADOS ========== -->
+<div class="modal fade" id="modalFeriados" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-umbrella-beach me-2"></i>Gestionar Feriados
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+
+                <div class="alert alert-info py-2 mb-3 small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Los feriados se guardan como <b>pendientes</b> hasta que los sincronices con el botón de la nube. Una vez sincronizados se descuentan de las horas planificadas del dashboard. Los feriados se listan en la tabla del Dashboard (con acciones para editar y eliminar).
+                </div>
+
+                <div class="question-container mb-3">
+                    <label class="form-label">Agregar nuevo feriado al mes seleccionado en el dashboard</label>
+                    <div class="row g-2">
+                        <div class="col-5">
+                            <input type="date" class="form-control" id="feriado-nuevo-fecha">
+                        </div>
+                        <div class="col-5">
+                            <input type="text" class="form-control" id="feriado-nuevo-desc" placeholder="Descripción (ej. Navidad)">
+                        </div>
+                        <div class="col-2 d-flex">
+                            <button type="button" class="btn btn-success w-100 p-0" id="btn-agregar-feriado" title="Agregar feriado (se guarda como pendiente)" style="min-width: 0; border-radius: 8px;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1321,6 +1361,7 @@
                             <option value="">Seleccione...</option>
                             <option value="DIA_LIBRE">Día Libre</option>
                             <option value="VACACIONES">Vacaciones</option>
+                            <option value="COMPENSACION">Compensación de Tiempo</option>
                             <option value="INCAPACIDAD">Incapacidad</option>
                             <option value="PERMISO">Permiso</option>
                             <option value="FALTA_INJUSTIFICADA">Falta Injustificada</option>
@@ -1336,6 +1377,45 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-warning rounded-pill" id="btn-guardar-edicion">
+                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MODAL EDITAR FERIADO ========== -->
+<div class="modal fade" id="modalEditarFeriado" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-pen me-2"></i>Editar Feriado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <input type="hidden" id="edit-feriado-fecha-original">
+                <input type="hidden" id="edit-feriado-rowNumber">
+
+                <div class="question-container">
+                    <label for="edit-feriado-fecha" class="form-label">Fecha</label>
+                    <input type="date" class="form-control" id="edit-feriado-fecha">
+                </div>
+
+                <div class="question-container">
+                    <label for="edit-feriado-desc" class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="edit-feriado-desc" placeholder="Ej: Navidad">
+                </div>
+
+                <div class="alert alert-info py-2 mb-0 small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Los cambios se guardarán como <b>pendientes</b> hasta que los sincronices.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning rounded-pill" id="btn-guardar-feriado-edicion">
                     <i class="fas fa-save me-2"></i>Guardar Cambios
                 </button>
             </div>
@@ -1463,7 +1543,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-success rounded-pill" id="btn-guardar-ajuste-modal">
                     <i class="fas fa-save me-2"></i>Guardar Ajuste
                 </button>
@@ -1580,6 +1659,7 @@
                             <option value="asistencia">Asistencia (Entrada / Salida)</option>
                             <option value="DIA_LIBRE">Día Libre (varios colaboradores, 1 fecha)</option>
                             <option value="VACACIONES">Vacaciones (rango de fechas)</option>
+                            <option value="COMPENSACION">Compensación de Tiempo (rango de fechas)</option>
                             <option value="INCAPACIDAD">Incapacidad (rango de fechas)</option>
                             <option value="PERMISO">Permiso (rango de fechas)</option>
                             <option value="FALTA_INJUSTIFICADA">Falta Injustificada (rango de fechas)</option>
@@ -1703,7 +1783,6 @@
                     <i class="fas fa-history"></i>Historial de Asistencia
                 </div>
 
-                <!-- Pestañas rápidas de colaboradores (solo admin) -->
                 <div id="hist-chips-colaboradores" class="mb-3" style="display:none;">
                     <div class="d-flex flex-wrap gap-2"></div>
                 </div>
@@ -1724,14 +1803,14 @@
                         <select id="hist-anio" class="form-select"></select>
                     </div>
                     <div class="col-md-5 d-flex align-items-end gap-2" id="hist-botones-col">
-                        <button type="button" id="btn-consultar-historial" class="btn btn-primary" style="flex: 1; min-width: 0;" title="Consultar historial">
-                            <i class="fas fa-search"></i>
+                        <button type="button" id="btn-consultar-historial" class="btn btn-primary" style="flex: 1; min-width: 0;" title="Buscar historial">
+                            <i class="fas fa-search me-1"></i>Buscar
                         </button>
                         <button type="button" id="btn-exportar-excel" class="btn btn-success" style="flex: 1; min-width: 0; display:none;" title="Exportar a Excel (todos los colaboradores)">
-                            <i class="fas fa-file-excel"></i>
+                            <i class="fas fa-file-excel me-1"></i>Exportar
                         </button>
                         <button type="button" id="btn-detectar-incompletos" class="btn btn-warning" style="flex: 1; min-width: 0; display:none;" title="Detectar asistencias incompletas del mes hasta hoy">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="fas fa-exclamation-triangle me-1"></i>Pendientes
                         </button>
                     </div>
                 </div>
@@ -1833,6 +1912,65 @@
                         <div class="alert alert-info small mt-3 mb-0" id="meta-detalle-completo"></div>
                     </div>
 
+                    <!-- ========== FERIADOS (TABLA EN DASHBOARD) ========== -->
+                    <div class="question-container mb-4" id="seccion-feriados" style="display:none;">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <div class="fw-bold">
+                                <i class="fas fa-umbrella-beach me-2"></i>Feriados del Mes
+                            </div>
+                            <button type="button" class="btn btn-success btn-nuevo-ajuste" id="btn-abrir-feriados">
+                                <i class="fas fa-plus-circle me-1"></i>Gestionar Feriados
+                            </button>
+                        </div>
+
+                        <div id="feriados-tabla-container">
+                            <div class="text-muted small text-center py-2">Sin feriados registrados</div>
+                        </div>
+
+                        <div class="alert alert-warning small mt-2 mb-0" id="feriados-impacto" style="display:none;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span id="feriados-impacto-texto"></span>
+                        </div>
+                    </div>
+
+                    <!-- ========== NUEVA SECCIÓN: PRESENCIA DIARIA ========== -->
+                    <div class="question-container mb-4" id="seccion-presencia">
+                        <div class="fw-bold mb-3">
+                            <i class="fas fa-user-check me-2"></i>Cumplimiento de Presencia Diaria
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <div class="kpi-presencia">
+                                    <div class="kpi-label">% Cumplimiento de Presencia</div>
+                                    <div class="kpi-value" id="presencia-cumplimiento">0%</div>
+                                    <div class="kpi-detail" id="presencia-cumplimiento-detalle">0 / 0 personas</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="kpi-card kpi-success">
+                                    <div class="kpi-label">Total Presentes (mes)</div>
+                                    <div class="kpi-value" id="presencia-total-real">0</div>
+                                    <div class="small text-muted" style="font-size:0.7rem;">Colaboradores que vinieron</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="kpi-card kpi-primary">
+                                    <div class="kpi-label">Meta Total (mes)</div>
+                                    <div class="kpi-value" id="presencia-total-meta">0</div>
+                                    <div class="small text-muted" style="font-size:0.7rem;">Personas esperadas</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-box" style="height: 320px;">
+                            <canvas id="chart-presentes"></canvas>
+                        </div>
+                        <div class="alert alert-info small mt-3 mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <b>Presencia diaria:</b> cuenta solo a colaboradores que <b>vinieron a trabajar</b> ese día (con entrada registrada). No incluye Día Libre, Vacaciones, Compensación ni ausencias. Días feriados no se cuentan en la meta.<br>
+                            <b>Meta:</b> 8 personas de lunes a viernes · Sábado 6 + Domingo 2 = 8 en fin de semana.
+                        </div>
+                    </div>
+
                     <div class="question-container mb-4">
                         <div class="fw-bold mb-3">
                             <i class="fas fa-percentage me-2"></i>Estadísticas de Asistencia
@@ -1865,7 +2003,7 @@
                         </div>
                         <div class="alert alert-info small mt-3 mb-0">
                             <i class="fas fa-info-circle me-1"></i>
-                            <b>% Asistencia</b> = (Trabajados + Día Libre + Vacaciones) / Días Laborables. Ni Día Libre ni Vacaciones penalizan.<br>
+                            <b>% Asistencia</b> = (Trabajados + Día Libre + Vacaciones + Compensación) / Días Laborables. Día Libre, Vacaciones ni Compensación penalizan.<br>
                             <b>% Ausentismo</b> = (Incapacidad + Permiso + Falta) / Días Laborables.
                         </div>
                     </div>
@@ -1897,6 +2035,7 @@
                                         <th class="text-center">Trab.</th>
                                         <th class="text-center">D.Libre</th>
                                         <th class="text-center">Vacac.</th>
+                                        <th class="text-center">Comp.</th>
                                         <th class="text-center">Incap.</th>
                                         <th class="text-center">Perm.</th>
                                         <th class="text-center">Falta</th>
@@ -2021,8 +2160,15 @@ const PROYECTO_LAT = 14.514168906326542;
 const PROYECTO_LNG = -87.65237283481956;
 const RADIO_METROS_PERMITIDO = 150;
 
+// Plan de horas (debe coincidir con el servidor)
+const PLAN_LUN_VIE_COLABS = 8;
+const PLAN_SABADO_COLABS = 6;
+const PLAN_DOMINGO_COLABS = 2;
+const HORAS_LUN_VIE = 9;
+const HORAS_FIN_SEMANA = 4;
+
 // =========================================================================
-// COLABORADORES — ÚNICA FUENTE DE VERDAD
+// COLABORADORES
 // =========================================================================
 const COLABORADORES = [
     "Cintia Yojana Dubon Machado",
@@ -2037,11 +2183,12 @@ const COLABORADORES = [
 ];
 
 const TIPOS_ESPECIALES = {
-    "DIA_LIBRE":           { label: "Día Libre",           esAusencia: false },
-    "VACACIONES":          { label: "Vacaciones",          esAusencia: false },
-    "INCAPACIDAD":         { label: "Incapacidad",         esAusencia: true },
-    "PERMISO":             { label: "Permiso",             esAusencia: true },
-    "FALTA_INJUSTIFICADA": { label: "Falta Injustificada", esAusencia: true }
+    "DIA_LIBRE":           { label: "Día Libre",              esAusencia: false },
+    "VACACIONES":          { label: "Vacaciones",             esAusencia: false },
+    "COMPENSACION":        { label: "Compensación de Tiempo", esAusencia: false },
+    "INCAPACIDAD":         { label: "Incapacidad",            esAusencia: true },
+    "PERMISO":             { label: "Permiso",                esAusencia: true },
+    "FALTA_INJUSTIFICADA": { label: "Falta Injustificada",    esAusencia: true }
 };
 const PREFIJO_AUSENCIA = "AUSENCIA: ";
 
@@ -2050,11 +2197,13 @@ let appConfig = { tema: 'auto', modoAdmin: false, camaraApp: true };
 let passwordAdmin = null;
 let chartDias = null;
 let chartColaboradores = null;
+let chartPresentes = null;
 let _historialActual = [];
 let _historialContext = {};
 let _editCache = null;
 let _ajustesActual = [];
 let _ajustesGlobales = [];
+let _ajustesServidorSnapshot = [];
 let tipoRegistroActual = 'asistencia';
 
 let gpsState = { lat: null, lng: null, distancia: null, ok: false };
@@ -2082,6 +2231,9 @@ let _pendientesCache = null;
 let _pendientesCacheTime = 0;
 
 let _isOnline = navigator.onLine;
+
+let _feriadosMesActual = [];
+let _ultimoDashboardData = null;
 
 // =========================================================================
 // HELPERS GENERALES
@@ -2297,7 +2449,89 @@ function getPinchDistance(t1, t2) {
 }
 
 // =========================================================================
-// ESTADO DE CONEXIÓN — Solo visual, NO hace auto-sync
+// META PLANIFICADA — cálculo local (para actualizar KPIs offline con feriados)
+// =========================================================================
+
+function calcularMetaPlanificadaLocal(anio, mes, feriados) {
+    const y = parseInt(anio, 10);
+    const m = parseInt(mes, 10);
+    const diasEnMes = new Date(y, m, 0).getDate();
+
+    const fechasFeriados = new Set((feriados || []).map(function(f) { return f.fecha; }));
+
+    let diasLunVie = 0;
+    let diasSab = 0;
+    let diasDom = 0;
+    let diasFeriadosLunVie = 0;
+    let diasFeriadosSab = 0;
+    let diasFeriadosDom = 0;
+
+    // Presencia: días con expectativa (excluye feriados)
+    let metaPresentesTotal = 0;
+    const metaPorFecha = {};
+
+    for (let d = 1; d <= diasEnMes; d++) {
+        const dow = new Date(y, m - 1, d).getDay();
+        const fechaStr = y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+        const esFeriado = fechasFeriados.has(fechaStr);
+
+        if (dow === 0) {
+            diasDom++;
+            if (esFeriado) diasFeriadosDom++;
+            metaPorFecha[fechaStr] = esFeriado ? 0 : PLAN_DOMINGO_COLABS;
+        } else if (dow === 6) {
+            diasSab++;
+            if (esFeriado) diasFeriadosSab++;
+            metaPorFecha[fechaStr] = esFeriado ? 0 : PLAN_SABADO_COLABS;
+        } else {
+            diasLunVie++;
+            if (esFeriado) diasFeriadosLunVie++;
+            metaPorFecha[fechaStr] = esFeriado ? 0 : PLAN_LUN_VIE_COLABS;
+        }
+
+        metaPresentesTotal += metaPorFecha[fechaStr];
+    }
+
+    const diasLunVieEfectivos = diasLunVie - diasFeriadosLunVie;
+    const diasSabEfectivos = diasSab - diasFeriadosSab;
+    const diasDomEfectivos = diasDom - diasFeriadosDom;
+
+    const horasLunVie = diasLunVieEfectivos * HORAS_LUN_VIE * PLAN_LUN_VIE_COLABS;
+    const horasSab = diasSabEfectivos * HORAS_FIN_SEMANA * PLAN_SABADO_COLABS;
+    const horasDom = diasDomEfectivos * HORAS_FIN_SEMANA * PLAN_DOMINGO_COLABS;
+    const total = horasLunVie + horasSab + horasDom;
+
+    const horasDescontadasLunVie = diasFeriadosLunVie * HORAS_LUN_VIE * PLAN_LUN_VIE_COLABS;
+    const horasDescontadasSab = diasFeriadosSab * HORAS_FIN_SEMANA * PLAN_SABADO_COLABS;
+    const horasDescontadasDom = diasFeriadosDom * HORAS_FIN_SEMANA * PLAN_DOMINGO_COLABS;
+    const horasDescontadasTotal = horasDescontadasLunVie + horasDescontadasSab + horasDescontadasDom;
+
+    let detalle = "";
+    detalle += diasLunVieEfectivos + " días L-V efectivos × " + HORAS_LUN_VIE + "h × " + PLAN_LUN_VIE_COLABS + " colabs = " + horasLunVie + "h";
+    detalle += " + " + diasSabEfectivos + " sábados efectivos × " + HORAS_FIN_SEMANA + "h × " + PLAN_SABADO_COLABS + " colabs = " + horasSab + "h";
+    detalle += " + " + diasDomEfectivos + " domingos efectivos × " + HORAS_FIN_SEMANA + "h × " + PLAN_DOMINGO_COLABS + " colabs = " + horasDom + "h";
+    if (fechasFeriados.size > 0) {
+        detalle += " | Feriados descontados: " + horasDescontadasTotal + "h";
+    }
+
+    return {
+        diasLunVie: diasLunVie,
+        diasSab: diasSab,
+        diasDom: diasDom,
+        diasFeriadosLunVie: diasFeriadosLunVie,
+        diasFeriadosSab: diasFeriadosSab,
+        diasFeriadosDom: diasFeriadosDom,
+        diasFeriadosTotal: diasFeriadosLunVie + diasFeriadosSab + diasFeriadosDom,
+        horasDescontadas: Number(horasDescontadasTotal.toFixed(2)),
+        total: Number(total.toFixed(2)),
+        detalle: detalle,
+        metaPresentesTotal: metaPresentesTotal,
+        metaPorFecha: metaPorFecha
+    };
+}
+
+// =========================================================================
+// ESTADO DE CONEXIÓN
 // =========================================================================
 
 function actualizarEstadoConexion() {
@@ -2312,20 +2546,9 @@ function actualizarEstadoConexion() {
         indicator.classList.remove('online', 'offline');
         indicator.classList.add(_isOnline ? 'online' : 'offline');
     }
-
-    if (icon) {
-        icon.className = _isOnline ? 'fas fa-wifi' : 'fas fa-wifi-slash';
-    }
-
-    if (tooltip) {
-        tooltip.textContent = _isOnline ? 'Conectado a internet' : 'Sin conexión - Modo offline';
-    }
-
-    if (btnSync) {
-        btnSync.title = _isOnline
-            ? 'Revisar y sincronizar pendientes'
-            : 'Sin conexión - No se puede sincronizar';
-    }
+    if (icon) icon.className = _isOnline ? 'fas fa-wifi' : 'fas fa-wifi-slash';
+    if (tooltip) tooltip.textContent = _isOnline ? 'Conectado a internet' : 'Sin conexión - Modo offline';
+    if (btnSync) btnSync.title = _isOnline ? 'Revisar y sincronizar pendientes' : 'Sin conexión - No se puede sincronizar';
 
     const btnSincronizar = document.getElementById('btn-sincronizar-seleccionados');
     if (btnSincronizar && !enviandoRegistro) {
@@ -2336,7 +2559,7 @@ function actualizarEstadoConexion() {
 }
 
 // =========================================================================
-// CHIPS RÁPIDOS DE COLABORADORES EN HISTORIAL
+// CHIPS RÁPIDOS EN HISTORIAL
 // =========================================================================
 
 function construirChipsColaboradores() {
@@ -2391,13 +2614,10 @@ function construirChipsColaboradores() {
 
             chip.addEventListener('click', function() {
                 const seleccionado = chip.dataset.colaborador;
-
                 row.querySelectorAll('.hist-chip').forEach(function(c) { c.classList.remove('active'); });
                 chip.classList.add('active');
-
                 const sel = document.getElementById('hist-colaborador');
                 if (sel) sel.value = seleccionado;
-
                 consultarHistorial();
             });
 
@@ -2415,11 +2635,8 @@ function actualizarChipsActivos() {
     if (!row) return;
 
     row.querySelectorAll('.hist-chip').forEach(function(chip) {
-        if (chip.dataset.colaborador === seleccionado) {
-            chip.classList.add('active');
-        } else {
-            chip.classList.remove('active');
-        }
+        if (chip.dataset.colaborador === seleccionado) chip.classList.add('active');
+        else chip.classList.remove('active');
     });
 }
 
@@ -2605,12 +2822,8 @@ function setTema(nuevo) {
     guardarConfiguracion();
     aplicarTema();
     Swal.fire({
-        icon: 'success',
-        title: 'Tema aplicado',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1800
+        icon: 'success', title: 'Tema aplicado',
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 1800
     });
 }
 
@@ -2702,26 +2915,19 @@ function inicializarMapaGPS() {
     if (!contenedor) return;
 
     if (!mapaGPS) {
-        mapaGPS = L.map('mapa-gps', {
-            zoomControl: true,
-            attributionControl: false
-        }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
+        mapaGPS = L.map('mapa-gps', { zoomControl: true, attributionControl: false }).setView([PROYECTO_LAT, PROYECTO_LNG], 16);
 
         L.tileLayer('https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=8583cb8c813242e8b1c1832272d20839', {
             maxZoom: 20,
             attribution: 'Powered by Geoapify | © OpenStreetMap contributors'
         }).addTo(mapaGPS);
 
-        L.marker([PROYECTO_LAT, PROYECTO_LNG], {
-            title: 'Proyecto'
-        }).addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
+        L.marker([PROYECTO_LAT, PROYECTO_LNG], { title: 'Proyecto' })
+            .addTo(mapaGPS).bindPopup('<b>Ubicación del Proyecto</b>');
 
         circuloRadio = L.circle([PROYECTO_LAT, PROYECTO_LNG], {
-            color: '#3498db',
-            fillColor: '#3498db',
-            fillOpacity: 0.15,
-            radius: RADIO_METROS_PERMITIDO,
-            weight: 2
+            color: '#3498db', fillColor: '#3498db', fillOpacity: 0.15,
+            radius: RADIO_METROS_PERMITIDO, weight: 2
         }).addTo(mapaGPS);
 
         contenedor.classList.add('visible');
@@ -2732,28 +2938,15 @@ function inicializarMapaGPS() {
 
 function actualizarMarcadorUsuario(lat, lng, dentroRango) {
     if (!mapaGPS) return;
-
-    if (marcadorUsuario) {
-        mapaGPS.removeLayer(marcadorUsuario);
-        marcadorUsuario = null;
-    }
+    if (marcadorUsuario) { mapaGPS.removeLayer(marcadorUsuario); marcadorUsuario = null; }
 
     const color = dentroRango ? '#2ecc71' : '#e74c3c';
-
     marcadorUsuario = L.circleMarker([lat, lng], {
-        radius: 10,
-        color: '#fff',
-        fillColor: color,
-        fillOpacity: 1,
-        weight: 3
+        radius: 10, color: '#fff', fillColor: color, fillOpacity: 1, weight: 3
     }).addTo(mapaGPS);
-
     marcadorUsuario.bindPopup('<b>Tu ubicación</b>').openPopup();
 
-    const bounds = L.latLngBounds([
-        [PROYECTO_LAT, PROYECTO_LNG],
-        [lat, lng]
-    ]);
+    const bounds = L.latLngBounds([[PROYECTO_LAT, PROYECTO_LNG], [lat, lng]]);
     mapaGPS.fitBounds(bounds, { padding: [40, 40], maxZoom: 18 });
 }
 
@@ -2775,11 +2968,8 @@ function obtenerUbicacionGPS() {
                 const dentroRango = dist <= RADIO_METROS_PERMITIDO;
                 gpsState = { lat: lat, lng: lng, distancia: dist, ok: dentroRango };
 
-                if (dentroRango) {
-                    actualizarEstadoGPS('ok', 'Ubicación OK · ' + dist.toFixed(0) + ' m del proyecto');
-                } else {
-                    actualizarEstadoGPS('error', 'Fuera de rango · ' + dist.toFixed(0) + ' m (máx ' + RADIO_METROS_PERMITIDO + ' m)');
-                }
+                if (dentroRango) actualizarEstadoGPS('ok', 'Ubicación OK · ' + dist.toFixed(0) + ' m del proyecto');
+                else actualizarEstadoGPS('error', 'Fuera de rango · ' + dist.toFixed(0) + ' m (máx ' + RADIO_METROS_PERMITIDO + ' m)');
 
                 actualizarMarcadorUsuario(lat, lng, dentroRango);
                 validarCamposRegistro();
@@ -2812,7 +3002,6 @@ function openCamera(previewId) {
         dispararInputFotoEstatico(previewId);
         return;
     }
-
     openCameraModal();
 }
 
@@ -2863,10 +3052,7 @@ function openCameraModal() {
     currentFacingMode = 'environment';
 
     const loadingEl = document.getElementById('camera-loading-overlay');
-    if (loadingEl) {
-        loadingEl.classList.remove('hidden');
-        loadingEl.style.display = '';
-    }
+    if (loadingEl) { loadingEl.classList.remove('hidden'); loadingEl.style.display = ''; }
     const msgEl = document.getElementById('camera-message');
     if (msgEl) msgEl.style.display = 'none';
     const previewEl = document.getElementById('foto-capturada-preview');
@@ -2876,19 +3062,13 @@ function openCameraModal() {
     const fotoPrevControls = document.getElementById('fotoPreviewControls');
     if (fotoPrevControls) fotoPrevControls.style.display = 'none';
     const flashBtn = document.getElementById('flash-toggle');
-    if (flashBtn) {
-        flashBtn.classList.remove('active');
-        flashBtn.disabled = false;
-    }
+    if (flashBtn) { flashBtn.classList.remove('active'); flashBtn.disabled = false; }
 
     document.body.classList.add('camera-active');
     document.documentElement.classList.add('camera-active-html');
 
     const modalEl = document.getElementById('cameraCaptureModal');
-    const cameraModal = bootstrap.Modal.getOrCreateInstance(modalEl, {
-        backdrop: 'static',
-        keyboard: false
-    });
+    const cameraModal = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static', keyboard: false });
 
     modalEl.addEventListener('hidden.bs.modal', function handler() {
         stopCamera();
@@ -2898,10 +3078,7 @@ function openCameraModal() {
         document.documentElement.classList.remove('camera-active-html');
         removeTouchZoomEvents();
         const lEl = document.getElementById('camera-loading-overlay');
-        if (lEl) {
-            lEl.classList.add('hidden');
-            lEl.style.display = '';
-        }
+        if (lEl) { lEl.classList.add('hidden'); lEl.style.display = ''; }
         modalEl.removeEventListener('hidden.bs.modal', handler);
     });
 
@@ -2927,18 +3104,12 @@ async function initializeCamera() {
     const loadingEl = document.getElementById('camera-loading-overlay');
     const msgEl = document.getElementById('camera-message');
     if (msgEl) msgEl.style.display = 'none';
-    if (loadingEl) {
-        loadingEl.classList.remove('hidden');
-        loadingEl.style.display = '';
-    }
+    if (loadingEl) { loadingEl.classList.remove('hidden'); loadingEl.style.display = ''; }
 
     try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             showCameraError('Tu navegador no soporta el acceso a la cámara.');
-            if (loadingEl) {
-                loadingEl.classList.add('hidden');
-                loadingEl.style.display = '';
-            }
+            if (loadingEl) { loadingEl.classList.add('hidden'); loadingEl.style.display = ''; }
             return;
         }
 
@@ -2958,21 +3129,12 @@ async function initializeCamera() {
         videoElement.srcObject = cameraStream;
         videoElement.style.transform = isMobileDevice ? 'scale(1)' : 'scaleX(-1)';
 
-        try { await videoElement.play(); } catch (e) { /* silencioso */ }
+        try { await videoElement.play(); } catch (e) { }
 
         await new Promise((resolve) => {
             let resuelto = false;
-            const terminar = () => {
-                if (resuelto) return;
-                resuelto = true;
-                cleanup();
-                resolve();
-            };
-            const checkReady = () => {
-                if (videoElement.videoWidth > 0 && videoElement.readyState >= 2) {
-                    terminar();
-                }
-            };
+            const terminar = () => { if (resuelto) return; resuelto = true; cleanup(); resolve(); };
+            const checkReady = () => { if (videoElement.videoWidth > 0 && videoElement.readyState >= 2) terminar(); };
             const intervalId = setInterval(checkReady, 80);
             const timeoutId = setTimeout(terminar, 4000);
             const cleanup = () => {
@@ -2995,43 +3157,30 @@ async function initializeCamera() {
             const flashBtn = document.getElementById('flash-toggle');
             if (flashBtn) {
                 flashBtn.disabled = !torchSupported;
-                if (!torchSupported) flashBtn.title = 'Tu cámara no soporta linterna';
-                else flashBtn.title = 'Encender/Apagar linterna';
+                flashBtn.title = !torchSupported ? 'Tu cámara no soporta linterna' : 'Encender/Apagar linterna';
             }
         } catch (e) { torchSupported = false; }
 
         applyZoom();
         const container = document.querySelector('.camera-container');
         if (container) container.classList.remove('no-camera');
-        if (loadingEl) {
-            loadingEl.classList.add('hidden');
-            loadingEl.style.display = '';
-        }
+        if (loadingEl) { loadingEl.classList.add('hidden'); loadingEl.style.display = ''; }
     } catch (error) {
         console.error('Error al acceder a la cámara:', error);
         showCameraError('No se pudo acceder a la cámara. Verifica los permisos.');
-        if (loadingEl) {
-            loadingEl.classList.add('hidden');
-            loadingEl.style.display = '';
-        }
+        if (loadingEl) { loadingEl.classList.add('hidden'); loadingEl.style.display = ''; }
     }
 }
 
 function showCameraError(message) {
     const msgEl = document.getElementById('camera-message');
-    if (msgEl) {
-        msgEl.textContent = message;
-        msgEl.style.display = 'block';
-    }
+    if (msgEl) { msgEl.textContent = message; msgEl.style.display = 'block'; }
     const container = document.querySelector('.camera-container');
     if (container) container.classList.add('no-camera');
 }
 
 function stopCamera() {
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(function(track) { track.stop(); });
-        cameraStream = null;
-    }
+    if (cameraStream) { cameraStream.getTracks().forEach(function(track) { track.stop(); }); cameraStream = null; }
     const v = document.getElementById('camera-video');
     if (v) v.srcObject = null;
 }
@@ -3091,9 +3240,7 @@ async function capturePhoto() {
                     dataUrl = await recortarImagenConZoom(dataUrl, zoomLevel);
                 }
             }
-        } catch (e) {
-            dataUrl = null;
-        }
+        } catch (e) { dataUrl = null; }
     }
 
     if (!dataUrl) {
@@ -3127,10 +3274,7 @@ async function capturePhoto() {
 
     fotoPendientePreview = { base64: dataUrl };
     const imgPreview = document.getElementById('foto-capturada-preview');
-    if (imgPreview) {
-        imgPreview.src = dataUrl;
-        imgPreview.style.display = 'block';
-    }
+    if (imgPreview) { imgPreview.src = dataUrl; imgPreview.style.display = 'block'; }
     const controlsEl = document.getElementById('camera-controls-captura');
     if (controlsEl) controlsEl.style.display = 'none';
     const fotoPrevControls = document.getElementById('fotoPreviewControls');
@@ -3149,8 +3293,7 @@ function recortarImagenConZoom(dataUrl, factor) {
             const cropX = (w - cropW) / 2;
             const cropY = (h - cropH) / 2;
             const canvas = document.createElement('canvas');
-            canvas.width = w;
-            canvas.height = h;
+            canvas.width = w; canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
@@ -3173,8 +3316,7 @@ function normalizarAJPEG(dataUrl) {
         img.onload = () => {
             try {
                 const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
+                canvas.width = img.width; canvas.height = img.height;
                 const ctx = canvas.getContext('2d', { alpha: false });
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -3183,9 +3325,7 @@ function normalizarAJPEG(dataUrl) {
                 canvas.width = 0; canvas.height = 0;
                 img.src = '';
                 resolve(out);
-            } catch (e) {
-                resolve(dataUrl);
-            }
+            } catch (e) { resolve(dataUrl); }
         };
         img.onerror = () => resolve(dataUrl);
         img.src = dataUrl;
@@ -3221,7 +3361,6 @@ async function aceptarFotoCapturada() {
 
     try {
         const base64Data = await compressImage(base64Captura, 0.7, 1280);
-
         let pesoKB = Math.round((base64Data.length * 3) / 4 / 1024);
         let finalBase64 = base64Data;
         if (pesoKB > 900) {
@@ -3259,10 +3398,7 @@ async function reintentarFotoCapturada() {
     if (fotoPrevControls) fotoPrevControls.style.display = 'none';
 
     const loadingEl = document.getElementById('camera-loading-overlay');
-    if (loadingEl) {
-        loadingEl.classList.remove('hidden');
-        loadingEl.style.display = '';
-    }
+    if (loadingEl) { loadingEl.classList.remove('hidden'); loadingEl.style.display = ''; }
     await initializeCamera();
     const controlsEl = document.getElementById('camera-controls-captura');
     if (controlsEl) controlsEl.style.display = 'flex';
@@ -3271,8 +3407,7 @@ async function reintentarFotoCapturada() {
 async function toggleFlash() {
     if (!torchSupported || !cameraStream) {
         Swal.fire({
-            icon: 'info',
-            title: 'Linterna no disponible',
+            icon: 'info', title: 'Linterna no disponible',
             text: 'Tu dispositivo o navegador no permite encender la linterna desde la web.',
             toast: true, position: 'top-end', showConfirmButton: false, timer: 2500
         });
@@ -3289,25 +3424,18 @@ async function toggleFlash() {
         flashOn = false;
         flashBtn.classList.remove('active');
         Swal.fire({
-            icon: 'error',
-            title: 'No se pudo activar la linterna',
+            icon: 'error', title: 'No se pudo activar la linterna',
             toast: true, position: 'top-end', showConfirmButton: false, timer: 2500
         });
     }
 }
 
 function zoomIn() {
-    if (zoomLevel < ZOOM_MAX) {
-        zoomLevel = Math.min(ZOOM_MAX, zoomLevel + 0.5);
-        applyZoom();
-    }
+    if (zoomLevel < ZOOM_MAX) { zoomLevel = Math.min(ZOOM_MAX, zoomLevel + 0.5); applyZoom(); }
 }
 
 function zoomOut() {
-    if (zoomLevel > ZOOM_MIN) {
-        zoomLevel = Math.max(ZOOM_MIN, zoomLevel - 0.5);
-        applyZoom();
-    }
+    if (zoomLevel > ZOOM_MIN) { zoomLevel = Math.max(ZOOM_MIN, zoomLevel - 0.5); applyZoom(); }
 }
 
 function addTouchZoomEvents() {
@@ -3375,20 +3503,15 @@ async function compressImage(file, quality = 0.7, maxWidth = 1280) {
                         width = maxWidth;
                         height = Math.round(height * ratio);
                     }
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     ctx.fillStyle = '#ffffff';
                     ctx.fillRect(0, 0, width, height);
                     ctx.drawImage(img, 0, 0, width, height);
                     const result = canvas.toDataURL('image/jpeg', quality);
-                    canvas.width = 0;
-                    canvas.height = 0;
+                    canvas.width = 0; canvas.height = 0;
                     img.src = '';
                     resolve(result);
-                } catch (e) {
-                    console.error('Error comprimiendo dataURL:', e);
-                    resolve(file);
-                }
+                } catch (e) { resolve(file); }
             };
             img.onerror = () => resolve(file);
             img.src = file;
@@ -3666,16 +3789,10 @@ async function enviarAsistencia() {
         }
 
         let pendientes = [];
-        try {
-            pendientes = await getPendientes();
-        } catch (e) {
-            console.warn('No se pudo leer pendientes locales:', e);
-        }
+        try { pendientes = await getPendientes(); } catch (e) {}
 
         const pendientesMismoDia = pendientes.filter(function(p) {
-            return p.tipoOperacion === 'asistencia'
-                && p.colaborador === colaborador
-                && p.fecha === fecha;
+            return p.tipoOperacion === 'asistencia' && p.colaborador === colaborador && p.fecha === fecha;
         });
 
         const yaHayEntradaPendiente = pendientesMismoDia.some(function(p) { return p.estado === 'Entrada'; });
@@ -3685,33 +3802,28 @@ async function enviarAsistencia() {
             const pendEnt = pendientesMismoDia.find(function(p) { return p.estado === 'Entrada'; });
             const horaTexto = pendEnt ? ('a las ' + pendEnt.hora + ' (pendiente)') : '';
             await Swal.fire({
-                icon: 'warning',
-                title: 'Entrada ya registrada localmente',
+                icon: 'warning', title: 'Entrada ya registrada localmente',
                 html: '<p>Ya tienes una <b>ENTRADA</b> pendiente hoy ' + horaTexto + '.</p>' +
-                      '<p class="text-muted small">Si fue un error, elimínala desde el Gestor de Envíos (botón de la nube).</p>'
+                      '<p class="text-muted small">Si fue un error, elimínala desde el Gestor de Envíos.</p>'
             });
             return;
         }
 
         if (estado === 'Salida' && yaHaySalidaPendiente) {
             await Swal.fire({
-                icon: 'warning',
-                title: 'Salida ya registrada localmente',
-                html: '<p>Ya tienes una <b>SALIDA</b> pendiente hoy.</p>' +
-                      '<p class="text-muted small">Si fue un error, elimínala desde el Gestor de Envíos (botón de la nube).</p>'
+                icon: 'warning', title: 'Salida ya registrada localmente',
+                html: '<p>Ya tienes una <b>SALIDA</b> pendiente hoy.</p>'
             });
             return;
         }
 
         if (estado === 'Salida' && !yaHayEntradaPendiente) {
             const conf = await Swal.fire({
-                icon: 'question',
-                title: 'No hay entrada pendiente',
+                icon: 'question', title: 'No hay entrada pendiente',
                 html: '<p>No tienes una <b>ENTRADA</b> pendiente para hoy en este dispositivo.</p>' +
                       '<p class="small text-muted">Puede que ya la hayas sincronizado. ¿Registrar la salida de todas formas?</p>',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, registrar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí, registrar', cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#28a745'
             });
             if (!conf.isConfirmed) return;
@@ -3725,11 +3837,8 @@ async function enviarAsistencia() {
         }
 
         let fotoLinea = '<b>Foto:</b> ';
-        if (fotoCapturaActual) {
-            fotoLinea += 'Sí (' + fotoCapturaActual.fechaHora + ')';
-        } else {
-            fotoLinea += '<span class="text-muted">Sin foto' + (esAdmin ? ' (opcional en admin)' : '') + '</span>';
-        }
+        if (fotoCapturaActual) fotoLinea += 'Sí (' + fotoCapturaActual.fechaHora + ')';
+        else fotoLinea += '<span class="text-muted">Sin foto' + (esAdmin ? ' (opcional en admin)' : '') + '</span>';
 
         const confirm = await Swal.fire({
             title: '¿Guardar registro?',
@@ -3739,14 +3848,12 @@ async function enviarAsistencia() {
                 '<b>Fecha:</b> ' + formatearFechaVisual(fecha) + '<br>' +
                 '<b>Hora:</b> ' + hora24a12(hora) + '<br>' +
                 '<b>Estado:</b> ' + estado + '<br>' +
-                gpsLinea + '<br>' +
-                fotoLinea +
+                gpsLinea + '<br>' + fotoLinea +
                 '</div>' +
                 '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente. Se validará al sincronizar.</p>',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Sí, guardar', cancelButtonText: 'Cancelar',
             confirmButtonColor: '#28a745'
         });
 
@@ -3756,28 +3863,23 @@ async function enviarAsistencia() {
 
         await addPendiente({
             tipoOperacion: 'asistencia',
-            colaborador: colaborador,
-            fecha: fecha,
-            hora: hora24a12(hora),
-            horaOriginal: hora,
+            colaborador: colaborador, fecha: fecha,
+            hora: hora24a12(hora), horaOriginal: hora,
             estado: estado,
             fotoBase64: fotoCapturaActual ? fotoCapturaActual.base64 : '',
             fotoFechaHora: fotoCapturaActual ? fotoCapturaActual.fechaHora : '',
-            lat: gpsState.lat,
-            lng: gpsState.lng,
+            lat: gpsState.lat, lng: gpsState.lng,
             distanciaMetros: gpsState.distancia,
             esAdmin: esAdmin,
             creadoEn: new Date().toISOString()
         });
 
-        try { await actualizarContadorPendientes(); } catch (e) { console.warn(e); }
+        try { await actualizarContadorPendientes(); } catch (e) {}
 
         await Swal.fire({
-            icon: 'success',
-            title: '¡Guardado!',
+            icon: 'success', title: '¡Guardado!',
             html: '<p>El registro quedó en pendientes.</p><p class="small text-muted">Sincronízalo desde el botón de la nube cuando tengas internet.</p>',
-            timer: 2000,
-            showConfirmButton: false
+            timer: 2000, showConfirmButton: false
         });
 
         try { document.getElementById('estado').value = ''; } catch (e) {}
@@ -3824,8 +3926,7 @@ async function enviarDiaLibre() {
                 '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sí, registrar',
-            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Sí, registrar', cancelButtonText: 'Cancelar',
             confirmButtonColor: '#28a745'
         });
 
@@ -3833,17 +3934,14 @@ async function enviarDiaLibre() {
 
         await addPendiente({
             tipoOperacion: 'dia_libre_multiple',
-            colaboradores: seleccionados,
-            fecha: fecha,
+            colaboradores: seleccionados, fecha: fecha,
             creadoEn: new Date().toISOString()
         });
         await actualizarContadorPendientes();
         await Swal.fire({
-            icon: 'success',
-            title: '¡Guardado!',
+            icon: 'success', title: '¡Guardado!',
             html: '<p>Día Libre para ' + seleccionados.length + ' colaborador(es) en pendientes.</p>',
-            timer: 2000,
-            showConfirmButton: false
+            timer: 2000, showConfirmButton: false
         });
         $$('#lista-colabs-dia-libre input[type="checkbox"]').forEach(function(c) { c.checked = false; });
         prellenarFechaHora();
@@ -3898,8 +3996,7 @@ async function enviarRango(tipoKey) {
                 '<p class="small text-muted mt-2 mb-0">Se guardará como pendiente.</p>',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sí, registrar',
-            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Sí, registrar', cancelButtonText: 'Cancelar',
             confirmButtonColor: '#f39c12'
         });
 
@@ -3908,21 +4005,17 @@ async function enviarRango(tipoKey) {
         await addPendiente({
             tipoOperacion: 'ausencia_rango',
             colaborador: colaborador,
-            fechaDesde: desde,
-            fechaHasta: hasta,
-            tipoKey: tipoKey,
-            tipoLabel: tipoInfo.label,
+            fechaDesde: desde, fechaHasta: hasta,
+            tipoKey: tipoKey, tipoLabel: tipoInfo.label,
             esAusencia: tipoInfo.esAusencia,
             totalDias: dias,
             creadoEn: new Date().toISOString()
         });
         await actualizarContadorPendientes();
         await Swal.fire({
-            icon: 'success',
-            title: '¡Guardado!',
+            icon: 'success', title: '¡Guardado!',
             html: '<p>' + tipoInfo.label + ' para ' + dias + ' día(s) en pendientes.</p>',
-            timer: 2000,
-            showConfirmButton: false
+            timer: 2000, showConfirmButton: false
         });
         prellenarFechaHora();
     } catch (err) {
@@ -3972,7 +4065,6 @@ async function consultarHistorial() {
 
         renderCalendarioHistorial(mapa, anio, mes);
         await cargarSemanalesAutomatico(colaborador, anio, mes);
-
     } catch (err) {
         console.error(err);
         tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger p-4"><i class="fas fa-exclamation-triangle me-2"></i>Error: ' + err.message + '</td></tr>';
@@ -4125,6 +4217,7 @@ function renderCalendarioHistorial(mapa, anio, mes) {
                 estadoTexto = ti.label;
                 if (ti.key === 'DIA_LIBRE') claseFila = 'fila-historial-dia-libre';
                 else if (ti.key === 'VACACIONES') claseFila = 'fila-historial-vacaciones';
+                else if (ti.key === 'COMPENSACION') claseFila = 'fila-historial-compensacion';
                 else if (ti.key === 'INCAPACIDAD') claseFila = 'fila-historial-incapacidad';
                 else if (ti.key === 'PERMISO') claseFila = 'fila-historial-permiso';
                 else if (ti.key === 'FALTA_INJUSTIFICADA') claseFila = 'fila-historial-falta';
@@ -4139,7 +4232,9 @@ function renderCalendarioHistorial(mapa, anio, mes) {
             const bp = esPend ? ' <span class="badge-pendiente-custom"><i class="fas fa-clock me-1"></i>Pend.</span>' : '';
 
             if (esAusenciaFilaCompleta) {
-                const ic = (ti && ti.key === 'DIA_LIBRE') ? 'fa-couch' : 'fa-user-slash';
+                let ic = 'fa-user-slash';
+                if (ti && ti.key === 'DIA_LIBRE') ic = 'fa-couch';
+                else if (ti && ti.key === 'COMPENSACION') ic = 'fa-balance-scale';
                 colE = '<i class="fas ' + ic + ' me-1"></i><b>' + estadoTexto + '</b>' + bp;
                 colS = '<span>—</span>';
                 colH = '<span>—</span>';
@@ -4219,7 +4314,7 @@ function renderCalendarioHistorial(mapa, anio, mes) {
 }
 
 // =========================================================================
-// EXPORTAR HISTORIAL A EXCEL (todos los colaboradores, una hoja por cada uno)
+// EXPORTAR HISTORIAL A EXCEL
 // =========================================================================
 
 async function exportarHistorialExcel() {
@@ -4254,17 +4349,10 @@ async function exportarHistorialExcel() {
                 const resp = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'obtenerRegistros',
-                        colaborador: colab,
-                        anio: anio,
-                        mes: mes
-                    })
+                    body: JSON.stringify({ action: 'obtenerRegistros', colaborador: colab, anio: anio, mes: mes })
                 }).then(function(r) { return r.json(); });
 
-                if (resp.status !== 'success') {
-                    return { colaborador: colab, registros: [], error: resp.message || 'Error' };
-                }
+                if (resp.status !== 'success') return { colaborador: colab, registros: [], error: resp.message || 'Error' };
                 return { colaborador: colab, registros: resp.data.registros || [], error: null };
             } catch (e) {
                 return { colaborador: colab, registros: [], error: e.message };
@@ -4272,7 +4360,6 @@ async function exportarHistorialExcel() {
         });
 
         const resultados = await Promise.all(promesas);
-
         const wb = XLSX.utils.book_new();
 
         const y = parseInt(anio, 10);
@@ -4294,21 +4381,12 @@ async function exportarHistorialExcel() {
                 const fechaStr = anio + '-' + String(mes).padStart(2, '0') + '-' + String(d).padStart(2, '0');
                 const reg = mapa[fechaStr];
 
-                let entrada = '';
-                let salida = '';
-                let horas = '';
-                let estado = '';
-                let fotoE = '';
-                let fotoS = '';
-                let ubE = '';
-                let ubS = '';
+                let entrada = '', salida = '', horas = '', estado = '', fotoE = '', fotoS = '', ubE = '', ubS = '';
 
                 if (reg) {
                     if (esMarcadorAusencia(reg.horaEntrada)) {
                         const ti = extraerTipoAusencia(reg.horaEntrada);
                         entrada = ti ? ti.label : 'Ausencia';
-                        salida = '';
-                        horas = '';
                         estado = ti ? ti.label : 'Ausencia';
                     } else {
                         entrada = reg.horaEntrada || '';
@@ -4326,68 +4404,29 @@ async function exportarHistorialExcel() {
                     estado = 'Sin registro';
                 }
 
-                const celdaFotoE = fotoE
-                    ? { v: 'Ver foto entrada', t: 's', l: { Target: fotoE, Tooltip: 'Abrir foto de entrada' } }
-                    : { v: '', t: 's' };
-                const celdaFotoS = fotoS
-                    ? { v: 'Ver foto salida', t: 's', l: { Target: fotoS, Tooltip: 'Abrir foto de salida' } }
-                    : { v: '', t: 's' };
+                const celdaFotoE = fotoE ? { v: 'Ver foto entrada', t: 's', l: { Target: fotoE, Tooltip: 'Abrir foto de entrada' } } : { v: '', t: 's' };
+                const celdaFotoS = fotoS ? { v: 'Ver foto salida', t: 's', l: { Target: fotoS, Tooltip: 'Abrir foto de salida' } } : { v: '', t: 's' };
 
-                datos.push([
-                    formatearFechaVisual(fechaStr),
-                    diasSemana[dow],
-                    entrada,
-                    salida,
-                    horas,
-                    estado,
-                    celdaFotoE,
-                    celdaFotoS,
-                    ubE,
-                    ubS
-                ]);
+                datos.push([formatearFechaVisual(fechaStr), diasSemana[dow], entrada, salida, horas, estado, celdaFotoE, celdaFotoS, ubE, ubS]);
             }
 
             const ws = XLSX.utils.aoa_to_sheet(datos);
 
             for (let rowIdx = 1; rowIdx < datos.length; rowIdx++) {
                 const fila = datos[rowIdx];
-                const celdaG = fila[6];
-                if (celdaG && typeof celdaG === 'object' && celdaG.l) {
+                if (fila[6] && typeof fila[6] === 'object' && fila[6].l) {
                     const ref = XLSX.utils.encode_cell({ r: rowIdx, c: 6 });
-                    ws[ref] = {
-                        v: celdaG.v,
-                        t: 's',
-                        l: { Target: celdaG.l.Target, Tooltip: celdaG.l.Tooltip || '' }
-                    };
+                    ws[ref] = { v: fila[6].v, t: 's', l: { Target: fila[6].l.Target, Tooltip: fila[6].l.Tooltip || '' } };
                 }
-                const celdaH = fila[7];
-                if (celdaH && typeof celdaH === 'object' && celdaH.l) {
+                if (fila[7] && typeof fila[7] === 'object' && fila[7].l) {
                     const ref = XLSX.utils.encode_cell({ r: rowIdx, c: 7 });
-                    ws[ref] = {
-                        v: celdaH.v,
-                        t: 's',
-                        l: { Target: celdaH.l.Target, Tooltip: celdaH.l.Tooltip || '' }
-                    };
+                    ws[ref] = { v: fila[7].v, t: 's', l: { Target: fila[7].l.Target, Tooltip: fila[7].l.Tooltip || '' } };
                 }
             }
 
-            ws['!cols'] = [
-                { wch: 12 },
-                { wch: 12 },
-                { wch: 14 },
-                { wch: 14 },
-                { wch: 8  },
-                { wch: 16 },
-                { wch: 22 },
-                { wch: 22 },
-                { wch: 30 },
-                { wch: 30 }
-            ];
+            ws['!cols'] = [{ wch: 12 },{ wch: 12 },{ wch: 14 },{ wch: 14 },{ wch: 8 },{ wch: 16 },{ wch: 22 },{ wch: 22 },{ wch: 30 },{ wch: 30 }];
 
-            let nombreHoja = String(r.colaborador)
-                .replace(/[\\\/\?\*\[\]:]/g, '')
-                .trim()
-                .substring(0, 31);
+            let nombreHoja = String(r.colaborador).replace(/[\\\/\?\*\[\]:]/g, '').trim().substring(0, 31);
             if (!nombreHoja) nombreHoja = 'Colaborador';
 
             let nombreFinal = nombreHoja;
@@ -4402,32 +4441,20 @@ async function exportarHistorialExcel() {
 
         const mesNombre = getMesNombre(mes);
         const nombreArchivo = 'Asistencia_' + anio + '-' + String(mes).padStart(2, '0') + '_' + mesNombre + '.xlsx';
-
         XLSX.writeFile(wb, nombreArchivo);
-
         hideLoading();
 
         const conError = resultados.filter(function(r) { return r.error; });
         if (conError.length > 0) {
-            let html = '<p>El archivo se descargó, pero algunos colaboradores no se pudieron consultar:</p>';
-            html += '<ul class="text-start small">';
-            conError.forEach(function(r) {
-                html += '<li><b>' + r.colaborador + '</b>: ' + r.error + '</li>';
-            });
+            let html = '<p>El archivo se descargó, pero algunos colaboradores no se pudieron consultar:</p><ul class="text-start small">';
+            conError.forEach(function(r) { html += '<li><b>' + r.colaborador + '</b>: ' + r.error + '</li>'; });
             html += '</ul>';
-            Swal.fire({
-                icon: 'warning',
-                title: 'Excel exportado con advertencias',
-                html: html
-            });
+            Swal.fire({ icon: 'warning', title: 'Excel exportado con advertencias', html: html });
         } else {
             Swal.fire({
-                icon: 'success',
-                title: 'Excel exportado',
-                html: '<p>Archivo: <b>' + nombreArchivo + '</b></p>' +
-                      '<p class="small text-muted">' + COLABORADORES.length + ' hoja(s), una por colaborador.</p>',
-                timer: 2500,
-                showConfirmButton: false
+                icon: 'success', title: 'Excel exportado',
+                html: '<p>Archivo: <b>' + nombreArchivo + '</b></p><p class="small text-muted">' + COLABORADORES.length + ' hoja(s), una por colaborador.</p>',
+                timer: 2500, showConfirmButton: false
             });
         }
     } catch (e) {
@@ -4441,7 +4468,7 @@ async function exportarHistorialExcel() {
 }
 
 // =========================================================================
-// DETECTAR ASISTENCIAS INCOMPLETAS (sin columna Día, compatible modo oscuro)
+// DETECTAR ASISTENCIAS INCOMPLETAS
 // =========================================================================
 
 async function detectarIncompletos() {
@@ -4453,15 +4480,8 @@ async function detectarIncompletos() {
     const mes = document.getElementById('hist-mes').value;
     const anio = document.getElementById('hist-anio').value;
 
-    if (!mes || !anio) {
-        Swal.fire('Atención', 'Selecciona mes y año.', 'warning');
-        return;
-    }
-
-    if (!_isOnline) {
-        Swal.fire('Sin conexión', 'Necesitas conexión a internet para consultar los registros del servidor.', 'warning');
-        return;
-    }
+    if (!mes || !anio) { Swal.fire('Atención', 'Selecciona mes y año.', 'warning'); return; }
+    if (!_isOnline) { Swal.fire('Sin conexión', 'Necesitas conexión a internet para consultar los registros del servidor.', 'warning'); return; }
 
     const btn = document.getElementById('btn-detectar-incompletos');
     const originalHtml = btn.innerHTML;
@@ -4476,17 +4496,9 @@ async function detectarIncompletos() {
                 const resp = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'obtenerRegistros',
-                        colaborador: colab,
-                        anio: anio,
-                        mes: mes
-                    })
+                    body: JSON.stringify({ action: 'obtenerRegistros', colaborador: colab, anio: anio, mes: mes })
                 }).then(function(r) { return r.json(); });
-
-                if (resp.status !== 'success') {
-                    return { colaborador: colab, registros: [], error: resp.message || 'Error' };
-                }
+                if (resp.status !== 'success') return { colaborador: colab, registros: [], error: resp.message || 'Error' };
                 return { colaborador: colab, registros: resp.data.registros || [], error: null };
             } catch (e) {
                 return { colaborador: colab, registros: [], error: e.message };
@@ -4494,7 +4506,6 @@ async function detectarIncompletos() {
         });
 
         const resultados = await Promise.all(promesas);
-
         const pendientesLocales = await getPendientes();
 
         const hoy = hoyYMD();
@@ -4507,14 +4518,8 @@ async function detectarIncompletos() {
         let ultimoDiaRevisar;
 
         if (mesSeleccionadoYMD > mesActualYMD) {
-            hideLoading();
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
-            Swal.fire({
-                icon: 'info',
-                title: 'Mes futuro',
-                text: 'No puedes analizar meses futuros.'
-            });
+            hideLoading(); btn.disabled = false; btn.innerHTML = originalHtml;
+            Swal.fire({ icon: 'info', title: 'Mes futuro', text: 'No puedes analizar meses futuros.' });
             return;
         } else if (mesSeleccionadoYMD === mesActualYMD) {
             ultimoDiaRevisar = parseInt(hoy.substring(8, 10), 10);
@@ -4526,12 +4531,7 @@ async function detectarIncompletos() {
 
         resultados.forEach(function(r) {
             if (r.error) {
-                problemas.push({
-                    colaborador: r.colaborador,
-                    fecha: '—',
-                    tipo: 'ERROR_CONSULTA',
-                    detalle: 'No se pudo consultar: ' + r.error
-                });
+                problemas.push({ colaborador: r.colaborador, fecha: '—', tipo: 'ERROR_CONSULTA', detalle: 'No se pudo consultar: ' + r.error });
                 return;
             }
 
@@ -4545,30 +4545,16 @@ async function detectarIncompletos() {
                             fecha: p.fecha,
                             horaEntrada: p.estado === 'Entrada' ? p.hora : '',
                             horaSalida: p.estado === 'Salida' ? p.hora : '',
-                            estado: p.estado,
-                            _pendiente: true
+                            estado: p.estado, _pendiente: true
                         };
                     } else {
-                        if (p.estado === 'Entrada' && !mapa[p.fecha].horaEntrada) {
-                            mapa[p.fecha].horaEntrada = p.hora;
-                            mapa[p.fecha]._pendiente = true;
-                        }
-                        if (p.estado === 'Salida' && !mapa[p.fecha].horaSalida) {
-                            mapa[p.fecha].horaSalida = p.hora;
-                            mapa[p.fecha]._pendiente = true;
-                        }
+                        if (p.estado === 'Entrada' && !mapa[p.fecha].horaEntrada) { mapa[p.fecha].horaEntrada = p.hora; mapa[p.fecha]._pendiente = true; }
+                        if (p.estado === 'Salida' && !mapa[p.fecha].horaSalida) { mapa[p.fecha].horaSalida = p.hora; mapa[p.fecha]._pendiente = true; }
                     }
                 }
-                if (p.tipoOperacion === 'dia_libre_multiple' &&
-                    Array.isArray(p.colaboradores) && p.colaboradores.includes(r.colaborador)) {
+                if (p.tipoOperacion === 'dia_libre_multiple' && Array.isArray(p.colaboradores) && p.colaboradores.includes(r.colaborador)) {
                     if (!mapa[p.fecha]) {
-                        mapa[p.fecha] = {
-                            fecha: p.fecha,
-                            horaEntrada: PREFIJO_AUSENCIA + 'Día Libre',
-                            horaSalida: '',
-                            estado: 'Día Libre',
-                            _pendiente: true
-                        };
+                        mapa[p.fecha] = { fecha: p.fecha, horaEntrada: PREFIJO_AUSENCIA + 'Día Libre', horaSalida: '', estado: 'Día Libre', _pendiente: true };
                     }
                 }
                 if (p.tipoOperacion === 'ausencia_rango' && p.colaborador === r.colaborador) {
@@ -4581,13 +4567,7 @@ async function detectarIncompletos() {
                         const dd = String(cur.getDate()).padStart(2, '0');
                         const fecha = yyyy + '-' + mm + '-' + dd;
                         if (!mapa[fecha]) {
-                            mapa[fecha] = {
-                                fecha: fecha,
-                                horaEntrada: PREFIJO_AUSENCIA + p.tipoLabel,
-                                horaSalida: '',
-                                estado: p.tipoLabel,
-                                _pendiente: true
-                            };
+                            mapa[fecha] = { fecha: fecha, horaEntrada: PREFIJO_AUSENCIA + p.tipoLabel, horaSalida: '', estado: p.tipoLabel, _pendiente: true };
                         }
                         cur.setDate(cur.getDate() + 1);
                     }
@@ -4599,12 +4579,7 @@ async function detectarIncompletos() {
                 const reg = mapa[fechaStr];
 
                 if (!reg) {
-                    problemas.push({
-                        colaborador: r.colaborador,
-                        fecha: formatearFechaVisual(fechaStr),
-                        tipo: 'SIN_REGISTRO',
-                        detalle: 'Día sin registro'
-                    });
+                    problemas.push({ colaborador: r.colaborador, fecha: formatearFechaVisual(fechaStr), tipo: 'SIN_REGISTRO', detalle: 'Día sin registro' });
                     continue;
                 }
 
@@ -4615,31 +4590,18 @@ async function detectarIncompletos() {
                 const tieneSalida = !!reg.horaSalida;
 
                 if (tieneEntrada && !tieneSalida) {
-                    problemas.push({
-                        colaborador: r.colaborador,
-                        fecha: formatearFechaVisual(fechaStr),
-                        tipo: 'SOLO_ENTRADA',
-                        detalle: 'Entrada ' + reg.horaEntrada + ' · Sin salida' + (reg._pendiente ? ' · Pendiente de sincronizar' : '')
-                    });
+                    problemas.push({ colaborador: r.colaborador, fecha: formatearFechaVisual(fechaStr), tipo: 'SOLO_ENTRADA', detalle: 'Entrada ' + reg.horaEntrada + ' · Sin salida' + (reg._pendiente ? ' · Pendiente de sincronizar' : '') });
                 } else if (!tieneEntrada && tieneSalida) {
-                    problemas.push({
-                        colaborador: r.colaborador,
-                        fecha: formatearFechaVisual(fechaStr),
-                        tipo: 'SOLO_SALIDA',
-                        detalle: 'Salida ' + reg.horaSalida + ' · Sin entrada' + (reg._pendiente ? ' · Pendiente de sincronizar' : '')
-                    });
+                    problemas.push({ colaborador: r.colaborador, fecha: formatearFechaVisual(fechaStr), tipo: 'SOLO_SALIDA', detalle: 'Salida ' + reg.horaSalida + ' · Sin entrada' + (reg._pendiente ? ' · Pendiente de sincronizar' : '') });
                 }
             }
         });
 
-        hideLoading();
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
+        hideLoading(); btn.disabled = false; btn.innerHTML = originalHtml;
 
         if (problemas.length === 0) {
             Swal.fire({
-                icon: 'success',
-                title: '¡Todo en orden!',
+                icon: 'success', title: '¡Todo en orden!',
                 html: '<p>No se encontraron asistencias incompletas ni días sin registro para ningún colaborador.</p>' +
                       '<p class="small text-muted mt-2">Revisado hasta el día ' + ultimoDiaRevisar + ' de ' + getMesNombre(mes) + ' ' + anio + '.</p>',
                 confirmButtonColor: '#28a745'
@@ -4658,9 +4620,7 @@ async function detectarIncompletos() {
         const contSoloSalida = problemas.filter(function(p) { return p.tipo === 'SOLO_SALIDA'; }).length;
         const contErrores = problemas.filter(function(p) { return p.tipo === 'ERROR_CONSULTA'; }).length;
 
-        // Detectar si el modo oscuro está activo para aplicar estilos inline (respaldo)
         const esOscuro = document.body.classList.contains('modo-oscuro');
-
         const colorTabla = esOscuro ? '#1e293b' : '#ffffff';
         const colorHead = esOscuro ? '#0f172a' : '#f8f9fa';
         const colorTexto = esOscuro ? '#e2e8f0' : '#212529';
@@ -4672,7 +4632,6 @@ async function detectarIncompletos() {
         const colorAlertBorde = esOscuro ? '#f59e0b' : '#ffeaa7';
 
         let html = '<div class="text-start" style="max-height: 60vh; overflow-y: auto;">';
-
         html += '<div class="alert py-2 mb-3 small" style="background-color:' + colorAlertBg + '; color:' + colorAlertTxt + '; border:1px solid ' + colorAlertBorde + '; border-radius:8px;">';
         html += '<b>Período analizado:</b> 1 al ' + ultimoDiaRevisar + ' de ' + getMesNombre(mes) + ' ' + anio + '<br>';
         html += '<b>Total de problemas:</b> ' + problemas.length + '<br>';
@@ -4683,13 +4642,11 @@ async function detectarIncompletos() {
         html += '</div>';
 
         html += '<table class="table table-sm mb-0" style="font-size: 0.85rem; background-color:' + colorTabla + '; color:' + colorTexto + '; border-radius:8px; overflow:hidden; width:100%;">';
-        html += '<thead style="background-color:' + colorHead + ';">';
-        html += '<tr>';
+        html += '<thead style="background-color:' + colorHead + ';"><tr>';
         html += '<th style="padding:8px; text-align:left; color:' + colorTextoHead + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600;">Colaborador</th>';
         html += '<th style="padding:8px; text-align:left; color:' + colorTextoHead + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600;">Fecha</th>';
         html += '<th style="padding:8px; text-align:left; color:' + colorTextoHead + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600;">Problema</th>';
-        html += '</tr>';
-        html += '</thead><tbody>';
+        html += '</tr></thead><tbody>';
 
         Object.keys(porColaborador).sort().forEach(function(colab) {
             const items = porColaborador[colab].sort(function(a, b) {
@@ -4699,19 +4656,10 @@ async function detectarIncompletos() {
             items.forEach(function(p, idx) {
                 let badgeClass = 'badge-warning-custom';
                 let badgeText = '';
-                if (p.tipo === 'SIN_REGISTRO') {
-                    badgeClass = 'badge-danger-custom';
-                    badgeText = 'SIN REGISTRO';
-                } else if (p.tipo === 'SOLO_ENTRADA') {
-                    badgeClass = 'badge-warning-custom';
-                    badgeText = 'SOLO ENTRADA';
-                } else if (p.tipo === 'SOLO_SALIDA') {
-                    badgeClass = 'badge-warning-custom';
-                    badgeText = 'SOLO SALIDA';
-                } else if (p.tipo === 'ERROR_CONSULTA') {
-                    badgeClass = 'badge-danger-custom';
-                    badgeText = 'ERROR';
-                }
+                if (p.tipo === 'SIN_REGISTRO') { badgeClass = 'badge-danger-custom'; badgeText = 'SIN REGISTRO'; }
+                else if (p.tipo === 'SOLO_ENTRADA') { badgeClass = 'badge-warning-custom'; badgeText = 'SOLO ENTRADA'; }
+                else if (p.tipo === 'SOLO_SALIDA') { badgeClass = 'badge-warning-custom'; badgeText = 'SOLO SALIDA'; }
+                else if (p.tipo === 'ERROR_CONSULTA') { badgeClass = 'badge-danger-custom'; badgeText = 'ERROR'; }
 
                 html += '<tr style="background-color:' + colorTabla + ';">';
                 if (idx === 0) {
@@ -4726,18 +4674,11 @@ async function detectarIncompletos() {
         html += '</tbody></table></div>';
 
         Swal.fire({
-            icon: 'warning',
-            title: 'Asistencias incompletas detectadas',
-            html: html,
-            width: 800,
-            confirmButtonText: 'Entendido',
-            confirmButtonColor: '#f39c12'
+            icon: 'warning', title: 'Asistencias incompletas detectadas',
+            html: html, width: 800, confirmButtonText: 'Entendido', confirmButtonColor: '#f39c12'
         });
-
     } catch (e) {
-        hideLoading();
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
+        hideLoading(); btn.disabled = false; btn.innerHTML = originalHtml;
         console.error('Error detectando incompletos:', e);
         Swal.fire('Error', 'No se pudo completar el análisis: ' + e.message, 'error');
     }
@@ -4771,18 +4712,11 @@ async function cargarSemanalesAutomatico(colaborador, anio, mes) {
             card.className = 'semana-card ' + (s.cumple ? 'cumple' : 'no-cumple');
             card.innerHTML =
                 '<div class="d-flex justify-content-between align-items-start flex-wrap gap-2">' +
-                '<div>' +
-                '<div class="semana-titulo">' + ic + 'Semana del ' + formatearFechaVisual(s.inicio) + ' al ' + formatearFechaVisual(s.fin) + '</div>' +
-                '<div class="small text-muted">' + s.diasConRegistro + ' día(s) con registro · Meta: ' + s.meta + ' h</div>' +
+                '<div><div class="semana-titulo">' + ic + 'Semana del ' + formatearFechaVisual(s.inicio) + ' al ' + formatearFechaVisual(s.fin) + '</div>' +
+                '<div class="small text-muted">' + s.diasConRegistro + ' día(s) con registro · Meta: ' + s.meta + ' h</div></div>' +
+                '<div class="text-end"><div class="semana-totales">' + s.totalHoras + ' h</div><div class="small">' + dt + '</div></div>' +
                 '</div>' +
-                '<div class="text-end">' +
-                '<div class="semana-totales">' + s.totalHoras + ' h</div>' +
-                '<div class="small">' + dt + '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="progress mt-2" style="height: 10px;">' +
-                '<div class="progress-bar ' + (s.cumple ? 'bg-success' : 'bg-danger') + '" role="progressbar" style="width: ' + Math.min(100, (s.totalHoras / s.meta) * 100) + '%"></div>' +
-                '</div>';
+                '<div class="progress mt-2" style="height: 10px;"><div class="progress-bar ' + (s.cumple ? 'bg-success' : 'bg-danger') + '" role="progressbar" style="width: ' + Math.min(100, (s.totalHoras / s.meta) * 100) + '%"></div></div>';
             c.appendChild(card);
         });
     } catch (e) {
@@ -4791,14 +4725,377 @@ async function cargarSemanalesAutomatico(colaborador, anio, mes) {
 }
 
 // =========================================================================
-// EDITAR / ELIMINAR
+// FERIADOS
+// =========================================================================
+
+async function obtenerFeriadosCombinados(anio, mes) {
+    const prefijoMes = anio + '-' + String(mes).padStart(2, '0');
+    let feriadosServidor = [];
+
+    if (_isOnline) {
+        try {
+            const resp = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'obtenerFeriados', anio: anio, mes: mes })
+            }).then(function(r) { return r.json(); });
+
+            if (resp.status === 'success' && resp.data && resp.data.feriados) {
+                feriadosServidor = resp.data.feriados.map(function(f) { return Object.assign({}, f, { _sincronizado: true }); });
+            }
+        } catch (e) { console.warn('No se pudieron cargar feriados del servidor:', e); }
+    }
+
+    const pendientes = await getPendientes();
+    const pendientesFeriados = pendientes.filter(function(p) {
+        return (p.tipoOperacion === 'feriado_agregar' || p.tipoOperacion === 'feriado_editar' || p.tipoOperacion === 'feriado_eliminar')
+            && p.fecha && p.fecha.startsWith(prefijoMes);
+    });
+
+    let resultado = feriadosServidor.slice();
+
+    const eliminadosPendientes = new Set(
+        pendientesFeriados.filter(function(p) { return p.tipoOperacion === 'feriado_eliminar'; }).map(function(p) { return p.fecha; })
+    );
+    resultado = resultado.filter(function(f) { return !eliminadosPendientes.has(f.fecha); });
+
+    pendientesFeriados.filter(function(p) { return p.tipoOperacion === 'feriado_editar'; }).forEach(function(p) {
+        const idx = resultado.findIndex(function(f) { return f.fecha === p.fechaOriginal; });
+        if (idx !== -1) {
+            resultado[idx] = { fecha: p.fecha, descripcion: p.descripcion, _pendiente: true, _pendienteId: p.id, _original: p.fechaOriginal };
+        } else {
+            resultado.push({ fecha: p.fecha, descripcion: p.descripcion, _pendiente: true, _pendienteId: p.id, _original: p.fechaOriginal });
+        }
+    });
+
+    pendientesFeriados.filter(function(p) { return p.tipoOperacion === 'feriado_agregar'; }).forEach(function(p) {
+        if (!resultado.some(function(f) { return f.fecha === p.fecha; })) {
+            resultado.push({ fecha: p.fecha, descripcion: p.descripcion, _pendiente: true, _pendienteId: p.id });
+        }
+    });
+
+    resultado = resultado.filter(function(f) { return !eliminadosPendientes.has(f.fecha); });
+    resultado.sort(function(a, b) { return a.fecha.localeCompare(b.fecha); });
+    return resultado;
+}
+
+function renderFeriadosDashboard(feriados, metaInfo) {
+    const contenedor = document.getElementById('feriados-tabla-container');
+    const impactoBox = document.getElementById('feriados-impacto');
+    const impactoTexto = document.getElementById('feriados-impacto-texto');
+
+    if (!contenedor) return;
+
+    if (!feriados || feriados.length === 0) {
+        contenedor.innerHTML = '<div class="text-muted small text-center py-2">Sin feriados registrados en este mes.</div>';
+        if (impactoBox) impactoBox.style.display = 'none';
+        return;
+    }
+
+    let html = '<div class="table-responsive" style="max-height: 350px; overflow-y: auto;">';
+    html += '<table class="table table-hover align-middle mb-0"><thead class="sticky-top"><tr>';
+    html += '<th style="width: 130px;">Fecha</th><th>Descripción</th><th class="text-center" style="width: 100px;">Acciones</th>';
+    html += '</tr></thead><tbody>';
+
+    feriados.forEach(function(f) {
+        const esPend = !!f._pendiente;
+        const claseFila = esPend ? 'fila-feriado-pendiente' : '';
+        const badgePend = esPend ? ' <span class="badge-pendiente-custom" style="font-size:0.65rem;"><i class="fas fa-clock me-1"></i>Pend.</span>' : '';
+
+        const fechaEsc = f.fecha.replace(/'/g, "\\'");
+        const originalEsc = (f._original || '').replace(/'/g, "\\'");
+
+        let acciones = '';
+        if (esPend) {
+            acciones =
+                '<button class="btn-action btn-edit-reg" onclick="abrirEditarFeriado(\'' + fechaEsc + '\',\'' + originalEsc + '\',' + f._pendienteId + ')" title="Editar feriado pendiente"><i class="fas fa-pen"></i></button>' +
+                '<button class="btn-action btn-delete-reg" onclick="eliminarFeriadoUI(\'' + fechaEsc + '\',' + f._pendienteId + ',false)" title="Quitar pendiente"><i class="fas fa-trash-alt"></i></button>';
+        } else {
+            acciones =
+                '<button class="btn-action btn-edit-reg" onclick="abrirEditarFeriado(\'' + fechaEsc + '\',\'' + originalEsc + '\',' + (f.rowNumber || 'null') + ')" title="Editar feriado"><i class="fas fa-pen"></i></button>' +
+                '<button class="btn-action btn-delete-reg" onclick="eliminarFeriadoUI(\'' + fechaEsc + '\',' + (f.rowNumber || 'null') + ',true)" title="Eliminar feriado (se marcará como pendiente)"><i class="fas fa-trash-alt"></i></button>';
+        }
+
+        html += '<tr class="' + claseFila + '">' +
+            '<td class="fw-bold">' + formatearFechaVisual(f.fecha) + '</td>' +
+            '<td>' + (f.descripcion || '<span class="text-muted">Sin descripción</span>') + badgePend + '</td>' +
+            '<td class="text-center">' + acciones + '</td></tr>';
+    });
+
+    html += '</tbody></table></div>';
+    contenedor.innerHTML = html;
+
+    if (metaInfo && metaInfo.horasDescontadas > 0) {
+        if (impactoBox) impactoBox.style.display = 'block';
+        if (impactoTexto) {
+            impactoTexto.innerHTML = 'Horas descontadas del plan por feriados: <b>' + metaInfo.horasDescontadas.toFixed(2) + ' h</b>' +
+                ' · Días feriados en día laborable: <b>' + (metaInfo.diasFeriadosTotal || 0) + '</b>';
+        }
+    } else {
+        if (impactoBox) impactoBox.style.display = 'none';
+    }
+}
+
+async function refrescarTablaFeriadosDashboard() {
+    const mes = document.getElementById('dash-mes').value;
+    const anio = document.getElementById('dash-anio').value;
+    if (!mes || !anio) return;
+    const feriados = await obtenerFeriadosCombinados(anio, mes);
+    _feriadosMesActual = feriados;
+    renderFeriadosDashboard(_feriadosMesActual);
+}
+
+// Refresca la tabla de feriados + KPIs locales (sin consultar servidor)
+async function refrescarTablaFeriadosLocal() {
+    const mes = document.getElementById('dash-mes').value;
+    const anio = document.getElementById('dash-anio').value;
+    if (!mes || !anio) return;
+
+    const pendientes = await getPendientes();
+    const prefijoMes = anio + '-' + String(mes).padStart(2, '0');
+
+    let resultado = (_feriadosMesActual || []).filter(function(f) { return !f._pendiente; }).slice();
+
+    const eliminadosPendientes = new Set(
+        pendientes.filter(function(p) { return p.tipoOperacion === 'feriado_eliminar' && p.fecha && p.fecha.startsWith(prefijoMes); }).map(function(p) { return p.fecha; })
+    );
+    resultado = resultado.filter(function(f) { return !eliminadosPendientes.has(f.fecha); });
+
+    pendientes.filter(function(p) { return p.tipoOperacion === 'feriado_editar' && p.fecha && p.fecha.startsWith(prefijoMes); }).forEach(function(p) {
+        const idx = resultado.findIndex(function(f) { return f.fecha === p.fechaOriginal; });
+        if (idx !== -1) {
+            resultado[idx] = { fecha: p.fecha, descripcion: p.descripcion, _pendiente: true, _pendienteId: p.id, _original: p.fechaOriginal };
+        } else {
+            resultado.push({ fecha: p.fecha, descripcion: p.descripcion, _pendiente: true, _pendienteId: p.id, _original: p.fechaOriginal });
+        }
+    });
+
+    pendientes.filter(function(p) { return p.tipoOperacion === 'feriado_agregar' && p.fecha && p.fecha.startsWith(prefijoMes); }).forEach(function(p) {
+        if (!resultado.some(function(f) { return f.fecha === p.fecha; })) {
+            resultado.push({ fecha: p.fecha, descripcion: p.descripcion, _pendiente: true, _pendienteId: p.id });
+        }
+    });
+
+    resultado = resultado.filter(function(f) { return !eliminadosPendientes.has(f.fecha); });
+    resultado.sort(function(a, b) { return a.fecha.localeCompare(b.fecha); });
+
+    _feriadosMesActual = resultado;
+
+    // Recalcular meta local y refrescar KPIs + gráfica de presencia
+    const metaLocal = calcularMetaPlanificadaLocal(anio, mes, _feriadosMesActual);
+    renderFeriadosDashboard(_feriadosMesActual, metaLocal);
+    actualizarKPIsMetaLocal(metaLocal);
+    if (_ultimoDashboardData) {
+        actualizarGraficaPresentes(_ultimoDashboardData, metaLocal);
+    }
+}
+
+// Actualiza los KPIs de meta localmente sin tocar el servidor
+function actualizarKPIsMetaLocal(metaLocal) {
+    const planEl = document.getElementById('meta-plan');
+    const detEl = document.getElementById('meta-plan-detalle');
+    const difEl = document.getElementById('meta-diferencia');
+    const difDetEl = document.getElementById('meta-diferencia-detalle');
+    const cumEl = document.getElementById('meta-cumplimiento');
+    const detCompleto = document.getElementById('meta-detalle-completo');
+
+    if (!planEl) return;
+
+    const horasPlanTotal = metaLocal.total;
+    planEl.textContent = horasPlanTotal.toFixed(2) + ' h';
+    if (detEl) detEl.innerHTML = metaLocal.diasLunVie + 'L-V + ' + metaLocal.diasSab + 'Sáb + ' + metaLocal.diasDom + 'Dom';
+
+    // Horas reales: usar las del último dashboard si están disponibles
+    let horasRealTotal = 0;
+    if (_ultimoDashboardData && _ultimoDashboardData.totales) {
+        horasRealTotal = _ultimoDashboardData.totales.totalHoras || 0;
+    }
+    const diferenciaHoras = Number((horasRealTotal - horasPlanTotal).toFixed(2));
+    const porcentajeCumplimiento = horasPlanTotal > 0 ? Number(((horasRealTotal / horasPlanTotal) * 100).toFixed(1)) : 0;
+
+    if (difEl) {
+        difEl.textContent = (diferenciaHoras >= 0 ? '+' : '') + diferenciaHoras.toFixed(2) + ' h';
+        difEl.style.color = diferenciaHoras >= 0 ? '#2ecc71' : '#e74c3c';
+    }
+    if (difDetEl) difDetEl.textContent = diferenciaHoras >= 0 ? 'Ganancia / a favor' : 'Déficit';
+    if (cumEl) {
+        cumEl.textContent = porcentajeCumplimiento + '%';
+        cumEl.style.color = porcentajeCumplimiento >= 100 ? '#2ecc71' : (porcentajeCumplimiento >= 90 ? '#f39c12' : '#e74c3c');
+    }
+    if (detCompleto) detCompleto.innerHTML = '<i class="fas fa-info-circle me-1"></i>' + metaLocal.detalle;
+}
+
+function abrirModalFeriados() {
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
+
+    const mes = document.getElementById('dash-mes').value;
+    const anio = document.getElementById('dash-anio').value;
+    if (!mes || !anio) { Swal.fire('Atención', 'Primero selecciona mes y año en el Dashboard.', 'warning'); return; }
+
+    document.getElementById('feriado-nuevo-fecha').value = anio + '-' + String(mes).padStart(2, '0') + '-01';
+    document.getElementById('feriado-nuevo-desc').value = '';
+
+    const modalEl = document.getElementById('modalFeriados');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+}
+
+async function agregarFeriadoUI() {
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
+
+    const fecha = document.getElementById('feriado-nuevo-fecha').value;
+    const descripcion = document.getElementById('feriado-nuevo-desc').value.trim();
+
+    if (!fecha) { Swal.fire('Atención', 'Selecciona la fecha del feriado.', 'warning'); return; }
+
+    const mes = document.getElementById('dash-mes').value;
+    const anio = document.getElementById('dash-anio').value;
+    const prefijoMes = anio + '-' + String(mes).padStart(2, '0');
+    if (!fecha.startsWith(prefijoMes)) {
+        Swal.fire('Atención', 'La fecha debe estar dentro del mes seleccionado (' + getMesNombre(mes) + ' ' + anio + ').', 'warning');
+        return;
+    }
+
+    if (_feriadosMesActual.some(function(f) { return f.fecha === fecha; })) {
+        Swal.fire('Duplicado', 'Ya existe un feriado registrado en la fecha ' + formatearFechaVisual(fecha) + '.', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('btn-agregar-feriado');
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    try {
+        await addPendiente({
+            tipoOperacion: 'feriado_agregar',
+            fecha: fecha, descripcion: descripcion,
+            anio: anio, mes: mes,
+            creadoEn: new Date().toISOString()
+        });
+        await actualizarContadorPendientes();
+
+        document.getElementById('feriado-nuevo-fecha').value = prefijoMes + '-01';
+        document.getElementById('feriado-nuevo-desc').value = '';
+
+        await refrescarTablaFeriadosLocal();
+
+        Swal.fire({
+            icon: 'success', title: 'Feriado agregado (pendiente)',
+            html: '<p>Se guardó en la cola de pendientes.</p><p class="small text-muted">Sincronízalo con el botón de la nube.</p>',
+            timer: 2200, showConfirmButton: false
+        });
+    } catch (e) {
+        Swal.fire('Error', 'No se pudo guardar: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+    }
+}
+
+function abrirEditarFeriado(fecha, fechaOriginal, rowNumberOPendienteId) {
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
+
+    document.getElementById('edit-feriado-fecha').value = fecha;
+    document.getElementById('edit-feriado-fecha-original').value = fechaOriginal || fecha;
+    document.getElementById('edit-feriado-rowNumber').value = rowNumberOPendienteId || '';
+
+    const item = _feriadosMesActual.find(function(f) { return f.fecha === fecha; });
+    document.getElementById('edit-feriado-desc').value = item ? (item.descripcion || '') : '';
+
+    new bootstrap.Modal(document.getElementById('modalEditarFeriado')).show();
+}
+
+async function guardarEdicionFeriado() {
+    if (!appConfig.modoAdmin) return;
+
+    const fechaOriginal = document.getElementById('edit-feriado-fecha-original').value;
+    const fechaNueva = document.getElementById('edit-feriado-fecha').value;
+    const descripcion = document.getElementById('edit-feriado-desc').value.trim();
+
+    if (!fechaNueva) { Swal.fire('Atención', 'Debes ingresar la fecha.', 'warning'); return; }
+
+    const mes = document.getElementById('dash-mes').value;
+    const anio = document.getElementById('dash-anio').value;
+    const prefijoMes = anio + '-' + String(mes).padStart(2, '0');
+    if (!fechaNueva.startsWith(prefijoMes)) {
+        Swal.fire('Atención', 'La nueva fecha debe estar dentro del mes seleccionado.', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('btn-guardar-feriado-edicion');
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
+    try {
+        await addPendiente({
+            tipoOperacion: 'feriado_editar',
+            fechaOriginal: fechaOriginal, fecha: fechaNueva,
+            descripcion: descripcion,
+            anio: anio, mes: mes,
+            creadoEn: new Date().toISOString()
+        });
+        await actualizarContadorPendientes();
+
+        bootstrap.Modal.getInstance(document.getElementById('modalEditarFeriado')).hide();
+        await refrescarTablaFeriadosLocal();
+
+        Swal.fire({ icon: 'success', title: 'Feriado actualizado (pendiente)', html: '<p>Se guardó en la cola de pendientes.</p>', timer: 2000, showConfirmButton: false });
+    } catch (e) {
+        Swal.fire('Error', 'No se pudo guardar: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+    }
+}
+
+async function eliminarFeriadoUI(fecha, rowNumberOPendienteId, esSincronizado) {
+    if (!appConfig.modoAdmin) return;
+
+    const conf = await Swal.fire({
+        title: '¿Eliminar feriado?',
+        html: '<p>Se eliminará el feriado del <b>' + formatearFechaVisual(fecha) + '</b>.</p>' +
+              (esSincronizado ? '<p class="small text-muted">El cambio se marcará como pendiente hasta que sincronices.</p>' : ''),
+        icon: 'warning', showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#e74c3c'
+    });
+    if (!conf.isConfirmed) return;
+
+    const mes = document.getElementById('dash-mes').value;
+    const anio = document.getElementById('dash-anio').value;
+
+    try {
+        if (!esSincronizado && rowNumberOPendienteId) {
+            await deletePendiente(rowNumberOPendienteId);
+            await actualizarContadorPendientes();
+        } else {
+            await addPendiente({
+                tipoOperacion: 'feriado_eliminar', fecha: fecha, anio: anio, mes: mes,
+                creadoEn: new Date().toISOString()
+            });
+            await actualizarContadorPendientes();
+        }
+
+        await refrescarTablaFeriadosLocal();
+
+        Swal.fire({
+            icon: 'success', title: 'Feriado eliminado',
+            html: esSincronizado ? '<p>Se marcó para eliminar en el servidor.</p><p class="small text-muted">Sincronízalo con el botón de la nube.</p>' : '',
+            timer: 2200, showConfirmButton: false
+        });
+    } catch (e) {
+        Swal.fire('Error', 'No se pudo eliminar: ' + e.message, 'error');
+    }
+}
+
+// =========================================================================
+// EDITAR / ELIMINAR REGISTROS (asistencia)
 // =========================================================================
 
 function abrirEditar(rowNumber) {
-    if (!appConfig.modoAdmin) {
-        Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning');
-        return;
-    }
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
     const reg = _historialActual.find(function(r) { return r.rowNumber === rowNumber; });
     if (!reg) return;
     _editCache = Object.assign({}, reg, { ctx: _historialContext });
@@ -4839,13 +5136,8 @@ function toggleEditTipoRegistro() {
     const t = document.getElementById('edit-tipo-registro').value;
     const ba = document.getElementById('edit-bloque-asistencia');
     const bu = document.getElementById('edit-bloque-ausencia');
-    if (t === 'ausencia') {
-        ba.style.display = 'none';
-        bu.style.display = 'block';
-    } else {
-        ba.style.display = 'block';
-        bu.style.display = 'none';
-    }
+    if (t === 'ausencia') { ba.style.display = 'none'; bu.style.display = 'block'; }
+    else { ba.style.display = 'block'; bu.style.display = 'none'; }
 }
 
 async function guardarEdicion() {
@@ -4876,18 +5168,15 @@ async function guardarEdicion() {
     const conf = await Swal.fire({
         title: '¿Guardar cambios?',
         html: '<p>El cambio se guardará como <b>pendiente</b> hasta que sincronices.</p>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, guardar',
-        cancelButtonText: 'Cancelar',
+        icon: 'question', showCancelButton: true,
+        confirmButtonText: 'Sí, guardar', cancelButtonText: 'Cancelar',
         confirmButtonColor: '#f39c12'
     });
     if (!conf.isConfirmed) return;
 
     try {
         await addPendiente({
-            tipoOperacion: 'editar',
-            colaborador: col, anio: anio, mes: mes, rowNumber: rn,
+            tipoOperacion: 'editar', colaborador: col, anio: anio, mes: mes, rowNumber: rn,
             fecha: fecha, horaEntrada: he, horaSalida: hs,
             creadoEn: new Date().toISOString()
         });
@@ -4946,8 +5235,109 @@ async function eliminarPendienteNuevo(idPendiente) {
 }
 
 // =========================================================================
-// DASHBOARD
+// DASHBOARD — con nueva gráfica de presencia
 // =========================================================================
+
+function actualizarGraficaPresentes(d, metaLocal) {
+    const canvas = document.getElementById('chart-presentes');
+    if (!canvas) return;
+
+    const y = parseInt(document.getElementById('dash-anio').value, 10);
+    const m = parseInt(document.getElementById('dash-mes').value, 10);
+    const diasEnMes = new Date(y, m, 0).getDate();
+
+    const presentesPorDia = d.presentesPorDia || {};
+    const metaPorFecha = metaLocal.metaPorFecha || {};
+
+    const labels = [];
+    const dataPresentes = [];
+    const dataMeta = [];
+    let totalReal = 0;
+    let totalMeta = 0;
+
+    for (let dd = 1; dd <= diasEnMes; dd++) {
+        const fechaStr = y + "-" + String(m).padStart(2, "0") + "-" + String(dd).padStart(2, "0");
+        labels.push(dd);
+        const pres = presentesPorDia[fechaStr] || 0;
+        const meta = metaPorFecha[fechaStr] || 0;
+        dataPresentes.push(pres);
+        dataMeta.push(meta);
+        totalReal += pres;
+        totalMeta += meta;
+    }
+
+    const pct = totalMeta > 0 ? Number(((totalReal / totalMeta) * 100).toFixed(1)) : 0;
+
+    const elCumpl = document.getElementById('presencia-cumplimiento');
+    const elCumplDet = document.getElementById('presencia-cumplimiento-detalle');
+    const elReal = document.getElementById('presencia-total-real');
+    const elMeta = document.getElementById('presencia-total-meta');
+
+    if (elCumpl) {
+        elCumpl.textContent = pct + '%';
+        elCumpl.style.color = pct >= 100 ? '#ffffff' : (pct >= 90 ? '#ffffff' : '#ffffff');
+    }
+    if (elCumplDet) elCumplDet.textContent = totalReal + ' / ' + totalMeta + ' personas';
+    if (elReal) elReal.textContent = totalReal;
+    if (elMeta) elMeta.textContent = totalMeta;
+
+    const ctx = canvas.getContext('2d');
+    if (chartPresentes) chartPresentes.destroy();
+
+    chartPresentes = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Presentes reales',
+                    data: dataPresentes,
+                    backgroundColor: '#16a085',
+                    borderRadius: 4,
+                    order: 2
+                },
+                {
+                    label: 'Meta de presencia',
+                    data: dataMeta,
+                    type: 'line',
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.15)',
+                    borderDash: [6, 4],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.2,
+                    fill: false,
+                    order: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, position: 'top' },
+                title: { display: true, text: 'Presentes por día vs Meta — ' + getMesNombre(m) + ' ' + y },
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            if (context.datasetIndex === 0) {
+                                const meta = dataMeta[context.dataIndex] || 0;
+                                if (meta === 0) return 'Día sin expectativa (feriado o fuera de plan)';
+                                const pctDia = meta > 0 ? ((context.parsed.y / meta) * 100).toFixed(0) : 0;
+                                return 'Meta: ' + meta + ' · Cumplimiento: ' + pctDia + '%';
+                            }
+                            return '';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Día del mes' } },
+                y: { beginAtZero: true, title: { display: true, text: 'Personas presentes' }, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+}
 
 async function consultarDashboard() {
     if (!appConfig.modoAdmin) {
@@ -4975,6 +5365,8 @@ async function consultarDashboard() {
         const d = resp.data;
         if (!d.existeDatos) { sinDatos.style.display = 'block'; return; }
 
+        _ultimoDashboardData = d;
+
         const m = d.meta || {};
         document.getElementById('meta-plan').textContent = (m.horasPlanTotal || 0).toFixed(2) + ' h';
         document.getElementById('meta-real').textContent = (m.horasRealTotal || 0).toFixed(2) + ' h';
@@ -4989,6 +5381,11 @@ async function consultarDashboard() {
         ce.textContent = (m.porcentajeCumplimiento || 0) + '%';
         ce.style.color = (m.porcentajeCumplimiento || 0) >= 100 ? '#2ecc71' : ((m.porcentajeCumplimiento || 0) >= 90 ? '#f39c12' : '#e74c3c');
         document.getElementById('meta-detalle-completo').innerHTML = '<i class="fas fa-info-circle me-1"></i>' + (m.detalle || '');
+
+        const seccionFeriados = document.getElementById('seccion-feriados');
+        if (seccionFeriados) seccionFeriados.style.display = 'block';
+        _feriadosMesActual = m.feriados || [];
+        renderFeriadosDashboard(_feriadosMesActual, m);
 
         const p = d.porcentajes || {};
         document.getElementById('dash-asis').textContent = (p.asistencia || 0) + '%';
@@ -5053,6 +5450,7 @@ async function consultarDashboard() {
                 '<td class="text-center">' + (c.trabajados || 0) + '</td>' +
                 '<td class="text-center">' + (c.diaLibre || 0) + '</td>' +
                 '<td class="text-center">' + (c.vacaciones || 0) + '</td>' +
+                '<td class="text-center">' + (c.compensacion || 0) + '</td>' +
                 '<td class="text-center text-danger fw-bold">' + (c.incapacidad || 0) + '</td>' +
                 '<td class="text-center text-warning fw-bold">' + (c.permiso || 0) + '</td>' +
                 '<td class="text-center text-danger fw-bold">' + (c.falta || 0) + '</td>' +
@@ -5062,6 +5460,22 @@ async function consultarDashboard() {
         });
 
         resumen.style.display = 'block';
+
+        // Gráfica de presencia
+        const metaLocalBase = calcularMetaPlanificadaLocal(anio, mes, _feriadosMesActual);
+        actualizarGraficaPresentes(d, metaLocalBase);
+
+        // Cargar feriados pendientes locales y recalcular
+        try {
+            const feriadosCombinados = await obtenerFeriadosCombinados(anio, mes);
+            _feriadosMesActual = feriadosCombinados;
+            const metaLocal = calcularMetaPlanificadaLocal(anio, mes, _feriadosMesActual);
+            renderFeriadosDashboard(_feriadosMesActual, metaLocal);
+            actualizarKPIsMetaLocal(metaLocal);
+            actualizarGraficaPresentes(d, metaLocal);
+        } catch (e) {
+            console.warn('Error cargando feriados pendientes:', e);
+        }
     } catch (e) {
         hideLoading();
         console.error(e);
@@ -5070,7 +5484,7 @@ async function consultarDashboard() {
 }
 
 // =========================================================================
-// AJUSTES DE HORAS — RESUMEN GLOBAL
+// AJUSTES DE HORAS
 // =========================================================================
 
 async function cargarAjustesGlobales() {
@@ -5088,11 +5502,55 @@ async function cargarAjustesGlobales() {
         if (resp.status !== 'success') throw new Error(resp.message || 'Error');
         const d = resp.data;
 
-        _ajustesGlobales = d.porColaborador || [];
-        renderAjustesGlobales(_ajustesGlobales, d.totales || {});
+        _ajustesServidorSnapshot = (d.porColaborador || []).map(function(a) { return Object.assign({}, a); });
+        _ajustesGlobales = _ajustesServidorSnapshot.map(function(a) { return Object.assign({}, a); });
+        await refrescarAjustesGlobalesLocal();
     } catch (e) {
         console.error('Error cargando ajustes globales:', e);
     }
+}
+
+async function refrescarAjustesGlobalesLocal() {
+    if (!appConfig.modoAdmin) return;
+
+    const pendientes = await getPendientes();
+    const ajustesPend = pendientes.filter(function(p) { return p.tipoOperacion === 'ajuste_horas'; });
+
+    const porColab = {};
+    (_ajustesServidorSnapshot || []).forEach(function(a) {
+        porColab[a.colaborador] = {
+            colaborador: a.colaborador,
+            totalPositivas: a.totalPositivas || 0,
+            totalNegativas: a.totalNegativas || 0,
+            balance: a.balance || 0
+        };
+    });
+
+    ajustesPend.forEach(function(p) {
+        if (!porColab[p.colaborador]) {
+            porColab[p.colaborador] = { colaborador: p.colaborador, totalPositivas: 0, totalNegativas: 0, balance: 0 };
+        }
+        const c = porColab[p.colaborador];
+        if (p.horas > 0) c.totalPositivas += p.horas;
+        else c.totalNegativas += Math.abs(p.horas);
+        c.balance += p.horas;
+    });
+
+    const lista = Object.values(porColab)
+        .filter(function(c) { return c.totalPositivas > 0 || c.totalNegativas > 0; })
+        .sort(function(a, b) { return a.colaborador.localeCompare(b.colaborador); });
+
+    let sumaPos = 0, sumaNeg = 0;
+    lista.forEach(function(c) { sumaPos += c.totalPositivas; sumaNeg += c.totalNegativas; });
+
+    const totales = {
+        totalPositivas: sumaPos, totalNegativas: sumaNeg,
+        balance: sumaPos - sumaNeg,
+        cantidadColaboradores: lista.length
+    };
+
+    _ajustesGlobales = lista;
+    renderAjustesGlobales(lista, totales);
 }
 
 function renderAjustesGlobales(ajustes, totales) {
@@ -5123,7 +5581,6 @@ function renderAjustesGlobales(ajustes, totales) {
 
     ajustes.forEach(function(a) {
         const tr = document.createElement('tr');
-
         let claseBalance = 'cero';
         if (a.balance > 0) claseBalance = 'positivo';
         else if (a.balance < 0) claseBalance = 'negativo';
@@ -5134,7 +5591,6 @@ function renderAjustesGlobales(ajustes, totales) {
             '<td class="text-center"><span class="badge-negative">-' + (a.totalNegativas || 0).toFixed(2) + ' h</span></td>' +
             '<td class="text-center"><span class="balance-cell ' + claseBalance + '">' + formatearBalance(a.balance || 0) + '</span></td>' +
             '<td class="text-center"><button type="button" class="btn-action btn-ver-detalle" title="Ver historial completo" onclick="verDetalleColaborador(\'' + a.colaborador.replace(/'/g, "\\'") + '\')"><i class="fas fa-eye"></i></button></td>';
-
         tbody.appendChild(tr);
     });
 }
@@ -5164,9 +5620,7 @@ async function verDetalleColaborador(colaborador) {
         if (resp.status !== 'success') throw new Error(resp.message || 'Error');
         const d = resp.data;
 
-        const pendientesLocales = (await getPendientes()).filter(function(p) {
-            return p.tipoOperacion === 'ajuste_horas' && p.colaborador === colaborador;
-        });
+        const pendientesLocales = (await getPendientes()).filter(function(p) { return p.tipoOperacion === 'ajuste_horas' && p.colaborador === colaborador; });
 
         let posTotal = d.totalPositivas || 0;
         let negTotal = d.totalNegativas || 0;
@@ -5245,7 +5699,7 @@ async function eliminarAjustePendienteDetalle(idPendiente) {
         await deletePendiente(idPendiente);
         await actualizarContadorPendientes();
         bootstrap.Modal.getInstance(document.getElementById('modalDetalleColaborador')).hide();
-        cargarAjustesGlobales();
+        await cargarAjustesGlobales();
         Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false });
     } catch (e) { console.error(e); }
 }
@@ -5275,7 +5729,7 @@ async function eliminarAjusteServidorDetalle(rowNumber, colaborador) {
         if (resp.status === 'success') {
             bootstrap.Modal.getInstance(document.getElementById('modalDetalleColaborador')).hide();
             await Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1500, showConfirmButton: false });
-            cargarAjustesGlobales();
+            await cargarAjustesGlobales();
         } else {
             throw new Error(resp.message || 'Error');
         }
@@ -5285,42 +5739,24 @@ async function eliminarAjusteServidorDetalle(rowNumber, colaborador) {
     }
 }
 
-// =========================================================================
-// MODO NORMAL — Ver historial
-// =========================================================================
-
 async function verAjustesModoNormal() {
     const col = document.getElementById('aju-colaborador-normal').value;
-    if (!col) {
-        Swal.fire('Atención', 'Selecciona un colaborador.', 'warning');
-        return;
-    }
+    if (!col) { Swal.fire('Atención', 'Selecciona un colaborador.', 'warning'); return; }
     verDetalleColaborador(col);
 }
 
-// =========================================================================
-// NUEVO AJUSTE — Modal
-// =========================================================================
-
 function abrirModalNuevoAjuste() {
-    if (!appConfig.modoAdmin) {
-        Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning');
-        return;
-    }
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
     document.getElementById('ajuste-modal-colaborador').value = '';
     document.getElementById('ajuste-modal-fecha').value = hoyYMD();
     document.getElementById('ajuste-modal-fecha').setAttribute('max', hoyYMD());
     document.getElementById('ajuste-modal-horas').value = '';
     document.getElementById('ajuste-modal-obs').value = '';
-
     new bootstrap.Modal(document.getElementById('modalNuevoAjuste')).show();
 }
 
 async function guardarNuevoAjusteModal() {
-    if (!appConfig.modoAdmin) {
-        Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning');
-        return;
-    }
+    if (!appConfig.modoAdmin) { Swal.fire('Acceso restringido', 'Activa el Modo Administrador.', 'warning'); return; }
 
     const col = document.getElementById('ajuste-modal-colaborador').value;
     const fecha = document.getElementById('ajuste-modal-fecha').value;
@@ -5342,23 +5778,16 @@ async function guardarNuevoAjusteModal() {
         await addPendiente({
             tipoOperacion: 'ajuste_horas',
             colaborador: col, fecha: fecha, horas: horasNum,
-            observaciones: obs || '',
-            registradoPor: 'Admin',
+            observaciones: obs || '', registradoPor: 'Admin',
             creadoEn: new Date().toISOString()
         });
         await actualizarContadorPendientes();
 
         bootstrap.Modal.getInstance(document.getElementById('modalNuevoAjuste')).hide();
 
-        await Swal.fire({
-            icon: 'success',
-            title: 'Ajuste pendiente',
-            html: '<p>Se guardó en la cola de pendientes.</p>',
-            timer: 1800,
-            showConfirmButton: false
-        });
+        await Swal.fire({ icon: 'success', title: 'Ajuste pendiente', html: '<p>Se guardó en la cola de pendientes.</p>', timer: 1800, showConfirmButton: false });
 
-        cargarAjustesGlobales();
+        await refrescarAjustesGlobalesLocal();
     } catch (e) {
         Swal.fire('Error', 'No se pudo guardar: ' + e.message, 'error');
     } finally {
@@ -5388,14 +5817,10 @@ async function toggleModoAdmin(activar) {
         const result = await Swal.fire({
             title: 'Activar Modo Administrador',
             html: '<p>Ingresa la contraseña de administrador.</p>',
-            input: 'password',
-            inputPlaceholder: 'Contraseña',
+            input: 'password', inputPlaceholder: 'Contraseña',
             inputAttributes: { autocapitalize: 'off', autocomplete: 'off' },
-            showCancelButton: true,
-            confirmButtonText: 'Activar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#2ecc71',
-            allowOutsideClick: false
+            showCancelButton: true, confirmButtonText: 'Activar', cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#2ecc71', allowOutsideClick: false
         });
         if (!result.isConfirmed) { setTimeout(abrirConfig, 200); return; }
         const pwd = result.value;
@@ -5459,6 +5884,9 @@ function iconoOperacion(op) {
         case 'eliminar': return '<i class="fas fa-trash text-danger me-1"></i>';
         case 'ajuste_horas': return '<i class="fas fa-coins text-warning me-1"></i>';
         case 'asistencia': return '<i class="fas fa-camera text-primary me-1"></i>';
+        case 'feriado_agregar': return '<i class="fas fa-umbrella-beach text-warning me-1"></i>';
+        case 'feriado_editar': return '<i class="fas fa-pen text-warning me-1"></i>';
+        case 'feriado_eliminar': return '<i class="fas fa-trash text-warning me-1"></i>';
         default: return '<i class="fas fa-clock text-primary me-1"></i>';
     }
 }
@@ -5470,21 +5898,23 @@ function labelOperacion(p) {
     if (p.tipoOperacion === 'eliminar') return 'Eliminación';
     if (p.tipoOperacion === 'ajuste_horas') return 'Ajuste horas: ' + (p.horas > 0 ? '+' : '') + p.horas + ' h';
     if (p.tipoOperacion === 'asistencia') return 'Asistencia: ' + p.estado + ' ' + p.hora + ' (con foto)';
+    if (p.tipoOperacion === 'feriado_agregar') return 'Feriado: ' + (p.descripcion || '(sin descripción)');
+    if (p.tipoOperacion === 'feriado_editar') return 'Editar feriado: ' + (p.descripcion || '(sin descripción)');
+    if (p.tipoOperacion === 'feriado_eliminar') return 'Eliminar feriado';
     return 'Asistencia: ' + p.estado + ' ' + p.hora;
 }
 
 function descripcionFecha(p) {
     if (p.tipoOperacion === 'dia_libre_multiple') return 'Fecha: ' + formatearFechaVisual(p.fecha);
     if (p.tipoOperacion === 'ausencia_rango') return formatearFechaVisual(p.fechaDesde) + ' → ' + formatearFechaVisual(p.fechaHasta);
+    if (p.tipoOperacion === 'feriado_editar') return formatearFechaVisual(p.fechaOriginal) + ' → ' + formatearFechaVisual(p.fecha);
     if (p.fecha) return formatearFechaVisual(p.fecha);
     if (p.anio) return p.mes + '/' + p.anio;
     return '';
 }
 
 async function renderizarModalPendientes() {
-    const pendientes = (await getPendientes(false))
-        .sort(function(a, b) { return new Date(b.creadoEn) - new Date(a.creadoEn); });
-
+    const pendientes = (await getPendientes(false)).sort(function(a, b) { return new Date(b.creadoEn) - new Date(a.creadoEn); });
     const $pend = document.getElementById('lista-pendientes');
     $pend.innerHTML = '';
 
@@ -5500,9 +5930,7 @@ async function renderizarModalPendientes() {
     pendientes.forEach(function(p) {
         const fechaObj = new Date(p.creadoEn);
         const fechaStr = fechaObj.toLocaleDateString() + ' ' + fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const titulo = p.tipoOperacion === 'dia_libre_multiple'
-            ? (p.colaboradores.length + ' colaboradores')
-            : (p.colaborador || '—');
+        const titulo = p.tipoOperacion === 'dia_libre_multiple' ? (p.colaboradores.length + ' colaboradores') : (p.colaborador || 'Feriado');
 
         const div = document.createElement('div');
         div.className = 'list-group-item d-flex align-items-center';
@@ -5527,9 +5955,7 @@ async function renderizarModalPendientes() {
         };
     });
 
-    $pend.querySelectorAll('.check-pendiente').forEach(function(cb) {
-        cb.onchange = actualizarBotonesSeleccion;
-    });
+    $pend.querySelectorAll('.check-pendiente').forEach(function(cb) { cb.onchange = actualizarBotonesSeleccion; });
 }
 
 function actualizarBotonesSeleccion() {
@@ -5547,7 +5973,13 @@ async function enviarPendienteAlServidor(p, intentos) {
     intentos = intentos || 1;
     let body = null;
 
-    if (p.tipoOperacion === 'asistencia') {
+    if (p.tipoOperacion === 'feriado_agregar') {
+        body = { action: 'agregarFeriado', password: passwordAdmin, fecha: p.fecha, descripcion: p.descripcion || '' };
+    } else if (p.tipoOperacion === 'feriado_editar') {
+        body = { action: 'editarFeriado', password: passwordAdmin, fechaOriginal: p.fechaOriginal, fecha: p.fecha, descripcion: p.descripcion || '' };
+    } else if (p.tipoOperacion === 'feriado_eliminar') {
+        body = { action: 'eliminarFeriado', password: passwordAdmin, fecha: p.fecha };
+    } else if (p.tipoOperacion === 'asistencia') {
         try {
             const partes = p.fecha.split('-');
             const anio = partes[0];
@@ -5556,12 +5988,7 @@ async function enviarPendienteAlServidor(p, intentos) {
             const checkResp = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'obtenerRegistros',
-                    colaborador: p.colaborador,
-                    anio: anio,
-                    mes: mes
-                })
+                body: JSON.stringify({ action: 'obtenerRegistros', colaborador: p.colaborador, anio: anio, mes: mes })
             }).then(function(r) { return r.json(); });
 
             if (checkResp.status === 'success') {
@@ -5573,44 +6000,25 @@ async function enviarPendienteAlServidor(p, intentos) {
                     const yaHayEntrada = regDelDia.horaEntrada && !esAusencia;
                     const yaHaySalida = regDelDia.horaSalida && !esAusencia;
 
-                    if (p.estado === 'Entrada' && yaHayEntrada) {
-                        return {
-                            ok: false, esDuplicado: true,
-                            error: 'Entrada ya registrada el ' + formatearFechaVisual(p.fecha) + ' a las ' + regDelDia.horaEntrada + '. Se descartó de pendientes.'
-                        };
-                    }
-                    if (p.estado === 'Salida' && yaHaySalida) {
-                        return {
-                            ok: false, esDuplicado: true,
-                            error: 'Salida ya registrada el ' + formatearFechaVisual(p.fecha) + ' a las ' + regDelDia.horaSalida + '. Se descartó de pendientes.'
-                        };
-                    }
-                    if (yaHayEntrada && yaHaySalida) {
-                        return {
-                            ok: false, esDuplicado: true,
-                            error: 'Jornada del ' + formatearFechaVisual(p.fecha) + ' ya completa. Se descartó de pendientes.'
-                        };
-                    }
-                    if (esAusencia) {
-                        return {
-                            ok: false, esDuplicado: true,
-                            error: 'El ' + formatearFechaVisual(p.fecha) + ' ya tiene registro especial (' + regDelDia.estado + '). Se descartó de pendientes.'
-                        };
-                    }
-                    if (p.estado === 'Salida' && !yaHayEntrada) {
-                        return {
-                            ok: false, esDuplicado: true,
-                            error: 'No se puede registrar salida del ' + formatearFechaVisual(p.fecha) + ': no existe entrada en el servidor.'
-                        };
-                    }
+                    if (p.estado === 'Entrada' && yaHayEntrada) return { ok: false, esDuplicado: true, error: 'Entrada ya registrada el ' + formatearFechaVisual(p.fecha) + ' a las ' + regDelDia.horaEntrada + '. Se descartó de pendientes.' };
+                    if (p.estado === 'Salida' && yaHaySalida) return { ok: false, esDuplicado: true, error: 'Salida ya registrada el ' + formatearFechaVisual(p.fecha) + ' a las ' + regDelDia.horaSalida + '. Se descartó de pendientes.' };
+                    if (yaHayEntrada && yaHaySalida) return { ok: false, esDuplicado: true, error: 'Jornada del ' + formatearFechaVisual(p.fecha) + ' ya completa. Se descartó de pendientes.' };
+                    if (esAusencia) return { ok: false, esDuplicado: true, error: 'El ' + formatearFechaVisual(p.fecha) + ' ya tiene registro especial (' + regDelDia.estado + '). Se descartó de pendientes.' };
+                    if (p.estado === 'Salida' && !yaHayEntrada) return { ok: false, esDuplicado: true, error: 'No se puede registrar salida del ' + formatearFechaVisual(p.fecha) + ': no existe entrada en el servidor.' };
                 }
             }
-        } catch (e) {
-            console.warn('Validación previa falló, se intentará envío directo:', e);
-        }
-    }
+        } catch (e) { console.warn('Validación previa falló, se intentará envío directo:', e); }
 
-    if (p.tipoOperacion === 'dia_libre_multiple') {
+        const horaParaEnviar = p.horaOriginal || p.hora;
+        body = {
+            action: 'registrarAsistencia',
+            colaborador: p.colaborador, fecha: p.fecha,
+            hora: horaParaEnviar, estado: p.estado,
+            fotoBase64: p.fotoBase64 || '', fotoFechaHora: p.fotoFechaHora || '',
+            lat: p.lat, lng: p.lng, distanciaMetros: p.distanciaMetros,
+            esAdmin: !!p.esAdmin
+        };
+    } else if (p.tipoOperacion === 'dia_libre_multiple') {
         body = { action: 'registrarDiaLibreMultiple', colaboradores: p.colaboradores, fecha: p.fecha };
     } else if (p.tipoOperacion === 'ausencia_rango') {
         body = { action: 'registrarAusenciaRango', colaborador: p.colaborador, fechaDesde: p.fechaDesde, fechaHasta: p.fechaHasta, tipoKey: p.tipoKey };
@@ -5621,17 +6029,7 @@ async function enviarPendienteAlServidor(p, intentos) {
     } else if (p.tipoOperacion === 'ajuste_horas') {
         body = { action: 'registrarAjusteHoras', password: passwordAdmin, colaborador: p.colaborador, fecha: p.fecha, horas: p.horas, observaciones: p.observaciones || '', registradoPor: p.registradoPor || 'Admin' };
     } else {
-        const horaParaEnviar = p.horaOriginal || p.hora;
-        body = {
-            action: 'registrarAsistencia',
-            colaborador: p.colaborador, fecha: p.fecha,
-            hora: horaParaEnviar, estado: p.estado,
-            fotoBase64: p.fotoBase64 || '',
-            fotoFechaHora: p.fotoFechaHora || '',
-            lat: p.lat, lng: p.lng,
-            distanciaMetros: p.distanciaMetros,
-            esAdmin: !!p.esAdmin
-        };
+        return { ok: false, esDuplicado: false, error: 'Tipo de operación no reconocido: ' + p.tipoOperacion };
     }
 
     try {
@@ -5647,10 +6045,8 @@ async function enviarPendienteAlServidor(p, intentos) {
         clearTimeout(timeoutId);
 
         const data = await resp.json();
-
-        if (data.status === 'success') {
-            return { ok: true, data: data.data };
-        } else {
+        if (data.status === 'success') return { ok: true, data: data.data };
+        else {
             const msg = data.message || 'Error del servidor';
             const esDup = /ya registrad|ya completa|ya tiene registro|ya existe|no existe entrada/i.test(msg);
             return { ok: false, esDuplicado: esDup, error: msg };
@@ -5667,13 +6063,14 @@ async function enviarPendienteAlServidor(p, intentos) {
     }
 }
 
+let _sincronizandoEnCurso = false;
+
 async function sincronizarSeleccionados() {
     if (!_isOnline) {
         Swal.fire({
             title: 'Sin conexión',
             html: '<p>No hay conexión a internet.</p><p class="small text-muted mt-2">Los registros se mantienen guardados localmente. Intenta de nuevo cuando tengas red.</p>',
-            icon: 'warning',
-            confirmButtonColor: '#f39c12'
+            icon: 'warning', confirmButtonColor: '#f39c12'
         });
         return;
     }
@@ -5685,10 +6082,15 @@ async function sincronizarSeleccionados() {
     const pendientes = await getPendientes(false);
     const aEnviar = pendientes.filter(function(p) { return ids.includes(p.id); });
 
+    _sincronizandoEnCurso = true;
+
     const btn = document.getElementById('btn-sincronizar-seleccionados');
     const original = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+
+    const btnCerrarX = document.getElementById('btn-cerrar-sync-x');
+    if (btnCerrarX) { btnCerrarX.style.pointerEvents = 'none'; btnCerrarX.style.opacity = '0.4'; }
 
     let ok = 0, err = 0, descartados = 0;
     const erroresDetalle = [];
@@ -5710,62 +6112,44 @@ async function sincronizarSeleccionados() {
                 }));
                 await deletePendiente(p.id);
                 ok++;
-            } catch (e) {
-                err++;
-                erroresDetalle.push((p.colaborador || 'Día Libre') + ' → Error guardando en sincronizados: ' + e.message);
-            }
+            } catch (e) { err++; erroresDetalle.push((p.colaborador || 'Feriado') + ' → Error guardando en sincronizados: ' + e.message); }
         } else if (resultado.esDuplicado) {
             try {
-                await addSincronizado(Object.assign({}, p, {
-                    accion: 'descartado_duplicado',
-                    message: resultado.error || 'Ya existía en el servidor',
-                    fechaSync: new Date().toISOString()
-                }));
+                await addSincronizado(Object.assign({}, p, { accion: 'descartado_duplicado', message: resultado.error || 'Ya existía en el servidor', fechaSync: new Date().toISOString() }));
                 await deletePendiente(p.id);
                 descartados++;
 
-                let descripcion = p.colaborador || 'Día Libre';
-                if (p.tipoOperacion === 'asistencia') {
-                    descripcion += ' [' + p.estado + ' ' + p.hora + ' del ' + formatearFechaVisual(p.fecha) + ']';
-                }
+                let descripcion = p.colaborador || 'Feriado';
+                if (p.tipoOperacion === 'asistencia') descripcion += ' [' + p.estado + ' ' + p.hora + ' del ' + formatearFechaVisual(p.fecha) + ']';
                 descartadosDetalle.push(descripcion + ' → ' + resultado.error);
-            } catch (e) {
-                err++;
-                erroresDetalle.push((p.colaborador || 'Día Libre') + ' → Error descartando duplicado: ' + e.message);
-            }
+            } catch (e) { err++; erroresDetalle.push((p.colaborador || 'Feriado') + ' → Error descartando duplicado: ' + e.message); }
         } else {
             err++;
-            let descripcion = p.colaborador || 'Día Libre';
-            if (p.tipoOperacion === 'asistencia') {
-                descripcion += ' [' + p.estado + ' ' + p.hora + ' del ' + formatearFechaVisual(p.fecha) + ']';
-            } else if (p.tipoOperacion === 'ajuste_horas') {
-                descripcion += ' [ajuste ' + (p.horas > 0 ? '+' : '') + p.horas + 'h]';
-            } else if (p.tipoOperacion === 'dia_libre_multiple') {
-                descripcion += ' [día libre del ' + formatearFechaVisual(p.fecha) + ']';
-            } else if (p.tipoOperacion === 'ausencia_rango') {
-                descripcion += ' [' + p.tipoLabel + ']';
-            }
+            let descripcion = p.colaborador || 'Feriado';
+            if (p.tipoOperacion === 'asistencia') descripcion += ' [' + p.estado + ' ' + p.hora + ' del ' + formatearFechaVisual(p.fecha) + ']';
+            else if (p.tipoOperacion === 'ajuste_horas') descripcion += ' [ajuste ' + (p.horas > 0 ? '+' : '') + p.horas + 'h]';
+            else if (p.tipoOperacion === 'dia_libre_multiple') descripcion += ' [día libre del ' + formatearFechaVisual(p.fecha) + ']';
+            else if (p.tipoOperacion === 'ausencia_rango') descripcion += ' [' + p.tipoLabel + ']';
+            else if (p.tipoOperacion === 'feriado_agregar') descripcion += ' [feriado ' + formatearFechaVisual(p.fecha) + ']';
+            else if (p.tipoOperacion === 'feriado_editar') descripcion += ' [editar feriado ' + formatearFechaVisual(p.fechaOriginal) + ' → ' + formatearFechaVisual(p.fecha) + ']';
+            else if (p.tipoOperacion === 'feriado_eliminar') descripcion += ' [eliminar feriado ' + formatearFechaVisual(p.fecha) + ']';
             erroresDetalle.push(descripcion + ' → ' + resultado.error);
         }
 
-        if (i < aEnviar.length - 1) {
-            await new Promise(function(r) { setTimeout(r, 800); });
-        }
+        if (i < aEnviar.length - 1) await new Promise(function(r) { setTimeout(r, 800); });
     }
+
+    _sincronizandoEnCurso = false;
 
     btn.innerHTML = original;
     btn.disabled = false;
+    if (btnCerrarX) { btnCerrarX.style.pointerEvents = ''; btnCerrarX.style.opacity = ''; }
+
     await actualizarContadorPendientes();
     await renderizarModalPendientes();
 
     if (err === 0 && descartados === 0) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Sincronización completa',
-            text: ok + ' operación(es) sincronizadas.',
-            timer: 1800,
-            showConfirmButton: false
-        });
+        Swal.fire({ icon: 'success', title: 'Sincronización completa', text: ok + ' operación(es) sincronizadas.', timer: 1800, showConfirmButton: false });
     } else {
         let html = '<div class="text-start">';
         if (ok > 0) html += '<p><b>✅ Sincronizadas:</b> ' + ok + '</p>';
@@ -5778,25 +6162,20 @@ async function sincronizarSeleccionados() {
             descartadosDetalle.forEach(function(d) { html += '<li>' + d + '</li>'; });
             html += '</ul></div>';
         }
-
         if (erroresDetalle.length > 0) {
             html += '<hr><div class="text-start small"><b>Errores (quedan en pendientes):</b><ul class="mb-0" style="max-height:150px;overflow-y:auto;font-size:0.75rem;">';
             erroresDetalle.forEach(function(e) { html += '<li>' + e + '</li>'; });
             html += '</ul></div>';
         }
 
-        Swal.fire({
-            icon: err > 0 ? 'warning' : 'info',
-            title: 'Sincronización parcial',
-            html: html,
-            width: 600
-        });
+        Swal.fire({ icon: err > 0 ? 'warning' : 'info', title: 'Sincronización parcial', html: html, width: 600 });
     }
 
     const tabActiva = document.querySelector('#mainTabs .nav-link.active');
     if (tabActiva) {
         if (tabActiva.dataset.tab === 'tab-historial' && _historialContext.colaborador) consultarHistorial();
         if (tabActiva.dataset.tab === 'tab-ajustes' && appConfig.modoAdmin) cargarAjustesGlobales();
+        if (tabActiva.dataset.tab === 'tab-dashboard' && appConfig.modoAdmin) consultarDashboard();
     }
 }
 
@@ -5814,9 +6193,7 @@ async function eliminarSeleccionados(tipo) {
     });
     if (!conf.isConfirmed) return;
 
-    for (const id of ids) {
-        await deletePendiente(id);
-    }
+    for (const id of ids) await deletePendiente(id);
     await actualizarContadorPendientes();
     await renderizarModalPendientes();
 }
@@ -5834,17 +6211,10 @@ function cambiarTabPrincipal(tabId) {
     $$('.tab-pane-content').forEach(function(el) { el.style.display = 'none'; });
     const target = document.getElementById(tabId);
     if (target) target.style.display = 'block';
-    $$('#mainTabs .nav-link').forEach(function(link) {
-        link.classList.toggle('active', link.dataset.tab === tabId);
-    });
+    $$('#mainTabs .nav-link').forEach(function(link) { link.classList.toggle('active', link.dataset.tab === tabId); });
 
-    if (tabId === 'tab-ajustes' && appConfig.modoAdmin) {
-        cargarAjustesGlobales();
-    }
-
-    if (tabId === 'tab-historial') {
-        try { construirChipsColaboradores(); actualizarChipsActivos(); } catch (e) {}
-    }
+    if (tabId === 'tab-ajustes' && appConfig.modoAdmin) cargarAjustesGlobales();
+    if (tabId === 'tab-historial') { try { construirChipsColaboradores(); actualizarChipsActivos(); } catch (e) {} }
 }
 
 function poblarSelectsMesAnio() {
@@ -5931,9 +6301,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     if (btnRefrescarGPS) btnRefrescarGPS.addEventListener('click', obtenerUbicacionGPS);
 
     const btnTomarFoto = document.getElementById('btn-tomar-foto');
-    if (btnTomarFoto) btnTomarFoto.addEventListener('click', function() {
-        openCamera('foto-preview');
-    });
+    if (btnTomarFoto) btnTomarFoto.addEventListener('click', function() { openCamera('foto-preview'); });
 
     const btnRetomar = document.getElementById('btn-retomar-foto');
     if (btnRetomar) btnRetomar.addEventListener('click', descartarFoto);
@@ -5970,14 +6338,19 @@ window.addEventListener('DOMContentLoaded', async function() {
     if (btnDetectar) btnDetectar.addEventListener('click', detectarIncompletos);
 
     const selHistColab = document.getElementById('hist-colaborador');
-    if (selHistColab) {
-        selHistColab.addEventListener('change', function() {
-            actualizarChipsActivos();
-        });
-    }
+    if (selHistColab) selHistColab.addEventListener('change', function() { actualizarChipsActivos(); });
 
     const btnDash = document.getElementById('btn-consultar-dashboard');
     if (btnDash) btnDash.addEventListener('click', consultarDashboard);
+
+    const btnAbrirFeriados = document.getElementById('btn-abrir-feriados');
+    if (btnAbrirFeriados) btnAbrirFeriados.addEventListener('click', abrirModalFeriados);
+
+    const btnAgregarFeriado = document.getElementById('btn-agregar-feriado');
+    if (btnAgregarFeriado) btnAgregarFeriado.addEventListener('click', agregarFeriadoUI);
+
+    const btnGuardarFeriadoEdicion = document.getElementById('btn-guardar-feriado-edicion');
+    if (btnGuardarFeriadoEdicion) btnGuardarFeriadoEdicion.addEventListener('click', guardarEdicionFeriado);
 
     const btnRefrescarGlobal = document.getElementById('btn-refrescar-global');
     if (btnRefrescarGlobal) {
@@ -6011,6 +6384,13 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     const togAdmin = document.getElementById('toggle-modo-admin');
     if (togAdmin) togAdmin.addEventListener('change', function() { toggleModoAdmin(this.checked); });
+
+    const modalSyncEl = document.getElementById('modalSync');
+    if (modalSyncEl) {
+        modalSyncEl.addEventListener('hide.bs.modal', function(e) {
+            if (_sincronizandoEnCurso) { e.preventDefault(); e.stopPropagation(); return false; }
+        });
+    }
 
     const btnSync = document.getElementById('btn-sync-manager');
     if (btnSync) {
@@ -6050,9 +6430,7 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     obtenerUbicacionGPS();
 
-    if (appConfig.modoAdmin) {
-        cargarAjustesGlobales();
-    }
+    if (appConfig.modoAdmin) cargarAjustesGlobales();
 
     try { construirChipsColaboradores(); actualizarChipsActivos(); } catch (e) {}
 
