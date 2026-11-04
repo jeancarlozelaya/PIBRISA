@@ -1103,6 +1103,47 @@
         body.modo-oscuro .card .table thead th { background-color: #0f172a !important; color: #93c5fd !important; border-color: #334155 !important; }
         body.modo-oscuro .card .table tbody td { background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
 
+        /* =========================================================== */
+        /* FIX MODO OSCURO: Tabla de detección de incompletos (SweetAlert) */
+        /* =========================================================== */
+        body.modo-oscuro .swal2-html-container table,
+        body.modo-oscuro .swal2-html-container .table,
+        body.modo-oscuro .swal2-popup table {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        body.modo-oscuro .swal2-html-container .table thead,
+        body.modo-oscuro .swal2-html-container .table thead tr,
+        body.modo-oscuro .swal2-popup .table thead {
+            background-color: #0f172a !important;
+        }
+        body.modo-oscuro .swal2-html-container .table thead th,
+        body.modo-oscuro .swal2-popup .table thead th {
+            background-color: #0f172a !important;
+            color: #93c5fd !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro .swal2-html-container .table tbody td,
+        body.modo-oscuro .swal2-popup .table tbody td {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        body.modo-oscuro .swal2-html-container .table tbody tr:hover td,
+        body.modo-oscuro .swal2-popup .table tbody tr:hover td {
+            background-color: #334155 !important;
+        }
+        body.modo-oscuro .swal2-popup {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        body.modo-oscuro .swal2-title {
+            color: #93c5fd !important;
+        }
+        body.modo-oscuro .swal2-html-container {
+            color: #e2e8f0 !important;
+        }
+
         .btn-close, .btn-close-white {
             filter: invert(1) grayscale(1) brightness(2) !important;
             opacity: 1 !important;
@@ -1186,7 +1227,7 @@
                             <span>Modo Administrador</span>
                         </div>
                         <p class="setting-description">
-                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard, editar o eliminar registros y exportar a Excel. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
+                            Al activarlo podrás ver fotos y ubicaciones del historial, registrar ausencias múltiples, ajustar horas, ver el dashboard, editar o eliminar registros, exportar a Excel y detectar asistencias incompletas. <b>Además, la foto y el GPS dejan de ser obligatorios para registrar asistencia.</b> Requiere contraseña.
                         </p>
                     </div>
                     <div class="form-check form-switch">
@@ -1688,6 +1729,9 @@
                         </button>
                         <button type="button" id="btn-exportar-excel" class="btn btn-success" style="flex: 1; min-width: 0; display:none;" title="Exportar a Excel (todos los colaboradores)">
                             <i class="fas fa-file-excel"></i>
+                        </button>
+                        <button type="button" id="btn-detectar-incompletos" class="btn btn-warning" style="flex: 1; min-width: 0; display:none;" title="Detectar asistencias incompletas del mes hasta hoy">
+                            <i class="fas fa-exclamation-triangle"></i>
                         </button>
                     </div>
                 </div>
@@ -2303,6 +2347,7 @@ function construirChipsColaboradores() {
     if (!contenedor) return;
 
     const botonesCol = document.getElementById('hist-botones-col');
+    const btnIncompletos = document.getElementById('btn-detectar-incompletos');
 
     if (!appConfig.modoAdmin) {
         contenedor.style.display = 'none';
@@ -2313,6 +2358,7 @@ function construirChipsColaboradores() {
         if (colMes) colMes.className = 'col-md-2';
         if (colAnio) colAnio.className = 'col-md-2';
         if (botonesCol) botonesCol.className = 'col-md-5 d-flex align-items-end gap-2';
+        if (btnIncompletos) btnIncompletos.style.display = 'none';
         return;
     }
 
@@ -2321,6 +2367,7 @@ function construirChipsColaboradores() {
     if (colMes) colMes.className = 'col-md-2';
     if (colAnio) colAnio.className = 'col-md-2';
     if (botonesCol) botonesCol.className = 'col-md-8 d-flex align-items-end gap-2';
+    if (btnIncompletos) btnIncompletos.style.display = '';
 
     const row = contenedor.querySelector('.d-flex');
     if (!row) return;
@@ -4279,7 +4326,6 @@ async function exportarHistorialExcel() {
                     estado = 'Sin registro';
                 }
 
-                // Crear celda con hipervínculo si hay foto
                 const celdaFotoE = fotoE
                     ? { v: 'Ver foto entrada', t: 's', l: { Target: fotoE, Tooltip: 'Abrir foto de entrada' } }
                     : { v: '', t: 's' };
@@ -4301,33 +4347,26 @@ async function exportarHistorialExcel() {
                 ]);
             }
 
-            // Crear hoja con opciones para manejar celdas tipo objeto (con hipervínculos)
             const ws = XLSX.utils.aoa_to_sheet(datos);
 
-            // Convertir celdas con { v, t, l } a celdas con hipervínculo real
-            // Iterar sobre los datos originales para aplicar el formato correcto
             for (let rowIdx = 1; rowIdx < datos.length; rowIdx++) {
                 const fila = datos[rowIdx];
-                // Columna 6 (índice G): Foto Entrada
                 const celdaG = fila[6];
                 if (celdaG && typeof celdaG === 'object' && celdaG.l) {
                     const ref = XLSX.utils.encode_cell({ r: rowIdx, c: 6 });
                     ws[ref] = {
                         v: celdaG.v,
                         t: 's',
-                        l: { Target: celdaG.l.Target, Tooltip: celdaG.l.Tooltip || '' },
-                        s: { font: { color: { rgb: '0563C1' }, underline: true } }
+                        l: { Target: celdaG.l.Target, Tooltip: celdaG.l.Tooltip || '' }
                     };
                 }
-                // Columna 7 (índice H): Foto Salida
                 const celdaH = fila[7];
                 if (celdaH && typeof celdaH === 'object' && celdaH.l) {
                     const ref = XLSX.utils.encode_cell({ r: rowIdx, c: 7 });
                     ws[ref] = {
                         v: celdaH.v,
                         t: 's',
-                        l: { Target: celdaH.l.Target, Tooltip: celdaH.l.Tooltip || '' },
-                        s: { font: { color: { rgb: '0563C1' }, underline: true } }
+                        l: { Target: celdaH.l.Target, Tooltip: celdaH.l.Tooltip || '' }
                     };
                 }
             }
@@ -4339,8 +4378,8 @@ async function exportarHistorialExcel() {
                 { wch: 14 },
                 { wch: 8  },
                 { wch: 16 },
-                { wch: 45 },
-                { wch: 45 },
+                { wch: 22 },
+                { wch: 22 },
                 { wch: 30 },
                 { wch: 30 }
             ];
@@ -4398,6 +4437,309 @@ async function exportarHistorialExcel() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalHtml;
+    }
+}
+
+// =========================================================================
+// DETECTAR ASISTENCIAS INCOMPLETAS (sin columna Día, compatible modo oscuro)
+// =========================================================================
+
+async function detectarIncompletos() {
+    if (!appConfig.modoAdmin) {
+        Swal.fire('Acceso restringido', 'Esta función solo está disponible en modo administrador.', 'warning');
+        return;
+    }
+
+    const mes = document.getElementById('hist-mes').value;
+    const anio = document.getElementById('hist-anio').value;
+
+    if (!mes || !anio) {
+        Swal.fire('Atención', 'Selecciona mes y año.', 'warning');
+        return;
+    }
+
+    if (!_isOnline) {
+        Swal.fire('Sin conexión', 'Necesitas conexión a internet para consultar los registros del servidor.', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('btn-detectar-incompletos');
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    showLoading('Analizando asistencias...', 'Consultando los ' + COLABORADORES.length + ' colaboradores...');
+
+    try {
+        const promesas = COLABORADORES.map(async function(colab) {
+            try {
+                const resp = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'obtenerRegistros',
+                        colaborador: colab,
+                        anio: anio,
+                        mes: mes
+                    })
+                }).then(function(r) { return r.json(); });
+
+                if (resp.status !== 'success') {
+                    return { colaborador: colab, registros: [], error: resp.message || 'Error' };
+                }
+                return { colaborador: colab, registros: resp.data.registros || [], error: null };
+            } catch (e) {
+                return { colaborador: colab, registros: [], error: e.message };
+            }
+        });
+
+        const resultados = await Promise.all(promesas);
+
+        const pendientesLocales = await getPendientes();
+
+        const hoy = hoyYMD();
+        const y = parseInt(anio, 10);
+        const m = parseInt(mes, 10);
+        const diasEnMes = new Date(y, m, 0).getDate();
+
+        const mesActualYMD = hoy.substring(0, 7);
+        const mesSeleccionadoYMD = anio + '-' + String(mes).padStart(2, '0');
+        let ultimoDiaRevisar;
+
+        if (mesSeleccionadoYMD > mesActualYMD) {
+            hideLoading();
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            Swal.fire({
+                icon: 'info',
+                title: 'Mes futuro',
+                text: 'No puedes analizar meses futuros.'
+            });
+            return;
+        } else if (mesSeleccionadoYMD === mesActualYMD) {
+            ultimoDiaRevisar = parseInt(hoy.substring(8, 10), 10);
+        } else {
+            ultimoDiaRevisar = diasEnMes;
+        }
+
+        const problemas = [];
+
+        resultados.forEach(function(r) {
+            if (r.error) {
+                problemas.push({
+                    colaborador: r.colaborador,
+                    fecha: '—',
+                    tipo: 'ERROR_CONSULTA',
+                    detalle: 'No se pudo consultar: ' + r.error
+                });
+                return;
+            }
+
+            const mapa = {};
+            (r.registros || []).forEach(function(reg) { mapa[reg.fecha] = reg; });
+
+            pendientesLocales.forEach(function(p) {
+                if (p.tipoOperacion === 'asistencia' && p.colaborador === r.colaborador) {
+                    if (!mapa[p.fecha]) {
+                        mapa[p.fecha] = {
+                            fecha: p.fecha,
+                            horaEntrada: p.estado === 'Entrada' ? p.hora : '',
+                            horaSalida: p.estado === 'Salida' ? p.hora : '',
+                            estado: p.estado,
+                            _pendiente: true
+                        };
+                    } else {
+                        if (p.estado === 'Entrada' && !mapa[p.fecha].horaEntrada) {
+                            mapa[p.fecha].horaEntrada = p.hora;
+                            mapa[p.fecha]._pendiente = true;
+                        }
+                        if (p.estado === 'Salida' && !mapa[p.fecha].horaSalida) {
+                            mapa[p.fecha].horaSalida = p.hora;
+                            mapa[p.fecha]._pendiente = true;
+                        }
+                    }
+                }
+                if (p.tipoOperacion === 'dia_libre_multiple' &&
+                    Array.isArray(p.colaboradores) && p.colaboradores.includes(r.colaborador)) {
+                    if (!mapa[p.fecha]) {
+                        mapa[p.fecha] = {
+                            fecha: p.fecha,
+                            horaEntrada: PREFIJO_AUSENCIA + 'Día Libre',
+                            horaSalida: '',
+                            estado: 'Día Libre',
+                            _pendiente: true
+                        };
+                    }
+                }
+                if (p.tipoOperacion === 'ausencia_rango' && p.colaborador === r.colaborador) {
+                    const d1 = new Date(p.fechaDesde + 'T00:00:00');
+                    const d2 = new Date(p.fechaHasta + 'T00:00:00');
+                    const cur = new Date(d1);
+                    while (cur <= d2) {
+                        const yyyy = cur.getFullYear();
+                        const mm = String(cur.getMonth() + 1).padStart(2, '0');
+                        const dd = String(cur.getDate()).padStart(2, '0');
+                        const fecha = yyyy + '-' + mm + '-' + dd;
+                        if (!mapa[fecha]) {
+                            mapa[fecha] = {
+                                fecha: fecha,
+                                horaEntrada: PREFIJO_AUSENCIA + p.tipoLabel,
+                                horaSalida: '',
+                                estado: p.tipoLabel,
+                                _pendiente: true
+                            };
+                        }
+                        cur.setDate(cur.getDate() + 1);
+                    }
+                }
+            });
+
+            for (let d = 1; d <= ultimoDiaRevisar; d++) {
+                const fechaStr = anio + '-' + String(mes).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                const reg = mapa[fechaStr];
+
+                if (!reg) {
+                    problemas.push({
+                        colaborador: r.colaborador,
+                        fecha: formatearFechaVisual(fechaStr),
+                        tipo: 'SIN_REGISTRO',
+                        detalle: 'Día sin registro'
+                    });
+                    continue;
+                }
+
+                const esAus = esMarcadorAusencia(reg.horaEntrada);
+                if (esAus) continue;
+
+                const tieneEntrada = !!reg.horaEntrada;
+                const tieneSalida = !!reg.horaSalida;
+
+                if (tieneEntrada && !tieneSalida) {
+                    problemas.push({
+                        colaborador: r.colaborador,
+                        fecha: formatearFechaVisual(fechaStr),
+                        tipo: 'SOLO_ENTRADA',
+                        detalle: 'Entrada ' + reg.horaEntrada + ' · Sin salida' + (reg._pendiente ? ' · Pendiente de sincronizar' : '')
+                    });
+                } else if (!tieneEntrada && tieneSalida) {
+                    problemas.push({
+                        colaborador: r.colaborador,
+                        fecha: formatearFechaVisual(fechaStr),
+                        tipo: 'SOLO_SALIDA',
+                        detalle: 'Salida ' + reg.horaSalida + ' · Sin entrada' + (reg._pendiente ? ' · Pendiente de sincronizar' : '')
+                    });
+                }
+            }
+        });
+
+        hideLoading();
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+
+        if (problemas.length === 0) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Todo en orden!',
+                html: '<p>No se encontraron asistencias incompletas ni días sin registro para ningún colaborador.</p>' +
+                      '<p class="small text-muted mt-2">Revisado hasta el día ' + ultimoDiaRevisar + ' de ' + getMesNombre(mes) + ' ' + anio + '.</p>',
+                confirmButtonColor: '#28a745'
+            });
+            return;
+        }
+
+        const porColaborador = {};
+        problemas.forEach(function(p) {
+            if (!porColaborador[p.colaborador]) porColaborador[p.colaborador] = [];
+            porColaborador[p.colaborador].push(p);
+        });
+
+        const contSinRegistro = problemas.filter(function(p) { return p.tipo === 'SIN_REGISTRO'; }).length;
+        const contSoloEntrada = problemas.filter(function(p) { return p.tipo === 'SOLO_ENTRADA'; }).length;
+        const contSoloSalida = problemas.filter(function(p) { return p.tipo === 'SOLO_SALIDA'; }).length;
+        const contErrores = problemas.filter(function(p) { return p.tipo === 'ERROR_CONSULTA'; }).length;
+
+        // Detectar si el modo oscuro está activo para aplicar estilos inline (respaldo)
+        const esOscuro = document.body.classList.contains('modo-oscuro');
+
+        const colorTabla = esOscuro ? '#1e293b' : '#ffffff';
+        const colorHead = esOscuro ? '#0f172a' : '#f8f9fa';
+        const colorTexto = esOscuro ? '#e2e8f0' : '#212529';
+        const colorTextoHead = esOscuro ? '#93c5fd' : '#495057';
+        const colorBorde = esOscuro ? '#334155' : '#dee2e6';
+        const colorMuted = esOscuro ? '#94a3b8' : '#6c757d';
+        const colorAlertBg = esOscuro ? '#78350f' : '#fff3cd';
+        const colorAlertTxt = esOscuro ? '#fef3c7' : '#856404';
+        const colorAlertBorde = esOscuro ? '#f59e0b' : '#ffeaa7';
+
+        let html = '<div class="text-start" style="max-height: 60vh; overflow-y: auto;">';
+
+        html += '<div class="alert py-2 mb-3 small" style="background-color:' + colorAlertBg + '; color:' + colorAlertTxt + '; border:1px solid ' + colorAlertBorde + '; border-radius:8px;">';
+        html += '<b>Período analizado:</b> 1 al ' + ultimoDiaRevisar + ' de ' + getMesNombre(mes) + ' ' + anio + '<br>';
+        html += '<b>Total de problemas:</b> ' + problemas.length + '<br>';
+        if (contSoloEntrada > 0) html += '· Solo entrada sin salida: <b>' + contSoloEntrada + '</b><br>';
+        if (contSoloSalida > 0) html += '· Solo salida sin entrada: <b>' + contSoloSalida + '</b><br>';
+        if (contSinRegistro > 0) html += '· Días sin registro: <b>' + contSinRegistro + '</b><br>';
+        if (contErrores > 0) html += '· Errores de consulta: <b>' + contErrores + '</b>';
+        html += '</div>';
+
+        html += '<table class="table table-sm mb-0" style="font-size: 0.85rem; background-color:' + colorTabla + '; color:' + colorTexto + '; border-radius:8px; overflow:hidden; width:100%;">';
+        html += '<thead style="background-color:' + colorHead + ';">';
+        html += '<tr>';
+        html += '<th style="padding:8px; text-align:left; color:' + colorTextoHead + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600;">Colaborador</th>';
+        html += '<th style="padding:8px; text-align:left; color:' + colorTextoHead + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600;">Fecha</th>';
+        html += '<th style="padding:8px; text-align:left; color:' + colorTextoHead + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600;">Problema</th>';
+        html += '</tr>';
+        html += '</thead><tbody>';
+
+        Object.keys(porColaborador).sort().forEach(function(colab) {
+            const items = porColaborador[colab].sort(function(a, b) {
+                return (b.fecha.split('/').reverse().join('')).localeCompare(a.fecha.split('/').reverse().join(''));
+            });
+
+            items.forEach(function(p, idx) {
+                let badgeClass = 'badge-warning-custom';
+                let badgeText = '';
+                if (p.tipo === 'SIN_REGISTRO') {
+                    badgeClass = 'badge-danger-custom';
+                    badgeText = 'SIN REGISTRO';
+                } else if (p.tipo === 'SOLO_ENTRADA') {
+                    badgeClass = 'badge-warning-custom';
+                    badgeText = 'SOLO ENTRADA';
+                } else if (p.tipo === 'SOLO_SALIDA') {
+                    badgeClass = 'badge-warning-custom';
+                    badgeText = 'SOLO SALIDA';
+                } else if (p.tipo === 'ERROR_CONSULTA') {
+                    badgeClass = 'badge-danger-custom';
+                    badgeText = 'ERROR';
+                }
+
+                html += '<tr style="background-color:' + colorTabla + ';">';
+                if (idx === 0) {
+                    html += '<td rowspan="' + items.length + '" style="padding:8px; vertical-align:middle; border-right:1px solid ' + colorBorde + '; border-bottom:1px solid ' + colorBorde + '; font-weight:600; color:' + colorTexto + ';">' + colab + '</td>';
+                }
+                html += '<td style="padding:8px; border-bottom:1px solid ' + colorBorde + '; color:' + colorTexto + ';">' + p.fecha + '</td>';
+                html += '<td style="padding:8px; border-bottom:1px solid ' + colorBorde + '; color:' + colorTexto + ';"><span class="' + badgeClass + '" style="font-size: 0.7rem;">' + badgeText + '</span> <span style="color:' + colorMuted + '; font-size:0.8rem; margin-left:4px;">' + p.detalle + '</span></td>';
+                html += '</tr>';
+            });
+        });
+
+        html += '</tbody></table></div>';
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Asistencias incompletas detectadas',
+            html: html,
+            width: 800,
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#f39c12'
+        });
+
+    } catch (e) {
+        hideLoading();
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+        console.error('Error detectando incompletos:', e);
+        Swal.fire('Error', 'No se pudo completar el análisis: ' + e.message, 'error');
     }
 }
 
@@ -5623,6 +5965,9 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     const btnExportExcel = document.getElementById('btn-exportar-excel');
     if (btnExportExcel) btnExportExcel.addEventListener('click', exportarHistorialExcel);
+
+    const btnDetectar = document.getElementById('btn-detectar-incompletos');
+    if (btnDetectar) btnDetectar.addEventListener('click', detectarIncompletos);
 
     const selHistColab = document.getElementById('hist-colaborador');
     if (selHistColab) {
